@@ -1,6 +1,4 @@
 import React from "react";
-import { SidebarInset, SidebarTrigger } from "./ui/sidebar";
-import { Separator } from "./ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,23 +10,18 @@ import {
 
 function AppHeader() {
   return (
-    <header className="flex h-14 shadow-md w-full items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-      <div className="flex items-center gap-2 px-4">
-        <SidebarTrigger className="-ml-1 cursor-pointer hover:opacity-105 duration-300 ease-in-out" />
-        <Separator
-          orientation="vertical"
-          className="mr-2 data-[orientation=vertical]:h-4"
-        />
+    <header className="flex h-14 bg-white shadow-sm border-b w-full items-center gap-2">
+      <div className="flex items-center gap-2 px-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href="#">
-                Building Your Application
+                Task Force Dashboard
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              <BreadcrumbPage>Assessment Portal</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
