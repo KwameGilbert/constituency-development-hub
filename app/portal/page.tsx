@@ -2,7 +2,7 @@ import React from "react";
 import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalCard } from "@/components/portal/PortalCard";
 import { PortalFooter } from "@/components/portal/PortalFooter";
-import { User, Shield, Settings } from "lucide-react";
+import { User, Shield, Settings, Globe, Users } from "lucide-react";
 
 export default function PortalPage() {
     return (
@@ -15,7 +15,7 @@ export default function PortalPage() {
                     <p className="text-muted-foreground">Select your role to continue to the login page</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl w-full">
+                <div className="flex flex-wrap justify-center gap-8 max-w-7xl w-full">
                     <PortalCard
                         title="Agent"
                         description="Manage field activities and report issues from the community"
@@ -39,6 +39,22 @@ export default function PortalPage() {
                         buttonText="Login as Admin"
                         href="/admin-login"
                         colorTheme="red"
+                    />
+                    <PortalCard
+                        title="Web Admin"
+                        description="Manage website content and configurations"
+                        icon={Globe}
+                        buttonText="Login as Web Admin"
+                        href="/web-admin-login"
+                        colorTheme="purple"
+                    />
+                    <PortalCard
+                        title="Task Force"
+                        description="Execute special tasks and operations"
+                        icon={Users}
+                        buttonText="Login as Task Force"
+                        href="/task-force-login"
+                        colorTheme="orange"
                     />
                 </div>
             </main>

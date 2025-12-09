@@ -10,7 +10,7 @@ interface PortalCardProps {
     icon: LucideIcon;
     buttonText: string;
     href: string;
-    colorTheme: "blue" | "green" | "red";
+    colorTheme: "blue" | "green" | "red" | "purple" | "orange";
 }
 
 export function PortalCard({
@@ -36,6 +36,16 @@ export function PortalCard({
             iconBg: "bg-red-100",
             iconColor: "text-red-600",
             button: "bg-red-600 hover:bg-red-700",
+        },
+        purple: {
+            iconBg: "bg-purple-100",
+            iconColor: "text-purple-600",
+            button: "bg-purple-600 hover:bg-purple-700",
+        },
+        orange: {
+            iconBg: "bg-orange-100",
+            iconColor: "text-orange-600",
+            button: "bg-orange-600 hover:bg-orange-700",
         },
     };
 
