@@ -22,7 +22,7 @@ export default function PortalPage() {
                         icon={User}
                         buttonText="Login as Agent"
                         href="/agent-login"
-                        colorTheme="blue"
+                        colorTheme="green"
                     />
                     <PortalCard
                         title="Officer"
