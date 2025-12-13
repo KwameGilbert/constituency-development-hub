@@ -9,7 +9,7 @@
     },
     {
       "id": "education",
-      "name": "Education", 
+      "name": "Education",
       "description": "Schools, libraries, educational facilities",
       "icon": "book",
       "color": "green"
@@ -37,7 +37,7 @@
     },
     {
       "id": "social_services",
-      "name": "Social Services", 
+      "name": "Social Services",
       "description": "Community centers, welfare programs",
       "icon": "users",
       "color": "purple"
@@ -55,13 +55,13 @@
       "parentCategory": "infrastructure"
     },
     {
-      "id": "primary_education", 
+      "id": "primary_education",
       "name": "Primary Education",
       "parentCategory": "education"
     },
     {
       "id": "secondary_education",
-      "name": "Secondary Education", 
+      "name": "Secondary Education",
       "parentCategory": "education"
     },
     {
@@ -84,7 +84,7 @@
       "urgencyScore": 1
     },
     {
-      "level": "medium", 
+      "level": "medium",
       "name": "Medium Priority",
       "description": "Should be addressed within 3-6 months",
       "color": "yellow",
@@ -92,7 +92,7 @@
     },
     {
       "level": "high",
-      "name": "High Priority", 
+      "name": "High Priority",
       "description": "Requires immediate attention within 1-3 months",
       "color": "red",
       "urgencyScore": 3
@@ -114,7 +114,7 @@
       "icon": "clock"
     },
     {
-      "value": "under_assessment", 
+      "value": "under_assessment",
       "label": "Under Assessment",
       "description": "Currently being reviewed by assessment team",
       "color": "blue",
@@ -124,7 +124,7 @@
       "value": "approved",
       "label": "Approved",
       "description": "Approved for funding and implementation",
-      "color": "green", 
+      "color": "green",
       "icon": "check"
     },
     {
@@ -163,7 +163,7 @@
       "description": "Issues to be addressed in the short term"
     },
     {
-      "value": "medium_term", 
+      "value": "medium_term",
       "label": "Medium Term (3-6 months)",
       "months": 6,
       "description": "Issues for medium-term planning"
