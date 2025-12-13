@@ -1,17 +1,13 @@
-import AppHeader from "@/components/app-header";
-import { AppSidebar } from "@/components/appsidebar";
+import { OfficerSidebar } from "./sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
-      <AppSidebar navItems={[]} />
-      <main>
-        <SidebarInset className="w-full">
-          <AppHeader />
-          <section>{children}</section>
-        </SidebarInset>
-      </main>
+      <OfficerSidebar />
+      <SidebarInset className="w-full">
+        <section>{children}</section>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

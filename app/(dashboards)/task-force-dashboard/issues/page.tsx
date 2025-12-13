@@ -1,0 +1,327 @@
+'use client';
+
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Search,
+  Filter,
+  Eye,
+  MessageSquare,
+  MapPin,
+  Calendar,
+  User,
+  ArrowUpRight,
+  FileText,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertTriangle
+} from 'lucide-react';
+import {
+  getIssues,
+  getStatistics,
+  getStatusColor,
+  getPriorityColor,
+  formatDate,
+  getMetadata
+} from '@/lib/data';
+
+const getPriorityIcon = (priority: string) => {
+  switch (priority) {
+    case 'high':
+      return <AlertTriangle className="h-4 w-4" />;
+    case 'medium':
+      return <Clock className="h-4 w-4" />;
+    case 'low':
+      return <CheckCircle className="h-4 w-4" />;
+    default:
+      return <Clock className="h-4 w-4" />;
+  }
+};
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return <CheckCircle className="h-4 w-4" />;
+    case 'rejected':
+      return <XCircle className="h-4 w-4" />;
+    case 'under_assessment':
+      return <Clock className="h-4 w-4" />;
+    default:
+      return <AlertTriangle className="h-4 w-4" />;
+  }
+};
+
+export default function IssuesPage() {
+  const allIssues = getIssues();
+  const statistics = getStatistics();
+  const metadata = getMetadata();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState('all');
+
+  // Filter issues based on search and filters
+  const filteredIssues = useMemo(() => {
+    let filtered = allIssues;
+
+    // Filter by tab
+    if (activeTab === 'pending') {
+      filtered = filtered.filter(issue => issue.status === 'pending_assessment');
+    } else if (activeTab === 'under-assessment') {
+      filtered = filtered.filter(issue => issue.status === 'under_assessment');
+    } else if (activeTab === 'completed') {
+      filtered = filtered.filter(issue => issue.status === 'approved' || issue.status === 'rejected');
+    }
+
+    // Search filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(issue => 
+        issue.title.toLowerCase().includes(searchLower) ||
+        issue.description.toLowerCase().includes(searchLower) ||
+        issue.community.toLowerCase().includes(searchLower) ||
+        issue.location.address.toLowerCase().includes(searchLower) ||
+        issue.submitter.name.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(issue => issue.status === statusFilter);
+    }
+
+    // Priority filter
+    if (priorityFilter !== 'all') {
+      filtered = filtered.filter(issue => issue.priority === priorityFilter);
+    }
+
+    // Category filter
+    if (categoryFilter !== 'all') {
+      filtered = filtered.filter(issue => issue.category === categoryFilter);
+    }
+
+    return filtered;
+  }, [searchTerm, statusFilter, priorityFilter, categoryFilter, activeTab, allIssues]);
+
+  const getTabCount = (tab: string) => {
+    switch (tab) {
+      case 'all':
+        return allIssues.length;
+      case 'pending':
+        return allIssues.filter(issue => issue.status === 'pending_assessment').length;
+      case 'under-assessment':
+        return allIssues.filter(issue => issue.status === 'under_assessment').length;
+      case 'completed':
+        return allIssues.filter(issue => issue.status === 'approved' || issue.status === 'rejected').length;
+      default:
+        return 0;
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">All Issues</h1>
+          <p className="text-gray-600 mt-1">
+            Comprehensive view of all constituency issues and their status
+          </p>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search issues by title, description, location, or submitter..."
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-3">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              {metadata.statuses.map(status => (
+                <SelectItem key={status.value} value={status.value}>
+                  {status.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Filter by priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Priority</SelectItem>
+              {metadata.priorities.map(priority => (
+                <SelectItem key={priority.level} value={priority.level}>
+                  {priority.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {metadata.categories.map(category => (
+                <SelectItem key={category.name} value={category.name}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Issues Display */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all" className="relative">
+            All Issues
+            <Badge variant="secondary" className="ml-2">
+              {getTabCount('all')}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="relative">
+            Pending
+            <Badge variant="secondary" className="ml-2">
+              {getTabCount('pending')}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="under-assessment" className="relative">
+            Under Assessment
+            <Badge variant="secondary" className="ml-2">
+              {getTabCount('under-assessment')}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="completed" className="relative">
+            Completed
+            <Badge variant="secondary" className="ml-2">
+              {getTabCount('completed')}
+            </Badge>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={activeTab} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredIssues.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Issues Found</h3>
+                <p className="text-gray-600">
+                  {searchTerm || statusFilter !== 'all' || priorityFilter !== 'all' || categoryFilter !== 'all'
+                    ? 'Try adjusting your search or filters'
+                    : 'No issues have been submitted yet'}
+                </p>
+              </div>
+            ) : (
+              filteredIssues.map((issue) => (
+                <Card key={issue.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg leading-tight mb-1">
+                          {issue.title}
+                        </CardTitle>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className={getStatusColor(issue.status)}>
+                            <div className="flex items-center gap-1">
+                              {getStatusIcon(issue.status)}
+                              {metadata.statuses.find(s => s.value === issue.status)?.label || issue.status}
+                            </div>
+                          </Badge>
+                          <Badge className={getPriorityColor(issue.priority)}>
+                            <div className="flex items-center gap-1">
+                              {getPriorityIcon(issue.priority)}
+                              {issue.priority}
+                            </div>
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="mb-4 line-clamp-3">
+                      {issue.description}
+                    </CardDescription>
+                    
+                    <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-gray-400" />
+                        <span>{issue.location.address}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-gray-400" />
+                        <span>{issue.submitter.name} • {issue.community}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <span>{formatDate(issue.submissionDate)}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-gray-400" />
+                        <span>{issue.category}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <div className="flex items-center gap-2">
+                        {issue.timeline && (
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
+                            <MessageSquare className="h-3 w-3" />
+                            <span>{issue.timeline.length} updates</span>
+                          </div>
+                        )}
+                        {issue.impactAssessment?.estimatedCost && (
+                          <div className="text-xs text-gray-500">
+                            Est: ${issue.impactAssessment.estimatedCost.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Link href={`/task-force-dashboard/issues/${issue.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4 mr-1" />
+                            View
+                          </Button>
+                        </Link>
+                        {issue.status === 'pending_assessment' && (
+                          <Link href={`/task-force-dashboard/assess/${issue.id}`}>
+                            <Button variant="outline" size="sm">
+                              Assess
+                            </Button>
+                          </Link>
+                        )}
+                        <ArrowUpRight className="h-4 w-4 text-gray-400" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

@@ -1,0 +1,265 @@
+{
+  "issues": [
+    {
+      "id": 1,
+      "title": "Water Supply Issues in Akonkora Community",
+      "community": "Akonkora",
+      "status": "pending_assessment",
+      "priority": "high",
+      "submittedBy": "John Mensah",
+      "submittedById": "user_001",
+      "submissionDate": "2024-12-01T08:30:00Z",
+      "lastUpdated": "2024-12-03T14:20:00Z",
+      "category": "Infrastructure",
+      "sector": "Water & Sanitation",
+      "description": "Community has been without clean water supply for over 2 weeks. The main borehole has broken down and residents are struggling to access clean water. This is affecting over 500 households in the area. Children are missing school to walk long distances to fetch water from neighboring communities.",
+      "detailedDescription": "The main borehole serving the Akonkora community was installed in 2018 and has been the primary source of clean water for over 500 households. On November 15, 2024, the submersible pump failed, leaving the entire community without access to clean water. Residents have reported that the pump made unusual noises for several days before completely failing. Local technicians attempted basic repairs but determined that the pump motor has burned out and requires replacement.",
+      "location": {
+        "address": "Akonkora, Sefwi Wiawso Constituency",
+        "gps": "5.8845° N, 2.4900° W",
+        "nearestLandmark": "Akonkora Primary School",
+        "accessRoute": "Main road to Sefwi Wiawso, then 3km dirt road east"
+      },
+      "submitter": {
+        "name": "John Mensah",
+        "role": "Community Representative",
+        "phone": "+233 24 123 4567",
+        "email": "john.mensah@community.gh",
+        "alternateContact": "Mary Asante (+233 20 987 6543)"
+      },
+      "impactAssessment": {
+        "affectedPopulation": 500,
+        "householdsAffected": 95,
+        "estimatedCost": 25000,
+        "urgencyLevel": "high",
+        "environmentalImpact": "medium",
+        "economicImpact": "high",
+        "socialImpact": "high"
+      },
+      "attachments": [
+        {
+          "id": "att_001",
+          "name": "broken_borehole.jpg",
+          "type": "image",
+          "size": "2.3 MB",
+          "url": "/uploads/issues/1/broken_borehole.jpg",
+          "uploadDate": "2024-12-01T08:35:00Z"
+        },
+        {
+          "id": "att_002",
+          "name": "community_petition.pdf",
+          "type": "document",
+          "size": "1.1 MB",
+          "url": "/uploads/issues/1/community_petition.pdf",
+          "uploadDate": "2024-12-01T08:40:00Z"
+        },
+        {
+          "id": "att_003",
+          "name": "technical_assessment.pdf",
+          "type": "document",
+          "size": "856 KB",
+          "url": "/uploads/issues/1/technical_assessment.pdf",
+          "uploadDate": "2024-12-02T10:15:00Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "tl_001",
+          "date": "2024-11-15T00:00:00Z",
+          "event": "Borehole pump failure reported",
+          "type": "issue",
+          "userId": "user_001"
+        },
+        {
+          "id": "tl_002",
+          "date": "2024-11-20T00:00:00Z",
+          "event": "Local technicians attempted repairs",
+          "type": "action",
+          "userId": "tech_001"
+        },
+        {
+          "id": "tl_003",
+          "date": "2024-11-25T00:00:00Z",
+          "event": "Technical assessment completed",
+          "type": "assessment",
+          "userId": "tech_001"
+        },
+        {
+          "id": "tl_004",
+          "date": "2024-12-01T08:30:00Z",
+          "event": "Formal issue submitted to constituency office",
+          "type": "submission",
+          "userId": "user_001"
+        },
+        {
+          "id": "tl_005",
+          "date": "2024-12-03T14:20:00Z",
+          "event": "Issue assigned to assessment team",
+          "type": "assignment",
+          "userId": "admin_001"
+        }
+      ],
+      "relatedIssues": [3, 7],
+      "assignedTo": ["assessor_001", "assessor_002"],
+      "tags": ["water", "infrastructure", "urgent", "community"],
+      "createdAt": "2024-12-01T08:30:00Z",
+      "updatedAt": "2024-12-03T14:20:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Poor Road Conditions on Main Street",
+      "community": "Sefwi Wiawso",
+      "status": "under_assessment",
+      "priority": "medium",
+      "submittedBy": "Mary Asante",
+      "submittedById": "user_002",
+      "submissionDate": "2024-11-28T10:15:00Z",
+      "lastUpdated": "2024-12-02T16:45:00Z",
+      "category": "Transportation",
+      "sector": "Infrastructure",
+      "description": "The main street has multiple potholes causing vehicle damage and making transportation difficult for residents and businesses.",
+      "detailedDescription": "The main street connecting the market area to the residential districts has developed numerous potholes over the past months due to heavy rains and increased traffic. Several vehicles have suffered tire damage, and motorcycles are finding it increasingly difficult to navigate safely.",
+      "location": {
+        "address": "Main Street, Sefwi Wiawso",
+        "gps": "5.9012° N, 2.4850° W",
+        "nearestLandmark": "Central Market",
+        "accessRoute": "City center main road"
+      },
+      "submitter": {
+        "name": "Mary Asante",
+        "role": "Market Trader",
+        "phone": "+233 20 456 7890",
+        "email": "mary.asante@trader.gh",
+        "alternateContact": "Kwame Boateng (+233 24 987 6543)"
+      },
+      "impactAssessment": {
+        "affectedPopulation": 1200,
+        "householdsAffected": 240,
+        "estimatedCost": 45000,
+        "urgencyLevel": "medium",
+        "environmentalImpact": "low",
+        "economicImpact": "medium",
+        "socialImpact": "medium"
+      },
+      "attachments": [
+        {
+          "id": "att_004",
+          "name": "pothole_damage.jpg",
+          "type": "image",
+          "size": "1.8 MB",
+          "url": "/uploads/issues/2/pothole_damage.jpg",
+          "uploadDate": "2024-11-28T10:20:00Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "tl_006",
+          "date": "2024-11-28T10:15:00Z",
+          "event": "Issue submitted",
+          "type": "submission",
+          "userId": "user_002"
+        },
+        {
+          "id": "tl_007",
+          "date": "2024-12-02T16:45:00Z",
+          "event": "Assessment team assigned",
+          "type": "assignment",
+          "userId": "admin_001"
+        }
+      ],
+      "relatedIssues": [],
+      "assignedTo": ["assessor_001"],
+      "tags": ["roads", "transportation", "infrastructure"],
+      "createdAt": "2024-11-28T10:15:00Z",
+      "updatedAt": "2024-12-02T16:45:00Z"
+    },
+    {
+      "id": 3,
+      "title": "School Building Repairs Needed",
+      "community": "Anhwiaso",
+      "status": "approved",
+      "priority": "high",
+      "submittedBy": "Peter Osei",
+      "submittedById": "user_003",
+      "submissionDate": "2024-11-25T14:20:00Z",
+      "lastUpdated": "2024-12-04T09:30:00Z",
+      "category": "Education",
+      "sector": "Infrastructure",
+      "description": "Primary school building roof is leaking during rainy season, affecting classes and students' learning environment.",
+      "detailedDescription": "The Anhwiaso Primary School's main building roof has multiple leaks that worsen during the rainy season. Water damages textbooks and makes some classrooms unusable, forcing students to crowd into fewer rooms.",
+      "location": {
+        "address": "Anhwiaso Primary School, Anhwiaso",
+        "gps": "5.8720° N, 2.4920° W",
+        "nearestLandmark": "Anhwiaso Health Center",
+        "accessRoute": "15km from Sefwi Wiawso on rural road"
+      },
+      "submitter": {
+        "name": "Peter Osei",
+        "role": "School Headteacher",
+        "phone": "+233 24 789 0123",
+        "email": "peter.osei@education.gh",
+        "alternateContact": "Grace Appiah (+233 20 345 6789)"
+      },
+      "impactAssessment": {
+        "affectedPopulation": 300,
+        "householdsAffected": 75,
+        "estimatedCost": 18000,
+        "urgencyLevel": "high",
+        "environmentalImpact": "low",
+        "economicImpact": "medium",
+        "socialImpact": "high"
+      },
+      "attachments": [
+        {
+          "id": "att_005",
+          "name": "leaking_roof.jpg",
+          "type": "image",
+          "size": "2.1 MB",
+          "url": "/uploads/issues/3/leaking_roof.jpg",
+          "uploadDate": "2024-11-25T14:25:00Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "tl_008",
+          "date": "2024-11-25T14:20:00Z",
+          "event": "Issue submitted",
+          "type": "submission",
+          "userId": "user_003"
+        },
+        {
+          "id": "tl_009",
+          "date": "2024-12-04T09:30:00Z",
+          "event": "Issue approved for funding",
+          "type": "approval",
+          "userId": "assessor_002"
+        }
+      ],
+      "relatedIssues": [1],
+      "assignedTo": ["assessor_002"],
+      "tags": ["education", "infrastructure", "urgent", "children"],
+      "createdAt": "2024-11-25T14:20:00Z",
+      "updatedAt": "2024-12-04T09:30:00Z",
+      "assessment": {
+        "assessorId": "assessor_002",
+        "assessorName": "Dr. Ama Boateng",
+        "assessmentDate": "2024-12-04T09:30:00Z",
+        "decision": "approved",
+        "comments": "Critical infrastructure need affecting children's education. Recommend immediate funding for roof repairs before next rainy season.",
+        "recommendations": "1. Emergency roof repairs using quality materials, 2. Regular maintenance schedule, 3. Additional classroom if needed",
+        "estimatedBudget": 18000,
+        "timeline": "immediate"
+      }
+    }
+  ],
+  "statistics": {
+    "pendingAssessment": 3,
+    "underAssessment": 0,
+    "assessedThisMonth": 0,
+    "totalAssessed": 0,
+    "totalIssues": 3,
+    "approvedIssues": 0,
+    "rejectedIssues": 0,
+    "lastUpdated": "2024-12-05T12:00:00Z"
+  }
+}
