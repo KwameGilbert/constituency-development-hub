@@ -208,11 +208,11 @@ export const getPriorityColor = (priority: string): string => {
 };
 
 export const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString();
+  return new Date(dateString).toLocaleDateString('en-GB');
 };
 
 export const formatDateTime = (dateString: string): string => {
-  return new Date(dateString).toLocaleString();
+  return new Date(dateString).toLocaleString('en-GB');
 };
 
 export const getRelativeTime = (dateString: string): string => {

@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   ArrowLeft,
   MapPin,
@@ -29,7 +30,8 @@ import {
   User,
   Upload,
   X,
-  Paperclip
+  Paperclip,
+  FileImage
 } from 'lucide-react';
 import {
   getIssueById,
@@ -74,6 +76,8 @@ export default function AssessIssue({ params }: AssessmentPageProps) {
     setSubmitting,
     resetAssessment,
   } = useAssessmentStore();
+
+  const fileErrors = errors.files ? [errors.files] : [];
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 

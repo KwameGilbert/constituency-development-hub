@@ -41,7 +41,7 @@ const issues = [
     },
 ];
 
-export function AllIssues() {
+export function AllIssues({ readOnly = false }: { readOnly?: boolean }) {
     return (
         <div className="space-y-6">
             {/* Filter Section */}
@@ -134,9 +134,11 @@ export function AllIssues() {
                                     <Button variant="link" className="h-auto p-0 text-indigo-600">
                                         View
                                     </Button>
-                                    <Button variant="link" className="h-auto p-0 text-indigo-600">
-                                        Edit
-                                    </Button>
+                                    {!readOnly && (
+                                        <Button variant="link" className="h-auto p-0 text-indigo-600">
+                                            Edit
+                                        </Button>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}

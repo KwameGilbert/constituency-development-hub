@@ -1,0 +1,123 @@
+"use client";
+
+import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, UserPlus, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
+import Link from "next/link";
+
+export default function AddAgentPage() {
+  return (
+    <div className="flex flex-col h-full bg-slate-50">
+      <AdminHeader 
+        title="Add New Agent" 
+        description="Create a new agent account"
+        roleAbbr="MP"
+        userName="Admin.Rock"
+        userRoleLabel="MP"
+        dropdownItems={[
+            { label: "Profile Settings", href: "/admin-dashboard/profile", icon: UserCircle },
+            { label: "Audit Logs", href: "/admin-dashboard/audit", icon: ShieldAlert },
+            { label: "System Settings", href: "/admin-dashboard/system-settings", icon: Settings2 },
+            { label: "Logout", icon: LogOut, className: "text-red-600 focus:text-red-600 focus:bg-red-50" },
+        ]}
+        actionButtons={[
+          { label: "Back to Agents", href: "/admin-dashboard/agents", icon: ArrowLeft, className: "bg-gray-100 text-gray-700 hover:bg-gray-200" }
+        ]}
+      />
+      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div className="max-w-[1600px] mx-auto">
+            <Card className="border-none shadow-sm">
+                <CardContent className="space-y-8 p-8">
+                    
+                    {/* Personal Information */}
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="fullName" className="text-gray-700">Full Name <span className="text-red-500">*</span></Label>
+                                <Input id="fullName" placeholder="Enter agent name" className="bg-white" />
+                            </div>
+                            <div className="space-y-2">
+                                 <Label htmlFor="email" className="text-gray-700">Email Address <span className="text-red-500">*</span></Label>
+                                 <Input id="email" type="email" placeholder="Enter email address" className="bg-white" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="phone" className="text-gray-700">Phone Number <span className="text-red-500">*</span></Label>
+                                <Input id="phone" placeholder="Enter phone number" className="bg-white" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Location Assignment */}
+                    <div className="space-y-4">
+                        <h3 className="text-gray-900 font-semibold text-lg">Location Assignment</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                             <div className="space-y-2">
+                                <Label htmlFor="mainCommunity" className="text-gray-700">Main Community <span className="text-red-500">*</span></Label>
+                                <Select>
+                                    <SelectTrigger className="bg-white">
+                                        <SelectValue placeholder="Select Main Community" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="comm1">Community 1</SelectItem>
+                                        <SelectItem value="comm2">Community 2</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="smallerCommunity" className="text-gray-700">Smaller Community</Label>
+                                <Select>
+                                    <SelectTrigger className="bg-white">
+                                        <SelectValue placeholder="Select Smaller Community" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="small1">Smaller Comm 1</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="suburb" className="text-gray-700">Suburb</Label>
+                                <Select>
+                                    <SelectTrigger className="bg-white">
+                                        <SelectValue placeholder="Select Suburb" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="sub1">Suburb 1</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                             <div className="space-y-2">
+                                <Label htmlFor="cottage" className="text-gray-700">Cottage</Label>
+                                <Select>
+                                    <SelectTrigger className="bg-white">
+                                        <SelectValue placeholder="Select Cottage" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="cot1">Cottage 1</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Actions */}
+                    <div className="pt-4 flex items-center justify-end gap-3 mt-6">
+                         <Button variant="ghost" asChild className="text-gray-500 hover:text-gray-700 hover:bg-gray-100">
+                            <Link href="/admin-dashboard/agents">Cancel</Link>
+                         </Button>
+                         <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 px-8">
+                            Add Agent
+                         </Button>
+                    </div>
+
+                </CardContent>
+            </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
