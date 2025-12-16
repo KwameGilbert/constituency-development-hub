@@ -1,4 +1,6 @@
-import { Header } from "@/components/public/Header";
+"use client";
+import SiteHeader from "@/components/hero/SiteHeader";
+import SiteFooter from "@/components/hero/SiteFooter";
 
 export default function PublicLayout({
   children,
@@ -7,8 +9,9 @@ export default function PublicLayout({
 }>) {
   return (
     <div>
-      <Header />
+      <SiteHeader />
       <main>{children}</main>
+      <SiteFooter />
     </div>
   );
 }
