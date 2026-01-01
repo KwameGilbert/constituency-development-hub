@@ -1,15 +1,80 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import WebAdminHeader from "@/components/web-admin-dashboard/WebAdminHeader";
 import { CarouselForm } from "@/components/web-admin-dashboard/carousel/CarouselForm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
+import { use } from "react";
 
-export default async function EditCarouselItemPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+interface EditCarouselItemPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function EditCarouselItemPage({ params }: EditCarouselItemPageProps) {
+  const { id } = use(params);
+  const [slide, setSlide] = useState<HeroSlide | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchSlide() {
+      try {
+        setLoading(true);
+        const response = await heroSlidesService.getSlideById(parseInt(id));
+        if (response.success && response.data.slide) {
+          setSlide(response.data.slide);
+        } else {
+          setError("Hero slide not found");
+        }
+      } catch (err: unknown) {
+        console.error("Failed to fetch hero slide:", err);
+        setError(err instanceof Error ? err.message : "Failed to load hero slide");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSlide();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+        <WebAdminHeader title="Edit Hero Slide" />
+        <div className="flex-1 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !slide) {
+    return (
+      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+        <WebAdminHeader title="Edit Hero Slide" />
+        <div className="flex-1 p-8 flex flex-col items-center justify-center text-center">
+          <div className="bg-red-50 p-4 rounded-full mb-4">
+            <AlertCircle className="h-8 w-8 text-red-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">Hero Slide Not Found</h2>
+          <p className="text-slate-500 mb-4">{error || "The hero slide you're trying to edit doesn't exist."}</p>
+          <Link href="/web-admin-dashboard/carousel">
+            <Button variant="outline">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Hero Slides
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <WebAdminHeader title="Edit Carousel Item" />
+      <WebAdminHeader title="Edit Hero Slide" />
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/web-admin-dashboard/carousel">
@@ -18,12 +83,12 @@ export default async function EditCarouselItemPage({ params }: { params: Promise
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Edit Carousel Item</h1>
-            <p className="text-slate-500">Update the details for this carousel item</p>
+            <h1 className="text-2xl font-bold text-slate-900">Edit Hero Slide</h1>
+            <p className="text-slate-500">Update the details for &quot;{slide.title}&quot;</p>
           </div>
         </div>
         
-        <CarouselForm isEditing={true} />
+        <CarouselForm slide={slide} isEditing={true} />
       </div>
     </div>
   );

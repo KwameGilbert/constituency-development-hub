@@ -1,0 +1,1 @@
+NEXT_PUBLIC_API_URL=http://app.comdevhub-api.com/v1
