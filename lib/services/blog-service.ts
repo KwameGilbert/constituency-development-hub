@@ -66,6 +66,10 @@ export const blogService = {
     return apiClient<BlogResponse>(`/admin/blog?${query.toString()}`);
   },
 
+  getPostById: async (id: number) => {
+    return apiClient<BlogResponse>(`/admin/blog/${id}`);
+  },
+
   createPost: async (data: Partial<BlogPost>) => {
     return apiClient<BlogResponse>("/admin/blog", {
       method: "POST",

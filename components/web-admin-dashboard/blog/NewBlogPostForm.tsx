@@ -18,7 +18,7 @@ import {
 import { blogService } from "@/lib/services/blog-service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, X, ImageIcon } from "lucide-react";
 
 const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -27,7 +27,6 @@ const blogSchema = z.object({
   content: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   status: z.enum(["draft", "published"]),
-  featured_image: z.string().optional(),
   is_featured: z.boolean(),
 });
 
@@ -36,6 +35,8 @@ type BlogFormValues = z.infer<typeof blogSchema>;
 export function NewBlogPostForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [imageUrl, setImageUrl] = useState<string>("");
+    const [imagePreview, setImagePreview] = useState<string>("");
     
     // Hardcoded categories as per blog.http example
     const categories = ["news", "projects", "community", "events"];
@@ -49,10 +50,19 @@ export function NewBlogPostForm() {
             content: "",
             category: "news",
             status: "draft",
-            featured_image: "",
             is_featured: false,
         },
     });
+
+    function handleImageUrlChange(url: string) {
+        setImageUrl(url);
+        setImagePreview(url);
+    }
+
+    function removeImage() {
+        setImageUrl("");
+        setImagePreview("");
+    }
 
     async function onSubmit(data: BlogFormValues) {
         setIsLoading(true);
@@ -63,7 +73,7 @@ export function NewBlogPostForm() {
                 title: data.title,
                 content: data.content || "",
                 excerpt: data.excerpt,
-                featured_image: data.featured_image || undefined,
+                featured_image: imageUrl || undefined,
                 category: data.category,
                 tags: [], // API expects tags array
                 status: data.status,
@@ -102,12 +112,13 @@ export function NewBlogPostForm() {
             <div className="space-y-6">
                 {/* Title */}
                 <div className="space-y-2">
-                    <Label htmlFor="title">Post Title</Label>
+                    <Label htmlFor="title">Post Title *</Label>
                     <Input 
                         id="title" 
                         placeholder="Enter post title" 
                         className="border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
                         {...form.register("title")}
+                        disabled={isLoading}
                     />
                     {form.formState.errors.title && (
                         <p className="text-red-500 text-sm">{form.formState.errors.title.message}</p>
@@ -123,12 +134,14 @@ export function NewBlogPostForm() {
                             placeholder="my-post-url" 
                             className="border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
                             {...form.register("slug")}
+                            disabled={isLoading}
                         />
                         <Button 
                             type="button" 
                             variant="outline" 
                             onClick={generateSlug}
                             className="bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
+                            disabled={isLoading}
                         >
                             Generate
                         </Button>
@@ -137,10 +150,11 @@ export function NewBlogPostForm() {
 
                 {/* Category */}
                 <div className="space-y-2">
-                    <Label>Category</Label>
+                    <Label>Category *</Label>
                     <Select 
                         onValueChange={(value) => form.setValue("category", value)} 
                         defaultValue={form.getValues("category")}
+                        disabled={isLoading}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select a category" />
@@ -158,13 +172,63 @@ export function NewBlogPostForm() {
                     )}
                 </div>
 
+                {/* Featured Image */}
+                <div className="space-y-2">
+                    <Label>Featured Image</Label>
+                    <div className="space-y-4">
+                        <Input 
+                            type="url"
+                            placeholder="https://example.com/blog-image.jpg" 
+                            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+                            value={imageUrl}
+                            onChange={(e) => handleImageUrlChange(e.target.value)}
+                            disabled={isLoading}
+                        />
+                        <p className="text-xs text-slate-400">Enter the URL for your blog post&apos;s featured image</p>
+                        
+                        {/* Image Preview */}
+                        {imagePreview ? (
+                            <div className="relative">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img 
+                                    src={imagePreview} 
+                                    alt="Featured image preview" 
+                                    className="w-full h-48 object-cover rounded-lg border border-slate-200"
+                                    onError={() => {
+                                        setImagePreview("");
+                                        toast.error("Failed to load image from URL");
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={removeImage}
+                                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                    disabled={isLoading}
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 flex flex-col items-center justify-center text-center">
+                                <div className="p-3 bg-violet-50 rounded-full mb-3">
+                                    <ImageIcon className="h-6 w-6 text-violet-600" />
+                                </div>
+                                <p className="text-sm text-slate-500">Enter an image URL above to preview</p>
+                                <p className="text-xs text-slate-400 mt-1">Recommended size: 1200x630 pixels</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 {/* Excerpt */}
                 <div className="space-y-2">
-                    <Label htmlFor="excerpt">Excerpt <span className="text-slate-400 font-normal">(Short summary)</span></Label>
+                    <Label htmlFor="excerpt">Excerpt * <span className="text-slate-400 font-normal">(Short summary)</span></Label>
                     <Textarea 
                         id="excerpt" 
+                        placeholder="A brief summary of your blog post..."
                         className="min-h-[100px] border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
                         {...form.register("excerpt")}
+                        disabled={isLoading}
                     />
                      {form.formState.errors.excerpt && (
                         <p className="text-red-500 text-sm">{form.formState.errors.excerpt.message}</p>
@@ -177,9 +241,11 @@ export function NewBlogPostForm() {
                     <Textarea 
                         id="content" 
                         placeholder="Write your full post content here..."
-                        className="min-h-[200px] border-slate-200 focus:border-violet-500 focus:ring-violet-500 font-mono" 
+                        className="min-h-[300px] border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
                         {...form.register("content")}
+                        disabled={isLoading}
                     />
+                    <p className="text-xs text-slate-400">Tip: You can use markdown formatting for rich text</p>
                 </div>
 
                 {/* Status */}
@@ -188,6 +254,7 @@ export function NewBlogPostForm() {
                     <Select 
                         onValueChange={(value) => form.setValue("status", value as "draft" | "published")} 
                         defaultValue={form.getValues("status")}
+                        disabled={isLoading}
                     >
                         <SelectTrigger>
                             <SelectValue placeholder="Select status" />
@@ -197,6 +264,9 @@ export function NewBlogPostForm() {
                            <SelectItem value="published">Published</SelectItem>
                         </SelectContent>
                     </Select>
+                    <p className="text-xs text-slate-400">
+                        Draft posts are only visible to admins. Published posts are visible to the public.
+                    </p>
                 </div>
             </div>
 
@@ -206,6 +276,7 @@ export function NewBlogPostForm() {
                     variant="outline" 
                     className="border-slate-200 text-slate-600 hover:bg-slate-50"
                     onClick={() => router.back()}
+                    disabled={isLoading}
                 >
                     Cancel
                 </Button>
