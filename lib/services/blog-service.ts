@@ -13,6 +13,7 @@ export interface BlogPost {
   published_at?: string;
   created_at?: string;
   views?: number;
+  author?: string;
 }
 
 export interface BlogResponse {

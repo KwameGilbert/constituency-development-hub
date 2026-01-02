@@ -2,6 +2,7 @@
 import HeroCarousel from "@/components/hero/HeroCarousel";
 import ProjectsShowcase from "@/components/hero/ProjectsShowcase";
 import ArticlesGrid from "@/components/hero/ArticlesGrid";
+import GalleryPreview from "@/components/hero/GalleryPreview";
 import EventsList from "@/components/hero/EventsList";
 import MapPreview from "@/components/hero/MapPreview";
 import ReportCTA from "@/components/hero/ReportCTA";
@@ -17,6 +18,7 @@ export default function PortalPage() {
         <HeroCarousel />
         <ProjectsShowcase />
         <ArticlesGrid />
+        <GalleryPreview />
         <EventsList />
         <MapPreview />
         <ReportCTA />

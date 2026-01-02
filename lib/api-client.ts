@@ -61,13 +61,10 @@ export async function apiClient<T>(
   }
 
   if (!response.ok) {
-    // Log detailed error info for debugging
-    console.error('API Error:', {
-      endpoint,
-      status: response.status,
-      statusText: response.statusText,
-      responseData: data,
-    });
+    // Only log detailed errors in development for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[API]', response.status, endpoint, data?.message || data?.error || '');
+    }
     const errorMessage = data?.message || data?.error || `HTTP ${response.status}: An error occurred`;
     throw new Error(errorMessage);
   }

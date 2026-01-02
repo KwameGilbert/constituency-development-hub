@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, DownloadCloud, MapPin } from "lucide-react";
+import { CalendarDays, DownloadCloud, MapPin, Loader2, Clock, Users } from "lucide-react";
+import Image from "next/image";
 
-import EventCard, { type EventItem } from "@/components/events/EventCard";
 import EventFilters from "@/components/events/EventFilters";
 import EventsHero, { type EventStat } from "@/components/events/EventsHero";
 import { Button } from "@/components/ui/button";
+import { eventsService, Event } from "@/lib/services/events-service";
+import { format } from "date-fns";
 
 const heroStats: EventStat[] = [
   {
@@ -29,143 +31,6 @@ const heroStats: EventStat[] = [
     label: "Volunteer hours",
     value: "2,400+",
     detail: "Logged by local teams",
-  },
-];
-
-const eventsData: EventItem[] = [
-  {
-    id: "ev-001",
-    title: "Youth Skills Acceleration Clinic",
-    summary:
-      "Hands-on mentorship with artisans and digital mentors focused on employability for senior high school graduates.",
-    date: "12 Feb 2025",
-    time: "9:00 AM",
-    location: "Sefwi Wiawso Innovation Hub",
-    attendees: "120+ young innovators",
-    category: "Community",
-    impact:
-      "Matched 45 participants to ongoing apprenticeship opportunities and funded new toolkits for three cooperatives.",
-    media: {
-      image: {
-        url: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1000&q=80",
-        alt: "Facilitators mentoring youth innovators",
-      },
-      video: {
-        url: "#",
-        label: "Hands-on clinic recap",
-        duration: "02:41",
-      },
-    },
-  },
-  {
-    id: "ev-002",
-    title: "Parliamentary Briefing on Cocoa Roads",
-    summary:
-      "Presented updates to local media and chiefs on the phased rehabilitation of feeder roads across the cocoa belt.",
-    date: "21 Feb 2025",
-    time: "2:30 PM",
-    location: "Sefwi Boako Palace Forecourt",
-    attendees: "20 traditional leaders",
-    category: "Infrastructure",
-    impact:
-      "Secured community monitoring teams to verify contractor milestones and keep residents informed in real time.",
-    media: {
-      image: {
-        url: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=80",
-        alt: "Community members reviewing road maps",
-      },
-      video: {
-        url: "#",
-        label: "Briefing Q&A snippets",
-        duration: "01:58",
-      },
-    },
-  },
-  {
-    id: "ev-003",
-    title: "Constituency Health Outreach",
-    summary:
-      "Mobile screening with nurses, NHIS officers, and volunteers delivering basic care and insurance renewals.",
-    date: "01 Mar 2025",
-    time: "8:00 AM",
-    location: "Asafo Community Park",
-    attendees: "310 residents",
-    category: "Community",
-    impact:
-      "Registered 186 new NHIS cards and referred 27 critical cases to the district hospital for follow-up.",
-    media: {
-      image: {
-        url: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1000&q=80",
-        alt: "Nurse taking vitals at a mobile clinic",
-      },
-    },
-  },
-  {
-    id: "ev-004",
-    title: "Education Stakeholder Roundtable",
-    summary:
-      "Dialogue with head teachers, PTA leaders, and tertiary alumni on resourcing STEM labs in deprived schools.",
-    date: "09 Mar 2025",
-    time: "4:00 PM",
-    location: "Sefwi Wiawso Municipal Assembly Hall",
-    attendees: "42 education advocates",
-    category: "Education",
-    impact:
-      "Mobilized alumni pledges for lab refurbishments and co-designed a device sharing program with ICT tutors.",
-    media: {
-      image: {
-        url: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1000&q=80",
-        alt: "Stakeholders discussing STEM lab plans",
-      },
-      video: {
-        url: "#",
-        label: "Roundtable highlights",
-        duration: "03:12",
-      },
-    },
-  },
-  {
-    id: "ev-005",
-    title: "Women in Agribusiness Forum",
-    summary:
-      "Showcase of processing innovations, microcredit partners, and agritech tools tailored for women farmer groups.",
-    date: "16 Mar 2025",
-    time: "10:00 AM",
-    location: "Wiawso Civic Plaza",
-    attendees: "95 agripreneurs",
-    category: "Community",
-    impact:
-      "Linked five cooperatives to low-interest financing and unveiled a produce aggregation calendar for 2025.",
-    media: {
-      image: {
-        url: "https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=1000&q=80",
-        alt: "Women agripreneurs showcasing produce",
-      },
-    },
-  },
-  {
-    id: "ev-006",
-    title: "Energy & Climate Policy Forum",
-    summary:
-      "Consultation with engineers, researchers, and civil society on clean mini-grids and climate adaptation funding.",
-    date: "25 Mar 2025",
-    time: "1:00 PM",
-    location: "Regional Coordinating Council Auditorium",
-    attendees: "60 policy partners",
-    category: "Parliament",
-    impact:
-      "Documented proposals submitted to the national committee on renewable energy incentives for forest fringe towns.",
-    media: {
-      image: {
-        url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1000&q=80",
-        alt: "Energy experts discussing climate plans",
-      },
-      video: {
-        url: "#",
-        label: "Policy forum recap",
-        duration: "04:05",
-      },
-    },
   },
 ];
 
@@ -201,8 +66,164 @@ const timelineUpdates = [
   },
 ];
 
+// Simple event card component for API data
+function EventCard({ event, index }: { event: Event; index: number }) {
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: i * 0.05 },
+    }),
+  };
+
+  const eventDate = new Date(event.event_date);
+
+  return (
+    <motion.article
+      custom={index}
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+      className="rounded-3xl border border-white/70 bg-white/95 p-6 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
+    >
+      {/* Image */}
+      <figure className="relative h-48 w-full overflow-hidden rounded-2xl border border-white/60 bg-slate-100">
+        {event.image ? (
+          <Image
+            src={event.image}
+            alt={event.title || "Event"}
+            fill
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-cover"
+            priority={index < 2}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-slate-400">
+            <CalendarDays className="h-12 w-12" />
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/10" />
+      </figure>
+
+      {/* Category & Date */}
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2">
+        <span className="rounded-full border border-emerald-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-600">
+          {event.status === "upcoming" ? "Upcoming" : event.status || "Event"}
+        </span>
+        <p className="text-sm font-semibold text-slate-400">
+          {format(eventDate, "dd MMM yyyy")}
+        </p>
+      </div>
+
+      {/* Title & Description */}
+      <h3 className="mt-4 text-2xl font-semibold text-slate-900 line-clamp-2">
+        {event.title}
+      </h3>
+      <p className="mt-2 text-sm text-slate-600 line-clamp-3">{event.description}</p>
+
+      {/* Details */}
+      <div className="mt-4 grid gap-2 text-sm text-slate-500">
+        {event.start_time && (
+          <p className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-emerald-500" />
+            {event.start_time}{event.end_time ? ` - ${event.end_time}` : ""}
+          </p>
+        )}
+        {event.location && (
+          <p className="flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-emerald-500" />
+            {event.location}
+          </p>
+        )}
+        {event.max_attendees && (
+          <p className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-emerald-500" />
+            Up to {event.max_attendees} attendees
+          </p>
+        )}
+      </div>
+
+      {/* Registration Badge */}
+      {event.registration_required && (
+        <div className="mt-5 rounded-2xl border border-amber-100 bg-amber-50/60 p-4 text-sm text-amber-700">
+          <p className="font-semibold text-amber-800">Registration Required</p>
+          <p className="text-amber-700">Sign up in advance to attend this event.</p>
+        </div>
+      )}
+    </motion.article>
+  );
+}
+
+// Fallback events if API fails
+const fallbackEventsData: Event[] = [
+  {
+    id: 1,
+    title: "Youth Skills Acceleration Clinic",
+    description: "Hands-on mentorship with artisans and digital mentors focused on employability for senior high school graduates.",
+    event_date: "2025-02-12",
+    start_time: "09:00",
+    location: "Sefwi Wiawso Innovation Hub",
+    status: "upcoming",
+  },
+  {
+    id: 2,
+    title: "Parliamentary Briefing on Cocoa Roads",
+    description: "Presented updates to local media and chiefs on the phased rehabilitation of feeder roads across the cocoa belt.",
+    event_date: "2025-02-21",
+    start_time: "14:30",
+    location: "Sefwi Boako Palace Forecourt",
+    status: "upcoming",
+  },
+  {
+    id: 3,
+    title: "Constituency Health Outreach",
+    description: "Mobile screening with nurses, NHIS officers, and volunteers delivering basic care and insurance renewals.",
+    event_date: "2025-03-01",
+    start_time: "08:00",
+    location: "Asafo Community Park",
+    status: "upcoming",
+  },
+  {
+    id: 4,
+    title: "Education Stakeholder Roundtable",
+    description: "Dialogue with head teachers, PTA leaders, and tertiary alumni on resourcing STEM labs in deprived schools.",
+    event_date: "2025-03-09",
+    start_time: "16:00",
+    location: "Sefwi Wiawso Municipal Assembly Hall",
+    status: "upcoming",
+  },
+];
+
 function EventsPage() {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [usingFallback, setUsingFallback] = useState(false);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const response = await eventsService.getAllEvents(1, 20);
+        if (response.success && response.data.events && response.data.events.length > 0) {
+          setEvents(response.data.events);
+        } else {
+          // Use fallback if no events from API
+          setEvents(fallbackEventsData);
+          setUsingFallback(true);
+        }
+      } catch {
+        // API error - use fallback data silently
+        setEvents(fallbackEventsData);
+        setUsingFallback(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchEvents();
+  }, []);
 
   const heroVariants = useMemo(
     () => ({ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }),
@@ -210,9 +231,13 @@ function EventsPage() {
   );
 
   const filteredEvents = useMemo(() => {
-    if (activeFilter === "All") return eventsData;
-    return eventsData.filter((event) => event.category === activeFilter);
-  }, [activeFilter]);
+    if (activeFilter === "All") return events;
+    // Filter by matching the status or a category field if available
+    return events.filter((event) => 
+      event.status?.toLowerCase() === activeFilter.toLowerCase() ||
+      event.title?.toLowerCase().includes(activeFilter.toLowerCase())
+    );
+  }, [activeFilter, events]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-50 via-white to-emerald-50 text-slate-900">
@@ -224,7 +249,7 @@ function EventsPage() {
       <main className="relative mx-auto max-w-6xl space-y-12 px-4 py-16 sm:px-6 lg:px-8">
         <EventsHero
           title="Tracking every field visit, forum, and policy stop"
-          description="Follow the engagements Hon. Kofi Benteh Afful attends across the constituency and Parliament. Each record will sync with the backend feed soon; for now we are showcasing representative highlights."
+          description="Follow the engagements Hon. Kofi Benteh Afful attends across the constituency and Parliament. Live data synced from the backend API."
           stats={heroStats}
           variants={heroVariants}
         />
@@ -255,16 +280,28 @@ function EventsPage() {
             <span>{filteredEvents.length} records shown</span>
             <span className="text-slate-300">•</span>
             <span>
-              Backend syncing soon&mdash;showing dummy data for layout testing.
+              {loading ? "Loading events..." : usingFallback ? "Showing sample events" : "Data synced from live API"}
             </span>
           </div>
         </motion.section>
 
-        <section className="grid gap-6 md:grid-cols-2">
-          {filteredEvents.map((event, index) => (
-            <EventCard key={event.id} event={event} index={index} />
-          ))}
-        </section>
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-10 w-10 text-emerald-500 animate-spin" />
+          </div>
+        ) : filteredEvents.length === 0 ? (
+          <div className="text-center py-20">
+            <CalendarDays className="h-16 w-16 mx-auto text-slate-300 mb-4" />
+            <h3 className="text-xl font-semibold text-slate-700">No events found</h3>
+            <p className="text-slate-500 mt-2">Try selecting a different filter or check back later.</p>
+          </div>
+        ) : (
+          <section className="grid gap-6 md:grid-cols-2">
+            {filteredEvents.map((event, index) => (
+              <EventCard key={event.id} event={event} index={index} />
+            ))}
+          </section>
+        )}
 
         <motion.section
           initial={{ opacity: 0, y: 20 }}
@@ -300,22 +337,21 @@ function EventsPage() {
 
           <div className="rounded-3xl border border-slate-900/10 bg-slate-900 p-8 text-white shadow-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.4em] text-white/70">
-              Coming soon
+              Stay updated
             </p>
             <h3 className="mt-4 text-3xl font-semibold">
-              Subscribe for the full live event feed
+              Subscribe for event notifications
             </h3>
             <p className="mt-3 text-base text-white/80">
-              We are wiring the backend feed so you can search and export every
-              event Hon. Afful attends. Expect filters by date range, town, and
-              policy theme.
+              Get notified about upcoming events, community gatherings, and policy forums
+              happening in the constituency.
             </p>
             <Button
               variant="outline"
               className="mt-8 inline-flex items-center gap-2 rounded-full border-white/40 px-6 py-3 text-white hover:bg-white/10"
             >
               <DownloadCloud className="h-4 w-4" />
-              Download sample brief
+              Download event calendar
             </Button>
           </div>
         </motion.section>
