@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Plus, GripVertical, Edit, Trash2, Info, Loader2, ImageIcon, ExternalLink } from "lucide-react";
+import React, { useEffect, useState, useMemo } from "react";
+import { Plus, GripVertical, Edit, Trash2, Info, Loader2, ImageIcon, ExternalLink, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
 import {
@@ -22,10 +23,24 @@ export function CarouselList() {
   const [slides, setSlides] = useState<HeroSlide[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchSlides();
   }, []);
+
+  // Filter slides based on search query
+  const filteredSlides = useMemo(() => {
+    if (!searchQuery.trim()) return slides;
+    
+    const query = searchQuery.toLowerCase();
+    return slides.filter(slide => 
+      slide.title?.toLowerCase().includes(query) ||
+      slide.subtitle?.toLowerCase().includes(query) ||
+      slide.cta_text?.toLowerCase().includes(query) ||
+      slide.cta_link?.toLowerCase().includes(query)
+    );
+  }, [slides, searchQuery]);
 
   async function fetchSlides() {
     try {
@@ -84,6 +99,33 @@ export function CarouselList() {
         </Link>
       </div>
 
+      {/* Search Bar */}
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Search slides by title, subtitle, or button text..."
+            className="pl-10 pr-10 border-slate-200 focus:border-purple-500 focus:ring-purple-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        {searchQuery && (
+          <p className="text-sm text-slate-500 mt-2">
+            Found {filteredSlides.length} {filteredSlides.length === 1 ? 'slide' : 'slides'} matching &quot;{searchQuery}&quot;
+          </p>
+        )}
+      </div>
+
       {slides.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[300px]">
           <div className="h-16 w-16 bg-purple-50 rounded-full flex items-center justify-center">
@@ -96,6 +138,14 @@ export function CarouselList() {
             </p>
           </div>
         </div>
+      ) : filteredSlides.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[200px]">
+          <Search className="h-8 w-8 text-slate-300" />
+          <p className="text-slate-500">No slides matching &quot;{searchQuery}&quot;</p>
+          <Button variant="outline" onClick={() => setSearchQuery("")}>
+            Clear Search
+          </Button>
+        </div>
       ) : (
         <>
           {/* Info Alert */}
@@ -107,7 +157,7 @@ export function CarouselList() {
           {/* List Section */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="divide-y divide-slate-100">
-              {slides.map((slide) => (
+              {filteredSlides.map((slide) => (
                 <div key={slide.id} className="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group">
                   <div className="cursor-move text-slate-300 hover:text-slate-500">
                     <GripVertical className="h-5 w-5" />

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Calendar, Plus, MapPin, Clock, Eye, Edit, Trash2, Loader2 } from "lucide-react";
+import React, { useEffect, useState, useMemo } from "react";
+import { Calendar, Plus, MapPin, Clock, Eye, Edit, Trash2, Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { format } from "date-fns";
@@ -27,12 +28,26 @@ export function EventsList({ initialEvents }: EventsListProps) {
   const [events, setEvents] = useState<Event[]>(initialEvents || []);
   const [loading, setLoading] = useState(!initialEvents);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!initialEvents) {
       fetchEvents();
     }
   }, [initialEvents]);
+
+  // Filter events based on search query
+  const filteredEvents = useMemo(() => {
+    if (!searchQuery.trim()) return events;
+    
+    const query = searchQuery.toLowerCase();
+    return events.filter(event => 
+      event.title?.toLowerCase().includes(query) ||
+      event.location?.toLowerCase().includes(query) ||
+      event.description?.toLowerCase().includes(query) ||
+      event.status?.toLowerCase().includes(query)
+    );
+  }, [events, searchQuery]);
 
   async function fetchEvents() {
     try {
@@ -102,114 +117,152 @@ export function EventsList({ initialEvents }: EventsListProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
-            <tr>
-              <th className="px-6 py-4 font-medium">Event Name</th>
-              <th className="px-6 py-4 font-medium">Date & Time</th>
-              <th className="px-6 py-4 font-medium">Location</th>
-              <th className="px-6 py-4 font-medium">Status</th>
-              <th className="px-6 py-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {events.map((event) => {
-              const status = event.status || getEventStatus(event);
-              return (
-                <tr key={event.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-lg bg-violet-50 flex-shrink-0 flex items-center justify-center border border-violet-100 text-violet-600 font-bold text-sm">
-                        {format(new Date(event.event_date), "dd")}
-                      </div>
-                      <span className="font-medium text-slate-900 line-clamp-1">
-                        {event.title}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col text-xs">
-                      <span className="font-medium text-slate-700 flex items-center gap-1">
-                        <Calendar className="h-3 w-3 text-slate-400" />
-                        {format(new Date(event.event_date), "MMM d, yyyy")}
-                      </span>
-                      {event.start_time && (
-                        <span className="text-slate-500 flex items-center gap-1 mt-1">
-                          <Clock className="h-3 w-3 text-slate-400" />
-                          {event.start_time}{event.end_time ? ` - ${event.end_time}` : ''}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-slate-500">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-slate-400" />
-                      <span className="truncate max-w-[150px]">{event.location}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                      status === 'upcoming' 
-                        ? 'bg-violet-50 text-violet-700 border border-violet-100' 
-                        : 'bg-slate-100 text-slate-600 border border-slate-200'
-                    }`}>
-                      {status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link href={`/web-admin-dashboard/events/${event.id}`}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-violet-600">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Link href={`/web-admin-dashboard/events/${event.id}/edit`}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-blue-600">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 text-slate-400 hover:text-red-600"
-                            disabled={deletingId === event.id}
-                          >
-                            {deletingId === event.id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Event</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete &quot;{event.title}&quot;? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(event.id)}
-                              className="bg-red-600 hover:bg-red-700"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+    <div className="space-y-4">
+      {/* Search Bar */}
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Search events by title, location, or description..."
+            className="pl-10 pr-10 border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        {searchQuery && (
+          <p className="text-sm text-slate-500 mt-2">
+            Found {filteredEvents.length} {filteredEvents.length === 1 ? 'event' : 'events'} matching &quot;{searchQuery}&quot;
+          </p>
+        )}
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4 font-medium">Event Name</th>
+                <th className="px-6 py-4 font-medium">Date & Time</th>
+                <th className="px-6 py-4 font-medium">Location</th>
+                <th className="px-6 py-4 font-medium">Status</th>
+                <th className="px-6 py-4 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredEvents.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                    {searchQuery ? `No events matching "${searchQuery}"` : 'No events found'}
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ) : (
+                filteredEvents.map((event) => {
+                  const status = event.status || getEventStatus(event);
+                  return (
+                    <tr key={event.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 rounded-lg bg-violet-50 flex-shrink-0 flex items-center justify-center border border-violet-100 text-violet-600 font-bold text-sm">
+                            {format(new Date(event.event_date), "dd")}
+                          </div>
+                          <span className="font-medium text-slate-900 line-clamp-1">
+                            {event.title}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col text-xs">
+                          <span className="font-medium text-slate-700 flex items-center gap-1">
+                            <Calendar className="h-3 w-3 text-slate-400" />
+                            {format(new Date(event.event_date), "MMM d, yyyy")}
+                          </span>
+                          {event.start_time && (
+                            <span className="text-slate-500 flex items-center gap-1 mt-1">
+                              <Clock className="h-3 w-3 text-slate-400" />
+                              {event.start_time}{event.end_time ? ` - ${event.end_time}` : ''}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-slate-400" />
+                          <span className="truncate max-w-[150px]">{event.location}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                          status === 'upcoming' 
+                            ? 'bg-violet-50 text-violet-700 border border-violet-100' 
+                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}>
+                          {status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link href={`/web-admin-dashboard/events/${event.id}`}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-violet-600">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <Link href={`/web-admin-dashboard/events/${event.id}/edit`}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-blue-600">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-slate-400 hover:text-red-600"
+                                disabled={deletingId === event.id}
+                              >
+                                {deletingId === event.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Event</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete &quot;{event.title}&quot;? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(event.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
