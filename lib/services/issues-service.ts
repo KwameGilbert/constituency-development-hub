@@ -35,7 +35,15 @@ export interface Issue {
   allocated_budget?: number;
   allocated_resources?: ResourceItem[];
   // Optional extra fields for UI adaptation (if returned)
-  timeline?: any[];
+  timeline?: TimelineEvent[];
+}
+
+export interface TimelineEvent {
+  id: string;
+  date: string;
+  event: string;
+  type: string;
+  userId?: string;
 }
 
 export interface IssueStatistics {

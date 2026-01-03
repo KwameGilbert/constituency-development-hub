@@ -8,23 +8,45 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Checkbox } from '@/components/ui/checkbox';
+// import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+// import { Checkbox } from '@/components/ui/checkbox';
 import {
   Settings,
   Bell,
-  Lock,
   Database,
   Palette,
-  Globe,
   Shield,
   Download,
   Upload,
   RefreshCw
 } from 'lucide-react';
 
+export interface SettingsState {
+  notifications: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+    newAssignments: boolean;
+    statusUpdates: boolean;
+    weeklyReport: boolean;
+    [key: string]: boolean;
+  };
+  appearance: {
+    theme: string;
+    language: string;
+    timezone: string;
+    [key: string]: string;
+  };
+  security: {
+    twoFactor: boolean;
+    sessionTimeout: string;
+    loginNotifications: boolean;
+    [key: string]: boolean | string;
+  };
+}
+
 export default function SettingsPage() {
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<SettingsState>({
     notifications: {
       email: true,
       push: false,
@@ -57,8 +79,8 @@ export default function SettingsPage() {
     types: ['assignments', 'status', 'reports']
   });
 
-  const handleSettingChange = (category: string, key: string, value: any) => {
-    setSettings((prev: any) => ({
+  const handleSettingChange = (category: keyof SettingsState, key: string, value: string | boolean) => {
+    setSettings((prev) => ({
       ...prev,
       [category]: {
         ...prev[category],
