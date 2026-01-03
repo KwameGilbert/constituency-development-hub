@@ -13,7 +13,7 @@ const fallbackPosts: BlogPost[] = [
     id: 1,
     title: "Expanding Access to Digital Skills",
     excerpt: "120 youth completed the accelerated coding bootcamp with new starter kits.",
-    featured_image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=900&q=80",
     slug: "expanding-access-digital-skills",
     category: "news",
   },
@@ -21,7 +21,7 @@ const fallbackPosts: BlogPost[] = [
     id: 2,
     title: "Farm-to-Market Roads Resurfaced",
     excerpt: "15km of feeder roads reopened to ease transport of cocoa and food crops.",
-    featured_image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80",
     slug: "farm-to-market-roads",
     category: "infrastructure",
   },
@@ -29,7 +29,7 @@ const fallbackPosts: BlogPost[] = [
     id: 3,
     title: "Women in Enterprise Showcase",
     excerpt: "Highlighting micro-grant winners building resilient family businesses.",
-    featured_image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80",
+    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80",
     slug: "women-enterprise-showcase",
     category: "community",
   },
@@ -109,11 +109,11 @@ function ArticlesGrid() {
               className="overflow-hidden rounded-2xl bg-white shadow"
             >
               <div className="h-48 overflow-hidden relative bg-slate-100">
-                {post.featured_image ? (
+                {post.image ? (
                   <Image
                     width={400}
                     height={192}
-                    src={post.featured_image}
+                    src={post.image}
                     alt={post.title || "Blog post"}
                     className="h-full w-full object-cover"
                   />

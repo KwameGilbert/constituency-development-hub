@@ -2,71 +2,12 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { Loader2, Search, X, Calendar, Tag, ArrowRight, BookOpen } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-
-// Fallback posts if API fails
-const fallbackPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: "Expanding Access to Digital Skills",
-    excerpt: "120 youth completed the accelerated coding bootcamp with new starter kits. The program aims to bridge the digital divide in our constituency.",
-    featured_image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=900&q=80",
-    slug: "expanding-access-digital-skills",
-    category: "education",
-    published_at: "2025-12-15T10:00:00Z",
-  },
-  {
-    id: 2,
-    title: "Farm-to-Market Roads Resurfaced",
-    excerpt: "15km of feeder roads reopened to ease transport of cocoa and food crops. This infrastructure project will benefit over 5,000 farmers.",
-    featured_image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80",
-    slug: "farm-to-market-roads",
-    category: "infrastructure",
-    published_at: "2025-12-10T10:00:00Z",
-  },
-  {
-    id: 3,
-    title: "Women in Enterprise Showcase",
-    excerpt: "Highlighting micro-grant winners building resilient family businesses. Over 50 women entrepreneurs received support and mentorship.",
-    featured_image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80",
-    slug: "women-enterprise-showcase",
-    category: "community",
-    published_at: "2025-12-05T10:00:00Z",
-  },
-  {
-    id: 4,
-    title: "Healthcare Outreach Success",
-    excerpt: "Mobile health clinics reached 2,000+ residents in remote areas. Free screenings and vaccinations were provided to underserved communities.",
-    featured_image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80",
-    slug: "healthcare-outreach-success",
-    category: "health",
-    published_at: "2025-12-01T10:00:00Z",
-  },
-  {
-    id: 5,
-    title: "Youth Sports Tournament",
-    excerpt: "Over 500 young athletes participated in the annual constituency sports tournament, promoting healthy competition and community bonding.",
-    featured_image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80",
-    slug: "youth-sports-tournament",
-    category: "youth",
-    published_at: "2025-11-25T10:00:00Z",
-  },
-  {
-    id: 6,
-    title: "School Renovation Project Complete",
-    excerpt: "Three primary schools received major renovations including new classrooms, furniture, and learning materials.",
-    featured_image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=900&q=80",
-    slug: "school-renovation-complete",
-    category: "education",
-    published_at: "2025-11-20T10:00:00Z",
-  },
-];
 
 const categories = ["All", "News", "Education", "Infrastructure", "Community", "Health", "Youth"];
 
@@ -75,7 +16,6 @@ function BlogPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [usingFallback, setUsingFallback] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const postsPerPage = 9;
@@ -85,20 +25,18 @@ function BlogPage() {
       try {
         setLoading(true);
         const response = await blogService.getAllPosts(currentPage, postsPerPage);
-        if (response.success && response.data.posts && response.data.posts.length > 0) {
+        if (response.success && response.data.posts) {
           setPosts(response.data.posts);
           if (response.data.pagination) {
             setTotalPages(response.data.pagination.total_pages);
           }
         } else {
-          setPosts(fallbackPosts);
-          setUsingFallback(true);
+          setPosts([]);
           setTotalPages(1);
         }
       } catch {
-        // API error - use fallback data silently
-        setPosts(fallbackPosts);
-        setUsingFallback(true);
+        // API error - show empty state
+        setPosts([]);
         setTotalPages(1);
       } finally {
         setLoading(false);
@@ -204,12 +142,6 @@ function BlogPage() {
           <div className="mt-4 flex items-center gap-2 text-sm text-slate-500">
             <BookOpen className="h-4 w-4" />
             <span>{filteredPosts.length} articles found</span>
-            {usingFallback && (
-              <>
-                <span className="text-slate-300">•</span>
-                <span className="text-amber-600">Showing sample articles</span>
-              </>
-            )}
           </div>
         </div>
       </section>
@@ -252,12 +184,12 @@ function BlogPage() {
                 {/* Image */}
                 <Link href={`/blog/${post.slug}`}>
                   <div className="relative h-48 bg-slate-100 overflow-hidden">
-                    {post.featured_image ? (
-                      <Image
-                        src={post.featured_image}
+                    {post.image ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={post.image}
                         alt={post.title || "Article"}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
                       <div className="h-full flex items-center justify-center text-slate-400">

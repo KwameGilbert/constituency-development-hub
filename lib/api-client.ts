@@ -4,13 +4,14 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface FetchOptions extends RequestInit {
   requiresAuth?: boolean;
+  isFormData?: boolean;
 }
 
 export async function apiClient<T>(
   endpoint: string,
   options: FetchOptions = {}
 ): Promise<T> {
-  const { requiresAuth = true, ...fetchOptions } = options;
+  const { requiresAuth = true, isFormData = false, ...fetchOptions } = options;
 
   if (!BASE_URL) {
     throw new Error("NEXT_PUBLIC_API_URL is not defined");
@@ -19,10 +20,11 @@ export async function apiClient<T>(
   const headers = new Headers(fetchOptions.headers);
 
   // Only set Content-Type for requests with a body (POST, PUT, PATCH)
+  // Skip setting Content-Type for FormData (browser sets it with boundary)
   const method = (fetchOptions.method || 'GET').toUpperCase();
   const hasBody = ['POST', 'PUT', 'PATCH'].includes(method);
   
-  if (hasBody && !headers.has("Content-Type")) {
+  if (hasBody && !isFormData && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 

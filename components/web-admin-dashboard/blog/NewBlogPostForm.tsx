@@ -18,7 +18,7 @@ import {
 import { blogService } from "@/lib/services/blog-service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2, X, ImageIcon } from "lucide-react";
+import { Loader2, X, Upload } from "lucide-react";
 
 const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -35,7 +35,7 @@ type BlogFormValues = z.infer<typeof blogSchema>;
 export function NewBlogPostForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>("");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
     
     // Hardcoded categories as per blog.http example
@@ -54,33 +54,56 @@ export function NewBlogPostForm() {
         },
     });
 
-    function handleImageUrlChange(url: string) {
-        setImageUrl(url);
-        setImagePreview(url);
+    function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+        const file = event.target.files?.[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please select an image file');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error('Image size must be less than 5MB');
+                return;
+            }
+            
+            setSelectedFile(file);
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
     }
 
     function removeImage() {
-        setImageUrl("");
+        setSelectedFile(null);
         setImagePreview("");
+        // Reset file input
+        const fileInput = document.getElementById('featured-image') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
     }
 
     async function onSubmit(data: BlogFormValues) {
         setIsLoading(true);
         try {
-            // Only send fields that the API expects (based on blog.http)
-            // Note: Backend auto-generates slug from title
+            // Prepare payload
             const payload = {
                 title: data.title,
                 content: data.content || "",
                 excerpt: data.excerpt,
-                featured_image: imageUrl || undefined,
+                image: imagePreview && !selectedFile ? imagePreview : undefined,
                 category: data.category,
                 tags: [], // API expects tags array
                 status: data.status,
             };
 
             console.log("Creating post with payload:", payload);
-            const response = await blogService.createPost(payload);
+            const response = await blogService.createPost(payload, selectedFile || undefined);
             
             if (response.success) {
                 toast.success("Blog post created successfully!");
@@ -176,45 +199,72 @@ export function NewBlogPostForm() {
                 <div className="space-y-2">
                     <Label>Featured Image</Label>
                     <div className="space-y-4">
-                        <Input 
-                            type="url"
-                            placeholder="https://example.com/blog-image.jpg" 
-                            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-                            value={imageUrl}
-                            onChange={(e) => handleImageUrlChange(e.target.value)}
-                            disabled={isLoading}
-                        />
-                        <p className="text-xs text-slate-400">Enter the URL for your blog post&apos;s featured image</p>
-                        
-                        {/* Image Preview */}
-                        {imagePreview ? (
+                        {/* URL Input (temporary fallback) */}
+                        <div className="space-y-2">
+                            <Input 
+                                type="url"
+                                placeholder="Or enter image URL: https://example.com/image.jpg" 
+                                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+                                value={imagePreview && !selectedFile ? imagePreview : ""}
+                                onChange={(e) => {
+                                    setImagePreview(e.target.value);
+                                    setSelectedFile(null);
+                                }}
+                                disabled={isLoading}
+                            />
+                            <p className="text-xs text-slate-400">Temporary: Use URL until upload endpoint is ready</p>
+                        </div>
+
+                        {/* File Input */}
+                        {!imagePreview ? (
+                            <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-violet-400 transition-colors">
+                                <input
+                                    id="featured-image"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileSelect}
+                                    className="hidden"
+                                    disabled={isLoading}
+                                />
+                                <label
+                                    htmlFor="featured-image"
+                                    className="cursor-pointer flex flex-col items-center gap-2"
+                                >
+                                    <Upload className="h-10 w-10 text-slate-400" />
+                                    <div className="text-sm text-slate-600">
+                                        <span className="font-semibold text-violet-600 hover:text-violet-700">
+                                            Click to upload
+                                        </span>
+                                        {" or drag and drop"}
+                                    </div>
+                                    <p className="text-xs text-slate-400">
+                                        PNG, JPG, GIF up to 5MB
+                                    </p>
+                                </label>
+                            </div>
+                        ) : (
                             <div className="relative">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img 
                                     src={imagePreview} 
                                     alt="Featured image preview" 
                                     className="w-full h-48 object-cover rounded-lg border border-slate-200"
-                                    onError={() => {
-                                        setImagePreview("");
-                                        toast.error("Failed to load image from URL");
-                                    }}
                                 />
-                                <button
+                                <Button
                                     type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    className="absolute top-2 right-2 h-8 w-8"
                                     onClick={removeImage}
-                                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                                     disabled={isLoading}
                                 >
                                     <X className="h-4 w-4" />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 flex flex-col items-center justify-center text-center">
-                                <div className="p-3 bg-violet-50 rounded-full mb-3">
-                                    <ImageIcon className="h-6 w-6 text-violet-600" />
-                                </div>
-                                <p className="text-sm text-slate-500">Enter an image URL above to preview</p>
-                                <p className="text-xs text-slate-400 mt-1">Recommended size: 1200x630 pixels</p>
+                                </Button>
+                                {selectedFile && (
+                                    <p className="mt-2 text-xs text-slate-500">
+                                        Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+                                    </p>
+                                )}
                             </div>
                         )}
                     </div>

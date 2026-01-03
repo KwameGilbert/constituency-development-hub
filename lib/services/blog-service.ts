@@ -6,7 +6,7 @@ export interface BlogPost {
   slug: string;
   excerpt?: string;
   content?: string;
-  featured_image?: string;
+  image?: string;
   category: string;
   tags?: string[];
   status?: "draft" | "published";
@@ -71,18 +71,66 @@ export const blogService = {
     return apiClient<BlogResponse>(`/admin/blog/${id}`);
   },
 
-  createPost: async (data: Partial<BlogPost>) => {
-    return apiClient<BlogResponse>("/admin/blog", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+  createPost: async (data: Partial<BlogPost>, file?: File) => {
+    if (file) {
+      // Send as multipart/form-data with file
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      // Append other fields
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      return apiClient<BlogResponse>("/admin/blog", {
+        method: "POST",
+        body: formData,
+        isFormData: true,
+      });
+    } else {
+      // Send as JSON without file
+      return apiClient<BlogResponse>("/admin/blog", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    }
   },
 
-  updatePost: async (id: number, data: Partial<BlogPost>) => {
-    return apiClient<BlogResponse>(`/admin/blog/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
+  updatePost: async (id: number, data: Partial<BlogPost>, file?: File) => {
+    if (file) {
+      // Send as multipart/form-data with file
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      // Append other fields
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      return apiClient<BlogResponse>(`/admin/blog/${id}`, {
+        method: "PUT",
+        body: formData,
+        isFormData: true,
+      });
+    } else {
+      // Send as JSON without file
+      return apiClient<BlogResponse>(`/admin/blog/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    }
   },
 
   deletePost: async (id: number) => {

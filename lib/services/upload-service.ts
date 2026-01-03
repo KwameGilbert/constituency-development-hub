@@ -39,7 +39,7 @@ export const uploadService = {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${BASE_URL}/upload`, {
+    const response = await fetch(`${BASE_URL}/admin/upload`, {
       method: "POST",
       headers,
       body: formData,

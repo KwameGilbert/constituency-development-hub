@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { Loader2, Calendar, Tag, ArrowLeft, Share2, Clock, User } from "lucide-react";
@@ -67,14 +66,13 @@ function BlogPostPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Image */}
-      {post.featured_image && (
+      {post.image && (
         <div className="relative h-[400px] lg:h-[500px] bg-slate-900">
-          <Image
-            src={post.featured_image}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={post.image}
             alt={post.title || "Article image"}
-            fill
-            className="object-cover opacity-80"
-            priority
+            className="w-full h-full object-cover opacity-80"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
         </div>
@@ -87,7 +85,7 @@ function BlogPostPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className={`bg-white rounded-2xl shadow-xl ${post.featured_image ? '-mt-32 relative' : 'mt-8'} p-8 lg:p-12`}
+          className={`bg-white rounded-2xl shadow-xl ${post.image ? '-mt-32 relative' : 'mt-8'} p-8 lg:p-12`}
         >
           {/* Back Link */}
           <Link 
@@ -159,21 +157,29 @@ function BlogPostPage() {
           )}
 
           {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-slate-100">
-              <h3 className="text-sm font-semibold text-slate-900 mb-3">Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag, index) => (
-                  <span 
-                    key={index}
-                    className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-sm hover:bg-slate-200 transition-colors"
-                  >
-                    #{tag}
-                  </span>
-                ))}
+          {(() => {
+            const tags = Array.isArray(post.tags) 
+              ? post.tags 
+              : typeof post.tags === 'string' 
+                ? JSON.parse(post.tags) 
+                : [];
+            
+            return tags.length > 0 ? (
+              <div className="mt-12 pt-8 border-t border-slate-100">
+                <h3 className="text-sm font-semibold text-slate-900 mb-3">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag: string, index: number) => (
+                    <span 
+                      key={index}
+                      className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-sm hover:bg-slate-200 transition-colors"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            ) : null;
+          })()}
 
           {/* Share */}
           <div className="mt-12 pt-8 border-t border-slate-100 flex items-center justify-between">

@@ -117,10 +117,10 @@ export function BlogPostsTable({ posts: initialPosts, pagination }: BlogPostsTab
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-4">
                         <div className="h-12 w-12 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-slate-200">
-                          {post.featured_image ? (
+                          {post.image ? (
                             <div className="relative w-full h-full"> 
                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                               <img src={post.featured_image} alt="" className="object-cover w-full h-full" />
+                               <img src={post.image} alt="" className="object-cover w-full h-full" />
                             </div>
                           ) : (
                             <ImageIcon className="h-5 w-5 text-slate-400" />

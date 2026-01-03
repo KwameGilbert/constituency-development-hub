@@ -18,7 +18,7 @@ import {
 import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Loader2, X, ImageIcon } from "lucide-react";
+import { Loader2, X, Upload } from "lucide-react";
 import Link from "next/link";
 
 const blogSchema = z.object({
@@ -39,8 +39,9 @@ interface EditBlogPostFormProps {
 export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>(post.featured_image || "");
-  const [imagePreview, setImagePreview] = useState<string>(post.featured_image || "");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(post.image || "");
+  const [existingImageUrl, setExistingImageUrl] = useState<string>(post.image || "");
   
   // Hardcoded categories as per blog.http example
   const categories = ["news", "projects", "community", "events"];
@@ -57,30 +58,61 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
     },
   });
 
-  function handleImageUrlChange(url: string) {
-    setImageUrl(url);
-    setImagePreview(url);
+  function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        return;
+      }
+      
+      setSelectedFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   function removeImage() {
-    setImageUrl("");
+    setSelectedFile(null);
     setImagePreview("");
+    setExistingImageUrl("");
+    // Reset file input
+    const fileInput = document.getElementById('featured-image') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   }
 
   async function onSubmit(data: BlogFormValues) {
     setIsLoading(true);
     try {
+      // Determine image URL
+      let imageUrl = existingImageUrl;
+      if (imagePreview && imagePreview !== existingImageUrl) {
+        imageUrl = imagePreview; // URL changed
+      }
+      
       const payload = {
         title: data.title,
         content: data.content || "",
         excerpt: data.excerpt,
-        featured_image: imageUrl || undefined,
+        image: !selectedFile ? imageUrl : undefined,
         category: data.category,
         status: data.status,
       };
 
       console.log("Updating post with payload:", payload);
-      const response = await blogService.updatePost(post.id, payload);
+      const response = await blogService.updatePost(post.id, payload, selectedFile || undefined);
       
       if (response.success) {
         toast.success("Blog post updated successfully!");
@@ -177,45 +209,106 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
         <div className="space-y-2">
           <Label>Featured Image</Label>
           <div className="space-y-4">
-            <Input 
-              type="url"
-              placeholder="https://example.com/blog-image.jpg" 
-              className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-              value={imageUrl}
-              onChange={(e) => handleImageUrlChange(e.target.value)}
-              disabled={isLoading}
-            />
-            <p className="text-xs text-slate-400">Enter the URL for your blog post&apos;s featured image</p>
-            
-            {/* Image Preview */}
+            {/* Show existing image or upload area */}
             {imagePreview ? (
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={imagePreview} 
-                  alt="Featured image preview" 
-                  className="w-full h-48 object-cover rounded-lg border border-slate-200"
-                  onError={() => {
-                    setImagePreview("");
-                    toast.error("Failed to load image from URL");
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                  disabled={isLoading}
-                >
-                  <X className="h-4 w-4" />
-                </button>
+              <div className="space-y-3">
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src={imagePreview} 
+                    alt="Featured image preview" 
+                    className="w-full h-48 object-cover rounded-lg border border-slate-200"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={removeImage}
+                    disabled={isLoading}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                {/* Change Image Button */}
+                <div className="space-y-3">
+                  {/* URL Input for editing */}
+                  <Input 
+                    type="url"
+                    placeholder="Or change to URL: https://example.com/image.jpg" 
+                    className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+                    value={!selectedFile ? imagePreview : ""}
+                    onChange={(e) => {
+                      setImagePreview(e.target.value);
+                      setExistingImageUrl(e.target.value);
+                      setSelectedFile(null);
+                    }}
+                    disabled={isLoading}
+                  />
+                  <div className="text-center">
+                    <input
+                      id="featured-image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      disabled={isLoading}
+                    />
+                    <label
+                      htmlFor="featured-image"
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-violet-600 bg-violet-50 rounded-lg hover:bg-violet-100 cursor-pointer transition-colors"
+                    >
+                      <Upload className="h-4 w-4" />
+                      Upload New Image
+                    </label>
+                    {selectedFile && (
+                      <p className="mt-2 text-xs text-slate-500">
+                        New: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 flex flex-col items-center justify-center text-center">
-                <div className="p-3 bg-violet-50 rounded-full mb-3">
-                  <ImageIcon className="h-6 w-6 text-violet-600" />
+              <div className="space-y-3">
+                {/* URL Input */}
+                <Input 
+                  type="url"
+                  placeholder="Enter image URL: https://example.com/image.jpg" 
+                  className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+                  value={imagePreview}
+                  onChange={(e) => {
+                    setImagePreview(e.target.value);
+                    setExistingImageUrl(e.target.value);
+                  }}
+                  disabled={isLoading}
+                />
+                {/* File upload area */}
+                <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-violet-400 transition-colors">
+                  <input
+                    id="featured-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    disabled={isLoading}
+                  />
+                  <label
+                    htmlFor="featured-image"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                  >
+                    <Upload className="h-10 w-10 text-slate-400" />
+                    <div className="text-sm text-slate-600">
+                      <span className="font-semibold text-violet-600 hover:text-violet-700">
+                        Click to upload
+                      </span>
+                      {" or drag and drop"}
+                    </div>
+                    <p className="text-xs text-slate-400">
+                      PNG, JPG, GIF up to 5MB
+                    </p>
+                  </label>
                 </div>
-                <p className="text-sm text-slate-500">Enter an image URL above to preview</p>
-                <p className="text-xs text-slate-400 mt-1">Recommended size: 1200x630 pixels</p>
               </div>
             )}
           </div>
