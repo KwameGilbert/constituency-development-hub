@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
     Pencil, 
-    ArrowLeft,
     UserCircle,
     ShieldAlert,
     Settings2,
@@ -16,11 +15,8 @@ import {
     Calendar,
     Clock,
     User,
-    Key,
-    UserCog,
-    Inbox
+    Eye
 } from "lucide-react";
-import Link from "next/link";
 import { use } from "react";
 
 export default function AgentDetailsPage({ params }: { params: Promise<{ id: string }> }) {

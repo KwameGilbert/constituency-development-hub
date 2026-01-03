@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,87 +22,112 @@ import {
   AlertTriangle,
   Phone,
   Mail,
-  Globe,
-  Target,
   TrendingUp,
   DollarSign,
   Users,
-  CheckCircle
+  CheckCircle,
+  Target,
+  Loader2,
+  XCircle
 } from 'lucide-react';
+import { issuesService, Issue as ApiIssue } from '@/lib/services/issues-service';
+import { getStatusColor as getStatusColorBase } from '@/lib/data';
 
-// Mock issue data - in real app, this would come from API based on ID
-const mockIssue = {
-  id: 1,
-  title: 'Water Supply Issues in Akonkora Community',
-  community: 'Akonkora',
-  status: 'pending_assessment',
-  priority: 'high',
-  submittedBy: 'John Mensah',
-  submissionDate: '2024-12-01',
-  lastUpdated: '2024-12-03',
-  category: 'Infrastructure',
-  sector: 'Water & Sanitation',
-  description: 'Community has been without clean water supply for over 2 weeks. The main borehole has broken down and residents are struggling to access clean water. This is affecting over 500 households in the area. Children are missing school to walk long distances to fetch water from neighboring communities. The situation is becoming dire as the dry season approaches and alternative water sources are drying up.',
-  detailedDescription: 'The main borehole serving the Akonkora community was installed in 2018 and has been the primary source of clean water for over 500 households. On November 15, 2024, the submersible pump failed, leaving the entire community without access to clean water. Residents have reported that the pump made unusual noises for several days before completely failing. Local technicians attempted basic repairs but determined that the pump motor has burned out and requires replacement. The backup hand pump is also not functioning properly due to lack of maintenance.',
-  location: {
-    address: 'Akonkora, Sefwi Wiawso Constituency',
-    gps: '5.8845° N, 2.4900° W',
-    nearestLandmark: 'Akonkora Primary School',
-    accessRoute: 'Main road to Sefwi Wiawso, then 3km dirt road east'
-  },
+// UI Type definition matching the previous mock structure
+interface UiIssue extends ApiIssue {
+  community: string;
   submitter: {
-    name: 'John Mensah',
-    role: 'Community Representative',
-    phone: '+233 24 123 4567',
-    email: 'john.mensah@community.gh',
-    alternateContact: 'Mary Asante (+233 20 987 6543)'
-  },
-  impactAssessment: {
-    affectedPopulation: 500,
-    householdsAffected: 95,
-    estimatedCost: 25000,
-    urgencyLevel: 'high',
-    environmentalImpact: 'medium',
-    economicImpact: 'high',
-    socialImpact: 'high'
-  },
-  attachments: [
-    { name: 'broken_borehole.jpg', type: 'image', size: '2.3 MB', uploadDate: '2024-12-01' },
-    { name: 'community_petition.pdf', type: 'document', size: '1.1 MB', uploadDate: '2024-12-01' },
-    { name: 'technical_assessment.pdf', type: 'document', size: '856 KB', uploadDate: '2024-12-02' },
-    { name: 'affected_areas_map.jpg', type: 'image', size: '3.1 MB', uploadDate: '2024-12-01' }
-  ],
-  timeline: [
-    { date: '2024-11-15', event: 'Borehole pump failure reported', type: 'issue' },
-    { date: '2024-11-20', event: 'Local technicians attempted repairs', type: 'action' },
-    { date: '2024-11-25', event: 'Technical assessment completed', type: 'assessment' },
-    { date: '2024-12-01', event: 'Formal issue submitted to constituency office', type: 'submission' },
-    { date: '2024-12-03', event: 'Issue assigned to assessment team', type: 'assignment' }
-  ],
-  relatedIssues: [
-    { id: 3, title: 'Water Quality Concerns in Nearby Villages', status: 'under_assessment' },
-    { id: 7, title: 'Borehole Maintenance Program Request', status: 'approved' }
-  ]
+    name: string;
+    role: string;
+    phone: string;
+    email: string;
+    alternateContact?: string;
+  };
+  location_details: { // Renamed from location to avoid conflict with string location in ApiIssue
+    address: string;
+    gps: string;
+    nearestLandmark?: string;
+    accessRoute?: string;
+  };
+  impactAssessment?: {
+    affectedPopulation: number;
+    householdsAffected: number;
+    estimatedCost: number;
+    urgencyLevel: string;
+    environmentalImpact: string;
+    economicImpact: string;
+    socialImpact: string;
+  };
+  attachments: { name: string; type: string; size: string; uploadDate: string }[];
+  timeline: { date: string; event: string; type: string }[];
+  relatedIssues: { id: number; title: string; status: string }[];
+  sector?: string;
+  detailedDescription?: string;
+  submissionDate: string;
+  lastUpdated: string;
+}
+
+// Helper to adapt API response to UI shape
+const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
+  return {
+    ...apiIssue,
+    community: apiIssue.location || 'Unknown Community',
+    submissionDate: apiIssue.created_at,
+    lastUpdated: apiIssue.updated_at || apiIssue.created_at,
+    sector: 'General', // Default
+    detailedDescription: apiIssue.description, // Reusing description if detailed not available
+    submitter: {
+      name: apiIssue.reporter_name || 'Anonymous',
+      role: 'Community Member',
+      phone: apiIssue.reporter_phone || 'N/A',
+      email: 'N/A'
+    },
+    location_details: {
+      address: apiIssue.location || '',
+      gps: apiIssue.latitude && apiIssue.longitude ? `${apiIssue.latitude}, ${apiIssue.longitude}` : 'N/A',
+      nearestLandmark: 'N/A',
+      accessRoute: 'N/A'
+    },
+    impactAssessment: {
+        affectedPopulation: 0,
+        householdsAffected: 0,
+        estimatedCost: apiIssue.allocated_budget || 0,
+        urgencyLevel: apiIssue.priority,
+        environmentalImpact: 'Not Assessed',
+        economicImpact: 'Not Assessed',
+        socialImpact: 'Not Assessed'
+    },
+    attachments: (apiIssue.images || []).map((img, i) => ({
+        name: `Image ${i + 1}`,
+        type: 'image',
+        size: 'N/A',
+        uploadDate: apiIssue.created_at
+    })),
+    timeline: [
+        { date: apiIssue.created_at, event: 'Issue Submitted', type: 'submission' }
+    ],
+    relatedIssues: []
+  };
 };
 
 const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'pending_assessment':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'under_assessment':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'approved':
-      return 'bg-green-100 text-green-800 border-green-200';
-    case 'rejected':
-      return 'bg-red-100 text-red-800 border-red-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
+    // Reuse specific logic or fallback to lib/data
+    switch (status) {
+      case 'pending_assessment': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'assigned_to_task_force': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'under_assessment': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'assessment_in_progress': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
+      case 'resolved': return 'bg-green-100 text-green-800 border-green-200';
+      case 'rejected': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
 };
 
 const getPriorityColor = (priority: string) => {
   switch (priority) {
     case 'high':
+    case 'urgent':
       return 'bg-red-100 text-red-800';
     case 'medium':
       return 'bg-yellow-100 text-yellow-800';
@@ -116,6 +141,45 @@ const getPriorityColor = (priority: string) => {
 export default function IssueDetailPage() {
   const router = useRouter();
   const params = useParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  const [issue, setIssue] = useState<UiIssue | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchIssue = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        const response = await issuesService.getIssueById(id);
+        if (response.success && response.data.report) {
+            setIssue(adaptIssueToUi(response.data.report));
+        }
+      } catch (error) {
+        console.error("Failed to fetch issue:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchIssue();
+  }, [id]);
+
+  if (loading) {
+    return (
+        <div className="flex h-screen items-center justify-center">
+            <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+        </div>
+    );
+  }
+
+  if (!issue) {
+    return (
+        <div className="p-6 text-center">
+            <h2 className="text-xl font-bold">Issue Not Found</h2>
+            <Button className="mt-4" onClick={() => router.back()}>Go Back</Button>
+        </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -132,16 +196,16 @@ export default function IssueDetailPage() {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-gray-900">{mockIssue.title}</h1>
-            <Badge className={getStatusColor(mockIssue.status)}>
-              {mockIssue.status.replace('_', ' ').replace(/\\b\\w/g, l => l.toUpperCase())}
+            <h1 className="text-2xl font-bold text-gray-900">{issue.title}</h1>
+            <Badge className={getStatusColor(issue.status)}>
+              {issue.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
             </Badge>
           </div>
-          <p className="text-gray-600">Issue #{mockIssue.id} • {mockIssue.community}</p>
+          <p className="text-gray-600">Issue #{issue.id} • {issue.community}</p>
         </div>
         <div className="flex gap-2">
-          {mockIssue.status === 'pending_assessment' && (
-            <Link href={`/task-force-dashboard/assess/${mockIssue.id}`}>
+          {(issue.status === 'pending_assessment' || issue.status === 'assigned_to_task_force') && (
+            <Link href={`/task-force-dashboard/assess/${issue.id}`}>
               <Button className="bg-purple-600 hover:bg-purple-700">
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Assess Issue
@@ -154,7 +218,6 @@ export default function IssueDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Issue Details Tabs */}
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -169,21 +232,21 @@ export default function IssueDetailPage() {
                   <CardTitle>Issue Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 leading-relaxed mb-4">{mockIssue.description}</p>
+                  <p className="text-gray-700 leading-relaxed mb-4">{issue.description}</p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
                     <div>
                       <Label className="text-sm font-medium text-gray-500">Category</Label>
-                      <p className="font-medium">{mockIssue.category}</p>
+                      <p className="font-medium">{issue.category}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-gray-500">Sector</Label>
-                      <p className="font-medium">{mockIssue.sector}</p>
+                      <p className="font-medium">{issue.sector}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-gray-500">Priority</Label>
-                      <Badge className={getPriorityColor(mockIssue.priority)}>
-                        {mockIssue.priority.charAt(0).toUpperCase() + mockIssue.priority.slice(1)}
+                      <Badge className={getPriorityColor(issue.priority)}>
+                        {issue.priority.charAt(0).toUpperCase() + issue.priority.slice(1)}
                       </Badge>
                     </div>
                   </div>
@@ -196,43 +259,49 @@ export default function IssueDetailPage() {
                   <CardTitle>Impact Assessment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <Users className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-blue-600">{mockIssue.impactAssessment.affectedPopulation}</p>
-                      <p className="text-xs text-gray-600">People Affected</p>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <Target className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-green-600">{mockIssue.impactAssessment.householdsAffected}</p>
-                      <p className="text-xs text-gray-600">Households</p>
-                    </div>
-                    <div className="text-center p-3 bg-purple-50 rounded-lg">
-                      <DollarSign className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-purple-600">₵{mockIssue.impactAssessment.estimatedCost.toLocaleString()}</p>
-                      <p className="text-xs text-gray-600">Est. Cost</p>
-                    </div>
-                    <div className="text-center p-3 bg-red-50 rounded-lg">
-                      <AlertTriangle className="h-6 w-6 text-red-600 mx-auto mb-2" />
-                      <p className="text-2xl font-bold text-red-600 capitalize">{mockIssue.impactAssessment.urgencyLevel}</p>
-                      <p className="text-xs text-gray-600">Urgency</p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">Social Impact</Label>
-                      <p className="font-medium capitalize">{mockIssue.impactAssessment.socialImpact}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">Economic Impact</Label>
-                      <p className="font-medium capitalize">{mockIssue.impactAssessment.economicImpact}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-gray-500">Environmental Impact</Label>
-                      <p className="font-medium capitalize">{mockIssue.impactAssessment.environmentalImpact}</p>
-                    </div>
-                  </div>
+                  {issue.impactAssessment ? (
+                     <>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="text-center p-3 bg-blue-50 rounded-lg">
+                          <Users className="h-6 w-6 text-blue-600 mx-auto mb-2" />
+                          <p className="text-2xl font-bold text-blue-600">{issue.impactAssessment.affectedPopulation}</p>
+                          <p className="text-xs text-gray-600">People Affected</p>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 rounded-lg">
+                          <Target className="h-6 w-6 text-green-600 mx-auto mb-2" />
+                          <p className="text-2xl font-bold text-green-600">{issue.impactAssessment.householdsAffected}</p>
+                          <p className="text-xs text-gray-600">Households</p>
+                        </div>
+                        <div className="text-center p-3 bg-purple-50 rounded-lg">
+                          <DollarSign className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+                          <p className="text-2xl font-bold text-purple-600">₵{issue.impactAssessment.estimatedCost.toLocaleString()}</p>
+                          <p className="text-xs text-gray-600">Est. Cost</p>
+                        </div>
+                        <div className="text-center p-3 bg-red-50 rounded-lg">
+                          <AlertTriangle className="h-6 w-6 text-red-600 mx-auto mb-2" />
+                          <p className="text-2xl font-bold text-red-600 capitalize">{issue.impactAssessment.urgencyLevel}</p>
+                          <p className="text-xs text-gray-600">Urgency</p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Social Impact</Label>
+                          <p className="font-medium capitalize">{issue.impactAssessment.socialImpact}</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Economic Impact</Label>
+                          <p className="font-medium capitalize">{issue.impactAssessment.economicImpact}</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Environmental Impact</Label>
+                          <p className="font-medium capitalize">{issue.impactAssessment.environmentalImpact}</p>
+                        </div>
+                      </div>
+                     </>
+                  ) : (
+                      <p className="text-gray-500 italic">No impact assessment available yet.</p>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -243,7 +312,7 @@ export default function IssueDetailPage() {
                   <CardTitle>Detailed Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 leading-relaxed">{mockIssue.detailedDescription}</p>
+                  <p className="text-gray-700 leading-relaxed">{issue.detailedDescription || issue.description}</p>
                 </CardContent>
               </Card>
 
@@ -254,19 +323,19 @@ export default function IssueDetailPage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Address</Label>
-                    <p className="font-medium">{mockIssue.location.address}</p>
+                    <p className="font-medium">{issue.location_details.address}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">GPS Coordinates</Label>
-                    <p className="font-medium">{mockIssue.location.gps}</p>
+                    <p className="font-medium">{issue.location_details.gps}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Nearest Landmark</Label>
-                    <p className="font-medium">{mockIssue.location.nearestLandmark}</p>
+                    <p className="font-medium">{issue.location_details.nearestLandmark}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-gray-500">Access Route</Label>
-                    <p className="font-medium">{mockIssue.location.accessRoute}</p>
+                    <p className="font-medium">{issue.location_details.accessRoute}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -280,7 +349,7 @@ export default function IssueDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {mockIssue.attachments.map((attachment, index) => (
+                    {issue.attachments.length > 0 ? issue.attachments.map((attachment, index) => (
                       <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
                         <div className="flex items-center gap-3">
                           {attachment.type === 'image' ? (
@@ -300,7 +369,9 @@ export default function IssueDetailPage() {
                           Download
                         </Button>
                       </div>
-                    ))}
+                    )) : (
+                        <p className="text-gray-500 italic">No attachments found.</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -314,7 +385,7 @@ export default function IssueDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {mockIssue.timeline.map((event, index) => (
+                    {issue.timeline.length > 0 ? issue.timeline.map((event, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className={`p-2 rounded-full ${
                           event.type === 'issue' ? 'bg-red-100' :
@@ -334,7 +405,9 @@ export default function IssueDetailPage() {
                           <p className="text-sm text-gray-500">{new Date(event.date).toLocaleDateString()}</p>
                         </div>
                       </div>
-                    ))}
+                    )) : (
+                        <p className="text-gray-500 italic">No timeline events available.</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -352,26 +425,22 @@ export default function IssueDetailPage() {
             <CardContent className="space-y-3">
               <div>
                 <Label className="text-sm font-medium text-gray-500">Name</Label>
-                <p className="font-medium">{mockIssue.submitter.name}</p>
+                <p className="font-medium">{issue.submitter.name}</p>
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-500">Role</Label>
-                <p>{mockIssue.submitter.role}</p>
+                <p>{issue.submitter.role}</p>
               </div>
               <Separator />
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="h-4 w-4 text-gray-500" />
-                  <span>{mockIssue.submitter.phone}</span>
+                  <span>{issue.submitter.phone}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Mail className="h-4 w-4 text-gray-500" />
-                  <span>{mockIssue.submitter.email}</span>
+                  <span>{issue.submitter.email}</span>
                 </div>
-              </div>
-              <div>
-                <Label className="text-sm font-medium text-gray-500">Alternate Contact</Label>
-                <p className="text-sm">{mockIssue.submitter.alternateContact}</p>
               </div>
             </CardContent>
           </Card>
@@ -386,39 +455,41 @@ export default function IssueDetailPage() {
                 <Calendar className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="font-medium">Submitted</p>
-                  <p className="text-gray-600">{new Date(mockIssue.submissionDate).toLocaleDateString()}</p>
+                  <p className="text-gray-600">{new Date(issue.submissionDate).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="h-4 w-4 text-gray-500" />
                 <div>
                   <p className="font-medium">Last Updated</p>
-                  <p className="text-gray-600">{new Date(mockIssue.lastUpdated).toLocaleDateString()}</p>
+                  <p className="text-gray-600">{new Date(issue.lastUpdated).toLocaleDateString()}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Related Issues */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Related Issues</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {mockIssue.relatedIssues.map((relatedIssue) => (
-                <Link 
-                  key={relatedIssue.id} 
-                  href={`/task-force-dashboard/issues/${relatedIssue.id}`}
-                  className="block p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <p className="font-medium text-sm line-clamp-2">{relatedIssue.title}</p>
-                  <Badge className={`mt-1 text-xs ${getStatusColor(relatedIssue.status)}`}>
-                    {relatedIssue.status.replace('_', ' ')}
-                  </Badge>
-                </Link>
-              ))}
-            </CardContent>
-          </Card>
+          {issue.relatedIssues.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Related Issues</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {issue.relatedIssues.map((relatedIssue) => (
+                    <Link 
+                      key={relatedIssue.id} 
+                      href={`/task-force-dashboard/issues/${relatedIssue.id}`}
+                      className="block p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <p className="font-medium text-sm line-clamp-2">{relatedIssue.title}</p>
+                      <Badge className={`mt-1 text-xs ${getStatusColor(relatedIssue.status)}`}>
+                        {relatedIssue.status.replace(/_/g, ' ')}
+                      </Badge>
+                    </Link>
+                  ))}
+                </CardContent>
+              </Card>
+          )}
         </div>
       </div>
     </div>
