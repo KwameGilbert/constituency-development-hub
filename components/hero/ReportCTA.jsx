@@ -1,3 +1,5 @@
+"use client";
+
 import { reportSteps } from "@/data/data";
 import { motion } from "framer-motion";
 

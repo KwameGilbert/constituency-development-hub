@@ -1,3 +1,5 @@
+"use client";
+
 import { featuredProjects } from "@/data/data";
 import { motion } from "framer-motion";
 import Image from "next/image";

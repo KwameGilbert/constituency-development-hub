@@ -1,30 +1,11 @@
-"use client";
-import HeroCarousel from "@/components/hero/HeroCarousel";
-import ProjectsShowcase from "@/components/hero/ProjectsShowcase";
-import ArticlesGrid from "@/components/hero/ArticlesGrid";
-import EventsList from "@/components/hero/EventsList";
-import MapPreview from "@/components/hero/MapPreview";
-import ReportCTA from "@/components/hero/ReportCTA";
-import VisionMission from "@/components/hero/VisionMission";
-import FAQAccordion from "@/components/hero/FAQAccordion";
-import NewsletterForm from "@/components/hero/NewsletterForm";
-import ContactPanel from "@/components/hero/ContactPanel";
+import { Metadata } from "next";
+import HomeClient from "./components/HomeClient";
+
+export const metadata: Metadata = {
+  title: "Home | Kofi Benteh Afful",
+  description: "Welcome to the official portal of Kofi Benteh Afful, MP for Sefwi Wiawso. Explore initiatives, projects, and latest updates.",
+};
 
 export default function PortalPage() {
-  return (
-    <div className="bg-white text-slate-900">
-      <main className="space-y-0">
-        <HeroCarousel />
-        <ProjectsShowcase />
-        <ArticlesGrid />
-        <EventsList />
-        <MapPreview />
-        <ReportCTA />
-        <VisionMission />
-        <FAQAccordion />
-        <NewsletterForm />
-        <ContactPanel />
-      </main>
-    </div>
-  );
+  return <HomeClient />;
 }

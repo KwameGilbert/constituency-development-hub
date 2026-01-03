@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,9 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Search,
-  Filter,
   Eye,
-  MessageSquare,
   MapPin,
   Calendar,
   User,
@@ -21,16 +19,16 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  Loader2
 } from 'lucide-react';
 import {
-  getIssues,
-  getStatistics,
   getStatusColor,
   getPriorityColor,
   formatDate,
   getMetadata
 } from '@/lib/data';
+import { issuesService, Issue as ApiIssue } from '@/lib/services/issues-service';
 
 const getPriorityIcon = (priority: string) => {
   switch (priority) {
@@ -59,9 +57,10 @@ const getStatusIcon = (status: string) => {
 };
 
 export default function IssuesPage() {
-  const allIssues = getIssues();
-  const statistics = getStatistics();
   const metadata = getMetadata();
+
+  const [allIssues, setAllIssues] = useState<ApiIssue[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -69,17 +68,38 @@ export default function IssuesPage() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [activeTab, setActiveTab] = useState('all');
 
+  // Fetch data
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch a reasonable limit of issues to allow client-side filtering/counting
+        // In a real large-scale app, we'd fetch counts separately from the list
+        const response = await issuesService.getAllIssues({ limit: 100 });
+        if (response.success) {
+          setAllIssues(response.data.reports);
+        }
+      } catch (error) {
+        console.error("Failed to fetch issues:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   // Filter issues based on search and filters
   const filteredIssues = useMemo(() => {
     let filtered = allIssues;
 
     // Filter by tab
     if (activeTab === 'pending') {
-      filtered = filtered.filter(issue => issue.status === 'pending_assessment');
+      filtered = filtered.filter(issue => issue.status === 'assigned_to_task_force'); // Mapped to API status
     } else if (activeTab === 'under-assessment') {
-      filtered = filtered.filter(issue => issue.status === 'under_assessment');
+      filtered = filtered.filter(issue => issue.status === 'assessment_in_progress'); // Mapped to API status
     } else if (activeTab === 'completed') {
-      filtered = filtered.filter(issue => issue.status === 'approved' || issue.status === 'rejected');
+      filtered = filtered.filter(issue => issue.status === 'resolved' || issue.status === 'closed');
     }
 
     // Search filter
@@ -88,9 +108,8 @@ export default function IssuesPage() {
       filtered = filtered.filter(issue => 
         issue.title.toLowerCase().includes(searchLower) ||
         issue.description.toLowerCase().includes(searchLower) ||
-        issue.community.toLowerCase().includes(searchLower) ||
-        issue.location.address.toLowerCase().includes(searchLower) ||
-        issue.submitter.name.toLowerCase().includes(searchLower)
+        issue.location?.toLowerCase().includes(searchLower) ||
+        issue.reporter_name?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -117,11 +136,11 @@ export default function IssuesPage() {
       case 'all':
         return allIssues.length;
       case 'pending':
-        return allIssues.filter(issue => issue.status === 'pending_assessment').length;
+        return allIssues.filter(issue => issue.status === 'assigned_to_task_force').length;
       case 'under-assessment':
-        return allIssues.filter(issue => issue.status === 'under_assessment').length;
+        return allIssues.filter(issue => issue.status === 'assessment_in_progress').length;
       case 'completed':
-        return allIssues.filter(issue => issue.status === 'approved' || issue.status === 'rejected').length;
+        return allIssues.filter(issue => issue.status === 'resolved' || issue.status === 'closed').length;
       default:
         return 0;
     }
@@ -224,7 +243,11 @@ export default function IssuesPage() {
 
         <TabsContent value={activeTab} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredIssues.length === 0 ? (
+            {loading ? (
+                <div className="col-span-full flex justify-center py-20">
+                    <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+                </div>
+            ) : filteredIssues.length === 0 ? (
               <div className="col-span-full text-center py-12">
                 <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Issues Found</h3>
@@ -268,15 +291,15 @@ export default function IssuesPage() {
                     <div className="space-y-2 text-sm text-gray-600 mb-4">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-gray-400" />
-                        <span>{issue.location.address}</span>
+                        <span>{issue.location}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-gray-400" />
-                        <span>{issue.submitter.name} • {issue.community}</span>
+                        <span>{issue.reporter_name || 'Anonymous'}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
-                        <span>{formatDate(issue.submissionDate)}</span>
+                        <span>{formatDate(issue.created_at)}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-gray-400" />
@@ -286,15 +309,9 @@ export default function IssuesPage() {
 
                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                       <div className="flex items-center gap-2">
-                        {issue.timeline && (
-                          <div className="flex items-center gap-1 text-xs text-gray-500">
-                            <MessageSquare className="h-3 w-3" />
-                            <span>{issue.timeline.length} updates</span>
-                          </div>
-                        )}
-                        {issue.impactAssessment?.estimatedCost && (
+                        {issue.allocated_budget && (
                           <div className="text-xs text-gray-500">
-                            Est: ${issue.impactAssessment.estimatedCost.toLocaleString()}
+                            Budget: ${issue.allocated_budget.toLocaleString()}
                           </div>
                         )}
                       </div>
@@ -305,7 +322,7 @@ export default function IssuesPage() {
                             View
                           </Button>
                         </Link>
-                        {issue.status === 'pending_assessment' && (
+                        {issue.status === 'assigned_to_task_force' && (
                           <Link href={`/task-force-dashboard/assess/${issue.id}`}>
                             <Button variant="outline" size="sm">
                               Assess

@@ -1,3 +1,5 @@
+"use client";
+
 import { faqItems } from "@/data/data";
 import { useState } from "react";
 

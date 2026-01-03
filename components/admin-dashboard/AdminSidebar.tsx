@@ -34,10 +34,39 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { authService } from "@/lib/services/auth-service";
+import { useMemo } from "react";
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  
+  const { userName, userEmail } = useMemo(() => {
+    const user = authService.getCurrentUser();
+    return {
+      userName: user?.name || user?.email?.split('@')[0] || "Administrator",
+      userEmail: user?.email || "admin@example.com",
+    };
+  }, []);
+
+  const handleLogout = () => {
+    authService.logout();
+    toast.success("Logged out successfully");
+    router.push('/login');
+  };
 
   // Helper to determine if a link is active
   const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
@@ -240,13 +269,34 @@ export function AdminSidebar() {
                     </div>
                 </div>
                 <div className="overflow-hidden">
-                    <p className="text-sm font-medium text-white truncate">Administrator</p>
-                    <p className="text-xs text-red-100 truncate">admin@example.com</p>
+                    <p className="text-sm font-medium text-white truncate">{userName}</p>
+                    <p className="text-xs text-red-100 truncate">{userEmail}</p>
                 </div>
             </div>
-            <button className="p-2 rounded-lg text-white hover:text-red-900 hover:bg-white transition-colors flex-shrink-0">
-                <LogOut className="w-4 h-4" />
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="p-2 rounded-lg text-white hover:text-red-900 hover:bg-white transition-colors flex-shrink-0">
+                    <LogOut className="w-4 h-4" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to log out? You will need to sign in again to access the admin dashboard.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleLogout}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
         </div>
       </SidebarFooter>
     </Sidebar>

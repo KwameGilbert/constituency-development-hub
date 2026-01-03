@@ -1,17 +1,17 @@
 "use client"
 
 import * as React from "react"
+import { useMemo } from "react"
 import {
     FileText,
     HelpCircle,
-    LayoutDashboard,
     LogOut,
     Users,
     FileBarChart,
     ShieldUser,
     ChartLine,
 } from "lucide-react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 
 import {
@@ -28,6 +28,19 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
+import { authService } from "@/lib/services/auth-service"
 
 // Menu items.
 const items = [
@@ -65,6 +78,21 @@ const items = [
 
 export function OfficerSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname()
+    const router = useRouter()
+    
+    const { userName, userEmail } = useMemo(() => {
+        const user = authService.getCurrentUser()
+        return {
+            userName: user?.name || user?.email?.split('@')[0] || "Officer",
+            userEmail: user?.email || "officer@example.com",
+        }
+    }, [])
+
+    const handleLogout = () => {
+        authService.logout()
+        toast.success("Logged out successfully")
+        router.push('/login')
+    }
 
     return (
         <Sidebar collapsible="icon" {...props}>
@@ -106,13 +134,36 @@ export function OfficerSidebar({ ...props }: React.ComponentProps<typeof Sidebar
                     <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent/10 p-3">
                         <Avatar className="h-10 w-10 rounded-full bg-blue-100">
                             <AvatarImage src="/avatars/officer.png" alt="Officer" />
-                            <AvatarFallback className="text-blue-600">OR</AvatarFallback>
+                            <AvatarFallback className="text-blue-600">{userName.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                            <span className="truncate font-semibold">   Officer.Rock</span>
-                            <span className="truncate text-xs text-muted-foreground">officer.rock@kofibenteh.com</span>
+                            <span className="truncate font-semibold">{userName}</span>
+                            <span className="truncate text-xs text-muted-foreground">{userEmail}</span>
                         </div>
-                        <LogOut className="ml-auto size-4 text-muted-foreground hover:text-foreground cursor-pointer" />
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <button className="ml-auto">
+                                    <LogOut className="size-4 text-muted-foreground hover:text-red-600 cursor-pointer transition-colors" />
+                                </button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        Are you sure you want to log out? You will need to sign in again to access your dashboard.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                        onClick={handleLogout}
+                                        className="bg-red-600 hover:bg-red-700"
+                                    >
+                                        Logout
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </div>
             </SidebarFooter>

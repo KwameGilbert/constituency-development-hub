@@ -1,80 +1,98 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Clock,
   CheckCircle,
   AlertCircle,
-  Users,
   Search,
-  Filter,
   FileText,
   Calendar,
   MapPin,
   User,
-  ChevronRight,
-  Plus,
   Download,
   Eye,
-  MessageSquare,
-  TrendingUp
+  TrendingUp,
+  Loader2
 } from 'lucide-react';
 import { 
-  getIssues, 
-  getStatistics, 
   getStatusColor, 
   getPriorityColor, 
   formatDate, 
   getRelativeTime, 
-  getMetadata, 
-  searchIssues, 
-  getIssuesByStatus, 
-  getIssuesByCategory 
+  getMetadata
 } from '@/lib/data';
+import { issuesService, Issue as ApiIssue, IssueStatistics as ApiStatistics } from '@/lib/services/issues-service';
 import Link from 'next/link';
 
 function TaskForceMainDashboardPage() {
-  // Load data from JSON files
-  const stats = getStatistics();
-  const allIssues = getIssues();
   const metadata = getMetadata();
+  
+  const [stats, setStats] = useState<ApiStatistics | null>(null);
+  const [filteredIssues, setFilteredIssues] = useState<ApiIssue[]>([]);
+  const [recentIssues, setRecentIssues] = useState<ApiIssue[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
-  // Filter issues based on search and filters
-  const filteredIssues = useMemo(() => {
-    let issues = allIssues;
+  // Fetch data
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch stats and recent issues (for sidebar)
+        const [statsRes, recentRes, filteredRes] = await Promise.all([
+          issuesService.getStatistics(),
+          issuesService.getAllIssues({ limit: 5 }), // Recent global
+          issuesService.getAllIssues({ // Filtered for main view
+            search: searchTerm,
+            status: statusFilter !== 'all' ? statusFilter : undefined,
+            category: categoryFilter !== 'all' ? categoryFilter : undefined,
+            limit: 5 // Dashboard only shows top 5 of filtered results
+          })
+        ]);
 
-    if (searchTerm) {
-      issues = searchIssues(searchTerm);
-    }
+        if (statsRes.success) {
+          setStats(statsRes.data);
+        }
+        
+        if (recentRes.success) {
+          setRecentIssues(recentRes.data.reports);
+        }
 
-    if (statusFilter !== 'all') {
-      issues = issues.filter(issue => issue.status === statusFilter);
-    }
+        if (filteredRes.success) {
+          setFilteredIssues(filteredRes.data.reports);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (categoryFilter !== 'all') {
-      issues = issues.filter(issue => issue.category === categoryFilter);
-    }
+    // Debounce search
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 500);
 
-    return issues;
-  }, [searchTerm, statusFilter, categoryFilter, allIssues]);
+    return () => clearTimeout(timer);
+  }, [searchTerm, statusFilter, categoryFilter]);
 
-  // Get recent issues (last 5)
-  const recentIssues = useMemo(() => {
-    return [...allIssues]
-      .sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime())
-      .slice(0, 5);
-  }, [allIssues]);
+  if (loading && !stats) {
+    return (
+      <div className="flex h-screen items-center justify-center p-6">
+        <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -108,7 +126,7 @@ function TaskForceMainDashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Pending Assessment</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pendingAssessment}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.by_status?.['assigned_to_task_force'] || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -122,7 +140,7 @@ function TaskForceMainDashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Under Assessment</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.underAssessment}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.by_status?.['assessment_in_progress'] || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -135,8 +153,8 @@ function TaskForceMainDashboardPage() {
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Assessed This Month</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.assessedThisMonth}</p>
+                <p className="text-sm font-medium text-gray-600">Resolved</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.resolved || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -149,8 +167,8 @@ function TaskForceMainDashboardPage() {
                 <TrendingUp className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Assessed</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalAssessed}</p>
+                <p className="text-sm font-medium text-gray-600">Total Issues</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.total || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -215,56 +233,60 @@ function TaskForceMainDashboardPage() {
 
               {/* Issues List */}
               <div className="space-y-4">
-                {filteredIssues.slice(0, 5).map((issue) => (
-                  <div key={issue.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-medium text-gray-900">{issue.title}</h4>
-                        <Badge variant="outline" className={getStatusColor(issue.status)}>
-                          {metadata.statuses.find(s => s.value === issue.status)?.label || issue.status}
-                        </Badge>
-                        <Badge className={getPriorityColor(issue.priority)}>
-                          {issue.priority}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {issue.community}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <User className="h-4 w-4" />
-                          {issue.submittedBy}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          {formatDate(issue.submissionDate)}
-                        </div>
-                      </div>
+                {loading ? (
+                    <div className="flex justify-center py-8">
+                        <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Link href={`/task-force-dashboard/issues/${issue.id}`}>
-                        <Button variant="outline" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Link href={`/task-force-dashboard/assess/${issue.id}`}>
-                        <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
-                          <FileText className="h-4 w-4 mr-2" />
-                          Assess
-                        </Button>
-                      </Link>
+                ) : filteredIssues.length > 0 ? (
+                    filteredIssues.map((issue) => (
+                        <div key={issue.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h4 className="font-medium text-gray-900">{issue.title}</h4>
+                              <Badge variant="outline" className={getStatusColor(issue.status)}>
+                                {metadata.statuses.find(s => s.value === issue.status)?.label || issue.status}
+                              </Badge>
+                              <Badge className={getPriorityColor(issue.priority)}>
+                                {issue.priority}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-4 w-4" />
+                                {issue.location}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <User className="h-4 w-4" />
+                                {issue.reporter_name || 'Anonymous'}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                {formatDate(issue.created_at)}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Link href={`/task-force-dashboard/issues/${issue.id}`}>
+                              <Button variant="outline" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                            <Link href={`/task-force-dashboard/assess/${issue.id}`}>
+                              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                                <FileText className="h-4 w-4 mr-2" />
+                                Assess
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      ))
+                ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>No issues found matching your criteria.</p>
                     </div>
-                  </div>
-                ))}
+                )}
               </div>
-
-              {filteredIssues.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p>No issues found matching your criteria.</p>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
@@ -279,20 +301,20 @@ function TaskForceMainDashboardPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Total Issues</span>
-                <span className="font-semibold">{stats.totalIssues}</span>
+                <span className="font-semibold">{stats?.total || 0}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Approved</span>
-                <span className="font-semibold text-green-600">{stats.approvedIssues}</span>
+                <span className="text-sm text-gray-600">Resolved</span>
+                <span className="font-semibold text-green-600">{stats?.resolved || 0}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Rejected</span>
-                <span className="font-semibold text-red-600">{stats.rejectedIssues}</span>
+                <span className="text-sm text-gray-600">Pending</span>
+                <span className="font-semibold text-yellow-600">{stats?.pending || 0}</span>
               </div>
               <div className="pt-2 border-t">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Last Updated</span>
-                  <span className="text-sm font-medium">{getRelativeTime(stats.lastUpdated)}</span>
+                  <span className="text-sm font-medium">Just now</span>
                 </div>
               </div>
             </CardContent>
@@ -315,7 +337,7 @@ function TaskForceMainDashboardPage() {
                         {issue.title}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {issue.community} • {getRelativeTime(issue.submissionDate)}
+                        {issue.location} • {getRelativeTime(issue.created_at)}
                       </p>
                     </div>
                   </div>
@@ -334,10 +356,10 @@ function TaskForceMainDashboardPage() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    {stats.pendingAssessment} issues need urgent assessment
+                    {stats?.by_priority?.['urgent'] || 0} urgent issues need attention
                   </AlertDescription>
                 </Alert>
-                <Link href="/task-force-dashboard/issues?status=pending_assessment">
+                <Link href="/task-force-dashboard/issues?status=assigned_to_task_force">
                   <Button className="w-full bg-purple-600 hover:bg-purple-700">
                     <Clock className="h-4 w-4 mr-2" />
                     Review Pending Issues
