@@ -19,7 +19,6 @@ import {
   MapPin,
   Calendar,
   FileText,
-  Camera,
   Download,
   Save,
   Send,
@@ -32,7 +31,6 @@ import {
   Upload,
   X,
   FileImage,
-  Target,
   Loader2
 } from 'lucide-react';
 import {
@@ -43,7 +41,7 @@ import {
   getCurrentUser
 } from '@/lib/data';
 import { useAssessmentStore } from '@/lib/stores/assessment-store';
-import { issuesService, Issue as ApiIssue } from '@/lib/services/issues-service';
+import { issuesService, Issue as ApiIssue, TimelineEvent } from '@/lib/services/issues-service';
 
 // --- Adapter Logic (Client Side View Model) ---
 
@@ -67,7 +65,7 @@ interface UiIssue extends ApiIssue {
     socialImpact: string;
   };
   attachments: { id: number; name: string; type: string; size: string; uploadDate: string }[];
-  timeline: { id: number; date: string; event: string; type: string; userId?: string }[];
+  timeline: TimelineEvent[];
   sector?: string;
   submissionDate: string;
 }
@@ -102,7 +100,7 @@ const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
         uploadDate: apiIssue.created_at
     })),
     timeline: [
-        { id: 1, date: apiIssue.created_at, event: 'Issue Submitted', type: 'submitted' }
+        { id: '1', date: apiIssue.created_at, event: 'Issue Submitted', type: 'submitted' }
     ]
   };
 };

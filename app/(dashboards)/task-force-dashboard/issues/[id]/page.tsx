@@ -11,9 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ArrowLeft,
-  MapPin,
   Calendar,
-  User,
   FileText,
   Camera,
   Download,
@@ -28,10 +26,8 @@ import {
   CheckCircle,
   Target,
   Loader2,
-  XCircle
 } from 'lucide-react';
 import { issuesService, Issue as ApiIssue } from '@/lib/services/issues-service';
-import { getStatusColor as getStatusColorBase } from '@/lib/data';
 
 // UI Type definition matching the previous mock structure
 interface UiIssue extends ApiIssue {
@@ -59,7 +55,7 @@ interface UiIssue extends ApiIssue {
     socialImpact: string;
   };
   attachments: { name: string; type: string; size: string; uploadDate: string }[];
-  timeline: { date: string; event: string; type: string }[];
+  timeline: { id: string; date: string; event: string; type: string }[];
   relatedIssues: { id: number; title: string; status: string }[];
   sector?: string;
   detailedDescription?: string;
@@ -103,8 +99,8 @@ const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
         size: 'N/A',
         uploadDate: apiIssue.created_at
     })),
-    timeline: [
-        { date: apiIssue.created_at, event: 'Issue Submitted', type: 'submission' }
+    timeline: (apiIssue.timeline || []).length > 0 ? apiIssue.timeline! : [
+        { id: '1', date: apiIssue.created_at, event: 'Issue Submitted', type: 'submission' }
     ],
     relatedIssues: []
   };
