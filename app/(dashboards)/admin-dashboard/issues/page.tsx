@@ -2,6 +2,7 @@
 
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { AllIssues } from "@/components/officer-dashboard/issues/AllIssues";
+import { IssuesStats } from "@/components/admin-dashboard/issues/IssuesStats";
 import { BarChart3, FileText, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
 
 export default function AdminIssuesPage() {
@@ -25,6 +26,9 @@ export default function AdminIssuesPage() {
         ]}
       />
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+        
+        {/* Issue Statistics */}
+        <IssuesStats />
         
         {/* Reusing AllIssues in Read-Only Mode */}
         {/* The user requested to import issues from officer dashboard and admin can only VIEW issues */}

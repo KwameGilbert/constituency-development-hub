@@ -120,31 +120,64 @@ class IssuesService {
     return apiClient("/admin/issues/stats");
   }
 
-  async updateStatus(id: number | string, status: string, comment?: string): Promise<ApiResponse<any>> {
+  async updateStatus(id: number | string, status: string, comment?: string): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/admin/issues/${id}/status`, {
       method: "PUT",
       body: JSON.stringify({ status, comment }),
     });
   }
 
-  async submitAssessment(id: number | string, data: AssessmentData): Promise<ApiResponse<any>> {
+  async submitAssessment(id: number | string, data: AssessmentData): Promise<ApiResponse<{ assessment: any; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/assessment`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async assignTaskForce(id: number | string, taskForceId: number): Promise<ApiResponse<any>> {
-    return apiClient(`/admin/issues/${id}/assign`, {
-      method: "POST",
+  async assignTaskForce(id: number | string, taskForceId: number): Promise<ApiResponse<{ report: Issue }>> {
+    return apiClient(`/admin/issues/${id}/assign-task-force`, {
+      method: "PUT",
       body: JSON.stringify({ task_force_id: taskForceId }),
     });
   }
 
   async allocateResources(id: number | string, data: ResourceAllocationData): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/admin/issues/${id}/allocate-resources`, {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify(data),
+    });
+  }
+
+  async getAwaitingAction(): Promise<ApiResponse<{
+    reports: Issue[];
+    counts: {
+      awaiting_assignment: number;
+      awaiting_assessment_review: number;
+      awaiting_resolution_review: number;
+    };
+  }>> {
+    return apiClient("/admin/issues/awaiting-action");
+  }
+
+  async reviewAssessment(
+    id: number | string,
+    action: 'approve' | 'reject' | 'revision',
+    notes: string
+  ): Promise<ApiResponse<{ resolution: any; report: Issue }>> {
+    return apiClient(`/admin/issues/${id}/review-assessment`, {
+      method: "PUT",
+      body: JSON.stringify({ action, notes }),
+    });
+  }
+
+  async reviewResolution(
+    id: number | string,
+    action: 'approve' | 'reject',
+    notes: string
+  ): Promise<ApiResponse<{ resolution: any; report: Issue }>> {
+    return apiClient(`/admin/issues/${id}/review-resolution`, {
+      method: "PUT",
+      body: JSON.stringify({ action, notes }),
     });
   }
 

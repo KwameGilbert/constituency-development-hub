@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// Temporarily using system fonts due to Google Fonts connectivity issues
+// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import JsonLd from "@/components/seo/JsonLd";
 
-const geistSans = Geist({
+// Using CSS variables with system font fallbacks
+const geistSans = {
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+};
 
-const geistMono = Geist_Mono({
+const geistMono = {
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+};
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://kofibentehafful.com";
 
