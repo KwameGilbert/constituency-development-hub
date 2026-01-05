@@ -1,0 +1,18 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboards)/layout,_N_T_/(dashboards)/agents-dashboard/layout,_N_T_/(dashboards)/agents-dashboard/issues/layout,_N_T_/(dashboards)/agents-dashboard/issues/add/layout,_N_T_/(dashboards)/agents-dashboard/issues/add/page,_N_T_/agents-dashboard/issues/add"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZHMp/agents-dashboard/issues/add/__PAGE__",
+    "/!KGRhc2hib2FyZHMp/agents-dashboard/issues/add",
+    "/!KGRhc2hib2FyZHMp/agents-dashboard/issues",
+    "/!KGRhc2hib2FyZHMp/agents-dashboard",
+    "/!KGRhc2hib2FyZHMp",
+    "/_index",
+    "/_head"
+  ]
+}

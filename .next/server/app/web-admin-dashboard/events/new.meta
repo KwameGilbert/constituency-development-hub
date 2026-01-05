@@ -1,0 +1,18 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboards)/layout,_N_T_/(dashboards)/web-admin-dashboard/layout,_N_T_/(dashboards)/web-admin-dashboard/events/layout,_N_T_/(dashboards)/web-admin-dashboard/events/new/layout,_N_T_/(dashboards)/web-admin-dashboard/events/new/page,_N_T_/web-admin-dashboard/events/new"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZHMp/web-admin-dashboard/events/new/__PAGE__",
+    "/!KGRhc2hib2FyZHMp/web-admin-dashboard/events/new",
+    "/!KGRhc2hib2FyZHMp/web-admin-dashboard/events",
+    "/!KGRhc2hib2FyZHMp/web-admin-dashboard",
+    "/!KGRhc2hib2FyZHMp",
+    "/_index",
+    "/_head"
+  ]
+}

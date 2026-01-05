@@ -1,0 +1,3 @@
+{
+  "/(dashboards)/web-admin-dashboard/events/page": "app/(dashboards)/web-admin-dashboard/events/page.js"
+}

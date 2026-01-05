@@ -1,0 +1,42 @@
+[00:00:11.489] Server  LOG     ✓ Ready in 7.2s
+[00:00:14.544] Server  LOG     ○ Compiling / ...
+[00:00:25.348] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:28.289] Server  ERROR   ⨯ "upstream image response failed for" "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Coat_of_arms_of_Ghana.svg/256px-Coat_of_arms_of_Ghana.svg.png" 429
+[00:00:28.817] Browser WARN    Image with src "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:28.817] Browser WARN    Image with src "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:28.817] Browser WARN    [API] 500 /events/upcoming?limit=5 An unexpected error occurred. Please try again later.
+[00:00:29.018] Browser WARN    Image with src "https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=1200&q=80" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:29.109] Server  ERROR   ⨯ "upstream image response failed for" "https://images.unsplash.com/photo-1595508064774-5ff825a62d61?auto=format&fit=crop&w=600&q=80" 404
+[00:00:29.335] Browser WARN    Image with src "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:00:29.779] Browser WARN    Image with src "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:29.983] Browser WARN    Image with src "https://images.unsplash.com/photo-1503424886307-b090341d25d1?auto=format&fit=crop&w=1200&q=80" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:56.450] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:56.974] Browser WARN    Image with src "https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=1200&q=80" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:56.974] Browser WARN    Image with src "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:56.974] Browser WARN    Image with src "https://images.unsplash.com/photo-1503424886307-b090341d25d1?auto=format&fit=crop&w=1200&q=80" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:56.974] Browser WARN    Image with src "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:56.974] Browser WARN    Image with src "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:56.974] Browser WARN    Image with src "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[00:01:57.891] Server  ERROR   ⨯ "upstream image response failed for" "https://images.unsplash.com/photo-1595508064774-5ff825a62d61?auto=format&fit=crop&w=600&q=80" 404
+[00:01:57.895] Server  ERROR   ⨯ "upstream image response failed for" "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Coat_of_arms_of_Ghana.svg/256px-Coat_of_arms_of_Ghana.svg.png" 429
+[00:01:58.770] Browser WARN    [API] 500 /events/upcoming?limit=5 An unexpected error occurred. Please try again later.
+[00:14:58.097] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:45.425] Browser WARN    [API] 401 /auth/login Invalid password
+[00:16:45.425] Browser ERROR   Login error: {}
+[00:16:59.232] Browser WARN    [API] 404 /admin/dashboard/stats The requested route does not exist.
+[00:16:59.479] Browser WARN    [API] 404 /admin/dashboard/stats The requested route does not exist.
+[00:17:01.475] Browser WARN    [API] 500 /events/upcoming?limit=100 An unexpected error occurred. Please try again later.
+[00:17:01.772] Browser WARN    [API] 500 /events/upcoming?limit=100 An unexpected error occurred. Please try again later.
+[00:17:03.444] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:05.910] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:06.401] Browser WARN    [API] 404 /admin/dashboard/stats The requested route does not exist.
+[00:17:07.121] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:08.364] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:17:08.862] Browser WARN    [API] 404 /admin/dashboard/stats The requested route does not exist.
+[00:17:10.159] Browser WARN    [API] 500 /events/upcoming?limit=100 An unexpected error occurred. Please try again later.
+[00:23:01.276] Server  LOG       Reload env: .env.local
+[00:23:01.706] Server  LOG     ✓ Compiled in 368ms
+[00:26:50.685] Server  LOG     ✓ Compiled in 486ms
+[00:30:38.932] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:49.344] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:55.399] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

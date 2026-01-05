@@ -1,0 +1,74 @@
+{
+  "assessors": [
+    {
+      "id": "assessor_001",
+      "name": "Kwame Asante",
+      "email": "kwame.asante@taskforce.gh",
+      "phone": "+233 24 111 2222",
+      "role": "Senior Assessor",
+      "specialization": ["Infrastructure", "Water & Sanitation"],
+      "experience": "8 years",
+      "location": "Sefwi Wiawso",
+      "avatar": "/avatars/kwame_asante.jpg",
+      "status": "active",
+      "totalAssessments": 45,
+      "completedThisMonth": 8,
+      "joinedDate": "2020-03-15T00:00:00Z",
+      "lastActive": "2024-12-05T10:30:00Z"
+    },
+    {
+      "id": "assessor_002", 
+      "name": "Dr. Ama Boateng",
+      "email": "ama.boateng@taskforce.gh",
+      "phone": "+233 20 333 4444",
+      "role": "Lead Assessor",
+      "specialization": ["Education", "Health", "Social Services"],
+      "experience": "12 years",
+      "location": "Sefwi Wiawso",
+      "avatar": "/avatars/ama_boateng.jpg",
+      "status": "active",
+      "totalAssessments": 67,
+      "completedThisMonth": 12,
+      "joinedDate": "2018-08-20T00:00:00Z",
+      "lastActive": "2024-12-05T11:45:00Z"
+    },
+    {
+      "id": "assessor_003",
+      "name": "Emmanuel Owusu",
+      "email": "emmanuel.owusu@taskforce.gh", 
+      "phone": "+233 24 555 6666",
+      "role": "Assessor",
+      "specialization": ["Transportation", "Environment"],
+      "experience": "5 years",
+      "location": "Anhwiaso",
+      "avatar": "/avatars/emmanuel_owusu.jpg",
+      "status": "active",
+      "totalAssessments": 32,
+      "completedThisMonth": 6,
+      "joinedDate": "2021-11-10T00:00:00Z",
+      "lastActive": "2024-12-04T16:20:00Z"
+    }
+  ],
+  "currentUser": {
+    "id": "assessor_001",
+    "name": "Kwame Asante",
+    "email": "kwame.asante@taskforce.gh",
+    "role": "Senior Assessor",
+    "avatar": "/avatars/kwame_asante.jpg",
+    "permissions": [
+      "view_issues",
+      "assess_issues", 
+      "create_reports",
+      "view_team"
+    ],
+    "preferences": {
+      "theme": "light",
+      "language": "en",
+      "notifications": {
+        "email": true,
+        "push": true,
+        "sms": false
+      }
+    }
+  }
+}

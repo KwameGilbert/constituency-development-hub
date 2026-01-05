@@ -1,0 +1,7 @@
+{
+  "/(dashboards)/web-admin-dashboard/blog/page": "app/(dashboards)/web-admin-dashboard/blog/page.js",
+  "/(dashboards)/web-admin-dashboard/page": "app/(dashboards)/web-admin-dashboard/page.js",
+  "/(public)/page": "app/(public)/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/login/page": "app/login/page.js"
+}
