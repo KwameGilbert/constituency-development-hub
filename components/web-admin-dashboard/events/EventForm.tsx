@@ -45,9 +45,8 @@ interface EventFormProps {
 export function EventForm({ event, isEditing = false }: EventFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>(event?.image || "");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(event?.image || "");
-  const [imageInputType, setImageInputType] = useState<"upload" | "url">("upload");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<EventFormValues>({
@@ -81,26 +80,19 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
       return;
     }
 
-    // Convert to data URL for preview and submission
-    // Note: In production, you'd upload to a server
+    setSelectedFile(file);
+
+    // Convert to data URL for preview
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string;
       setImagePreview(dataUrl);
-      // For now, we'll just use the URL that's manually entered
-      // since there's no upload endpoint
-      toast.info("Image selected. Please enter the image URL after uploading to your server.");
     };
     reader.readAsDataURL(file);
   }
 
-  function handleUrlChange(url: string) {
-    setImageUrl(url);
-    setImagePreview(url);
-  }
-
   function removeImage() {
-    setImageUrl("");
+    setSelectedFile(null);
     setImagePreview("");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -115,7 +107,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         name: data.title,
         title: data.title,
         description: data.description || undefined,
-        image: imageUrl || undefined,
+        image: imagePreview && !selectedFile ? imagePreview : undefined, // Keep existing URL if editing and no new file select
         location: data.location,
         event_date: data.event_date,
         start_time: data.start_time || undefined,
@@ -129,9 +121,9 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
 
       let response;
       if (isEditing && event?.id) {
-        response = await eventsService.updateEvent(event.id, payload);
+        response = await eventsService.updateEvent(event.id, payload, selectedFile || undefined);
       } else {
-        response = await eventsService.createEvent(payload);
+        response = await eventsService.createEvent(payload, selectedFile || undefined);
       }
 
       if (response.success) {
@@ -234,99 +226,45 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         {/* Image Input */}
         <div className="space-y-2">
           <Label>Event Image</Label>
-          <Tabs value={imageInputType} onValueChange={(v) => setImageInputType(v as "upload" | "url")} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="url" className="flex items-center gap-2">
-                <LinkIcon className="h-4 w-4" />
-                Image URL
-              </TabsTrigger>
-              <TabsTrigger value="upload" className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Upload
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="url" className="space-y-2">
-              <Input 
-                type="url"
-                placeholder="https://example.com/event-image.jpg" 
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-                value={imageUrl}
-                onChange={(e) => handleUrlChange(e.target.value)}
-                disabled={isLoading}
-              />
-              <p className="text-xs text-slate-500">Enter the URL of your event image</p>
-            </TabsContent>
-            
-            <TabsContent value="upload" className="space-y-2">
-              <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 hover:border-violet-300 transition-colors">
-                {imagePreview && imageInputType === "upload" ? (
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={imagePreview} 
-                      alt="Event preview" 
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                      disabled={isLoading}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div 
-                    className="flex flex-col items-center justify-center cursor-pointer py-6"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="p-3 bg-violet-50 rounded-full mb-3">
-                      <ImageIcon className="h-6 w-6 text-violet-600" />
-                    </div>
-                    <p className="text-sm font-medium text-slate-700">Click to select image</p>
-                    <p className="text-xs text-slate-500 mt-1">PNG, JPG up to 5MB</p>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                  disabled={isLoading}
+          <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 hover:border-violet-300 transition-colors">
+            {imagePreview ? (
+                <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                    src={imagePreview} 
+                    alt="Event preview" 
+                    className="w-full h-48 object-cover rounded-lg"
                 />
-              </div>
-              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
-                ⚠️ Note: After selecting an image, upload it to your server and paste the URL above.
-              </p>
-            </TabsContent>
-          </Tabs>
-          
-          {/* Image Preview for URL input */}
-          {imagePreview && imageInputType === "url" && (
-            <div className="relative mt-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={imagePreview} 
-                alt="Event preview" 
-                className="w-full h-48 object-cover rounded-lg border border-slate-200"
-                onError={() => {
-                  setImagePreview("");
-                  toast.error("Failed to load image from URL");
-                }}
-              />
-              <button
-                type="button"
-                onClick={removeImage}
-                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                    disabled={isLoading}
+                >
+                    <X className="h-4 w-4" />
+                </button>
+                </div>
+            ) : (
+                <div 
+                className="flex flex-col items-center justify-center cursor-pointer py-6"
+                onClick={() => fileInputRef.current?.click()}
+                >
+                <div className="p-3 bg-violet-50 rounded-full mb-3">
+                    <ImageIcon className="h-6 w-6 text-violet-600" />
+                </div>
+                <p className="text-sm font-medium text-slate-700">Click to select image</p>
+                <p className="text-xs text-slate-500 mt-1">PNG, JPG up to 5MB</p>
+                </div>
+            )}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                className="hidden"
                 disabled={isLoading}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          )}
+            />
+          </div>
         </div>
 
         {/* Description */}
