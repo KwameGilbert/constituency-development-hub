@@ -1,12 +1,14 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  PieChart, 
-  Pie, 
-  Cell, 
-  ResponsiveContainer, 
-  Legend, 
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
   Tooltip,
   LineChart,
   Line,
@@ -17,20 +19,71 @@ import {
   Area
 } from "recharts";
 
-export function AdminCharts() {
-  const pieData = [
-    { name: "Pending", value: 0, color: "#fbbf24" }, // Amber
-    { name: "Reviewed", value: 0, color: "#3b82f6" }, // Blue
-    { name: "Approved", value: 1, color: "#10b981" }, // Emerald
-    { name: "Rejected", value: 1, color: "#ef4444" }, // Red
-    { name: "Resolved", value: 0, color: "#34d399" }, // Teal-ish
-    { name: "In Progress", value: 0, color: "#8b5cf6" }, // Violet
-  ];
+interface ChartData {
+  issuesStatusDistribution: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+  monthlyTrends: Array<{
+    name: string;
+    total: number;
+    resolved: number;
+  }>;
+}
 
-  const lineData = [
-    { name: "2025-09", total: 1, resolved: 0 },
-    { name: "2025-10", total: 1, resolved: 0 },
-  ];
+export function AdminCharts() {
+  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const response = await axios.get('/data/admin-charts.json');
+        setChartData(response.data);
+      } catch (err) {
+        setError('Failed to load chart data');
+        console.error('Error fetching chart data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChartData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        {[1, 2].map((i) => (
+          <Card key={i}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div className="h-6 bg-gray-200 rounded animate-pulse w-48"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px] w-full bg-gray-100 rounded-lg animate-pulse"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (error || !chartData) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-red-600">
+              {error || 'No chart data available'}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
@@ -45,7 +98,7 @@ export function AdminCharts() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={chartData.issuesStatusDistribution}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -55,7 +108,7 @@ export function AdminCharts() {
                   strokeWidth={2}
                   stroke="#fff"
                 >
-                  {pieData.map((entry, index) => (
+                  {chartData.issuesStatusDistribution.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -86,7 +139,7 @@ export function AdminCharts() {
             <div className="h-[300px] w-full bg-white rounded-lg">
                  <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                        data={lineData}
+                        data={chartData.monthlyTrends}
                         margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />

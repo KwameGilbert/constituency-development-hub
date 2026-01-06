@@ -1,89 +1,193 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { NewJobForm } from "@/components/admin-dashboard/employment/JobForm";
-import { employmentService } from "@/lib/services/employment-service";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { notFound } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
+import axios from "axios";
+import { useParams } from "next/navigation";
 
-const MOCK_JOBS = [
-  {
-    id: 1,
-    slug: "community-development-officer",
-    title: "Community Development Officer",
-    description: "We are seeking a passionate Community Development Officer to coordinate and implement development programs within the constituency. The ideal candidate will work closely with community leaders, stakeholders, and local organizations to identify needs and deliver impactful projects.",
-    company: "Constituency Development Office",
-    location: "Constituency Office, Main District",
-    job_type: "full_time" as const,
-    salary_range: "GHS 3,500 - 5,000 per month",
-    requirements: "• Bachelor's degree in Social Sciences, Community Development, or related field\n• Minimum 2 years experience in community development or social work\n• Excellent communication and interpersonal skills\n• Proficiency in Microsoft Office Suite\n• Valid driver's license preferred",
-    responsibilities: "• Coordinate community development programs and initiatives\n• Conduct needs assessments and prepare project proposals\n• Liaise with community leaders and stakeholders\n• Monitor and evaluate project implementation\n• Prepare regular reports on program activities",
-    application_deadline: "2025-02-15",
-    status: "published" as const,
-    category: "Community Development",
-    experience_level: "Mid-level",
-    applicants_count: 24,
-    created_at: "2025-01-01",
-    published_at: "2025-01-05",
-  },
-  {
-    id: 2,
-    slug: "youth-coordinator",
-    title: "Youth Programs Coordinator",
-    description: "Join our team as a Youth Programs Coordinator to design and implement programs that empower young people in our constituency. This role involves organizing skills training, mentorship programs, and youth engagement activities.",
-    location: "Youth Center, Central District",
-    job_type: "contract" as const,
-    salary_range: "GHS 2,800 - 4,000 per month",
-    requirements: "• Degree in Youth Development, Education, or related field\n• Experience working with youth programs\n• Strong organizational and leadership skills\n• Creative and innovative mindset\n• Good computer skills",
-    responsibilities: "• Develop and implement youth programs\n• Organize skills training and workshops\n• Coordinate mentorship initiatives\n• Engage with youth groups and organizations\n• Track program outcomes and prepare reports",
-    application_deadline: "2025-02-20",
-    status: "published" as const,
-    category: "Youth Development",
-    experience_level: "Entry to Mid-level",
-    applicants_count: 18,
-    created_at: "2025-01-03",
-    published_at: "2025-01-08",
-  },
-  {
-    id: 3,
-    slug: "administrative-assistant",
-    title: "Administrative Assistant",
-    description: "We are looking for a detail-oriented Administrative Assistant to support the daily operations of our constituency office. The role involves managing schedules, handling correspondence, and providing general administrative support.",
-    company: "Constituency Office",
-    location: "Main Office, District Center",
-    job_type: "full_time" as const,
-    salary_range: "GHS 2,000 - 3,200 per month",
-    requirements: "• Diploma or Certificate in Secretarial Studies, Administration, or related field\n• Minimum 1 year office experience\n• Excellent typing and computer skills\n• Strong organizational abilities\n• Professional communication skills",
-    responsibilities: "• Manage office schedules and appointments\n• Handle incoming calls and correspondence\n• Maintain filing systems and records\n• Assist with event coordination\n• Provide general administrative support",
-    application_deadline: "2025-02-10",
-    status: "published" as const,
-    category: "Administration",
-    experience_level: "Entry-level",
-    applicants_count: 35,
-    created_at: "2025-01-02",
-    published_at: "2025-01-06",
-  },
-];
+interface JobPosting {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  company?: string;
+  location: string;
+  job_type: "full_time" | "part_time" | "contract" | "internship";
+  salary_range?: string;
+  requirements?: string;
+  responsibilities?: string;
+  application_deadline: string;
+  status: "draft" | "published" | "closed";
+  category?: string;
+  experience_level?: string;
+  applicants_count?: number;
+  created_at?: string;
+  updated_at?: string;
+  published_at?: string;
+}
 
-export default async function EditJobPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  let job = null;
+interface JobsData {
+  jobs: JobPosting[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+  statistics: {
+    total_jobs: number;
+    published_jobs: number;
+    draft_jobs: number;
+    closed_jobs: number;
+    total_applicants: number;
+    by_category: Array<{
+      category: string;
+      count: number;
+    }>;
+    by_job_type: Array<{
+      job_type: string;
+      count: number;
+    }>;
+    by_experience_level: Array<{
+      experience_level: string;
+      count: number;
+    }>;
+  };
+}
 
-  try {
-    const response = await employmentService.getJobById(id);
-    if (response && response.success && response.data.job) {
-      job = response.data.job;
-    } else {
-      return notFound();
+export default function EditJobPage() {
+  const params = useParams();
+  const id = params.id as string;
+
+  const [job, setJob] = useState<JobPosting | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchJob = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<JobsData>('/data/admin-employment-jobs.json');
+        const foundJob = response.data.jobs.find(j => j.id === parseInt(id));
+        if (foundJob) {
+          setJob(foundJob);
+          setError(null);
+        } else {
+          setError('Job not found');
+        }
+      } catch (err) {
+        console.error('Failed to load job data:', err);
+        setError('Failed to load job data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchJob();
     }
-  } catch {
-    // Use mock data as fallback
-    job = MOCK_JOBS.find(j => j.id === parseInt(id));
-    if (!job) return notFound();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+        <AdminHeader title="Edit Job Posting" />
+        <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
+          <div className="flex items-center gap-4">
+            <Link href="/admin-dashboard/employment">
+              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-64" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          </div>
+
+          <Card className="p-6">
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-5 w-20" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="space-y-4">
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-5 w-26" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-5 w-30" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Skeleton className="h-5 w-36" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+
+              <div className="space-y-4">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+
+              <div className="space-y-4">
+                <Skeleton className="h-5 w-44" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <Skeleton className="h-10 w-20" />
+                <Skeleton className="h-10 w-24" />
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
-  if (!job) return notFound();
+  if (error || !job) {
+    return (
+      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+        <AdminHeader title="Edit Job Posting" />
+        <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
+          <div className="flex items-center gap-4">
+            <Link href="/admin-dashboard/employment">
+              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">Job Not Found</h1>
+              <p className="text-slate-500">The requested job could not be found</p>
+            </div>
+          </div>
+
+          <Card className="p-12 text-center">
+            <p className="text-red-600 text-lg font-medium">{error || 'Job not found'}</p>
+            <p className="text-slate-500 mt-2">Please check the job ID and try again</p>
+            <div className="mt-6">
+              <Link href="/admin-dashboard/employment">
+                <Button>Back to Jobs</Button>
+              </Link>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-slate-50">
@@ -100,7 +204,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
             <p className="text-slate-500">{job.title}</p>
           </div>
         </div>
-        
+
         <NewJobForm job={job} />
       </div>
     </div>

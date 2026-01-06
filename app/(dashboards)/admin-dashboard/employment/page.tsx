@@ -1,93 +1,129 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { JobsHeader } from "@/components/admin-dashboard/employment/JobsHeader";
 import { JobsTable } from "@/components/admin-dashboard/employment/JobsTable";
-import { employmentService } from "@/lib/services/employment-service";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
+import axios from "axios";
 
-// Mock data for development when backend is not available
-const MOCK_JOBS = [
-  {
-    id: 1,
-    title: "Community Development Officer",
-    slug: "community-development-officer",
-    description: "Lead community development initiatives and coordinate with local stakeholders to implement constituency projects.",
-    company: "District Office",
-    location: "Central Office, Accra",
-    job_type: "full_time" as const,
-    salary_range: "GHS 3,000 - 5,000 per month",
-    requirements: "Bachelor's degree in Social Sciences, Development Studies, or related field\nMinimum 2 years experience in community development\nStrong communication and organizational skills",
-    responsibilities: "Coordinate community development projects\nLiaise with local leaders and stakeholders\nPrepare project reports and documentation",
-    application_deadline: "2025-02-28",
-    status: "published" as const,
-    category: "administration",
-    experience_level: "mid",
-    applicants_count: 12,
-    created_at: "2025-01-01",
-  },
-  {
-    id: 2,
-    title: "Youth Engagement Coordinator",
-    slug: "youth-engagement-coordinator",
-    description: "Develop and implement youth programs and initiatives to engage young people in constituency activities.",
-    company: "Youth Development Unit",
-    location: "Community Center",
-    job_type: "full_time" as const,
-    salary_range: "GHS 2,500 - 4,000 per month",
-    application_deadline: "2025-03-15",
-    status: "published" as const,
-    category: "social_services",
-    experience_level: "entry",
-    applicants_count: 8,
-    created_at: "2025-01-05",
-  },
-  {
-    id: 3,
-    title: "Administrative Assistant - Internship",
-    slug: "admin-assistant-internship",
-    description: "Support administrative operations and gain experience in constituency management.",
-    location: "Main Office",
-    job_type: "internship" as const,
-    salary_range: "GHS 800 - 1,200 per month",
-    application_deadline: "2025-01-31",
-    status: "published" as const,
-    category: "administration",
-    experience_level: "entry",
-    applicants_count: 25,
-    created_at: "2024-12-20",
-  },
-];
+interface JobPosting {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  company?: string;
+  location: string;
+  job_type: "full_time" | "part_time" | "contract" | "internship";
+  salary_range?: string;
+  requirements?: string;
+  responsibilities?: string;
+  application_deadline: string;
+  status: "draft" | "published" | "closed";
+  category?: string;
+  experience_level?: string;
+  applicants_count?: number;
+  created_at?: string;
+  updated_at?: string;
+  published_at?: string;
+}
 
-export default async function JobsListPage() {
-  let jobs: any[] = [];
-  let pagination: any = undefined;
-  let usingMockData = false;
+interface JobsData {
+  jobs: JobPosting[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+  statistics: {
+    total_jobs: number;
+    published_jobs: number;
+    draft_jobs: number;
+    closed_jobs: number;
+    total_applicants: number;
+    by_category: Array<{
+      category: string;
+      count: number;
+    }>;
+    by_job_type: Array<{
+      job_type: string;
+      count: number;
+    }>;
+    by_experience_level: Array<{
+      experience_level: string;
+      count: number;
+    }>;
+  };
+}
 
-  try {
-    const response = await employmentService.getAdminJobs();
-    if (response && response.success && response.data) {
-      jobs = response.data.jobs || [];
-      pagination = response.data.pagination;
-    }
-  } catch (e: unknown) {
-    // Silently fall back to mock data when API is unavailable
-    jobs = MOCK_JOBS;
-    usingMockData = true;
-  }
+export default function JobsListPage() {
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
+  const [pagination, setPagination] = useState<JobsData['pagination'] | undefined>(undefined);
+  const [statistics, setStatistics] = useState<JobsData['statistics'] | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get<JobsData>('/data/admin-employment-jobs.json');
+        setJobs(response.data.jobs);
+        setPagination(response.data.pagination);
+        setStatistics(response.data.statistics);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to load jobs data:', err);
+        setError('Failed to load jobs data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-slate-50">
       <AdminHeader title="Employment" />
       <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
         <JobsHeader />
-        
-        {usingMockData && (
-          <div className="p-4 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
-            <p className="font-medium">⚠️ Using mock data - Backend API not available</p>
-            <p className="text-sm mt-1">Create/edit/delete operations will not work until the backend is connected.</p>
-          </div>
+
+        {/* Loading State */}
+        {loading && (
+          <Card className="p-6">
+            <div className="space-y-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="space-y-2">
+                    <Skeleton className="h-5 w-64" />
+                    <Skeleton className="h-4 w-48" />
+                  </div>
+                  <div className="flex space-x-2">
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-8 w-16" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
         )}
-        
-        <JobsTable jobs={jobs} pagination={pagination} />
+
+        {/* Error State */}
+        {error && !loading && (
+          <Card className="p-12 text-center">
+            <p className="text-red-600 text-lg font-medium">{error}</p>
+            <p className="text-slate-500 mt-2">Please try refreshing the page</p>
+          </Card>
+        )}
+
+        {/* Jobs Table */}
+        {!loading && !error && (
+          <JobsTable jobs={jobs} pagination={pagination} />
+        )}
       </div>
     </div>
   );

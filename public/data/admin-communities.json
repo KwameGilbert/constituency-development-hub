@@ -1,0 +1,144 @@
+{
+  "communities": [
+    {
+      "id": "c1",
+      "name": "Sefwi Asawinso",
+      "slug": "sefwiasawinso",
+      "description": "The largest community in the Sefwi constituency, known for its rich cultural heritage and agricultural activities. Home to the constituency headquarters and major administrative offices.",
+      "status": "active",
+      "population": 25000,
+      "area_km2": 45.2,
+      "coordinates": {
+        "latitude": 6.2833,
+        "longitude": -2.3333
+      },
+      "contact_info": {
+        "email": "asawinso@constituency.gov.gh",
+        "phone": "+233244123456"
+      },
+      "infrastructure": {
+        "electricity_coverage": 85,
+        "water_coverage": 70,
+        "road_network": "good",
+        "health_facilities": 2,
+        "schools": 8
+      },
+      "economic_activities": ["farming", "trading", "mining", "services"],
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2025-01-15T10:30:00Z"
+    },
+    {
+      "id": "c2",
+      "name": "Sefwi Boako",
+      "slug": "sefwiboako",
+      "description": "A vibrant community known for its educational institutions and youth development programs. Features modern infrastructure and serves as an educational hub.",
+      "status": "active",
+      "population": 18000,
+      "area_km2": 32.8,
+      "coordinates": {
+        "latitude": 6.3167,
+        "longitude": -2.2833
+      },
+      "contact_info": {
+        "email": "boako@constituency.gov.gh",
+        "phone": "+233244234567"
+      },
+      "infrastructure": {
+        "electricity_coverage": 90,
+        "water_coverage": 75,
+        "road_network": "excellent",
+        "health_facilities": 1,
+        "schools": 6
+      },
+      "economic_activities": ["education", "farming", "business", "services"],
+      "created_at": "2024-01-02T00:00:00Z",
+      "updated_at": "2025-01-14T14:20:00Z"
+    },
+    {
+      "id": "c3",
+      "name": "Sefwi Dwenase",
+      "slug": "sefwidwenase",
+      "description": "An agricultural community with rich cocoa farming traditions. Known for its community-based development initiatives and cooperative farming practices.",
+      "status": "active",
+      "population": 15000,
+      "area_km2": 28.5,
+      "coordinates": {
+        "latitude": 6.2500,
+        "longitude": -2.3167
+      },
+      "contact_info": {
+        "email": "dwenase@constituency.gov.gh",
+        "phone": "+233244345678"
+      },
+      "infrastructure": {
+        "electricity_coverage": 65,
+        "water_coverage": 60,
+        "road_network": "fair",
+        "health_facilities": 1,
+        "schools": 5
+      },
+      "economic_activities": ["cocoa_farming", "food_crops", "trading", "cooperatives"],
+      "created_at": "2024-01-03T00:00:00Z",
+      "updated_at": "2025-01-13T16:45:00Z"
+    },
+    {
+      "id": "c4",
+      "name": "Sefwi Wiawso",
+      "slug": "sefwiwiawso",
+      "description": "A border community with strong cross-border trade relations. Features diverse economic activities and serves as a commercial gateway for the constituency.",
+      "status": "active",
+      "population": 22000,
+      "area_km2": 38.9,
+      "coordinates": {
+        "latitude": 6.2167,
+        "longitude": -2.4833
+      },
+      "contact_info": {
+        "email": "wiawso@constituency.gov.gh",
+        "phone": "+233244456789"
+      },
+      "infrastructure": {
+        "electricity_coverage": 75,
+        "water_coverage": 65,
+        "road_network": "good",
+        "health_facilities": 2,
+        "schools": 7
+      },
+      "economic_activities": ["trading", "farming", "border_trade", "services"],
+      "created_at": "2024-01-04T00:00:00Z",
+      "updated_at": "2025-01-12T11:15:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 4,
+    "total_pages": 1
+  },
+  "statistics": {
+    "total_communities": 4,
+    "active_communities": 4,
+    "total_population": 80000,
+    "average_population": 20000,
+    "total_area_km2": 145.4,
+    "average_area_km2": 36.35,
+    "infrastructure_summary": {
+      "average_electricity_coverage": 78.75,
+      "average_water_coverage": 67.5,
+      "health_facilities_total": 6,
+      "schools_total": 26
+    },
+    "economic_activities_distribution": {
+      "farming": 4,
+      "trading": 3,
+      "services": 3,
+      "education": 1,
+      "mining": 1,
+      "business": 1,
+      "cocoa_farming": 1,
+      "food_crops": 1,
+      "cooperatives": 1,
+      "border_trade": 1
+    }
+  }
+}

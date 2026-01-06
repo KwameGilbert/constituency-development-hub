@@ -1,0 +1,156 @@
+{
+  "smaller_communities": [
+    {
+      "id": "sc1",
+      "name": "Sefwi Ananta",
+      "slug": "sefwiananta",
+      "description": "A smaller community within Sefwi Asawinso, known for its traditional crafts and community farming initiatives.",
+      "community_id": "c1",
+      "community_name": "Sefwi Asawinso",
+      "status": "active",
+      "population": 3200,
+      "coordinates": {
+        "latitude": 6.2833,
+        "longitude": -2.3333
+      },
+      "infrastructure": {
+        "electricity_coverage": 80,
+        "water_coverage": 65,
+        "health_facilities": 0,
+        "schools": 2
+      },
+      "economic_activities": ["farming", "crafts", "trading"],
+      "created_at": "2024-02-01T00:00:00Z",
+      "updated_at": "2025-01-10T09:15:00Z"
+    },
+    {
+      "id": "sc2",
+      "name": "Sefwi Bekwai",
+      "slug": "sefwibekwai",
+      "description": "Agricultural community specializing in vegetable farming and community-based cooperatives.",
+      "community_id": "c2",
+      "community_name": "Sefwi Boako",
+      "status": "active",
+      "population": 2800,
+      "coordinates": {
+        "latitude": 6.3167,
+        "longitude": -2.2833
+      },
+      "infrastructure": {
+        "electricity_coverage": 85,
+        "water_coverage": 70,
+        "health_facilities": 0,
+        "schools": 1
+      },
+      "economic_activities": ["vegetable_farming", "cooperatives", "trading"],
+      "created_at": "2024-02-02T00:00:00Z",
+      "updated_at": "2025-01-09T14:30:00Z"
+    },
+    {
+      "id": "sc3",
+      "name": "Sefwi Akasa",
+      "slug": "sefwiakasa",
+      "description": "Forest community with strong cocoa farming traditions and sustainable agriculture practices.",
+      "community_id": "c3",
+      "community_name": "Sefwi Dwenase",
+      "status": "active",
+      "population": 2100,
+      "coordinates": {
+        "latitude": 6.2500,
+        "longitude": -2.3167
+      },
+      "infrastructure": {
+        "electricity_coverage": 60,
+        "water_coverage": 55,
+        "health_facilities": 0,
+        "schools": 1
+      },
+      "economic_activities": ["cocoa_farming", "sustainable_agriculture", "forest_products"],
+      "created_at": "2024-02-03T00:00:00Z",
+      "updated_at": "2025-01-08T16:45:00Z"
+    },
+    {
+      "id": "sc4",
+      "name": "Sefwi Juaboso",
+      "slug": "sefwijuaboso",
+      "description": "Border trading community with diverse economic activities and cross-border commerce.",
+      "community_id": "c4",
+      "community_name": "Sefwi Wiawso",
+      "status": "active",
+      "population": 3500,
+      "coordinates": {
+        "latitude": 6.2167,
+        "longitude": -2.4833
+      },
+      "infrastructure": {
+        "electricity_coverage": 70,
+        "water_coverage": 60,
+        "health_facilities": 0,
+        "schools": 2
+      },
+      "economic_activities": ["border_trade", "trading", "services"],
+      "created_at": "2024-02-04T00:00:00Z",
+      "updated_at": "2025-01-07T11:20:00Z"
+    },
+    {
+      "id": "sc5",
+      "name": "Sefwi Chirano",
+      "slug": "sefwichirano",
+      "description": "Mining community with growing service sector and community development programs.",
+      "community_id": "c1",
+      "community_name": "Sefwi Asawinso",
+      "status": "active",
+      "population": 2900,
+      "coordinates": {
+        "latitude": 6.2833,
+        "longitude": -2.3333
+      },
+      "infrastructure": {
+        "electricity_coverage": 90,
+        "water_coverage": 75,
+        "health_facilities": 1,
+        "schools": 1
+      },
+      "economic_activities": ["mining", "services", "trading"],
+      "created_at": "2024-02-05T00:00:00Z",
+      "updated_at": "2025-01-06T13:40:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 5,
+    "total_pages": 1
+  },
+  "statistics": {
+    "total_smaller_communities": 5,
+    "active_smaller_communities": 5,
+    "total_population": 14500,
+    "average_population": 2900,
+    "by_community": {
+      "c1": 2,
+      "c2": 1,
+      "c3": 1,
+      "c4": 1
+    },
+    "infrastructure_summary": {
+      "average_electricity_coverage": 77,
+      "average_water_coverage": 65,
+      "health_facilities_total": 1,
+      "schools_total": 7
+    },
+    "economic_activities_distribution": {
+      "farming": 1,
+      "crafts": 1,
+      "trading": 4,
+      "vegetable_farming": 1,
+      "cooperatives": 1,
+      "cocoa_farming": 1,
+      "sustainable_agriculture": 1,
+      "forest_products": 1,
+      "border_trade": 1,
+      "services": 2,
+      "mining": 1
+    }
+  }
+}

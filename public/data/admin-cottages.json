@@ -1,0 +1,178 @@
+{
+  "cottages": [
+    {
+      "id": "ct1",
+      "name": "Sefwi Asafo Gardens",
+      "slug": "sefwiasafogardens",
+      "description": "Residential cottage community with modern housing and community gardens.",
+      "suburb_id": "s1",
+      "suburb_name": "Sefwi Asafo",
+      "smaller_community_id": null,
+      "smaller_community_name": null,
+      "status": "active",
+      "population": 450,
+      "households": 120,
+      "coordinates": {
+        "latitude": 6.2833,
+        "longitude": -2.3333
+      },
+      "infrastructure": {
+        "electricity_coverage": 100,
+        "water_coverage": 95,
+        "road_network": "excellent",
+        "waste_management": "available"
+      },
+      "amenities": ["community_garden", "playground", "security", "parking"],
+      "created_at": "2024-04-01T00:00:00Z",
+      "updated_at": "2025-01-15T10:30:00Z"
+    },
+    {
+      "id": "ct2",
+      "name": "Sefwi Essam Heights",
+      "slug": "sefwiessamheights",
+      "description": "Upscale residential cottages near educational institutions.",
+      "suburb_id": "s2",
+      "suburb_name": "Sefwi Essam",
+      "smaller_community_id": null,
+      "smaller_community_name": null,
+      "status": "active",
+      "population": 380,
+      "households": 95,
+      "coordinates": {
+        "latitude": 6.3167,
+        "longitude": -2.2833
+      },
+      "infrastructure": {
+        "electricity_coverage": 100,
+        "water_coverage": 90,
+        "road_network": "excellent",
+        "waste_management": "available"
+      },
+      "amenities": ["school_access", "library", "community_center", "parking"],
+      "created_at": "2024-04-02T00:00:00Z",
+      "updated_at": "2025-01-14T14:20:00Z"
+    },
+    {
+      "id": "ct3",
+      "name": "Sefwi Adabokrom Estates",
+      "slug": "sefwiadabokromestates",
+      "description": "Commercial-residential cottages serving business community.",
+      "suburb_id": "s3",
+      "suburb_name": "Sefwi Adabokrom",
+      "smaller_community_id": null,
+      "smaller_community_name": null,
+      "status": "active",
+      "population": 520,
+      "households": 140,
+      "coordinates": {
+        "latitude": 6.2167,
+        "longitude": -2.4833
+      },
+      "infrastructure": {
+        "electricity_coverage": 98,
+        "water_coverage": 85,
+        "road_network": "good",
+        "waste_management": "available"
+      },
+      "amenities": ["market_access", "business_center", "parking", "security"],
+      "created_at": "2024-04-03T00:00:00Z",
+      "updated_at": "2025-01-13T16:45:00Z"
+    },
+    {
+      "id": "ct4",
+      "name": "Sefwi Ananta Village",
+      "slug": "sefwianantavillage",
+      "description": "Traditional cottages integrated with smaller community living.",
+      "suburb_id": null,
+      "suburb_name": null,
+      "smaller_community_id": "sc1",
+      "smaller_community_name": "Sefwi Ananta",
+      "status": "active",
+      "population": 280,
+      "households": 70,
+      "coordinates": {
+        "latitude": 6.2833,
+        "longitude": -2.3333
+      },
+      "infrastructure": {
+        "electricity_coverage": 85,
+        "water_coverage": 70,
+        "road_network": "fair",
+        "waste_management": "community_based"
+      },
+      "amenities": ["community_farm", "traditional_market", "meeting_hall"],
+      "created_at": "2024-04-04T00:00:00Z",
+      "updated_at": "2025-01-12T11:15:00Z"
+    },
+    {
+      "id": "ct5",
+      "name": "Sefwi Bekwai Greens",
+      "slug": "sefwibekwaigreens",
+      "description": "Eco-friendly cottages with community farming integration.",
+      "suburb_id": null,
+      "suburb_name": null,
+      "smaller_community_id": "sc2",
+      "smaller_community_name": "Sefwi Bekwai",
+      "status": "active",
+      "population": 320,
+      "households": 85,
+      "coordinates": {
+        "latitude": 6.3167,
+        "longitude": -2.2833
+      },
+      "infrastructure": {
+        "electricity_coverage": 90,
+        "water_coverage": 75,
+        "road_network": "good",
+        "waste_management": "composting"
+      },
+      "amenities": ["organic_farm", "composting_facility", "community_garden", "eco_center"],
+      "created_at": "2024-04-05T00:00:00Z",
+      "updated_at": "2025-01-11T13:40:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 5,
+    "total_pages": 1
+  },
+  "statistics": {
+    "total_cottages": 5,
+    "active_cottages": 5,
+    "total_population": 1950,
+    "total_households": 510,
+    "average_population_per_cottage": 390,
+    "average_households_per_cottage": 102,
+    "by_location_type": {
+      "suburb_based": 3,
+      "smaller_community_based": 2
+    },
+    "infrastructure_summary": {
+      "average_electricity_coverage": 94.6,
+      "average_water_coverage": 83,
+      "waste_management_types": {
+        "available": 3,
+        "community_based": 1,
+        "composting": 1
+      }
+    },
+    "amenities_distribution": {
+      "community_garden": 2,
+      "parking": 3,
+      "security": 2,
+      "playground": 1,
+      "school_access": 1,
+      "library": 1,
+      "community_center": 1,
+      "market_access": 1,
+      "business_center": 1,
+      "community_farm": 1,
+      "traditional_market": 1,
+      "meeting_hall": 1,
+      "organic_farm": 1,
+      "composting_facility": 1,
+      "eco_center": 1
+    }
+  }
+}
