@@ -1,15 +1,5 @@
 {
-  "/(dashboards)/admin-dashboard/agents/new/page": "app/(dashboards)/admin-dashboard/agents/new/page.js",
-  "/(dashboards)/admin-dashboard/agents/page": "app/(dashboards)/admin-dashboard/agents/page.js",
-  "/(dashboards)/admin-dashboard/analytics/page": "app/(dashboards)/admin-dashboard/analytics/page.js",
-  "/(dashboards)/admin-dashboard/audit/page": "app/(dashboards)/admin-dashboard/audit/page.js",
-  "/(dashboards)/admin-dashboard/ideas/page": "app/(dashboards)/admin-dashboard/ideas/page.js",
-  "/(dashboards)/admin-dashboard/locations/communities/page": "app/(dashboards)/admin-dashboard/locations/communities/page.js",
-  "/(dashboards)/admin-dashboard/locations/page": "app/(dashboards)/admin-dashboard/locations/page.js",
-  "/(dashboards)/admin-dashboard/officers/[id]/page": "app/(dashboards)/admin-dashboard/officers/[id]/page.js",
-  "/(dashboards)/admin-dashboard/officers/page": "app/(dashboards)/admin-dashboard/officers/page.js",
-  "/(dashboards)/admin-dashboard/page": "app/(dashboards)/admin-dashboard/page.js",
-  "/(dashboards)/admin-dashboard/users/new/page": "app/(dashboards)/admin-dashboard/users/new/page.js",
-  "/(dashboards)/admin-dashboard/users/page": "app/(dashboards)/admin-dashboard/users/page.js",
-  "/_not-found/page": "app/_not-found/page.js"
+  "/(public)/page": "app/(public)/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/login/page": "app/login/page.js"
 }
