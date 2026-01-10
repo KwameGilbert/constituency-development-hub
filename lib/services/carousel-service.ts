@@ -66,15 +66,42 @@ export const heroSlidesService = {
   },
 
   // Create new hero slide
-  createSlide: async (data: CreateHeroSlidePayload) => {
+  createSlide: async (data: CreateHeroSlidePayload, file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+
     return apiClient<HeroSlidesResponse>("/admin/hero-slides", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: formData,
+      isFormData: true,
     });
   },
 
   // Update hero slide
-  updateSlide: async (id: number, data: Partial<CreateHeroSlidePayload>) => {
+  updateSlide: async (id: number, data: Partial<CreateHeroSlidePayload>, file?: File) => {
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
+
+      return apiClient<HeroSlidesResponse>(`/admin/hero-slides/${id}`, {
+        method: "PUT",
+        body: formData,
+        isFormData: true,
+      });
+    }
+
     return apiClient<HeroSlidesResponse>(`/admin/hero-slides/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),

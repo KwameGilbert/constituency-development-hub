@@ -199,21 +199,7 @@ export function NewBlogPostForm() {
                 <div className="space-y-2">
                     <Label>Featured Image</Label>
                     <div className="space-y-4">
-                        {/* URL Input (temporary fallback) */}
-                        <div className="space-y-2">
-                            <Input 
-                                type="url"
-                                placeholder="Or enter image URL: https://example.com/image.jpg" 
-                                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-                                value={imagePreview && !selectedFile ? imagePreview : ""}
-                                onChange={(e) => {
-                                    setImagePreview(e.target.value);
-                                    setSelectedFile(null);
-                                }}
-                                disabled={isLoading}
-                            />
-                            <p className="text-xs text-slate-400">Temporary: Use URL until upload endpoint is ready</p>
-                        </div>
+
 
                         {/* File Input */}
                         {!imagePreview ? (

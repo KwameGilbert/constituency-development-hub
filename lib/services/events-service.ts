@@ -91,7 +91,28 @@ export const eventsService = {
   },
 
   // Create new event - accepts any object to handle different backend field requirements
-  createEvent: async (data: Record<string, unknown>) => {
+  createEvent: async (data: Record<string, unknown>, file?: File) => {
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      return apiClient<EventsResponse>("/admin/events", {
+        method: "POST",
+        body: formData,
+        isFormData: true,
+      });
+    }
+
     return apiClient<EventsResponse>("/admin/events", {
       method: "POST",
       body: JSON.stringify(data),
@@ -99,7 +120,28 @@ export const eventsService = {
   },
 
   // Update event - accepts any object for flexibility
-  updateEvent: async (id: number, data: Record<string, unknown>) => {
+  updateEvent: async (id: number, data: Record<string, unknown>, file?: File) => {
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, String(value));
+          }
+        }
+      });
+
+      return apiClient<EventsResponse>(`/admin/events/${id}`, {
+        method: "PUT",
+        body: formData,
+        isFormData: true,
+      });
+    }
+
     return apiClient<EventsResponse>(`/admin/events/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
