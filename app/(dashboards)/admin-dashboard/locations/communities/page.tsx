@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { 
-    Home, 
-    MapPin, 
     UserCircle, 
     ShieldAlert, 
     Settings2, 
@@ -14,7 +12,8 @@ import {
     Building,
     Edit,
     Trash2,
-    ArrowLeft
+    ArrowLeft,
+    Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,49 +33,191 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { locationsService, Location } from "@/lib/services/locations-service";
+
+interface Community {
+    id: number;
+    name: string;
+    children_count: number;
+    created_at: string;
+}
 
 export default function CommunitiesPage() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [newCommunityName, setNewCommunityName] = useState("");
     
+    // API State
+    const [communities, setCommunities] = useState<Community[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
     // Edit State
-    const [selectedCommunity, setSelectedCommunity] = useState<{id: number, name: string} | null>(null);
+    const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
     const [editCommunityName, setEditCommunityName] = useState("");
 
-    // Mock Data
-    const communities = [
-        { id: 1, name: "Sefwi Asawinso", suburbs: 1, created: "Sep 28, 2025" },
-        { id: 2, name: "Sefwi Boako", suburbs: 0, created: "Sep 28, 2025" },
-        { id: 3, name: "Sefwi Dwenase", suburbs: 0, created: "Sep 28, 2025" },
-        { id: 4, name: "Sefwi Wiawso", suburbs: 0, created: "Sep 28, 2025" },
-    ];
+    // Fetch communities from API
+    const fetchCommunities = useCallback(async () => {
+        try {
+            setLoading(true);
+            const response = await locationsService.getLocations({
+                type: 'community',
+                limit: 100,
+                sort_by: 'name',
+                sort_order: 'asc'
+            });
+            
+            if (response.success && response.data?.locations) {
+                const mappedCommunities: Community[] = response.data.locations.map((loc: Location) => ({
+                    id: loc.id,
+                    name: loc.name,
+                    children_count: loc.children_count,
+                    created_at: loc.created_at
+                }));
+                setCommunities(mappedCommunities);
+            }
+        } catch (error) {
+            console.error("Failed to fetch communities:", error);
+            toast.error("Failed to load communities");
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
+    useEffect(() => {
+        fetchCommunities();
+    }, [fetchCommunities]);
+
+    // Filter communities based on search query
     const filteredCommunities = communities.filter(c => 
         c.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleAddCommunity = () => {
-        // Handle add logic here
-        console.log("Adding community:", newCommunityName);
-        setIsAddModalOpen(false);
-        setNewCommunityName("");
+    // Format date for display
+    const formatDate = (dateString: string) => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+        } catch {
+            return dateString;
+        }
     };
 
-    const handleEditClick = (community: typeof communities[0]) => {
+    // Handle adding a new community
+    const handleAddCommunity = async () => {
+        if (!newCommunityName.trim()) {
+            toast.error("Community name is required");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.createLocation({
+                name: newCommunityName.trim(),
+                type: 'community',
+            });
+
+            if (response.success) {
+                toast.success("Community added successfully");
+                setIsAddModalOpen(false);
+                setNewCommunityName("");
+                fetchCommunities();
+            } else {
+                toast.error(response.message || "Failed to add community");
+            }
+        } catch (error) {
+            console.error("Failed to add community:", error);
+            toast.error("Failed to add community");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Handle edit click
+    const handleEditClick = (community: Community) => {
         setSelectedCommunity(community);
         setEditCommunityName(community.name);
         setIsEditModalOpen(true);
     };
 
-    const handleSaveChanges = () => {
-        // Handle save logic here
-        console.log("Updating community:", selectedCommunity?.id, "to", editCommunityName);
-        setIsEditModalOpen(false);
-        setSelectedCommunity(null);
-        setEditCommunityName("");
+    // Handle saving changes
+    const handleSaveChanges = async () => {
+        if (!selectedCommunity) return;
+        
+        if (!editCommunityName.trim()) {
+            toast.error("Community name is required");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.updateLocation(selectedCommunity.id, {
+                name: editCommunityName.trim(),
+            });
+
+            if (response.success) {
+                toast.success("Community updated successfully");
+                setIsEditModalOpen(false);
+                setSelectedCommunity(null);
+                setEditCommunityName("");
+                fetchCommunities();
+            } else {
+                toast.error(response.message || "Failed to update community");
+            }
+        } catch (error) {
+            console.error("Failed to update community:", error);
+            toast.error("Failed to update community");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Handle delete click
+    const handleDeleteClick = (community: Community) => {
+        setSelectedCommunity(community);
+        setIsDeleteDialogOpen(true);
+    };
+
+    // Handle delete confirmation
+    const handleConfirmDelete = async () => {
+        if (!selectedCommunity) return;
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.deleteLocation(selectedCommunity.id);
+
+            if (response.success) {
+                toast.success("Community deleted successfully");
+                setIsDeleteDialogOpen(false);
+                setSelectedCommunity(null);
+                fetchCommunities();
+            } else {
+                toast.error(response.message || "Failed to delete community");
+            }
+        } catch (error) {
+            console.error("Failed to delete community:", error);
+            toast.error("Failed to delete community. It may have associated suburbs or issues.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -111,7 +252,9 @@ export default function CommunitiesPage() {
                     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
                         <div className="space-y-1">
                             <h2 className="text-lg font-semibold text-gray-900">Communities</h2>
-                            <p className="text-sm text-gray-500">Showing {filteredCommunities.length} communities</p>
+                            <p className="text-sm text-gray-500">
+                                {loading ? "Loading..." : `Showing ${filteredCommunities.length} communities`}
+                            </p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
@@ -145,49 +288,66 @@ export default function CommunitiesPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {filteredCommunities.map((community) => (
-                                        <TableRow key={community.id} className="hover:bg-gray-50/50 border-gray-100 transition-colors">
-                                            <TableCell className="font-medium text-gray-900">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                                                        <Building className="w-4 h-4" />
-                                                    </div>
-                                                    {community.name}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {community.suburbs > 0 ? (
-                                                    <Badge variant="secondary" className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
-                                                        {community.suburbs} suburbs
-                                                    </Badge>
-                                                ) : (
-                                                    <span className="text-gray-400 text-sm">No suburbs</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell className="text-gray-500 text-sm">{community.created}</TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <Button 
-                                                        variant="ghost" 
-                                                        size="icon" 
-                                                        className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                                                        onClick={() => handleEditClick(community)}
-                                                    >
-                                                        <Edit className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
+                                    {loading ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center py-10">
+                                                <div className="flex flex-col items-center justify-center gap-2">
+                                                    <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+                                                    <span className="text-gray-500">Loading communities...</span>
                                                 </div>
                                             </TableCell>
                                         </TableRow>
-                                    ))}
-                                    {filteredCommunities.length === 0 && (
+                                    ) : filteredCommunities.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={4} className="text-center py-10 text-gray-500">
                                                 No communities found
                                             </TableCell>
                                         </TableRow>
+                                    ) : (
+                                        filteredCommunities.map((community) => (
+                                            <TableRow key={community.id} className="hover:bg-gray-50/50 border-gray-100 transition-colors">
+                                                <TableCell className="font-medium text-gray-900">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                                            <Building className="w-4 h-4" />
+                                                        </div>
+                                                        {community.name}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {community.children_count > 0 ? (
+                                                        <Badge variant="secondary" className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100">
+                                                            {community.children_count} suburbs
+                                                        </Badge>
+                                                    ) : (
+                                                        <span className="text-gray-400 text-sm">No suburbs</span>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell className="text-gray-500 text-sm">
+                                                    {formatDate(community.created_at)}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <Button 
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                                                            onClick={() => handleEditClick(community)}
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button 
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
+                                                            onClick={() => handleDeleteClick(community)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
                                     )}
                                 </TableBody>
                             </Table>
@@ -210,16 +370,31 @@ export default function CommunitiesPage() {
                                 placeholder="Enter community name" 
                                 value={newCommunityName}
                                 onChange={(e) => setNewCommunityName(e.target.value)}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                        <Button 
+                            variant="outline" 
+                            onClick={() => setIsAddModalOpen(false)}
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </Button>
                         <Button 
                             className="bg-indigo-600 hover:bg-indigo-700 text-white"
                             onClick={handleAddCommunity}
+                            disabled={isSubmitting}
                         >
-                            Add Community
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Adding...
+                                </>
+                            ) : (
+                                "Add Community"
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -239,20 +414,65 @@ export default function CommunitiesPage() {
                                 placeholder="Enter community name" 
                                 value={editCommunityName}
                                 onChange={(e) => setEditCommunityName(e.target.value)}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                        <Button 
+                            variant="outline" 
+                            onClick={() => setIsEditModalOpen(false)}
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </Button>
                         <Button 
                             className="bg-indigo-600 hover:bg-indigo-700 text-white"
                             onClick={handleSaveChanges}
+                            disabled={isSubmitting}
                         >
-                            Save Changes
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Save Changes"
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Community</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete &quot;{selectedCommunity?.name}&quot;? 
+                            This action cannot be undone. Communities with associated suburbs or issues cannot be deleted.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleConfirmDelete}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                "Delete"
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card } from "@/components/ui/card";
 import {
   AlertCircle,
@@ -15,40 +14,23 @@ import {
   TrendingUp,
   TrendingDown
 } from "lucide-react";
-
-interface MetricsData {
-  metrics: {
-    totalIssues: number;
-    activeStaff: number;
-    totalProjects: number;
-    activeBudget: number;
-    newIssuesThisWeek: number;
-    resolvedThisWeek: number;
-    activeUsers7Days: number;
-    ongoingProjects: number;
-  };
-  trends: {
-    issuesChange: number;
-    staffChange: number;
-    projectsChange: number;
-    budgetChange: number;
-    newIssuesChange: number;
-    resolvedChange: number;
-    activeUsersChange: number;
-    ongoingProjectsChange: number;
-  };
-}
+import { dashboardService, AnalyticsMetricsData } from "@/lib/services/dashboard-service";
 
 export function AnalyticsMetrics() {
-  const [metricsData, setMetricsData] = useState<MetricsData | null>(null);
+  const [metricsData, setMetricsData] = useState<AnalyticsMetricsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await axios.get('/data/admin-analytics-metrics.json');
-        setMetricsData(response.data);
+        const response = await dashboardService.getAnalyticsMetrics();
+        
+        if (response.success && response.data) {
+          setMetricsData(response.data);
+        } else {
+          setError(response.message || 'Failed to load metrics data');
+        }
       } catch (err) {
         setError('Failed to load metrics data');
         console.error('Error fetching metrics:', err);

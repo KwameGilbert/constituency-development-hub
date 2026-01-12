@@ -24,7 +24,6 @@ import {
   MapPin,
   FolderKanban,
   Lightbulb,
-  Megaphone,
   Settings,
   ShieldAlert,
   UserCircle,
@@ -32,6 +31,7 @@ import {
   LogOut,
   Crown,
   Star,
+  Tag,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -168,6 +168,7 @@ export function AdminSidebar() {
                 { title: "Field Agents", icon: Briefcase, href: "/admin-dashboard/agents" }, 
                 { title: "Youth Records", icon: GraduationCap, href: "/admin-dashboard/youth" },
                 { title: "Locations", icon: MapPin, href: "/admin-dashboard/locations" },
+                { title: "Sectors", icon: Tag, href: "/admin-dashboard/sectors" },
               ].map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
@@ -201,7 +202,6 @@ export function AdminSidebar() {
                 { title: "Projects", icon: FolderKanban, href: "/admin-dashboard/projects" },
                 { title: "Employment", icon: Briefcase, href: "/admin-dashboard/employment" },
                 { title: "Ideas & Suggestions", icon: Lightbulb, href: "/admin-dashboard/ideas" },
-                { title: "Announcements", icon: Megaphone, href: "/admin-dashboard/announcements" },
               ].map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton

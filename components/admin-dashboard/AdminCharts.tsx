@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
@@ -15,9 +14,8 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  AreaChart,
-  Area
 } from "recharts";
+import { dashboardService } from "@/lib/services/dashboard-service";
 
 interface ChartData {
   issuesStatusDistribution: Array<{
@@ -40,8 +38,22 @@ export function AdminCharts() {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await axios.get('/data/admin-charts.json');
-        setChartData(response.data);
+        const response = await dashboardService.getAdminCharts();
+        
+        if (response.success && response.data?.charts) {
+          // Transform API response to component format
+          const transformedData: ChartData = {
+            issuesStatusDistribution: response.data.charts.issueStatusDistribution || [],
+            monthlyTrends: (response.data.charts.monthlyTrends || []).map(item => ({
+              name: item.name,
+              total: item.issues,
+              resolved: item.resolved,
+            })),
+          };
+          setChartData(transformedData);
+        } else {
+          setError(response.message || 'Failed to load chart data');
+        }
       } catch (err) {
         setError('Failed to load chart data');
         console.error('Error fetching chart data:', err);

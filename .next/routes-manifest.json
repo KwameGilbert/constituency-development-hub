@@ -1,0 +1,707 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/admin-dashboard/agents/[id]",
+      "regex": "^/admin\\-dashboard/agents/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/agents/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/agents/[id]/edit",
+      "regex": "^/admin\\-dashboard/agents/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/agents/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/announcements/[id]",
+      "regex": "^/admin\\-dashboard/announcements/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/announcements/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/announcements/[id]/edit",
+      "regex": "^/admin\\-dashboard/announcements/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/announcements/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/employment/[id]",
+      "regex": "^/admin\\-dashboard/employment/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/employment/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/employment/[id]/edit",
+      "regex": "^/admin\\-dashboard/employment/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/employment/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/ideas/[id]",
+      "regex": "^/admin\\-dashboard/ideas/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/ideas/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/issues/[id]",
+      "regex": "^/admin\\-dashboard/issues/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/issues/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/officers/[id]",
+      "regex": "^/admin\\-dashboard/officers/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/officers/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/officers/[id]/edit",
+      "regex": "^/admin\\-dashboard/officers/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/officers/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/projects/[id]",
+      "regex": "^/admin\\-dashboard/projects/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/projects/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/projects/[id]/edit",
+      "regex": "^/admin\\-dashboard/projects/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/projects/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/users/[id]",
+      "regex": "^/admin\\-dashboard/users/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/users/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/users/[id]/edit",
+      "regex": "^/admin\\-dashboard/users/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/users/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/youth/[id]",
+      "regex": "^/admin\\-dashboard/youth/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/youth/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/youth/[id]/edit",
+      "regex": "^/admin\\-dashboard/youth/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin\\-dashboard/youth/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/blog/[slug]",
+      "regex": "^/blog/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/blog/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/events/[slug]",
+      "regex": "^/events/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/events/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/agents/[id]",
+      "regex": "^/officer\\-dashboard/agents/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/officer\\-dashboard/agents/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/agents/[id]/edit",
+      "regex": "^/officer\\-dashboard/agents/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/officer\\-dashboard/agents/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/assess/[id]",
+      "regex": "^/task\\-force\\-dashboard/assess/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/task\\-force\\-dashboard/assess/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/issues/[id]",
+      "regex": "^/task\\-force\\-dashboard/issues/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/task\\-force\\-dashboard/issues/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/announcements/[id]",
+      "regex": "^/web\\-admin\\-dashboard/announcements/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/web\\-admin\\-dashboard/announcements/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/announcements/[id]/edit",
+      "regex": "^/web\\-admin\\-dashboard/announcements/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/web\\-admin\\-dashboard/announcements/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/blog/[id]/edit",
+      "regex": "^/web\\-admin\\-dashboard/blog/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/web\\-admin\\-dashboard/blog/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/carousel/[id]/edit",
+      "regex": "^/web\\-admin\\-dashboard/carousel/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/web\\-admin\\-dashboard/carousel/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/events/[id]",
+      "regex": "^/web\\-admin\\-dashboard/events/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/web\\-admin\\-dashboard/events/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/events/[id]/edit",
+      "regex": "^/web\\-admin\\-dashboard/events/([^/]+?)/edit(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/web\\-admin\\-dashboard/events/(?<nxtPid>[^/]+?)/edit(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard",
+      "regex": "^/admin\\-dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/agents",
+      "regex": "^/admin\\-dashboard/agents(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/agents(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/agents/new",
+      "regex": "^/admin\\-dashboard/agents/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/agents/new(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/analytics",
+      "regex": "^/admin\\-dashboard/analytics(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/analytics(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/announcements",
+      "regex": "^/admin\\-dashboard/announcements(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/announcements(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/announcements/new",
+      "regex": "^/admin\\-dashboard/announcements/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/announcements/new(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/audit",
+      "regex": "^/admin\\-dashboard/audit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/audit(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/employment",
+      "regex": "^/admin\\-dashboard/employment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/employment(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/employment/new",
+      "regex": "^/admin\\-dashboard/employment/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/employment/new(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/help",
+      "regex": "^/admin\\-dashboard/help(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/help(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/ideas",
+      "regex": "^/admin\\-dashboard/ideas(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/ideas(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/issues",
+      "regex": "^/admin\\-dashboard/issues(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/issues(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/locations",
+      "regex": "^/admin\\-dashboard/locations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/locations(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/locations/communities",
+      "regex": "^/admin\\-dashboard/locations/communities(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/locations/communities(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/locations/cottages",
+      "regex": "^/admin\\-dashboard/locations/cottages(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/locations/cottages(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/locations/smaller-communities",
+      "regex": "^/admin\\-dashboard/locations/smaller\\-communities(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/locations/smaller\\-communities(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/locations/suburbs",
+      "regex": "^/admin\\-dashboard/locations/suburbs(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/locations/suburbs(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/officers",
+      "regex": "^/admin\\-dashboard/officers(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/officers(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/officers/new",
+      "regex": "^/admin\\-dashboard/officers/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/officers/new(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/profile",
+      "regex": "^/admin\\-dashboard/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/profile(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/projects",
+      "regex": "^/admin\\-dashboard/projects(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/projects(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/projects/new",
+      "regex": "^/admin\\-dashboard/projects/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/projects/new(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/reports",
+      "regex": "^/admin\\-dashboard/reports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/reports(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/sectors",
+      "regex": "^/admin\\-dashboard/sectors(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/sectors(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/system-settings",
+      "regex": "^/admin\\-dashboard/system\\-settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/system\\-settings(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/users",
+      "regex": "^/admin\\-dashboard/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/users(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/users/new",
+      "regex": "^/admin\\-dashboard/users/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/users/new(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/youth",
+      "regex": "^/admin\\-dashboard/youth(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/youth(?:/)?$"
+    },
+    {
+      "page": "/admin-dashboard/youth/new",
+      "regex": "^/admin\\-dashboard/youth/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin\\-dashboard/youth/new(?:/)?$"
+    },
+    {
+      "page": "/agents-dashboard",
+      "regex": "^/agents\\-dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents\\-dashboard(?:/)?$"
+    },
+    {
+      "page": "/agents-dashboard/issues",
+      "regex": "^/agents\\-dashboard/issues(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents\\-dashboard/issues(?:/)?$"
+    },
+    {
+      "page": "/agents-dashboard/issues/add",
+      "regex": "^/agents\\-dashboard/issues/add(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents\\-dashboard/issues/add(?:/)?$"
+    },
+    {
+      "page": "/agents-dashboard/settings",
+      "regex": "^/agents\\-dashboard/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents\\-dashboard/settings(?:/)?$"
+    },
+    {
+      "page": "/blog",
+      "regex": "^/blog(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/blog(?:/)?$"
+    },
+    {
+      "page": "/contact",
+      "regex": "^/contact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/events",
+      "regex": "^/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/events(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/gallery",
+      "regex": "^/gallery(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/gallery(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard",
+      "regex": "^/officer\\-dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/agents",
+      "regex": "^/officer\\-dashboard/agents(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard/agents(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/help",
+      "regex": "^/officer\\-dashboard/help(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard/help(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/issues",
+      "regex": "^/officer\\-dashboard/issues(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard/issues(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/issues/add",
+      "regex": "^/officer\\-dashboard/issues/add(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard/issues/add(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/profile",
+      "regex": "^/officer\\-dashboard/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard/profile(?:/)?$"
+    },
+    {
+      "page": "/officer-dashboard/reports",
+      "regex": "^/officer\\-dashboard/reports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/officer\\-dashboard/reports(?:/)?$"
+    },
+    {
+      "page": "/robots.txt",
+      "regex": "^/robots\\.txt(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/robots\\.txt(?:/)?$"
+    },
+    {
+      "page": "/sitemap.xml",
+      "regex": "^/sitemap\\.xml(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sitemap\\.xml(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard",
+      "regex": "^/task\\-force\\-dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/dashboard",
+      "regex": "^/task\\-force\\-dashboard/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/dashboard(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/issues",
+      "regex": "^/task\\-force\\-dashboard/issues(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/issues(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/pending",
+      "regex": "^/task\\-force\\-dashboard/pending(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/pending(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/profile",
+      "regex": "^/task\\-force\\-dashboard/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/profile(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/reports",
+      "regex": "^/task\\-force\\-dashboard/reports(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/reports(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/settings",
+      "regex": "^/task\\-force\\-dashboard/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/settings(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/team",
+      "regex": "^/task\\-force\\-dashboard/team(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/team(?:/)?$"
+    },
+    {
+      "page": "/task-force-dashboard/under-assessment",
+      "regex": "^/task\\-force\\-dashboard/under\\-assessment(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/task\\-force\\-dashboard/under\\-assessment(?:/)?$"
+    },
+    {
+      "page": "/unauthorized",
+      "regex": "^/unauthorized(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/unauthorized(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard",
+      "regex": "^/web\\-admin\\-dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/announcements",
+      "regex": "^/web\\-admin\\-dashboard/announcements(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/announcements(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/announcements/new",
+      "regex": "^/web\\-admin\\-dashboard/announcements/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/announcements/new(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/blog",
+      "regex": "^/web\\-admin\\-dashboard/blog(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/blog(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/blog/new",
+      "regex": "^/web\\-admin\\-dashboard/blog/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/blog/new(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/carousel",
+      "regex": "^/web\\-admin\\-dashboard/carousel(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/carousel(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/carousel/new",
+      "regex": "^/web\\-admin\\-dashboard/carousel/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/carousel/new(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/events",
+      "regex": "^/web\\-admin\\-dashboard/events(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/events(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/events/new",
+      "regex": "^/web\\-admin\\-dashboard/events/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/events/new(?:/)?$"
+    },
+    {
+      "page": "/web-admin-dashboard/profile",
+      "regex": "^/web\\-admin\\-dashboard/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/web\\-admin\\-dashboard/profile(?:/)?$"
+    },
+    {
+      "page": "/youth",
+      "regex": "^/youth(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/youth(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

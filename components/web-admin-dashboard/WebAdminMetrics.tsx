@@ -1,10 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { dashboardService } from "@/lib/services/dashboard-service";
 import { FileText, Calendar, Image as ImageIcon, Clock } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { dashboardService, DashboardStats } from "@/lib/services/dashboard-service";
+
+interface WebAdminStats {
+  blog_posts: number;
+  events: number;
+  carousel_items: number;
+  upcoming_events: number;
+}
+
+// Default stats - can be replaced with actual API data when available
+const defaultStats: WebAdminStats = {
+  blog_posts: 0,
+  events: 0,
+  carousel_items: 0,
+  upcoming_events: 0,
+};
 
 interface MetricCardProps {
   title: string;
@@ -64,29 +79,25 @@ function MetricCard({ title, count, label, icon: Icon, href, color, loading }: M
   );
 }
 
+
+
 export function WebAdminMetrics() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [stats, setStats] = useState<WebAdminStats>(defaultStats);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchStats() {
+    const fetchStats = async () => {
       try {
-        const response = await dashboardService.getStats();
-        if (response.success) {
-          setStats(response.data);
+        const response = await dashboardService.getAdminStats();
+        if (response.success && response.data.content_stats) {
+          setStats(response.data.content_stats);
         }
-      } catch {
-        // Silently use fallback values if API fails
-        setStats({
-          blog_posts: 0,
-          events: 0,
-          carousel_items: 0,
-          upcoming_events: 0,
-        });
+      } catch (error) {
+        console.error("Failed to fetch web admin stats:", error);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchStats();
   }, []);

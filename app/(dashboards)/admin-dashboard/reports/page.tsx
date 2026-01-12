@@ -1,11 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { ReportBuilder } from "@/components/admin-dashboard/reports/ReportBuilder";
 import { ReportPreview } from "@/components/admin-dashboard/reports/ReportPreview";
-import { BarChart3, RefreshCw, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
+import { BarChart3, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
+import { ReportData, ReportColumn, getColumnsForType } from "@/lib/services/reports-service";
 
 export default function ReportsPage() {
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [currentColumns, setCurrentColumns] = useState<ReportColumn[]>(getColumnsForType('issues'));
+
+  const handlePreview = (data: ReportData, columns: ReportColumn[]) => {
+    setReportData(data);
+    setCurrentColumns(columns);
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-50">
       <AdminHeader 
@@ -15,7 +25,6 @@ export default function ReportsPage() {
         userName="Admin.Rock"
         userRoleLabel="MP"
         dropdownItems={[
-            { label: "Reset Form", icon: RefreshCw },
             { label: "Profile Settings", href: "/admin-dashboard/profile", icon: UserCircle },
             { label: "Audit Logs", href: "/admin-dashboard/audit", icon: ShieldAlert },
             { label: "System Settings", href: "/admin-dashboard/system-settings", icon: Settings2 },
@@ -28,10 +37,10 @@ export default function ReportsPage() {
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
         
         {/* Report Builder */}
-        <ReportBuilder />
+        <ReportBuilder onPreview={handlePreview} />
 
         {/* Report Preview */}
-        <ReportPreview />
+        <ReportPreview data={reportData} columns={currentColumns} />
 
       </div>
     </div>

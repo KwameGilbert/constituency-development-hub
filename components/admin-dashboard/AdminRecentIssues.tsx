@@ -1,25 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Inbox } from "lucide-react";
-
-interface Issue {
-  id: string;
-  title: string;
-  description: string;
-  agent: string;
-  status: string;
-  severity: string;
-  date: string;
-  category: string;
-}
-
-interface IssuesData {
-  recentIssues: Issue[];
-}
+import { dashboardService, RecentIssue } from "@/lib/services/dashboard-service";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -52,15 +37,20 @@ const getSeverityColor = (severity: string) => {
 };
 
 export function AdminRecentIssues() {
-  const [issues, setIssues] = useState<Issue[]>([]);
+  const [issues, setIssues] = useState<RecentIssue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchIssues = async () => {
       try {
-        const response = await axios.get('/data/admin-recent-issues.json');
-        setIssues(response.data.recentIssues);
+        const response = await dashboardService.getRecentIssues(10);
+        
+        if (response.success && response.data?.recentIssues) {
+          setIssues(response.data.recentIssues);
+        } else {
+          setError(response.message || 'Failed to load recent issues');
+        }
       } catch (err) {
         setError('Failed to load recent issues');
         console.error('Error fetching issues:', err);

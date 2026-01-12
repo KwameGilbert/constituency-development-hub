@@ -16,6 +16,7 @@ import {
   FileText,
   Calendar,
   Image as ImageIcon,
+  Megaphone,
   User,
   LogOut,
 } from "lucide-react";
@@ -105,6 +106,18 @@ export function WebAdminSidebar() {
                   <Link href="/web-admin-dashboard/carousel">
                     <ImageIcon />
                     <span>Carousel</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith("/web-admin-dashboard/announcements")}
+                  className="text-violet-200 hover:bg-violet-900 hover:text-white data-[active=true]:bg-violet-600 data-[active=true]:text-white"
+                >
+                  <Link href="/web-admin-dashboard/announcements">
+                    <Megaphone />
+                    <span>Announcements</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

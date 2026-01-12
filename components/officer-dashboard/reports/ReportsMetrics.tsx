@@ -1,8 +1,44 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Clock, CheckCircle, TrendingUp } from "lucide-react";
+import { FileText, Clock, CheckCircle, TrendingUp, Loader2 } from "lucide-react";
+import { officerReportsService, ReportsSummary } from "@/lib/services/officer-reports-service";
 
 export function ReportsMetrics() {
+    const [loading, setLoading] = useState(true);
+    const [summary, setSummary] = useState<ReportsSummary | null>(null);
+
+    useEffect(() => {
+        async function fetchSummary() {
+            try {
+                const response = await officerReportsService.getSummary();
+                if (response.success) {
+                    setSummary(response.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch reports summary:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchSummary();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, i) => (
+                    <Card key={i}>
+                        <CardContent className="p-6 flex items-center justify-center h-24">
+                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+        );
+    }
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Total Issues */}
@@ -13,7 +49,7 @@ export function ReportsMetrics() {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-muted-foreground">Total Issues</p>
-                        <h3 className="text-2xl font-bold text-[#1e1b4b]">2</h3>
+                        <h3 className="text-2xl font-bold text-[#1e1b4b]">{summary?.total_issues ?? 0}</h3>
                     </div>
                 </CardContent>
             </Card>
@@ -26,7 +62,7 @@ export function ReportsMetrics() {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-muted-foreground">Pending Issues</p>
-                        <h3 className="text-2xl font-bold text-[#1e1b4b]">0</h3>
+                        <h3 className="text-2xl font-bold text-[#1e1b4b]">{summary?.pending_issues ?? 0}</h3>
                     </div>
                 </CardContent>
             </Card>
@@ -39,7 +75,7 @@ export function ReportsMetrics() {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-muted-foreground">Resolved Issues</p>
-                        <h3 className="text-2xl font-bold text-[#1e1b4b]">0</h3>
+                        <h3 className="text-2xl font-bold text-[#1e1b4b]">{summary?.resolved_issues ?? 0}</h3>
                     </div>
                 </CardContent>
             </Card>
@@ -52,7 +88,9 @@ export function ReportsMetrics() {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-muted-foreground">Avg Resolution Time</p>
-                        <h3 className="text-2xl font-bold text-[#1e1b4b]">0 days</h3>
+                        <h3 className="text-2xl font-bold text-[#1e1b4b]">
+                            {summary?.avg_resolution_time ?? 0} days
+                        </h3>
                     </div>
                 </CardContent>
             </Card>

@@ -29,9 +29,10 @@ type AnnouncementFormValues = z.infer<typeof announcementSchema>;
 
 interface AnnouncementFormProps {
   announcement?: Announcement;
+  redirectPath?: string;
 }
 
-export function NewAnnouncementForm({ announcement }: AnnouncementFormProps) {
+export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashboard/announcements" }: AnnouncementFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditMode = !!announcement;
@@ -71,7 +72,7 @@ export function NewAnnouncementForm({ announcement }: AnnouncementFormProps) {
 
       if (response.success) {
         toast.success(isEditMode ? "Announcement updated" : "Announcement created");
-        router.push("/admin-dashboard/announcements");
+        router.push(redirectPath);
         router.refresh();
       } else {
         toast.error("Failed to save");

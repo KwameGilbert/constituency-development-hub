@@ -9,12 +9,16 @@ import VisionMission from "@/components/hero/VisionMission";
 import FAQAccordion from "@/components/hero/FAQAccordion";
 import NewsletterForm from "@/components/hero/NewsletterForm";
 import ContactPanel from "@/components/hero/ContactPanel";
+import AnnouncementSection from "@/components/hero/AnnouncementSection";
+import AnnouncementPopup from "@/components/hero/AnnouncementPopup";
 
 export default function HomeClient() {
   return (
     <div className="bg-white text-slate-900">
       <main className="space-y-0">
+        <AnnouncementPopup />
         <HeroCarousel />
+        <AnnouncementSection />
         <ProjectsShowcase />
         <ArticlesGrid />
         <GalleryPreview />

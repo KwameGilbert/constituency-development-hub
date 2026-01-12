@@ -17,6 +17,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { profileService, UserProfile } from '@/lib/services/profile-service';
+import { taskForceService } from '@/lib/services/task-force-service';
 import { toast } from 'sonner';
 
 export default function ProfilePage() {
@@ -38,13 +39,27 @@ export default function ProfilePage() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await profileService.getProfile();
-      if (response.success && response.data.user) {
-        setCurrentUser(response.data.user);
+      const response = await taskForceService.getProfile();
+      if (response.success && response.data.member) {
+        // Map TeamMember to UserProfile shape
+        const member = response.data.member;
+        const userProfile: UserProfile = {
+            id: member.id,
+            name: member.name,
+            email: member.email || '',
+            phone: member.phone || '',
+            role: 'task_force', 
+            bio: '',
+            avatar: undefined,
+            location: undefined,
+            status: member.status as 'active' | 'inactive' | 'suspended',
+            created_at: new Date().toISOString()
+        };
+        setCurrentUser(userProfile);
         setFormData({
-          name: response.data.user.name,
-          phone: response.data.user.phone,
-          bio: response.data.user.bio || '',
+          name: member.name,
+          phone: member.phone || '',
+          bio: '',
         });
       }
     } catch (error) {

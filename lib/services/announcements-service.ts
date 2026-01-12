@@ -72,7 +72,7 @@ class AnnouncementsService {
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
 
-    return apiClient<AnnouncementResponse>(`/announcements?${params.toString()}`, {
+    return apiClient<AnnouncementResponse>(`/announcements/public?${params.toString()}`, {
       requiresAuth: false,
     });
   }

@@ -1,0 +1,3 @@
+{
+  "/(dashboards)/task-force-dashboard/assess/[id]/page": "app/(dashboards)/task-force-dashboard/assess/[id]/page.js"
+}

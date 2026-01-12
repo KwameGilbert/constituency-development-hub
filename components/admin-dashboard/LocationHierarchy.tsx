@@ -2,13 +2,22 @@ import React from 'react';
 import Link from 'next/link';
 import { Building, Home, MapPin, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-export function LocationHierarchy() {
+interface LocationHierarchyProps {
+  counts?: {
+    community: number;
+    suburb: number;
+    cottage: number;
+    smaller_community: number;
+  };
+}
+
+export function LocationHierarchy({ counts }: LocationHierarchyProps) {
   const steps = [
     {
       id: 1,
       title: "Communities",
       description: "Main geographical areas in the constituency",
-      count: 4,
+      count: counts?.community || 0,
       countLabel: "communities",
       href: "/admin-dashboard/locations/communities",
       icon: Building,
@@ -21,24 +30,9 @@ export function LocationHierarchy() {
     },
     {
       id: 2,
-      title: "Smaller Communities",
-      description: "Subdivisions within the constituency",
-      count: 0,
-      countLabel: "smaller communities", // Screenshot says "0 smaller communities"
-      href: "/admin-dashboard/locations/smaller-communities",
-      icon: Home,
-      color: "bg-blue-600",
-      textColor: "text-blue-600",
-      borderColor: "border-blue-200",
-      ringColor: "ring-blue-100",
-      linkText: "Manage Smaller Communities",
-      align: "right"
-    },
-    {
-      id: 3,
       title: "Suburbs",
       description: "Residential areas within communities",
-      count: 1,
+      count: counts?.suburb || 0,
       countLabel: "suburbs",
       href: "/admin-dashboard/locations/suburbs",
       icon: MapPin,
@@ -47,17 +41,32 @@ export function LocationHierarchy() {
       borderColor: "border-green-200",
       ringColor: "ring-green-100",
       linkText: "Manage Suburbs",
+      align: "right"
+    },
+    {
+      id: 3,
+      title: "Smaller Communities",
+      description: "Subdivisions within suburbs",
+      count: counts?.smaller_community || 0,
+      countLabel: "smaller communities", 
+      href: "/admin-dashboard/locations/smaller-communities",
+      icon: Home,
+      color: "bg-blue-600",
+      textColor: "text-blue-600",
+      borderColor: "border-blue-200",
+      ringColor: "ring-blue-100",
+      linkText: "Manage Smaller Communities",
       align: "left"
     },
     {
       id: 4,
       title: "Cottages",
       description: "Individual housing units within smaller communities",
-      count: 0,
+      count: counts?.cottage || 0,
       countLabel: "cottages",
       href: "/admin-dashboard/locations/cottages",
       icon: Home,
-      color: "bg-amber-500", // Amber-500 is often closer to that orange/gold
+      color: "bg-amber-500", 
       textColor: "text-amber-600",
       borderColor: "border-amber-200",
       ringColor: "ring-amber-100",

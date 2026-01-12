@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
@@ -16,37 +15,23 @@ import {
   YAxis,
   CartesianGrid
 } from "recharts";
-
-interface ChartsData {
-  charts: {
-    issueStatusDistribution: Array<{
-      name: string;
-      value: number;
-      color: string;
-    }>;
-    monthlyTrends: Array<{
-      name: string;
-      issues: number;
-      resolved: number;
-    }>;
-    categoryDistribution: Array<{
-      name: string;
-      value: number;
-      color: string;
-    }>;
-  };
-}
+import { dashboardService, AdminChartsData } from "@/lib/services/dashboard-service";
 
 export function AnalyticsCharts() {
-  const [chartsData, setChartsData] = useState<ChartsData | null>(null);
+  const [chartsData, setChartsData] = useState<AdminChartsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCharts = async () => {
       try {
-        const response = await axios.get('/data/admin-analytics-charts.json');
-        setChartsData(response.data);
+        const response = await dashboardService.getAdminCharts();
+        
+        if (response.success && response.data) {
+          setChartsData(response.data);
+        } else {
+          setError(response.message || 'Failed to load charts data');
+        }
       } catch (err) {
         setError('Failed to load charts data');
         console.error('Error fetching charts:', err);
@@ -169,6 +154,7 @@ export function AnalyticsCharts() {
       </div>
 
       {/* Row 2: Severity & Categories */}
+      {chartsData.charts.categoryDistribution && chartsData.charts.categoryDistribution.length > 0 && (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Issues by Severity */}
         <Card>
@@ -218,7 +204,7 @@ export function AnalyticsCharts() {
                         </div>
                         <div className="flex items-center gap-2 w-1/3 justify-end">
                             <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                                <div className={`h-full rounded-full ${cat.value > 0 ? 'bg-indigo-600' : 'bg-gray-300'}`} style={{ width: `${(cat.value / Math.max(...chartsData.charts.categoryDistribution.map(c => c.value))) * 100}%` }}></div>
+                                <div className={`h-full rounded-full ${cat.value > 0 ? 'bg-indigo-600' : 'bg-gray-300'}`} style={{ width: `${(cat.value / Math.max(...chartsData.charts.categoryDistribution!.map(c => c.value))) * 100}%` }}></div>
                             </div>
                             <span className="font-semibold text-gray-800 w-4 text-right">{cat.value}</span>
                         </div>
@@ -228,6 +214,7 @@ export function AnalyticsCharts() {
           </CardContent>
         </Card>
       </div>
+      )}
     </div>
   );
 }

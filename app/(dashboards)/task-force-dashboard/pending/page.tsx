@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,45 +17,90 @@ import {
   User,
   FileText,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Loader2
 } from 'lucide-react';
+import { taskForceService, TaskForceIssue } from '@/lib/services/task-force-service';
 import { 
-  getIssues, 
   getStatusColor, 
   getPriorityColor, 
   formatDate, 
-  getMetadata, 
-  searchIssues,
-  getIssuesByStatus
+  getMetadata
 } from '@/lib/data';
 
 export default function PendingIssuesPage() {
-  // Get all pending issues
-  const pendingIssues = useMemo(() => getIssuesByStatus('pending_assessment'), []);
   const metadata = getMetadata();
+  
+  const [issues, setIssues] = useState<TaskForceIssue[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    total: 0,
+    highPriority: 0,
+    overdue: 0
+  });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
-  // Filter issues based on search and filters
-  const filteredIssues = useMemo(() => {
-    let issues = pendingIssues;
+  // Fetch pending issues
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await taskForceService.getAllTaskForceIssues({
+          status: 'assigned_to_task_force',
+          // search: searchTerm || undefined, // Search not yet supported in taskForceService endpoint params directly unless added
+          priority: priorityFilter !== 'all' ? priorityFilter : undefined,
+          category: categoryFilter !== 'all' ? categoryFilter : undefined,
+          limit: 50,
+        });
 
-    if (searchTerm) {
-      issues = searchIssues(searchTerm).filter(issue => issue.status === 'pending_assessment');
-    }
+        if (response.success) {
+          let fetchedIssues = response.data.issues;
 
-    if (priorityFilter !== 'all') {
-      issues = issues.filter(issue => issue.priority === priorityFilter);
-    }
+          // Client-side search for now (or update backend to support search)
+          if (searchTerm) {
+             fetchedIssues = fetchedIssues.filter(i => 
+               i.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+               i.description.toLowerCase().includes(searchTerm.toLowerCase())
+             );
+          }
 
-    if (categoryFilter !== 'all') {
-      issues = issues.filter(issue => issue.category === categoryFilter);
-    }
+          setIssues(fetchedIssues);
+          
+          // Calculate stats
+          const allIssues = response.data.issues;
+          const highPriority = allIssues.filter(i => i.priority === 'high' || i.priority === 'urgent').length;
+          const overdue = allIssues.filter(i => {
+            const daysSince = Math.floor(
+              (new Date().getTime() - new Date(i.created_at).getTime()) / (1000 * 60 * 60 * 24)
+            );
+            return daysSince >= 7;
+          }).length;
+          
+          setStats({
+            total: response.data.pagination.total,
+            highPriority,
+            overdue
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch pending issues:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return issues;
-  }, [searchTerm, priorityFilter, categoryFilter, pendingIssues]);
+    const timer = setTimeout(fetchData, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm, priorityFilter, categoryFilter]);
+
+  const getDaysSinceSubmission = (createdAt: string) => {
+    return Math.floor(
+      (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
+    );
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -64,7 +109,7 @@ export default function PendingIssuesPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Pending Issues</h1>
           <p className="text-gray-600 mt-1">
-            Issues awaiting assessment - {filteredIssues.length} of {pendingIssues.length} issues
+            Issues awaiting assessment - {issues.length} of {stats.total} issues
           </p>
         </div>
       </div>
@@ -79,7 +124,7 @@ export default function PendingIssuesPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{pendingIssues.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
             </div>
           </CardContent>
@@ -93,9 +138,7 @@ export default function PendingIssuesPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">High Priority</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {pendingIssues.filter(issue => issue.priority === 'high').length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{stats.highPriority}</p>
               </div>
             </div>
           </CardContent>
@@ -109,14 +152,7 @@ export default function PendingIssuesPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Overdue (7+ days)</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {pendingIssues.filter(issue => {
-                    const daysSinceSubmission = Math.floor(
-                      (new Date().getTime() - new Date(issue.submissionDate).getTime()) / (1000 * 60 * 60 * 24)
-                    );
-                    return daysSinceSubmission >= 7;
-                  }).length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{stats.overdue}</p>
               </div>
             </div>
           </CardContent>
@@ -182,16 +218,18 @@ export default function PendingIssuesPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredIssues.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+              </div>
+            ) : issues.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                 <p>No pending issues found matching your criteria</p>
               </div>
             ) : (
-              filteredIssues.map((issue) => {
-                const daysSinceSubmission = Math.floor(
-                  (new Date().getTime() - new Date(issue.submissionDate).getTime()) / (1000 * 60 * 60 * 24)
-                );
+              issues.map((issue) => {
+                const daysSinceSubmission = getDaysSinceSubmission(issue.created_at);
                 const isOverdue = daysSinceSubmission >= 7;
 
                 return (
@@ -233,19 +271,15 @@ export default function PendingIssuesPage() {
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
-                                {issue.community}
+                                {issue.location}
                               </div>
                               <div className="flex items-center gap-1">
                                 <User className="h-4 w-4" />
-                                {issue.submittedBy}
+                                {issue.reporter_name || 'Anonymous'}
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
-                                {formatDate(issue.submissionDate)}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <User className="h-4 w-4" />
-                                {issue.impactAssessment.affectedPopulation} affected
+                                {formatDate(issue.created_at)}
                               </div>
                             </div>
                           </div>

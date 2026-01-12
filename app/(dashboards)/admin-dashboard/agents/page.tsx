@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,24 +18,22 @@ import {
   LogOut,
 } from "lucide-react";
 import Link from "next/link";
-
-interface Agent {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  location: string;
-  status: string;
-  role: string;
-  lastLogin: string;
-  dateAdded: string;
-  issuesHandled: number;
-  activeIssues: number;
-  performance: string;
-}
+import { agentService, AgentProfile } from "@/lib/services/agent-service";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface AgentsData {
-  agents: Agent[];
+  agents: AgentProfile[];
   summary: {
     total: number;
     active: number;
@@ -45,22 +42,9 @@ interface AgentsData {
 }
 
 const getStatusColor = (status: string) => {
-  return status === 'active'
+  return status?.toLowerCase() === 'active'
     ? 'bg-green-100 text-green-700 hover:bg-green-200'
     : 'bg-red-100 text-red-700 hover:bg-red-200';
-};
-
-const getPerformanceColor = (performance: string) => {
-  switch (performance.toLowerCase()) {
-    case 'excellent':
-      return 'bg-blue-100 text-blue-700';
-    case 'good':
-      return 'bg-green-100 text-green-700';
-    case 'average':
-      return 'bg-yellow-100 text-yellow-700';
-    default:
-      return 'bg-gray-100 text-gray-700';
-  }
 };
 
 export default function AgentsPage() {
@@ -70,11 +54,54 @@ export default function AgentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await agentService.deleteAgent(id);
+      if (response.success) {
+        toast.success("Agent deleted successfully");
+        // Update local state
+        if (agentsData) {
+            const updatedAgents = agentsData.agents.filter(a => a.id !== id);
+            setAgentsData({
+                ...agentsData,
+                agents: updatedAgents,
+                summary: {
+                    ...agentsData.summary,
+                    total: agentsData.summary.total - 1,
+                    active: updatedAgents.filter(a => a.user.status === 'active').length,
+                    inactive: updatedAgents.filter(a => a.user.status !== 'active').length
+                }
+            });
+        }
+      } else {
+        toast.error("Failed to delete agent", { description: response.message });
+      }
+    } catch (error: any) {
+      toast.error("An error occurred", { description: error.message || "Unknown error" });
+    }
+  };
+
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await axios.get('/data/admin-agents.json');
-        setAgentsData(response.data);
+        const response = await agentService.getAllAgents();
+        if (response.success && response.data.agents) {
+          const agents = response.data.agents;
+          
+          // Calculate summary stats
+          const total = agents.length;
+          const active = agents.filter(a => a.user.status === 'active').length;
+          const inactive = total - active;
+
+          setAgentsData({
+            agents,
+            summary: {
+              total,
+              active,
+              inactive
+            }
+          });
+        }
       } catch (err) {
         setError('Failed to load agents data');
         console.error('Error fetching agents:', err);
@@ -87,11 +114,11 @@ export default function AgentsPage() {
   }, []);
 
   const filteredAgents = agentsData?.agents.filter(agent => {
-    const matchesSearch = agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.phone.includes(searchTerm);
+    const matchesSearch = agent.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         agent.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (agent.user.phone && agent.user.phone.includes(searchTerm));
 
-    const matchesStatus = statusFilter === "all" || agent.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || agent.user.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   }) || [];
@@ -238,7 +265,7 @@ export default function AgentsPage() {
             label: "System Settings",
             href: "/admin-dashboard/system-settings",
             icon: Settings2,
-          },
+            },
           {
             label: "Logout",
             icon: LogOut,
@@ -324,40 +351,33 @@ export default function AgentsPage() {
                     <tr key={agent.id} className="hover:bg-gray-50/50 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
-                            <UserCircle className="w-6 h-6" />
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold overflow-hidden">
+                             {agent.profile_image ? (
+                               <img src={agent.profile_image} alt={agent.user.name} className="w-full h-full object-cover" />
+                             ) : (
+                               <UserCircle className="w-6 h-6" />
+                             )}
                           </div>
                           <div className="flex flex-col">
                             <span className="font-medium text-gray-900">
-                              {agent.name}
+                              {agent.user.name}
                             </span>
                             <span className="text-xs text-gray-500">
-                              {agent.email}
+                              {agent.user.email}
                             </span>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-gray-900">{agent.location}</span>
+                        <span className="text-gray-900">{agent.assigned_location || 'Unassigned'}</span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
-                          <Badge className={`${getStatusColor(agent.status)} border-none px-2 py-0.5 w-fit font-normal`}>
-                            {agent.status === 'active' ? 'Active' : 'Inactive'}
+                          <Badge className={`${getStatusColor(agent.user.status)} border-none px-2 py-0.5 w-fit font-normal`}>
+                            {agent.user.status === 'active' ? 'Active' : 'Inactive'}
                           </Badge>
                           <span className="text-xs text-gray-500">
-                            Last login: {new Date(agent.lastLogin).toLocaleDateString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric'
-                            })}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            Added: {new Date(agent.dateAdded).toLocaleDateString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric'
-                            })}
+                            Code: {agent.agent_code}
                           </span>
                         </div>
                       </td>
@@ -383,13 +403,33 @@ export default function AgentsPage() {
                               <Edit className="w-4 h-4" />
                             </Link>
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 bg-red-50"
-                          >
-                            <UserX className="w-4 h-4" />
-                          </Button>
+                          
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 bg-red-50"
+                                >
+                                    <UserX className="w-4 h-4" />
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the agent account and remove their data from the servers.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => handleDelete(agent.id)}>
+                                        Delete Agent
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+
                           <Button
                             variant="ghost"
                             size="icon"

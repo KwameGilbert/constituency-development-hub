@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { 
     Building, 
@@ -9,7 +10,8 @@ import {
     ShieldAlert, 
     Settings2, 
     LogOut,
-    Map as MapIcon
+    Map as MapIcon,
+    Loader2
 } from "lucide-react";
 
 import Link from "next/link";
@@ -24,41 +26,66 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { LocationHierarchy } from "@/components/admin-dashboard/LocationHierarchy";
+import { locationsService, LocationDashboardStatsResponse } from "@/lib/services/locations-service";
+import { toast } from "sonner";
 
 export default function LocationsPage() {
-    // Metrics Data
+    const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState<LocationDashboardStatsResponse['data'] | null>(null);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const response = await locationsService.getDashboardStats();
+                if (response.success) {
+                    setStats(response.data);
+                } else {
+                    toast.error("Failed to load location statistics");
+                }
+            } catch (error) {
+                console.error("Failed to fetch location stats:", error);
+                toast.error("Failed to load location statistics");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, []);
+
+    // Metrics Data derived from stats
     const metrics = [
         {
             label: "Total Locations",
-            count: 5,
+            count: stats?.total || 0,
             icon: MapIcon,
             color: "text-indigo-600",
             bgColor: "bg-indigo-100"
         },
         {
             label: "Communities",
-            count: 4,
+            count: stats?.counts?.community || 0,
             icon: Building,
             color: "text-indigo-600",
             bgColor: "bg-indigo-100"
         },
         {
             label: "Smaller Communities",
-            count: 0,
+            count: stats?.counts?.smaller_community || 0,
             icon: Home,
             color: "text-blue-600",
             bgColor: "bg-blue-100"
         },
         {
             label: "Suburbs",
-            count: 1,
+            count: stats?.counts?.suburb || 0,
             icon: MapPin,
             color: "text-green-600",
             bgColor: "bg-green-100"
         },
         {
             label: "Cottages",
-            count: 0,
+            count: stats?.counts?.cottage || 0,
             icon: Home,
             color: "text-amber-600",
             bgColor: "bg-amber-100"
@@ -101,15 +128,6 @@ export default function LocationsPage() {
         }
     ];
 
-    // Recent Locations Data
-    const recentLocations = [
-        { id: 1, name: "Sefwi Asafo", type: "Suburb", date: "Sep 28, 2025" },
-        { id: 2, name: "Sefwi Boako", type: "Community", date: "Sep 28, 2025" },
-        { id: 3, name: "Sefwi Dwenase", type: "Community", date: "Sep 28, 2025" },
-        { id: 4, name: "Sefwi Wiawso", type: "Community", date: "Sep 28, 2025" },
-        { id: 5, name: "Sefwi Asawinso", type: "Community", date: "Sep 28, 2025" },
-    ];
-
     return (
         <div className="flex flex-col h-full bg-slate-50">
             <AdminHeader 
@@ -141,7 +159,9 @@ export default function LocationsPage() {
                             <div key={index} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
                                 <div className="space-y-1">
                                     <p className="text-sm font-medium text-gray-500">{metric.label}</p>
-                                    <h3 className="text-2xl font-bold text-gray-900">{metric.count}</h3>
+                                    <h3 className="text-2xl font-bold text-gray-900">
+                                        {loading ? <Loader2 className="h-6 w-6 animate-spin text-gray-300" /> : metric.count}
+                                    </h3>
                                 </div>
                                 <div className={`p-3 rounded-lg ${metric.bgColor}`}>
                                     <metric.icon className={`w-5 h-5 ${metric.color}`} />
@@ -179,37 +199,53 @@ export default function LocationsPage() {
                         {/* Recent Locations */}
                         <Card className="p-6 bg-white border-gray-100 shadow-sm">
                             <h3 className="text-lg font-bold text-gray-900 mb-6">Recently Added Locations</h3>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="hover:bg-transparent">
-                                        <TableHead className="w-[40%]">Location</TableHead>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead className="text-right">Added</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {recentLocations.map((location) => (
-                                        <TableRow key={location.id} className="hover:bg-gray-50 border-gray-50">
-                                            <TableCell className="font-medium text-gray-900">{location.name}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="secondary" className={`
-                                                    ${location.type === 'Suburb' ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}
-                                                    ${location.type === 'Community' ? 'bg-indigo-100 text-indigo-700 hover:bg-indigo-100' : ''}
-                                                `}>
-                                                    {location.type}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right text-gray-500 text-sm">{location.date}</TableCell>
+                            {loading ? (
+                                <div className="flex justify-center py-8">
+                                    <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                                </div>
+                            ) : (
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow className="hover:bg-transparent">
+                                            <TableHead className="w-[40%]">Location</TableHead>
+                                            <TableHead>Type</TableHead>
+                                            <TableHead className="text-right">Added</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {stats?.recent_locations && stats.recent_locations.length > 0 ? (
+                                            stats.recent_locations.map((location) => (
+                                                <TableRow key={location.id} className="hover:bg-gray-50 border-gray-50">
+                                                    <TableCell className="font-medium text-gray-900">{location.name}</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant="secondary" className={`
+                                                            ${location.type === 'suburb' ? 'bg-green-100 text-green-700 hover:bg-green-100' : ''}
+                                                            ${location.type === 'community' ? 'bg-indigo-100 text-indigo-700 hover:bg-indigo-100' : ''}
+                                                            ${location.type === 'cottage' ? 'bg-amber-100 text-amber-700 hover:bg-amber-100' : ''}
+                                                            ${location.type === 'smaller_community' ? 'bg-blue-100 text-blue-700 hover:bg-blue-100' : ''}
+                                                        `}>
+                                                            {location.type === 'smaller_community' ? 'Smaller Community' : location.type.charAt(0).toUpperCase() + location.type.slice(1)}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="text-right text-gray-500 text-sm">{location.formatted_date}</TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={3} className="text-center text-gray-500 py-4">
+                                                    No locations found
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            )}
                         </Card>
                     </div>
 
                     {/* Location Hierarchy */}
                     <div className="w-full">
-                        <LocationHierarchy />
+                        <LocationHierarchy counts={stats?.counts} />
                     </div>
                 </div>
             </div>

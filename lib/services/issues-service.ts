@@ -187,6 +187,14 @@ class IssuesService {
       body: JSON.stringify({ comment }),
     });
   }
+
+  async submitOfficerIssue(data: FormData): Promise<ApiResponse<{ report: Issue }>> {
+    return apiClient("/officer/issues", {
+      method: "POST",
+      body: data,
+      isFormData: true,
+    });
+  }
 }
 
 export const issuesService = new IssuesService();

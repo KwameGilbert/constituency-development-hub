@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import {
   Search,
@@ -10,6 +10,12 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  UserCircle,
+  Settings2,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,71 +36,108 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import axios from "axios";
+import { auditService, AuditLog, AuditData } from "@/lib/services/audit-service";
+import { toast } from "sonner";
 
-interface AuditLog {
-  id: number;
-  user: string;
-  action: string;
-  resource: string;
-  ip: string;
-  timestamp: string;
-  status: "success" | "failed" | "warning";
-  user_agent?: string;
-  session_id?: string;
-}
 
-interface AuditData {
-  auditLogs: AuditLog[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-  };
-  summary: {
-    total_logs: number;
-    success_count: number;
-    failed_count: number;
-    warning_count: number;
-    last_updated: string;
-  };
+// Simple debounce implementation if hook doesn't exist, but I'll use useEffect with delay
+function useDebounceValue<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
 }
 
 export default function AuditLogsPage() {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
-  const [pagination, setPagination] = useState<
-    AuditData["pagination"] | undefined
-  >(undefined);
-  const [summary, setSummary] = useState<AuditData["summary"] | undefined>(
-    undefined
-  );
+  const [pagination, setPagination] = useState<AuditData["pagination"]>({
+    page: 1,
+    limit: 20,
+    total: 0,
+    total_pages: 0
+  });
+  const [summary, setSummary] = useState<AuditData["summary"] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Filters
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounceValue(searchQuery, 500);
+  const [actionType, setActionType] = useState("all");
 
-  useEffect(() => {
-    const fetchAuditLogs = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get<AuditData>(
-          "/data/admin-audit-logs.json"
-        );
+  const fetchAuditLogs = useCallback(async (page: number = 1) => {
+    try {
+      setLoading(true);
+      const response = await auditService.getAuditLogs({
+        page,
+        limit: 20,
+        search: debouncedSearch,
+        action_type: actionType
+      });
+
+      if (response.success) {
         setAuditLogs(response.data.auditLogs);
         setPagination(response.data.pagination);
         setSummary(response.data.summary);
         setError(null);
-      } catch (err) {
-        console.error("Failed to load audit logs data:", err);
-        setError("Failed to load audit logs data");
-      } finally {
-        setLoading(false);
+      } else {
+        setError(response.message || "Failed to load logs");
+        toast.error(response.message);
       }
-    };
+    } catch (err) {
+      console.error("Failed to load audit logs data:", err);
+      setError("Failed to load audit logs data");
+      toast.error("Network error");
+    } finally {
+      setLoading(false);
+    }
+  }, [debouncedSearch, actionType]);
 
-    fetchAuditLogs();
-  }, []);
+  // Reset page when filters change
+  useEffect(() => {
+    fetchAuditLogs(1);
+  }, [fetchAuditLogs]); // fetchAuditLogs depends on debouncedSearch/actionType
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= (pagination.total_pages || 1)) {
+       // We don't change state directly, we just call fetch with new page
+       // But fetchAuditLogs updates state. Wait, if I call fetch(2), it updates logs.
+       // I should probably track currentPage in a ref or state if I want to strictly control it,
+       // but fetching handles it.
+       // Actually, my useEffect logic resets to page 1 on filter change.
+       // For pagination click, I shouldn't trigger that effect.
+       // I should remove `fetchAuditLogs(1)` from dependency array and manage it differently?
+       // Better: Add currentPage state.
+       fetchAuditLogs(newPage);
+    }
+  };
+  
+  // Actually, standard pattern:
+  // useEffect on [currentPage, debouncedSearch, actionType]
+  // BUT search/action change should reset page to 1.
+  // So:
+  /*
+    useEffect(() => {
+        setPage(1);
+    }, [debouncedSearch, actionType]);
+
+    useEffect(() => {
+        fetchAuditLogs(page);
+    }, [page, debouncedSearch, actionType]);
+  */
+  // I'll stick to the simpler manual call for now to avoid rapid effect firing, 
+  // explicitly calling fetchAuditLogs(1) when filters change (via effect) is safer if handlePageChange calls fetchAuditLogs(p).
+  // But wait, if I put fetchAuditLogs in dependency, it loops if I don't use useCallback. I did.
+  
+  // Let's rely on the useEffect(fetch(1), [debounced...]).
+  // Pagination click -> calls fetch(page). Pagination state is updated from response.
+  // It works.
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -131,15 +174,19 @@ export default function AuditLogsPage() {
   };
 
   const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    try {
+        const date = new Date(timestamp);
+        return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+        });
+    } catch {
+        return timestamp;
+    }
   };
 
   return (
@@ -147,6 +194,14 @@ export default function AuditLogsPage() {
       <AdminHeader
         title="Audit Logs"
         description="Track system activities and security events"
+        roleAbbr="MP"
+        userName="Admin.Rock"
+        userRoleLabel="MP"
+        dropdownItems={[
+            { label: "Profile Settings", href: "/admin-dashboard/profile", icon: UserCircle },
+            { label: "System Settings", href: "/admin-dashboard/system-settings", icon: Settings2 },
+            { label: "Logout", icon: LogOut, className: "text-red-600 focus:text-red-600 focus:bg-red-50" },
+        ]}
       />
 
       <div className="flex-1 p-6 overflow-y-auto">
@@ -164,7 +219,7 @@ export default function AuditLogsPage() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Select defaultValue="all">
+                <Select value={actionType} onValueChange={setActionType}>
                   <SelectTrigger className="w-full sm:w-40">
                     <SelectValue placeholder="Action Type" />
                   </SelectTrigger>
@@ -178,9 +233,9 @@ export default function AuditLogsPage() {
                 </Select>
               </div>
               <div className="flex gap-2 w-full md:w-auto">
-                <Button variant="outline" className="w-full md:w-auto">
+                <Button variant="outline" className="w-full md:w-auto" onClick={() => fetchAuditLogs(pagination.page)}>
                   <Filter className="w-4 h-4 mr-2" />
-                  More Filters
+                  Refresh
                 </Button>
                 <Button variant="outline" className="w-full md:w-auto">
                   <Download className="w-4 h-4 mr-2" />
@@ -191,35 +246,27 @@ export default function AuditLogsPage() {
           </Card>
 
           {/* Loading State */}
-          {loading && (
-            <Card className="p-6">
-              <div className="space-y-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-4 w-24" />
-                    <Skeleton className="h-6 w-16" />
-                  </div>
-                ))}
-              </div>
-            </Card>
+          {loading && !auditLogs.length && (
+            <div className="flex items-center justify-center p-12">
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            </div>
           )}
 
           {/* Error State */}
           {error && !loading && (
-            <Card className="p-12 text-center">
-              <p className="text-red-600 text-lg font-medium">{error}</p>
-              <p className="text-slate-500 mt-2">
-                Please try refreshing the page
-              </p>
+            <Card className="p-12 text-center text-red-600">
+               {error}
             </Card>
           )}
 
           {/* Table */}
-          {!loading && !error && (
+          {!loading && !error && auditLogs.length === 0 && (
+              <Card className="p-12 text-center text-gray-500">
+                  No audit logs found matching your criteria.
+              </Card>
+          )}
+
+          {(auditLogs.length > 0) && (
             <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
               <Table>
                 <TableHeader className="bg-gray-50/50">
@@ -260,14 +307,37 @@ export default function AuditLogsPage() {
                   ))}
                 </TableBody>
               </Table>
-              <div className="p-4 border-t border-gray-100 bg-gray-50/50 text-xs text-center text-gray-500">
-                Showing {auditLogs.length} of {summary?.total_logs || 0} logs
-                {summary && (
-                  <span className="ml-4">
-                    (Success: {summary.success_count} | Failed:{" "}
-                    {summary.failed_count} | Warning: {summary.warning_count})
-                  </span>
-                )}
+              
+              <div className="p-4 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div className="text-xs text-gray-500">
+                  Showing {auditLogs.length} logs (Page {pagination.page} of {pagination.total_pages}) | Total: {pagination.total}
+                  {summary && (
+                    <span className="ml-2 hidden lg:inline-block">
+                      (Success: {summary.success_count} | Failed: {summary.failed_count})
+                    </span>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-2">
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handlePageChange(pagination.page - 1)}
+                        disabled={pagination.page <= 1 || loading}
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                        Previous
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handlePageChange(pagination.page + 1)}
+                        disabled={pagination.page >= pagination.total_pages || loading}
+                    >
+                        Next
+                        <ChevronRight className="w-4 h-4" />
+                    </Button>
+                </div>
               </div>
             </div>
           )}

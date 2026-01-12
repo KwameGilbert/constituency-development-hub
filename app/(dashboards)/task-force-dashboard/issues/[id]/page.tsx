@@ -27,7 +27,9 @@ import {
   Target,
   Loader2,
 } from 'lucide-react';
-import { issuesService, Issue as ApiIssue } from '@/lib/services/issues-service';
+
+import { Issue as ApiIssue } from '@/lib/services/issues-service';
+import { taskForceService } from '@/lib/services/task-force-service';
 
 // UI Type definition matching the previous mock structure
 interface UiIssue extends ApiIssue {
@@ -147,9 +149,10 @@ export default function IssueDetailPage() {
       if (!id) return;
       setLoading(true);
       try {
-        const response = await issuesService.getIssueById(id);
-        if (response.success && response.data.report) {
-            setIssue(adaptIssueToUi(response.data.report));
+        const response = await taskForceService.getIssue(id);
+        if (response.success && response.data.issue) {
+            // Cast to ApiIssue as API returns full object similar to Issue
+            setIssue(adaptIssueToUi(response.data.issue as unknown as ApiIssue));
         }
       } catch (error) {
         console.error("Failed to fetch issue:", error);

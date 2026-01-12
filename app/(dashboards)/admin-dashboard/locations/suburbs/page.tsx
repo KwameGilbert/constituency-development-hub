@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { 
     ArrowLeft, 
@@ -12,7 +12,8 @@ import {
     Plus,
     MapPin,
     Edit,
-    Trash2
+    Trash2,
+    Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,16 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import {
   Table,
@@ -39,10 +50,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "sonner";
+import { locationsService, Location } from "@/lib/services/locations-service";
+
+interface Suburb {
+    id: number;
+    name: string;
+    parent_id: number | null;
+    parent_name: string | null;
+    created_at: string;
+}
+
+interface Community {
+    id: number;
+    name: string;
+}
 
 export default function SuburbsPage() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     
     // Filter State
@@ -53,36 +80,198 @@ export default function SuburbsPage() {
     const [selectedCommunity, setSelectedCommunity] = useState("");
     
     // Edit specific state
-    const [editingSuburb, setEditingSuburb] = useState<any>(null);
+    const [editingSuburb, setEditingSuburb] = useState<Suburb | null>(null);
     const [editSuburbName, setEditSuburbName] = useState("");
     const [editCommunityId, setEditCommunityId] = useState("");
     
-    // Mock Data - Empty array to show empty state as per default, or we can add entries to test list view
-    // const suburbs = []; 
-    // To demonstrate list view capabilities vs empty state, I'll default to empty as requested by "Nodak" empty state requirement,
-    // but the code handles both.
-    // Let's stick to empty for now to match the "No suburbs found" screenshot requirement,
-    // but I'll write the list rendering logic so it works when data is present.
-    const suburbs: any[] = []; 
+    // API State
+    const [suburbs, setSuburbs] = useState<Suburb[]>([]);
+    const [communities, setCommunities] = useState<Community[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleAddSuburb = () => {
-        console.log("Adding suburb:", newSuburbName, "in community:", selectedCommunity);
-        setIsAddModalOpen(false);
-        setNewSuburbName("");
-        setSelectedCommunity("");
+    // Fetch communities for dropdown
+    const fetchCommunities = useCallback(async () => {
+        try {
+            const response = await locationsService.getLocations({
+                type: 'community',
+                limit: 100,
+                sort_by: 'name',
+                sort_order: 'asc'
+            });
+            
+            if (response.success && response.data?.locations) {
+                const mappedCommunities: Community[] = response.data.locations.map((loc: Location) => ({
+                    id: loc.id,
+                    name: loc.name
+                }));
+                setCommunities(mappedCommunities);
+            }
+        } catch (error) {
+            console.error("Failed to fetch communities:", error);
+        }
+    }, []);
+
+    // Fetch suburbs from API
+    const fetchSuburbs = useCallback(async () => {
+        try {
+            setLoading(true);
+            const params: Record<string, string | number> = {
+                type: 'suburb',
+                limit: 100,
+                sort_by: 'name',
+                sort_order: 'asc'
+            };
+            
+            // Filter by parent community if selected
+            if (selectedCommunityFilter && selectedCommunityFilter !== "all") {
+                params.parent_id = selectedCommunityFilter;
+            }
+            
+            const response = await locationsService.getLocations(params);
+            
+            if (response.success && response.data?.locations) {
+                const mappedSuburbs: Suburb[] = response.data.locations.map((loc: Location) => ({
+                    id: loc.id,
+                    name: loc.name,
+                    parent_id: loc.parent_id,
+                    parent_name: loc.parent_name,
+                    created_at: loc.created_at
+                }));
+                setSuburbs(mappedSuburbs);
+            }
+        } catch (error) {
+            console.error("Failed to fetch suburbs:", error);
+            toast.error("Failed to load suburbs");
+        } finally {
+            setLoading(false);
+        }
+    }, [selectedCommunityFilter]);
+
+    useEffect(() => {
+        fetchCommunities();
+    }, [fetchCommunities]);
+
+    useEffect(() => {
+        fetchSuburbs();
+    }, [fetchSuburbs]);
+
+    // Filter suburbs based on search query
+    const filteredSuburbs = suburbs.filter(s => 
+        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (s.parent_name && s.parent_name.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    // Handle adding a new suburb
+    const handleAddSuburb = async () => {
+        if (!newSuburbName.trim()) {
+            toast.error("Suburb name is required");
+            return;
+        }
+        if (!selectedCommunity) {
+            toast.error("Please select a community");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.createLocation({
+                name: newSuburbName.trim(),
+                type: 'suburb',
+                parent_id: parseInt(selectedCommunity),
+            });
+
+            if (response.success) {
+                toast.success("Suburb added successfully");
+                setIsAddModalOpen(false);
+                setNewSuburbName("");
+                setSelectedCommunity("");
+                fetchSuburbs();
+            } else {
+                toast.error(response.message || "Failed to add suburb");
+            }
+        } catch (error) {
+            console.error("Failed to add suburb:", error);
+            toast.error("Failed to add suburb");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
-    const handleEditClick = (suburb: any) => {
+    // Handle edit click
+    const handleEditClick = (suburb: Suburb) => {
         setEditingSuburb(suburb);
         setEditSuburbName(suburb.name);
-        setEditCommunityId(suburb.communityId);
+        setEditCommunityId(suburb.parent_id?.toString() || "");
         setIsEditModalOpen(true);
     };
 
-    const handleSaveChanges = () => {
-        console.log("Updating suburb", editingSuburb?.id, "to", editSuburbName, editCommunityId);
-        setIsEditModalOpen(false);
-        setEditingSuburb(null);
+    // Handle saving changes
+    const handleSaveChanges = async () => {
+        if (!editingSuburb) return;
+        
+        if (!editSuburbName.trim()) {
+            toast.error("Suburb name is required");
+            return;
+        }
+        if (!editCommunityId) {
+            toast.error("Please select a community");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.updateLocation(editingSuburb.id, {
+                name: editSuburbName.trim(),
+                parent_id: parseInt(editCommunityId),
+            });
+
+            if (response.success) {
+                toast.success("Suburb updated successfully");
+                setIsEditModalOpen(false);
+                setEditingSuburb(null);
+                setEditSuburbName("");
+                setEditCommunityId("");
+                fetchSuburbs();
+            } else {
+                toast.error(response.message || "Failed to update suburb");
+            }
+        } catch (error) {
+            console.error("Failed to update suburb:", error);
+            toast.error("Failed to update suburb");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Handle delete click
+    const handleDeleteClick = (suburb: Suburb) => {
+        setEditingSuburb(suburb);
+        setIsDeleteDialogOpen(true);
+    };
+
+    // Handle delete confirmation
+    const handleConfirmDelete = async () => {
+        if (!editingSuburb) return;
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.deleteLocation(editingSuburb.id);
+
+            if (response.success) {
+                toast.success("Suburb deleted successfully");
+                setIsDeleteDialogOpen(false);
+                setEditingSuburb(null);
+                fetchSuburbs();
+            } else {
+                toast.error(response.message || "Failed to delete suburb");
+            }
+        } catch (error) {
+            console.error("Failed to delete suburb:", error);
+            toast.error("Failed to delete suburb");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -117,7 +306,9 @@ export default function SuburbsPage() {
                     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
                         <div className="space-y-1">
                             <h2 className="text-lg font-semibold text-gray-900">Suburbs</h2>
-                            <p className="text-sm text-gray-500">Showing {suburbs.length} suburbs</p>
+                            <p className="text-sm text-gray-500">
+                                {loading ? "Loading..." : `Showing ${filteredSuburbs.length} suburbs`}
+                            </p>
                         </div>
 
                         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
@@ -137,13 +328,13 @@ export default function SuburbsPage() {
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All Communities</SelectItem>
-                                        <SelectItem value="c1">Sefwi Asawinso</SelectItem>
-                                        <SelectItem value="c2">Sefwi Boako</SelectItem>
+                                        {communities.map((community) => (
+                                            <SelectItem key={community.id} value={community.id.toString()}>
+                                                {community.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
-                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                                    Apply Filters
-                                </Button>
                             </div>
                             
                             <Button 
@@ -156,8 +347,13 @@ export default function SuburbsPage() {
                         </div>
                     </div>
 
-                    {/* Empty State / List */}
-                    {suburbs.length === 0 ? (
+                    {/* Loading / Empty State / List */}
+                    {loading ? (
+                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-20 px-4 text-center">
+                            <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
+                            <p className="text-gray-500">Loading suburbs...</p>
+                        </div>
+                    ) : filteredSuburbs.length === 0 ? (
                         <div className="bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-20 px-4 text-center">
                             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                 <MapPin className="w-8 h-8 text-gray-400" />
@@ -183,10 +379,17 @@ export default function SuburbsPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {suburbs.map((suburb) => (
+                                    {filteredSuburbs.map((suburb) => (
                                         <TableRow key={suburb.id} className="hover:bg-gray-50/50 border-gray-100 transition-colors">
-                                            <TableCell className="font-medium text-gray-900">{suburb.name}</TableCell>
-                                            <TableCell className="text-gray-500">{suburb.communityName}</TableCell>
+                                            <TableCell className="font-medium text-gray-900">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
+                                                        <MapPin className="w-4 h-4" />
+                                                    </div>
+                                                    {suburb.name}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-gray-500">{suburb.parent_name || '-'}</TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button 
@@ -197,7 +400,12 @@ export default function SuburbsPage() {
                                                     >
                                                         <Edit className="w-4 h-4" />
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
+                                                        onClick={() => handleDeleteClick(suburb)}
+                                                    >
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>
                                                 </div>
@@ -220,14 +428,16 @@ export default function SuburbsPage() {
                     <div className="py-4 space-y-4">
                         <div className="space-y-2">
                             <Label>Community</Label>
-                            <Select value={selectedCommunity} onValueChange={setSelectedCommunity}>
+                            <Select value={selectedCommunity} onValueChange={setSelectedCommunity} disabled={isSubmitting}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select Community" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="c1">Sefwi Asawinso</SelectItem>
-                                    <SelectItem value="c2">Sefwi Boako</SelectItem>
-                                    <SelectItem value="c3">Sefwi Dwenase</SelectItem>
+                                    {communities.map((community) => (
+                                        <SelectItem key={community.id} value={community.id.toString()}>
+                                            {community.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -235,19 +445,30 @@ export default function SuburbsPage() {
                             <Label htmlFor="name">Suburb Name</Label>
                             <Input 
                                 id="name" 
-                                placeholder="" 
+                                placeholder="Enter suburb name" 
                                 value={newSuburbName}
                                 onChange={(e) => setNewSuburbName(e.target.value)}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setIsAddModalOpen(false)} disabled={isSubmitting}>
+                            Cancel
+                        </Button>
                         <Button 
                             className="bg-indigo-600 hover:bg-indigo-700 text-white"
                             onClick={handleAddSuburb}
+                            disabled={isSubmitting}
                         >
-                            Add Suburb
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Adding...
+                                </>
+                            ) : (
+                                "Add Suburb"
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -262,14 +483,16 @@ export default function SuburbsPage() {
                     <div className="py-4 space-y-4">
                         <div className="space-y-2">
                             <Label>Community</Label>
-                            <Select value={editCommunityId} onValueChange={setEditCommunityId}>
+                            <Select value={editCommunityId} onValueChange={setEditCommunityId} disabled={isSubmitting}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select Community" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="c1">Sefwi Asawinso</SelectItem>
-                                    <SelectItem value="c2">Sefwi Boako</SelectItem>
-                                    <SelectItem value="c3">Sefwi Dwenase</SelectItem>
+                                    {communities.map((community) => (
+                                        <SelectItem key={community.id} value={community.id.toString()}>
+                                            {community.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -277,23 +500,64 @@ export default function SuburbsPage() {
                             <Label htmlFor="edit-name">Suburb Name</Label>
                             <Input 
                                 id="edit-name" 
-                                placeholder="" 
+                                placeholder="Enter suburb name" 
                                 value={editSuburbName}
                                 onChange={(e) => setEditSuburbName(e.target.value)}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setIsEditModalOpen(false)} disabled={isSubmitting}>
+                            Cancel
+                        </Button>
                         <Button 
                             className="bg-indigo-600 hover:bg-indigo-700 text-white"
                             onClick={handleSaveChanges}
+                            disabled={isSubmitting}
                         >
-                            Save Changes
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Save Changes"
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Suburb</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete &quot;{editingSuburb?.name}&quot;? 
+                            This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleConfirmDelete}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                "Delete"
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

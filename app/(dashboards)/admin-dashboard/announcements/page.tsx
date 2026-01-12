@@ -6,19 +6,13 @@ import { AnnouncementsHeader } from "@/components/admin-dashboard/announcements/
 import { AnnouncementsTable } from "@/components/admin-dashboard/announcements/AnnouncementsTable";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import axios from "axios";
-import { Announcement } from "@/lib/services/announcements-service";
+import { announcementsService, Announcement } from "@/lib/services/announcements-service";
 
 interface Pagination {
   page: number;
-  limit: number;
+    limit: number;
   total: number;
   total_pages: number;
-}
-
-interface AnnouncementsData {
-  announcements: Announcement[];
-  pagination: Pagination;
 }
 
 export default function AnnouncementsListPage() {
@@ -31,10 +25,15 @@ export default function AnnouncementsListPage() {
     const fetchAnnouncements = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<AnnouncementsData>('/data/admin-announcements.json');
-        setAnnouncements(response.data.announcements);
-        setPagination(response.data.pagination);
-        setError(null);
+        const response = await announcementsService.getAdminAnnouncements();
+        if (response.success) {
+          setAnnouncements(response.data.announcements);
+          // Assuming the pagination structure matches or is adapted
+          setPagination(response.data.pagination);
+          setError(null);
+        } else {
+            setError(response.message || "Failed to load announcements");
+        }
       } catch (err) {
         console.error('Failed to load announcements data:', err);
         setError('Failed to load announcements data');

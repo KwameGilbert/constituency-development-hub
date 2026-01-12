@@ -100,6 +100,27 @@ export interface LocationTypesResponse {
   };
 }
 
+export interface LocationDashboardStatsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    counts: {
+      community: number;
+      suburb: number;
+      cottage: number;
+      smaller_community: number;
+    };
+    total: number;
+    recent_locations: Array<{
+      id: number;
+      name: string;
+      type: string;
+      created_at: string;
+      formatted_date: string;
+    }>;
+  };
+}
+
 export const locationsService = {
   // Get all locations with pagination and filters
   getLocations: async (params?: {
@@ -150,6 +171,14 @@ export const locationsService = {
   // Get location types summary
   getLocationTypes: async (): Promise<LocationTypesResponse> => {
     return apiClient<LocationTypesResponse>('/admin/locations/types', {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  // Get dashboard statistics
+  getDashboardStats: async (): Promise<LocationDashboardStatsResponse> => {
+    return apiClient<LocationDashboardStatsResponse>('/admin/locations/dashboard-stats', {
       method: 'GET',
       requiresAuth: true,
     });

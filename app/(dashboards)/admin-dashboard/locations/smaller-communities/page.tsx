@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { 
     ArrowLeft, 
@@ -11,7 +11,10 @@ import {
     Search,
     Plus,
     MapPin,
-    Filter
+    Filter,
+    Edit,
+    Trash2,
+    Loader2
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,31 +32,247 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { toast } from "sonner";
+import { locationsService, Location } from "@/lib/services/locations-service";
+
+interface SmallerCommunity {
+    id: number;
+    name: string;
+    parent_id: number | null;
+    parent_name: string | null; // This will come from the API as the suburb name
+    created_at: string;
+}
+
+interface Suburb {
+    id: number;
+    name: string;
+}
 
 export default function SmallerCommunitiesPage() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     
     // Filter State
-    const [selectedCommunityFilter, setSelectedCommunityFilter] = useState("all");
     const [selectedSuburbFilter, setSelectedSuburbFilter] = useState("all");
 
     // Add/Edit State
     const [newCommunityName, setNewCommunityName] = useState("");
     const [selectedSuburb, setSelectedSuburb] = useState("");
     
-    // Define types for better TS support if needed, but for now inferred is fine
-    // Mock Data - Empty for now to match design requirement of "No smaller communities found"
-    // const smallerCommunities = []; 
-    const smallerCommunities: any[] = []; 
+    // Edit specific state
+    const [editingCommunity, setEditingCommunity] = useState<SmallerCommunity | null>(null);
+    const [editCommunityName, setEditCommunityName] = useState("");
+    const [editSuburbId, setEditSuburbId] = useState("");
+    
+    // API State
+    const [smallerCommunities, setSmallerCommunities] = useState<SmallerCommunity[]>([]);
+    const [suburbs, setSuburbs] = useState<Suburb[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleAddCommunity = () => {
-        console.log("Adding smaller community:", newCommunityName, "in suburb:", selectedSuburb);
-        setIsAddModalOpen(false);
-        setNewCommunityName("");
-        setSelectedSuburb("");
+    // Fetch suburbs for dropdown
+    const fetchSuburbs = useCallback(async () => {
+        try {
+            const response = await locationsService.getLocations({
+                type: 'suburb',
+                limit: 100,
+                sort_by: 'name',
+                sort_order: 'asc'
+            });
+            
+            if (response.success && response.data?.locations) {
+                const mappedSuburbs: Suburb[] = response.data.locations.map((loc: Location) => ({
+                    id: loc.id,
+                    name: loc.name
+                }));
+                setSuburbs(mappedSuburbs);
+            }
+        } catch (error) {
+            console.error("Failed to fetch suburbs:", error);
+        }
+    }, []);
+
+    // Fetch smaller communities from API
+    const fetchSmallerCommunities = useCallback(async () => {
+        try {
+            setLoading(true);
+            const params: Record<string, string | number> = {
+                type: 'smaller_community',
+                limit: 100,
+                sort_by: 'name',
+                sort_order: 'asc'
+            };
+            
+            // Filter by parent suburb if selected
+            if (selectedSuburbFilter && selectedSuburbFilter !== "all") {
+                params.parent_id = selectedSuburbFilter;
+            }
+            
+            const response = await locationsService.getLocations(params);
+            
+            if (response.success && response.data?.locations) {
+                const mappedCommunities: SmallerCommunity[] = response.data.locations.map((loc: Location) => ({
+                    id: loc.id,
+                    name: loc.name,
+                    parent_id: loc.parent_id,
+                    parent_name: loc.parent_name,
+                    created_at: loc.created_at
+                }));
+                setSmallerCommunities(mappedCommunities);
+            }
+        } catch (error) {
+            console.error("Failed to fetch smaller communities:", error);
+            toast.error("Failed to load smaller communities");
+        } finally {
+            setLoading(false);
+        }
+    }, [selectedSuburbFilter]);
+
+    useEffect(() => {
+        fetchSuburbs();
+    }, [fetchSuburbs]);
+
+    useEffect(() => {
+        fetchSmallerCommunities();
+    }, [fetchSmallerCommunities]);
+
+    // Filter communities based on search query
+    const filteredCommunities = smallerCommunities.filter(c => 
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (c.parent_name && c.parent_name.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    // Handle adding a new smaller community
+    const handleAddCommunity = async () => {
+        if (!newCommunityName.trim()) {
+            toast.error("Community name is required");
+            return;
+        }
+        if (!selectedSuburb) {
+            toast.error("Please select a suburb");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.createLocation({
+                name: newCommunityName.trim(),
+                type: 'smaller_community',
+                parent_id: parseInt(selectedSuburb),
+            });
+
+            if (response.success) {
+                toast.success("Smaller community added successfully");
+                setIsAddModalOpen(false);
+                setNewCommunityName("");
+                setSelectedSuburb("");
+                fetchSmallerCommunities();
+            } else {
+                toast.error(response.message || "Failed to add smaller community");
+            }
+        } catch (error) {
+            console.error("Failed to add smaller community:", error);
+            toast.error("Failed to add smaller community");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Handle edit click
+    const handleEditClick = (community: SmallerCommunity) => {
+        setEditingCommunity(community);
+        setEditCommunityName(community.name);
+        setEditSuburbId(community.parent_id?.toString() || "");
+        setIsEditModalOpen(true);
+    };
+
+    // Handle saving changes
+    const handleSaveChanges = async () => {
+        if (!editingCommunity) return;
+        
+        if (!editCommunityName.trim()) {
+            toast.error("Community name is required");
+            return;
+        }
+        if (!editSuburbId) {
+            toast.error("Please select a suburb");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.updateLocation(editingCommunity.id, {
+                name: editCommunityName.trim(),
+                parent_id: parseInt(editSuburbId),
+            });
+
+            if (response.success) {
+                toast.success("Smaller community updated successfully");
+                setIsEditModalOpen(false);
+                setEditingCommunity(null);
+                setEditCommunityName("");
+                setEditSuburbId("");
+                fetchSmallerCommunities();
+            } else {
+                toast.error(response.message || "Failed to update smaller community");
+            }
+        } catch (error) {
+            console.error("Failed to update smaller community:", error);
+            toast.error("Failed to update smaller community");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // Handle delete click
+    const handleDeleteClick = (community: SmallerCommunity) => {
+        setEditingCommunity(community);
+        setIsDeleteDialogOpen(true);
+    };
+
+    // Handle delete confirmation
+    const handleConfirmDelete = async () => {
+        if (!editingCommunity) return;
+
+        setIsSubmitting(true);
+        try {
+            const response = await locationsService.deleteLocation(editingCommunity.id);
+
+            if (response.success) {
+                toast.success("Smaller community deleted successfully");
+                setIsDeleteDialogOpen(false);
+                setEditingCommunity(null);
+                fetchSmallerCommunities();
+            } else {
+                toast.error(response.message || "Failed to delete smaller community");
+            }
+        } catch (error) {
+            console.error("Failed to delete smaller community:", error);
+            toast.error("Failed to delete smaller community");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -88,7 +307,9 @@ export default function SmallerCommunitiesPage() {
                     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
                         <div className="space-y-1">
                             <h2 className="text-lg font-semibold text-gray-900">Smaller Communities</h2>
-                            <p className="text-sm text-gray-500">Showing {smallerCommunities.length} smaller communities</p>
+                            <p className="text-sm text-gray-500">
+                                {loading ? "Loading..." : `Showing ${filteredCommunities.length} smaller communities`}
+                            </p>
                         </div>
 
                         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
@@ -102,29 +323,19 @@ export default function SmallerCommunitiesPage() {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
-                                <Select value={selectedCommunityFilter} onValueChange={setSelectedCommunityFilter}>
-                                    <SelectTrigger className="w-full sm:w-48 bg-white border-gray-200">
-                                        <SelectValue placeholder="All Communities" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Communities</SelectItem>
-                                        <SelectItem value="c1">Sefwi Asawinso</SelectItem>
-                                        <SelectItem value="c2">Sefwi Boako</SelectItem>
-                                    </SelectContent>
-                                </Select>
                                 <Select value={selectedSuburbFilter} onValueChange={setSelectedSuburbFilter}>
                                     <SelectTrigger className="w-full sm:w-48 bg-white border-gray-200">
                                         <SelectValue placeholder="All Suburbs" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All Suburbs</SelectItem>
-                                        <SelectItem value="s1">Suburb A</SelectItem>
-                                        <SelectItem value="s2">Suburb B</SelectItem>
+                                        {suburbs.map((suburb) => (
+                                            <SelectItem key={suburb.id} value={suburb.id.toString()}>
+                                                {suburb.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
-                                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                                    Apply Filters
-                                </Button>
                             </div>
                             
                             <Button 
@@ -137,8 +348,13 @@ export default function SmallerCommunitiesPage() {
                         </div>
                     </div>
 
-                    {/* Empty State / List */}
-                    {smallerCommunities.length === 0 ? (
+                    {/* Loading / Empty State / List */}
+                    {loading ? (
+                        <div className="bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-20 px-4 text-center">
+                            <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
+                            <p className="text-gray-500">Loading smaller communities...</p>
+                        </div>
+                    ) : filteredCommunities.length === 0 ? (
                         <div className="bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-20 px-4 text-center">
                             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                 <MapPin className="w-8 h-8 text-gray-400" />
@@ -154,9 +370,51 @@ export default function SmallerCommunitiesPage() {
                             </Button>
                         </div>
                     ) : (
-                        // Placeholder for list view if data exists
-                        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                            <p className="text-gray-500">List view implementation...</p>
+                        <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
+                            <Table>
+                                <TableHeader className="bg-gray-50/50">
+                                    <TableRow className="hover:bg-transparent border-gray-100">
+                                        <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">Name</TableHead>
+                                        <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">Suburb</TableHead>
+                                        <TableHead className="text-right font-medium text-gray-500 text-xs uppercase tracking-wider">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredCommunities.map((community) => (
+                                        <TableRow key={community.id} className="hover:bg-gray-50/50 border-gray-100 transition-colors">
+                                            <TableCell className="font-medium text-gray-900">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
+                                                        <MapPin className="w-4 h-4" />
+                                                    </div>
+                                                    {community.name}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-gray-500">{community.parent_name || '-'}</TableCell>
+                                            <TableCell className="text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                                                        onClick={() => handleEditClick(community)}
+                                                    >
+                                                        <Edit className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
+                                                        onClick={() => handleDeleteClick(community)}
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </div>
                     )}
                 </div>
@@ -171,38 +429,136 @@ export default function SmallerCommunitiesPage() {
                     <div className="py-4 space-y-4">
                         <div className="space-y-2">
                             <Label>Suburb</Label>
-                            <Select value={selectedSuburb} onValueChange={setSelectedSuburb}>
+                            <Select value={selectedSuburb} onValueChange={setSelectedSuburb} disabled={isSubmitting}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select Suburb" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="s1">Suburb A</SelectItem>
-                                    <SelectItem value="s2">Suburb B</SelectItem>
-                                    <SelectItem value="s3">Suburb C</SelectItem>
+                                    {suburbs.map((suburb) => (
+                                        <SelectItem key={suburb.id} value={suburb.id.toString()}>
+                                            {suburb.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="name">Smaller Community Name</Label>
+                            <Label htmlFor="name">Community Name</Label>
                             <Input 
                                 id="name" 
-                                placeholder="" 
+                                placeholder="Enter community name" 
                                 value={newCommunityName}
                                 onChange={(e) => setNewCommunityName(e.target.value)}
+                                disabled={isSubmitting}
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                        <Button variant="outline" onClick={() => setIsAddModalOpen(false)} disabled={isSubmitting}>
+                            Cancel
+                        </Button>
                         <Button 
                             className="bg-indigo-600 hover:bg-indigo-700 text-white"
                             onClick={handleAddCommunity}
+                            disabled={isSubmitting}
                         >
-                            Add Smaller Community
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Adding...
+                                </>
+                            ) : (
+                                "Add Community"
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Edit Smaller Community Modal */}
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle>Edit Smaller Community</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label>Suburb</Label>
+                            <Select value={editSuburbId} onValueChange={setEditSuburbId} disabled={isSubmitting}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Suburb" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {suburbs.map((suburb) => (
+                                        <SelectItem key={suburb.id} value={suburb.id.toString()}>
+                                            {suburb.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="edit-name">Community Name</Label>
+                            <Input 
+                                id="edit-name" 
+                                placeholder="Enter community name" 
+                                value={editCommunityName}
+                                onChange={(e) => setEditCommunityName(e.target.value)}
+                                disabled={isSubmitting}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsEditModalOpen(false)} disabled={isSubmitting}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                            onClick={handleSaveChanges}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Save Changes"
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Smaller Community</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete &quot;{editingCommunity?.name}&quot;? 
+                            This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleConfirmDelete}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Deleting...
+                                </>
+                            ) : (
+                                "Delete"
+                            )}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

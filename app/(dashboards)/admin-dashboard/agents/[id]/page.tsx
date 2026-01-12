@@ -17,10 +17,61 @@ import {
     User,
     Eye
 } from "lucide-react";
-import { use } from "react";
+import { use, useEffect, useState } from "react";
+import { agentService, AgentProfile } from "@/lib/services/agent-service";
+import { toast } from "sonner";
+import Link from "next/link";
 
 export default function AgentDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [agent, setAgent] = useState<AgentProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+    const handleVerify = async () => {
+        if (!agent) return;
+        try {
+            const response = await agentService.verifyAgent(agent.id);
+            if (response.success) {
+                toast.success("Agent verified successfully");
+                setAgent(prev => prev ? ({ ...prev, user: { ...prev.user, status: 'active' } }) : null);
+            } else {
+                toast.error("Failed to verify agent");
+            }
+        } catch (error) {
+            toast.error("An error occurred during verification");
+        }
+    };
+
+    useEffect(() => {
+    const fetchAgent = async () => {
+      try {
+        const response = await agentService.getAgentById(parseInt(id));
+        if (response.success && response.data.agent) {
+          setAgent(response.data.agent);
+        } else {
+          setError("Failed to fetch agent details");
+        }
+      } catch (err) {
+        setError("An error occurred while fetching agent details");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+        fetchAgent();
+    }
+  }, [id]);
+
+  if (loading) {
+      return <div className="p-8">Loading agent details...</div>;
+  }
+
+  if (error || !agent) {
+      return <div className="p-8 text-red-500">Error: {error || "Agent not found"}</div>;
+  }
 
   return (
     <div className="flex flex-col h-full bg-slate-50">
@@ -31,9 +82,9 @@ export default function AgentDetailsPage({ params }: { params: Promise<{ id: str
         userName="Admin.Rock"
         userRoleLabel="MP"
         dropdownItems={[
-             { label: "Profile Settings", icon: UserCircle, href: "#" },
-             { label: "Audit Logs", icon: ShieldAlert, href: "#" },
-             { label: "System Settings", icon: Settings2, href: "#" },
+             { label: "Profile Settings", icon: UserCircle, href: "/admin-dashboard/profile" },
+             { label: "Audit Logs", icon: ShieldAlert, href: "/admin-dashboard/audit" },
+             { label: "System Settings", icon: Settings2, href: "/admin-dashboard/system-settings" },
              { label: "Logout", icon: LogOut, href: "#", className: "text-red-600 hover:text-red-700 hover:bg-red-50" },
         ]}
         actionButtons={[
@@ -50,15 +101,32 @@ export default function AgentDetailsPage({ params }: { params: Promise<{ id: str
                         {/* Profile Header */}
                         <div className="flex-1">
                             <div className="flex items-start gap-4">
-                                <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
-                                    <User className="w-8 h-8" />
+                                <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 overflow-hidden">
+                                    {agent.profile_image ? (
+                                        <img src={agent.profile_image} alt={agent.user.name} className="w-full h-full object-cover"/>
+                                    ) : (
+                                        <User className="w-8 h-8" />
+                                    )}
                                 </div>
                                 <div className="space-y-1">
-                                    <h2 className="text-2xl font-bold text-gray-900">Agent.Rock</h2>
-                                    <p className="text-gray-500">agent.rock@kofibenteh.com</p>
-                                    <div className="flex gap-2 pt-1">
-                                        <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-200">Active</Badge>
+                                    <h2 className="text-2xl font-bold text-gray-900">{agent.user.name}</h2>
+                                    <p className="text-gray-500">{agent.user.email}</p>
+                                    <div className="flex gap-2 pt-1 items-center">
+                                        <Badge variant="secondary" className={`text-xs ${agent.user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                            {agent.user.status}
+                                        </Badge>
                                         <Badge variant="outline" className="text-gray-500 border-gray-200">Agent</Badge>
+                                        <Badge variant="outline" className="text-blue-500 border-blue-200">{agent.agent_code}</Badge>
+                                        {agent.user.status !== 'active' && (
+                                            <Button 
+                                                size="sm" 
+                                                variant="default"
+                                                onClick={handleVerify} 
+                                                className="h-6 text-xs px-2 bg-green-600 hover:bg-green-700 ml-2"
+                                            >
+                                                Verify Agent
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -72,19 +140,17 @@ export default function AgentDetailsPage({ params }: { params: Promise<{ id: str
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3 text-sm">
                                     <Mail className="w-4 h-4 text-gray-400" />
-                                    <span className="text-gray-700">agent.rock@kofibenteh.com</span>
+                                    <span className="text-gray-700">{agent.user.email}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm">
                                     <Phone className="w-4 h-4 text-gray-400" />
-                                    <span className="text-gray-400 italic">No phone number</span>
+                                    <span className={agent.user.phone ? "text-gray-700" : "text-gray-400 italic"}>
+                                        {agent.user.phone || "No phone number"}
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm">
                                     <Calendar className="w-4 h-4 text-gray-400" />
-                                    <span className="text-gray-700">Joined Sep 28, 2025</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-sm">
-                                    <Clock className="w-4 h-4 text-gray-400" />
-                                    <span className="text-gray-700">Last login Dec 08, 2025 16:43</span>
+                                    <span className="text-gray-700">Joined {new Date(agent.created_at).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -93,8 +159,17 @@ export default function AgentDetailsPage({ params }: { params: Promise<{ id: str
                         <div className="space-y-4">
                             <h3 className="font-semibold text-gray-900">Location Assignment</h3>
                             <div className="space-y-3">
-                                <div className="text-sm text-gray-500 italic">
-                                    No location assigned
+                                <div className="text-sm text-gray-700">
+                                    {agent.assigned_location ? (
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-medium">{agent.assigned_location}</span>
+                                            {agent.assigned_communities && (
+                                                <span className="text-xs text-gray-500">Communities: {agent.assigned_communities}</span>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <span className="italic text-gray-500">No location assigned</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -102,22 +177,16 @@ export default function AgentDetailsPage({ params }: { params: Promise<{ id: str
                          {/* Activity Statistics */}
                         <div className="space-y-4">
                             <h3 className="font-semibold text-gray-900">Activity Statistics</h3>
+                            {/* Assuming stats might come with agent data or separate call. 
+                                For now displaying placeholder or real stats if added to AgentProfile interface */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="text-center p-3">
-                                    <div className="text-2xl font-bold text-indigo-600">2</div>
+                                    <div className="text-2xl font-bold text-indigo-600">-</div>
                                     <div className="text-xs text-gray-500">Total Issues</div>
                                 </div>
                                 <div className="text-center p-3">
-                                    <div className="text-2xl font-bold text-green-600">0</div>
+                                    <div className="text-2xl font-bold text-green-600">-</div>
                                     <div className="text-xs text-gray-500">Resolved</div>
-                                </div>
-                                <div className="text-center p-3">
-                                    <div className="text-2xl font-bold text-yellow-600">0</div>
-                                    <div className="text-xs text-gray-500">Pending</div>
-                                </div>
-                                <div className="text-center p-3">
-                                    <div className="text-2xl font-bold text-blue-600">0</div>
-                                    <div className="text-xs text-gray-500">Last 30 Days</div>
                                 </div>
                             </div>
                         </div>
@@ -125,52 +194,14 @@ export default function AgentDetailsPage({ params }: { params: Promise<{ id: str
                 </CardContent>
             </Card>
 
-            {/* Recent Issues Managed */}
+            {/* Recent Issues Managed - Could be a separate component fetching issues by this agent */}
              <Card>
                 <CardHeader>
                     <CardTitle className="text-base font-semibold">Recent Issues</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100 uppercase text-xs">
-                                <tr>
-                                    <th className="px-6 py-4">ISSUE</th>
-                                    <th className="px-6 py-4">CATEGORY</th>
-                                    <th className="px-6 py-4">STATUS</th>
-                                    <th className="px-6 py-4">CREATED</th>
-                                    <th className="px-6 py-4 text-right">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                <tr className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-gray-900">aeda</td>
-                                    <td className="px-6 py-4 text-gray-600">Health</td>
-                                    <td className="px-6 py-4">
-                                        <Badge variant="secondary" className="bg-gray-100 text-gray-700 hover:bg-gray-200">Rejected</Badge>
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-600">Oct 01, 2025</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">
-                                            <Eye className="w-4 h-4" />
-                                        </Button>
-                                    </td>
-                                </tr>
-                                <tr className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-gray-900">t6r6</td>
-                                    <td className="px-6 py-4 text-gray-600">Economic Empowerment</td>
-                                    <td className="px-6 py-4">
-                                        <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-200">Approved</Badge>
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-600">Sep 28, 2025</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 bg-indigo-50 hover:bg-indigo-100">
-                                             <Eye className="w-4 h-4" />
-                                        </Button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div className="text-sm text-gray-500 italic p-4 text-center">
+                        Issues list integration pending...
                     </div>
                 </CardContent>
              </Card>

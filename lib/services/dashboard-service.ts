@@ -28,6 +28,132 @@ export interface AdminDashboardStats {
     completed: number;
     on_hold: number;
   };
+  content_stats?: {
+    blog_posts: number;
+    events: number;
+    upcoming_events: number;
+    carousel_items: number;
+  };
+}
+
+// Admin Charts Data
+export interface AdminChartsData {
+  charts: {
+    issueStatusDistribution: Array<{
+      name: string;
+      value: number;
+      color: string;
+    }>;
+    monthlyTrends: Array<{
+      name: string;
+      issues: number;
+      resolved: number;
+    }>;
+    categoryDistribution?: Array<{
+      name: string;
+      value: number;
+      color: string;
+    }>;
+  };
+}
+
+// Recent Issue
+export interface RecentIssue {
+  id: string;
+  title: string;
+  description: string;
+  agent: string;
+  status: string;
+  severity: string;
+  date: string;
+  category: string;
+}
+
+// Recent Issues Data
+export interface RecentIssuesData {
+  recentIssues: RecentIssue[];
+}
+
+// Audit Log Entry
+export interface AuditLogEntry {
+  id: number;
+  user: string;
+  action: string;
+  resource: string;
+  ip: string;
+  timestamp: string;
+  status: string;
+  user_agent?: string;
+  session_id?: string;
+}
+
+// Recent Activity Data
+export interface RecentActivityData {
+  auditLogs: AuditLogEntry[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    total_pages: number;
+  };
+  summary?: {
+    total_logs: number;
+    success_count: number;
+    failed_count: number;
+    warning_count: number;
+    last_updated: string | null;
+  };
+}
+
+// Analytics Metrics Data
+export interface AnalyticsMetricsData {
+  metrics: {
+    totalIssues: number;
+    activeStaff: number;
+    totalProjects: number;
+    activeBudget: number;
+    newIssuesThisWeek: number;
+    resolvedThisWeek: number;
+    activeUsers7Days: number;
+    ongoingProjects: number;
+  };
+  trends: {
+    issuesChange: number;
+    staffChange: number;
+    projectsChange: number;
+    budgetChange: number;
+    newIssuesChange: number;
+    resolvedChange: number;
+    activeUsersChange: number;
+    ongoingProjectsChange: number;
+  };
+}
+
+// Top Performer
+export interface TopPerformer {
+  id: number;
+  name: string;
+  role: string;
+  resolvedCount: number;
+  totalCount: number;
+  resolutionRate: number;
+  rank: number;
+}
+
+// Community Insight
+export interface CommunityInsight {
+  location: string;
+  issuesReported: number;
+  avgResolutionTime: string;
+  resolutionRate: number;
+}
+
+// Analytics Insights Data
+export interface AnalyticsInsightsData {
+  insights: {
+    topPerformers: TopPerformer[];
+    communityInsights: CommunityInsight[];
+  };
 }
 
 // Officer Dashboard Stats
@@ -107,6 +233,36 @@ export interface TaskForceStatsResponse {
   data: TaskForceDashboardStats;
 }
 
+export interface AdminChartsResponse {
+  success: boolean;
+  message: string;
+  data: AdminChartsData;
+}
+
+export interface RecentIssuesResponse {
+  success: boolean;
+  message: string;
+  data: RecentIssuesData;
+}
+
+export interface RecentActivityResponse {
+  success: boolean;
+  message: string;
+  data: RecentActivityData;
+}
+
+export interface AnalyticsMetricsResponse {
+  success: boolean;
+  message: string;
+  data: AnalyticsMetricsData;
+}
+
+export interface AnalyticsInsightsResponse {
+  success: boolean;
+  message: string;
+  data: AnalyticsInsightsData;
+}
+
 // Backward compatibility alias
 export type DashboardStats = AdminDashboardStats;
 export type DashboardStatsResponse = AdminStatsResponse;
@@ -139,6 +295,46 @@ export const dashboardService = {
   // Task Force dashboard stats
   getTaskForceStats: async (): Promise<TaskForceStatsResponse> => {
     return apiClient<TaskForceStatsResponse>('/task-force/dashboard/stats', {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  // Admin charts data
+  getAdminCharts: async (): Promise<AdminChartsResponse> => {
+    return apiClient<AdminChartsResponse>('/admin/data/analytics/charts', {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  // Recent issues data
+  getRecentIssues: async (limit: number = 10): Promise<RecentIssuesResponse> => {
+    return apiClient<RecentIssuesResponse>(`/admin/data/recent-issues?limit=${limit}`, {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  // Recent activity (audit logs)
+  getRecentActivity: async (limit: number = 10): Promise<RecentActivityResponse> => {
+    return apiClient<RecentActivityResponse>(`/admin/data/audit-logs?limit=${limit}`, {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  // Analytics metrics
+  getAnalyticsMetrics: async (): Promise<AnalyticsMetricsResponse> => {
+    return apiClient<AnalyticsMetricsResponse>('/admin/data/analytics/metrics', {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  // Analytics insights
+  getAnalyticsInsights: async (): Promise<AnalyticsInsightsResponse> => {
+    return apiClient<AnalyticsInsightsResponse>('/admin/data/analytics/insights', {
       method: 'GET',
       requiresAuth: true,
     });

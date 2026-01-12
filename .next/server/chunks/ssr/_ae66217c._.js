@@ -1,0 +1,3 @@
+module.exports=[50917,a=>{"use strict";var b=a.i(93215);a.s(["Loader2",()=>b.default])},72128,a=>{"use strict";var b=a.i(64759),c=a.i(94657),d=a.i(11347),e=a.i(50917);function f(){let a=(0,d.useRouter)();return(0,c.useEffect)(()=>{a.replace("/task-force-dashboard/dashboard")},[a]),(0,b.jsx)("div",{className:"flex h-screen items-center justify-center",children:(0,b.jsxs)("div",{className:"text-center",children:[(0,b.jsx)(e.Loader2,{className:"h-10 w-10 text-purple-600 animate-spin mx-auto mb-4"}),(0,b.jsx)("p",{className:"text-gray-600",children:"Redirecting to dashboard..."})]})})}a.s(["default",()=>f])}];
+
+//# sourceMappingURL=_ae66217c._.js.map

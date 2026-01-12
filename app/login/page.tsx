@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,7 +20,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -41,12 +39,26 @@ export default function LoginPage() {
 
       if (response.success) {
         const user = response.data.user;
+        const token = response.data.access_token;
         const dashboardUrl = authService.getDashboardForRole(user.role);
+
+        // Sync auth state with Zustand store
+        const { useAuthStore } = await import('@/lib/stores/auth-store');
+        useAuthStore.getState().login(
+          { id: String(user.id), name: user.name || '', email: user.email, role: user.role },
+          token
+        );
+
+        // Check for returnUrl
+        const params = new URLSearchParams(window.location.search);
+        const returnUrl = params.get("returnUrl");
 
         toast.success(`Welcome back, ${user.name || user.email}!`);
         
-        // Redirect to the appropriate dashboard based on role
-        router.push(dashboardUrl);
+        // Use window.location.href to force a full page reload
+        // This ensures middleware sees the new cookies immediately
+        // Prioritize returnUrl if it exists, otherwise use role-based dashboard
+        window.location.href = returnUrl ? decodeURIComponent(returnUrl) : dashboardUrl;
       } else {
         toast.error(response.message || "Login failed");
       }

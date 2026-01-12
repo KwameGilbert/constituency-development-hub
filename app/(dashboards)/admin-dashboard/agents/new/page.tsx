@@ -1,15 +1,94 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, UserPlus, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
+import { ArrowLeft, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
 import Link from "next/link";
+import { agentService } from "@/lib/services/agent-service";
+import { locationsService, Location } from "@/lib/services/locations-service";
+import { toast } from "sonner";
 
 export default function AddAgentPage() {
+  const router = useRouter();
+  // const { toast } = useToast(); // Removed
+  const [loading, setLoading] = useState(false);
+  const [locations, setLocations] = useState<Location[]>([]);
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    mainCommunity: "",
+    smallerCommunity: "",
+    suburb: "",
+    cottage: "",
+  });
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await locationsService.getLocations({ limit: 100 }); 
+        if (response.success && response.data) {
+           setLocations(response.data.locations); 
+        }
+      } catch (error) {
+        console.error("Failed to fetch locations", error);
+      }
+    };
+    fetchLocations();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSelectChange = (key: string, value: string) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      // Prepare FormData for API
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("email", formData.email);
+      data.append("phone", formData.phone);
+      
+      // Assign location - prioritization logic could go here
+      // For now sending the main selection as 'assigned_location'
+      data.append("assigned_location", formData.mainCommunity); 
+      if (formData.smallerCommunity) data.append("assigned_communities", formData.smallerCommunity);
+
+      const response = await agentService.createAgent(data);
+      
+      if (response.success) {
+        toast.success("Success", {
+          description: "Agent created successfully",
+        });
+        router.push("/admin-dashboard/agents");
+      } else {
+        toast.error("Error", {
+          description: response.message || "Failed to create agent",
+        });
+      }
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+        toast.error("Error", {
+          description: errorMessage,
+        });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-50">
       <AdminHeader 
@@ -37,16 +116,16 @@ export default function AddAgentPage() {
                     <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="fullName" className="text-gray-700">Full Name <span className="text-red-500">*</span></Label>
-                                <Input id="fullName" placeholder="Enter agent name" className="bg-white" />
+                                <Label htmlFor="name" className="text-gray-700">Full Name <span className="text-red-500">*</span></Label>
+                                <Input id="name" value={formData.name} onChange={handleChange} placeholder="Enter agent name" className="bg-white" />
                             </div>
                             <div className="space-y-2">
                                  <Label htmlFor="email" className="text-gray-700">Email Address <span className="text-red-500">*</span></Label>
-                                 <Input id="email" type="email" placeholder="Enter email address" className="bg-white" />
+                                 <Input id="email" type="email" value={formData.email} onChange={handleChange} placeholder="Enter email address" className="bg-white" />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="phone" className="text-gray-700">Phone Number <span className="text-red-500">*</span></Label>
-                                <Input id="phone" placeholder="Enter phone number" className="bg-white" />
+                                <Input id="phone" value={formData.phone} onChange={handleChange} placeholder="Enter phone number" className="bg-white" />
                             </div>
                         </div>
                     </div>
@@ -58,49 +137,20 @@ export default function AddAgentPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                              <div className="space-y-2">
                                 <Label htmlFor="mainCommunity" className="text-gray-700">Main Community <span className="text-red-500">*</span></Label>
-                                <Select>
+                                <Select onValueChange={(val) => handleSelectChange("mainCommunity", val)}>
                                     <SelectTrigger className="bg-white">
                                         <SelectValue placeholder="Select Main Community" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="comm1">Community 1</SelectItem>
-                                        <SelectItem value="comm2">Community 2</SelectItem>
+                                        {locations.map(loc => (
+                                          <SelectItem key={loc.id} value={loc.id.toString()}>
+                                            {loc.name}
+                                          </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="smallerCommunity" className="text-gray-700">Smaller Community</Label>
-                                <Select>
-                                    <SelectTrigger className="bg-white">
-                                        <SelectValue placeholder="Select Smaller Community" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="small1">Smaller Comm 1</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="suburb" className="text-gray-700">Suburb</Label>
-                                <Select>
-                                    <SelectTrigger className="bg-white">
-                                        <SelectValue placeholder="Select Suburb" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="sub1">Suburb 1</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="cottage" className="text-gray-700">Cottage</Label>
-                                <Select>
-                                    <SelectTrigger className="bg-white">
-                                        <SelectValue placeholder="Select Cottage" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="cot1">Cottage 1</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                             {/* Other dropdowns can remain static or be enhanced later */}
                         </div>
                     </div>
 
@@ -109,8 +159,12 @@ export default function AddAgentPage() {
                          <Button variant="ghost" asChild className="text-gray-500 hover:text-gray-700 hover:bg-gray-100">
                             <Link href="/admin-dashboard/agents">Cancel</Link>
                          </Button>
-                         <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 px-8">
-                            Add Agent
+                         <Button 
+                            onClick={handleSubmit} 
+                            disabled={loading}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2 px-8"
+                         >
+                            {loading ? "Adding..." : "Add Agent"}
                          </Button>
                     </div>
 

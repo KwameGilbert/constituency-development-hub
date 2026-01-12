@@ -30,6 +30,7 @@ interface AnnouncementsTableProps {
     total: number;
     total_pages: number;
   };
+  basePath?: string;
 }
 
 const getStatusColor = (status: string) => {
@@ -59,7 +60,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-export function AnnouncementsTable({ announcements, pagination }: AnnouncementsTableProps) {
+export function AnnouncementsTable({ announcements, pagination, basePath = "/admin-dashboard/announcements" }: AnnouncementsTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -126,12 +127,12 @@ export function AnnouncementsTable({ announcements, pagination }: AnnouncementsT
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin-dashboard/announcements/${announcement.id}`}>
+                      <Link href={`${basePath}/${announcement.id}`}>
                         <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
                           <Eye className="w-4 h-4" />
                         </Button>
                       </Link>
-                      <Link href={`/admin-dashboard/announcements/${announcement.id}/edit`}>
+                      <Link href={`${basePath}/${announcement.id}/edit`}>
                         <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900">
                           <Edit className="w-4 h-4" />
                         </Button>

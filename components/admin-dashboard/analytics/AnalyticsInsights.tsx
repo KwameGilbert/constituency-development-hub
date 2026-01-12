@@ -1,41 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MapPin } from "lucide-react";
-
-interface InsightsData {
-  insights: {
-    topPerformers: Array<{
-      id: number;
-      name: string;
-      role: string;
-      resolvedCount: number;
-      totalCount: number;
-      resolutionRate: number;
-      rank: number;
-    }>;
-    communityInsights: Array<{
-      location: string;
-      issuesReported: number;
-      avgResolutionTime: string;
-      resolutionRate: number;
-    }>;
-  };
-}
+import { dashboardService, AnalyticsInsightsData } from "@/lib/services/dashboard-service";
 
 export function AnalyticsInsights() {
-  const [insightsData, setInsightsData] = useState<InsightsData | null>(null);
+  const [insightsData, setInsightsData] = useState<AnalyticsInsightsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInsights = async () => {
       try {
-        const response = await axios.get('/data/admin-analytics-insights.json');
-        setInsightsData(response.data);
+        const response = await dashboardService.getAnalyticsInsights();
+        
+        if (response.success && response.data) {
+          setInsightsData(response.data);
+        } else {
+          setError(response.message || 'Failed to load insights data');
+        }
       } catch (err) {
         setError('Failed to load insights data');
         console.error('Error fetching insights:', err);

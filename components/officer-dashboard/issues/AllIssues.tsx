@@ -27,7 +27,7 @@ import {
 } from "@/lib/services/issues-service";
 import Link from "next/link";
 
-export function AllIssues({ readOnly = false }: { readOnly?: boolean }) {
+export function AllIssues() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
@@ -299,7 +299,7 @@ export function AllIssues({ readOnly = false }: { readOnly?: boolean }) {
                         className="h-auto p-0 text-indigo-600 hover:text-indigo-700"
                         asChild
                       >
-                        <Link href={`/admin-dashboard/issues/${issue.id}`}>
+                        <Link href={`/officer-dashboard/issues/${issue.id}`}>
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </Link>
