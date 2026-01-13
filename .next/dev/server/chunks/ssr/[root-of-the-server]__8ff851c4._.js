@@ -204,13 +204,11 @@ const MetricsCards = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_mo
     throw new Error("Attempted to call MetricsCards() from the server but MetricsCards is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.");
 }, "[project]/components/agent-dashboard/MetricsCards.tsx", "MetricsCards");
 }),
-"[project]/components/agent-dashboard/MetricsCards.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
+"[project]/components/agent-dashboard/MetricsCards.tsx [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$agent$2d$dashboard$2f$MetricsCards$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/components/agent-dashboard/MetricsCards.tsx [app-rsc] (client reference proxy) <module evaluation>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$agent$2d$dashboard$2f$MetricsCards$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__ = __turbopack_context__.i("[project]/components/agent-dashboard/MetricsCards.tsx [app-rsc] (client reference proxy)");
-;
-__turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$agent$2d$dashboard$2f$MetricsCards$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__);
+const e = new Error("Could not parse module '[project]/components/agent-dashboard/MetricsCards.tsx'\n\nMerge conflict marker encountered.");
+e.code = 'MODULE_UNPARSABLE';
+throw e;
 }),
 "[project]/components/agent-dashboard/RecentTasks.tsx [app-rsc] (client reference proxy) <module evaluation>", ((__turbopack_context__) => {
 "use strict";
@@ -240,13 +238,11 @@ const RecentTasks = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_mod
     throw new Error("Attempted to call RecentTasks() from the server but RecentTasks is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.");
 }, "[project]/components/agent-dashboard/RecentTasks.tsx", "RecentTasks");
 }),
-"[project]/components/agent-dashboard/RecentTasks.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
+"[project]/components/agent-dashboard/RecentTasks.tsx [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$agent$2d$dashboard$2f$RecentTasks$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/components/agent-dashboard/RecentTasks.tsx [app-rsc] (client reference proxy) <module evaluation>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$agent$2d$dashboard$2f$RecentTasks$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__ = __turbopack_context__.i("[project]/components/agent-dashboard/RecentTasks.tsx [app-rsc] (client reference proxy)");
-;
-__turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$agent$2d$dashboard$2f$RecentTasks$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__);
+const e = new Error("Could not parse module '[project]/components/agent-dashboard/RecentTasks.tsx'\n\nMerge conflict marker encountered.");
+e.code = 'MODULE_UNPARSABLE';
+throw e;
 }),
 "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx [app-rsc] (client reference proxy) <module evaluation>", ((__turbopack_context__) => {
 "use strict";
@@ -276,13 +272,11 @@ const IssueBreakdown = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
     throw new Error("Attempted to call IssueBreakdown() from the server but IssueBreakdown is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.");
 }, "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx", "IssueBreakdown");
 }),
-"[project]/components/officer-dashboard/charts/IssueBreakdown.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
+"[project]/components/officer-dashboard/charts/IssueBreakdown.tsx [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$officer$2d$dashboard$2f$charts$2f$IssueBreakdown$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/components/officer-dashboard/charts/IssueBreakdown.tsx [app-rsc] (client reference proxy) <module evaluation>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$officer$2d$dashboard$2f$charts$2f$IssueBreakdown$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__ = __turbopack_context__.i("[project]/components/officer-dashboard/charts/IssueBreakdown.tsx [app-rsc] (client reference proxy)");
-;
-__turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$officer$2d$dashboard$2f$charts$2f$IssueBreakdown$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__);
+const e = new Error("Could not parse module '[project]/components/officer-dashboard/charts/IssueBreakdown.tsx'\n\nMerge conflict marker encountered.");
+e.code = 'MODULE_UNPARSABLE';
+throw e;
 }),
 "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx [app-rsc] (client reference proxy) <module evaluation>", ((__turbopack_context__) => {
 "use strict";
@@ -312,13 +306,11 @@ const IssuesByStatus = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
     throw new Error("Attempted to call IssuesByStatus() from the server but IssuesByStatus is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.");
 }, "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx", "IssuesByStatus");
 }),
-"[project]/components/officer-dashboard/charts/IssuesByStatus.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
+"[project]/components/officer-dashboard/charts/IssuesByStatus.tsx [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$officer$2d$dashboard$2f$charts$2f$IssuesByStatus$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/components/officer-dashboard/charts/IssuesByStatus.tsx [app-rsc] (client reference proxy) <module evaluation>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$officer$2d$dashboard$2f$charts$2f$IssuesByStatus$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__ = __turbopack_context__.i("[project]/components/officer-dashboard/charts/IssuesByStatus.tsx [app-rsc] (client reference proxy)");
-;
-__turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$officer$2d$dashboard$2f$charts$2f$IssuesByStatus$2e$tsx__$5b$app$2d$rsc$5d$__$28$client__reference__proxy$29$__);
+const e = new Error("Could not parse module '[project]/components/officer-dashboard/charts/IssuesByStatus.tsx'\n\nMerge conflict marker encountered.");
+e.code = 'MODULE_UNPARSABLE';
+throw e;
 }),
 "[project]/app/(dashboards)/agents-dashboard/page.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
