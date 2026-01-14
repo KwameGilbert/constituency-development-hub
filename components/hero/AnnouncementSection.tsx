@@ -33,7 +33,7 @@ export default function AnnouncementSection() {
 
   return (
     <section className="py-16 bg-slate-50">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-6xl px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-10">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Latest Announcements</h2>

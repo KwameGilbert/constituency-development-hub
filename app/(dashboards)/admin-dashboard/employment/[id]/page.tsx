@@ -8,58 +8,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import axios from "axios";
 import { useParams } from "next/navigation";
-
-interface JobPosting {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  company?: string;
-  location: string;
-  job_type: "full_time" | "part_time" | "contract" | "internship";
-  salary_range?: string;
-  requirements?: string;
-  responsibilities?: string;
-  application_deadline: string;
-  status: "draft" | "published" | "closed";
-  category?: string;
-  experience_level?: string;
-  applicants_count?: number;
-  created_at?: string;
-  updated_at?: string;
-  published_at?: string;
-}
-
-interface JobsData {
-  jobs: JobPosting[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-  };
-  statistics: {
-    total_jobs: number;
-    published_jobs: number;
-    draft_jobs: number;
-    closed_jobs: number;
-    total_applicants: number;
-    by_category: Array<{
-      category: string;
-      count: number;
-    }>;
-    by_job_type: Array<{
-      job_type: string;
-      count: number;
-    }>;
-    by_experience_level: Array<{
-      experience_level: string;
-      count: number;
-    }>;
-  };
-}
+import { employmentService, JobPosting } from "@/lib/services/employment-service";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -73,10 +23,9 @@ export default function JobDetailPage() {
     const fetchJob = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<JobsData>('/data/admin-employment-jobs.json');
-        const foundJob = response.data.jobs.find(j => j.id === parseInt(id));
-        if (foundJob) {
-          setJob(foundJob);
+        const response = await employmentService.getJobById(id);
+        if (response.success && response.data.job) {
+          setJob(response.data.job);
           setError(null);
         } else {
           setError('Job not found');

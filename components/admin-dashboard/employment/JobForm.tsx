@@ -186,10 +186,13 @@ export function NewJobForm({ job }: JobFormProps) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="administration">Administration</SelectItem>
+                    <SelectItem value="technical">Technical</SelectItem>
+                    <SelectItem value="health">Health</SelectItem>
                     <SelectItem value="education">Education</SelectItem>
-                    <SelectItem value="healthcare">Healthcare</SelectItem>
-                    <SelectItem value="engineering">Engineering</SelectItem>
                     <SelectItem value="social_services">Social Services</SelectItem>
+                    <SelectItem value="finance">Finance</SelectItem>
+                    <SelectItem value="communications">Communications</SelectItem>
+                    <SelectItem value="monitoring_evaluation">Monitoring & Evaluation</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
 import { Loader2 } from "lucide-react";
+import { getImageUrl } from "@/lib/utils";
 
 // Fallback slides if API fails
 const fallbackSlides: HeroSlide[] = [
@@ -79,7 +80,7 @@ function HeroCarousel() {
 
   return (
     <section className="relative bg-gray-100">
-      <div className="relative h-[90vh] overflow-hidden">
+      <div className="relative h-[35vh] md:h-[90vh] overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide.id}
@@ -92,7 +93,7 @@ function HeroCarousel() {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: `url(${currentSlide.image})`,
+                backgroundImage: `url(${getImageUrl(currentSlide.image)})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}

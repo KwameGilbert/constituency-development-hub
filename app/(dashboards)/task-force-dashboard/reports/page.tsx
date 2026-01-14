@@ -21,6 +21,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { taskForceService, TeamMember, TaskForceReports } from '@/lib/services/task-force-service';
+import * as XLSX from 'xlsx';
 
 export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,47 @@ export default function ReportsPage() {
   const totalIssues = reports?.total_issues || 0;
 
   const handleExportReport = () => {
-    alert(`Exporting report for ${reportPeriod}`);
+    if (!reports) return;
+
+    const workbook = XLSX.utils.book_new();
+
+    // 1. Overview Sheet
+    const overviewData = [
+      { Metric: "Total Issues", Value: reports.total_issues },
+      { Metric: "Resolved Issues", Value: reports.resolved_issues },
+      { Metric: "Resolution Rate", Value: `${reports.total_issues ? ((reports.resolved_issues / reports.total_issues) * 100).toFixed(1) : 0}%` },
+      { Metric: "", Value: "" }, // Spacer
+      { Metric: "Status Distribution", Value: "" },
+      ...statusBreakdown.map(s => ({ Metric: s.label, Value: s.count })),
+      { Metric: "", Value: "" },
+      { Metric: "Priority Breakdown", Value: "" },
+      ...priorityBreakdown.map(p => ({ Metric: p.name, Value: p.count }))
+    ];
+    const overviewSheet = XLSX.utils.json_to_sheet(overviewData);
+    XLSX.utils.book_append_sheet(workbook, overviewSheet, "Overview");
+
+    // 2. Team Performance Sheet
+    const performanceData = teamMembers.map(m => ({
+      Name: m.name,
+      Role: m.title || m.specialization || 'Task Force Member',
+      Status: m.status,
+      "Assigned Issues": m.assigned_count,
+      "Completed Issues": m.completed_count,
+      "Completion Rate": `${m.assigned_count ? Math.round((m.completed_count / m.assigned_count) * 100) : 0}%`
+    }));
+    const performanceSheet = XLSX.utils.json_to_sheet(performanceData);
+    XLSX.utils.book_append_sheet(workbook, performanceSheet, "Team Performance");
+
+    // 3. Category Sheet
+    const categoryData = (reports.category_distribution || []).map(c => ({
+      Category: c.name,
+      Count: c.count,
+      Percentage: `${reports.total_issues ? ((c.count / reports.total_issues) * 100).toFixed(1) : 0}%`
+    }));
+    const categorySheet = XLSX.utils.json_to_sheet(categoryData);
+    XLSX.utils.book_append_sheet(workbook, categorySheet, "Categories");
+
+    XLSX.writeFile(workbook, `Task_Force_Report_${reportPeriod}.xlsx`);
   };
 
   if (loading && !reports) {

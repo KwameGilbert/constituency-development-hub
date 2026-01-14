@@ -24,6 +24,7 @@ interface FormData {
 export function ProfileDetails() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [activity, setActivity] = useState<ActivityStats | null>(null);
     const [officerData, setOfficerData] = useState<OfficerData | null>(null);
@@ -39,6 +40,17 @@ export function ProfileDetails() {
 
     useEffect(() => {
         async function fetchData() {
+            // Check if user is authenticated
+            const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+            const envToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
+            const hasToken = token || (envToken && envToken !== "YOUR_JWT_TOKEN_HERE");
+
+            if (!hasToken) {
+                toast.error("Please log in to access your profile.");
+                setLoading(false);
+                return;
+            }
+
             try {
                 const [profileRes, statsRes] = await Promise.all([
                     profileService.getProfile(),
@@ -67,6 +79,27 @@ export function ProfileDetails() {
                 }
             } catch (error) {
                 console.error("Failed to fetch profile data:", error);
+                const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+
+                // Check for specific error types
+                if (errorMessage.includes("User not found")) {
+                    toast.error("Profile not found. Please contact support if this persists.");
+                    setError("Your profile could not be found. Please contact support or try logging in again.");
+                } else if (errorMessage.includes("401") || errorMessage.includes("403")) {
+                    toast.error("Session expired. Please log in again.");
+                    setError("Authentication required. Please log in again.");
+                    // Optionally redirect to login
+                    // window.location.href = "/login";
+                } else if (errorMessage.includes("404")) {
+                    toast.error("Profile endpoint not found. Please contact support.");
+                    setError("Service temporarily unavailable. Please try again later.");
+                } else if (errorMessage.includes("500") || errorMessage.includes("502") || errorMessage.includes("503")) {
+                    toast.error("Server error. Please try again later.");
+                    setError("Service temporarily unavailable. Please try again later.");
+                } else {
+                    toast.error("Failed to load profile data. Please try again.");
+                    setError("Unable to load profile data. Please refresh the page.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -106,7 +139,12 @@ export function ProfileDetails() {
             });
 
             if (!updateRes.success) {
-                toast.error(updateRes.message || "Failed to update profile");
+                const errorMessage = updateRes.message || "Failed to update profile";
+                if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                    toast.error("Session expired. Please log in again.");
+                    return;
+                }
+                toast.error(errorMessage);
                 return;
             }
 
@@ -119,7 +157,12 @@ export function ProfileDetails() {
                 });
 
                 if (!passwordRes.success) {
-                    toast.error(passwordRes.message || "Failed to change password");
+                    const errorMessage = passwordRes.message || "Failed to change password";
+                    if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                        toast.error("Session expired. Please log in again.");
+                        return;
+                    }
+                    toast.error(errorMessage);
                     return;
                 }
 
@@ -133,15 +176,27 @@ export function ProfileDetails() {
             }
 
             toast.success("Profile updated successfully");
-            
+
             // Refresh profile data
             const refreshRes = await profileService.getProfile();
             if (refreshRes.success) {
                 setProfile(refreshRes.data.user);
+            } else {
+                const errorMessage = refreshRes.message || "Failed to refresh profile data";
+                if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                    toast.error("Session expired. Please log in again.");
+                } else {
+                    toast.error("Profile updated but failed to refresh data.");
+                }
             }
         } catch (error) {
             console.error("Failed to update profile:", error);
-            toast.error("Failed to update profile. Please try again.");
+            const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+            if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                toast.error("Session expired. Please log in again.");
+            } else {
+                toast.error("Failed to update profile. Please try again.");
+            }
         } finally {
             setSaving(false);
         }
@@ -170,6 +225,28 @@ export function ProfileDetails() {
         return (
             <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <Card className="w-full max-w-md">
+                    <CardContent className="pt-6 text-center">
+                        <div className="text-red-500 mb-4">
+                            <Info className="h-12 w-12 mx-auto" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Unable to Load Profile</h3>
+                        <p className="text-muted-foreground mb-4">{error}</p>
+                        <Button
+                            onClick={() => window.location.reload()}
+                            className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90"
+                        >
+                            Refresh Page
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         );
     }

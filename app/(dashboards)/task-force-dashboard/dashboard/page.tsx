@@ -30,6 +30,7 @@ import {
 } from '@/lib/data';
 import { issuesService, Issue as ApiIssue, IssueStatistics as ApiStatistics } from '@/lib/services/issues-service';
 import Link from 'next/link';
+import * as XLSX from 'xlsx';
 
 function TaskForceMainDashboardPage() {
   const metadata = getMetadata();
@@ -86,6 +87,31 @@ function TaskForceMainDashboardPage() {
     return () => clearTimeout(timer);
   }, [searchTerm, statusFilter, categoryFilter]);
 
+  const handleExportReports = () => {
+    const dataToExport = filteredIssues.length > 0 ? filteredIssues : [];
+    
+    if (dataToExport.length === 0) {
+      // Could show a toast here if we had one set up
+      return;
+    }
+
+    const exportData = dataToExport.map(issue => ({
+      ID: issue.id,
+      Title: issue.title,
+      Status: issue.status,
+      Priority: issue.priority,
+      Category: issue.category,
+      Location: issue.location,
+      Reporter: issue.reporter_name || 'Anonymous',
+      Date: formatDate(issue.created_at)
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reports");
+    XLSX.writeFile(workbook, "Task_Force_Reports.xlsx");
+  };
+
   if (loading && !stats) {
     return (
       <div className="flex h-screen items-center justify-center p-6">
@@ -103,7 +129,7 @@ function TaskForceMainDashboardPage() {
           <p className="text-gray-600 mt-1">Review and assess community issues for parliamentary action</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button variant="outline" className="flex items-center gap-2" onClick={handleExportReports}>
             <Download className="h-4 w-4" />
             Export Reports
           </Button>

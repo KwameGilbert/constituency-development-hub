@@ -1,167 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { X, ChevronLeft, ChevronRight, Images, Calendar, MapPin } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Images, Calendar, MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Gallery categories
-type GalleryCategory = "All" | "Events" | "Programs" | "Community" | "Infrastructure";
+import { galleryService, Gallery } from "@/lib/services/gallery-service";
+import { getImageUrl } from "@/lib/utils";
 
-// Gallery item type
-interface GalleryItem {
-  id: string;
-  title: string;
-  description: string;
-  category: GalleryCategory;
-  date: string;
-  location: string;
-  coverImage: string;
-  images: {
-    url: string;
-    caption: string;
-  }[];
-}
-
-// Dummy gallery data
-const galleryData: GalleryItem[] = [
-  {
-    id: "1",
-    title: "Youth Skills Development Workshop",
-    description: "Hands-on training session for youth in digital skills and entrepreneurship",
-    category: "Programs",
-    date: "December 15, 2025",
-    location: "Sefwi Wiawso Community Center",
-    coverImage: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80", caption: "Opening ceremony" },
-      { url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80", caption: "Group discussion session" },
-      { url: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80", caption: "Hands-on computer training" },
-      { url: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80", caption: "Mentorship breakout session" },
-      { url: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80", caption: "Certificate presentation" },
-    ],
-  },
-  {
-    id: "2",
-    title: "Community Health Outreach",
-    description: "Free medical screening and health education for residents",
-    category: "Events",
-    date: "December 10, 2025",
-    location: "Asafo Community Park",
-    coverImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80", caption: "Medical team setup" },
-      { url: "https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=800&q=80", caption: "Blood pressure screening" },
-      { url: "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?auto=format&fit=crop&w=800&q=80", caption: "Health education session" },
-      { url: "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=800&q=80", caption: "Community members receiving care" },
-    ],
-  },
-  {
-    id: "3",
-    title: "Road Rehabilitation Project",
-    description: "Progress of the feeder road rehabilitation connecting farming communities",
-    category: "Infrastructure",
-    date: "November 28, 2025",
-    location: "Wiawso-Boako Road",
-    coverImage: "https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=800&q=80", caption: "Road construction in progress" },
-      { url: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80", caption: "Heavy equipment at work" },
-      { url: "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=800&q=80", caption: "Bridge construction" },
-    ],
-  },
-  {
-    id: "4",
-    title: "Women in Agriculture Forum",
-    description: "Annual gathering celebrating women farmers and their contributions",
-    category: "Community",
-    date: "November 20, 2025",
-    location: "Municipal Assembly Hall",
-    coverImage: "https://images.unsplash.com/photo-1595508064774-5ff825a62d61?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1595508064774-5ff825a62d61?auto=format&fit=crop&w=800&q=80", caption: "Forum opening" },
-      { url: "https://images.unsplash.com/photo-1591696205602-2f950c417cb9?auto=format&fit=crop&w=800&q=80", caption: "Women farmers showcase" },
-      { url: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=800&q=80", caption: "Panel discussion" },
-      { url: "https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?auto=format&fit=crop&w=800&q=80", caption: "Award ceremony" },
-      { url: "https://images.unsplash.com/photo-1560252829-804f1aedf1be?auto=format&fit=crop&w=800&q=80", caption: "Group photo" },
-      { url: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=800&q=80", caption: "Networking session" },
-    ],
-  },
-  {
-    id: "5",
-    title: "School Renovation Handover",
-    description: "Official handover of renovated classrooms to the community",
-    category: "Events",
-    date: "November 15, 2025",
-    location: "Wiawso Methodist Primary School",
-    coverImage: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80", caption: "Renovated classroom" },
-      { url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80", caption: "New library section" },
-      { url: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80", caption: "Students in new classroom" },
-      { url: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80", caption: "Handover ceremony" },
-    ],
-  },
-  {
-    id: "6",
-    title: "Constituency Town Hall Meeting",
-    description: "Quarterly engagement with constituents on development priorities",
-    category: "Events",
-    date: "November 8, 2025",
-    location: "Sefwi Wiawso Community Hall",
-    coverImage: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80", caption: "Town hall in session" },
-      { url: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=800&q=80", caption: "MP addressing constituents" },
-      { url: "https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=800&q=80", caption: "Q&A session" },
-    ],
-  },
-  {
-    id: "7",
-    title: "Clean Water Project Launch",
-    description: "Inauguration of new boreholes serving 5 communities",
-    category: "Infrastructure",
-    date: "October 25, 2025",
-    location: "Pokuase Township",
-    coverImage: "https://images.unsplash.com/photo-1541544741670-35e9c1c0f7af?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1541544741670-35e9c1c0f7af?auto=format&fit=crop&w=800&q=80", caption: "Borehole inauguration" },
-      { url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80", caption: "Clean water flowing" },
-      { url: "https://images.unsplash.com/photo-1594398901394-4e34939a4fd0?auto=format&fit=crop&w=800&q=80", caption: "Community celebration" },
-    ],
-  },
-  {
-    id: "8",
-    title: "Youth Sports Tournament",
-    description: "Inter-community football tournament promoting youth engagement",
-    category: "Programs",
-    date: "October 18, 2025",
-    location: "Wiawso Sports Complex",
-    coverImage: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
-    images: [
-      { url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80", caption: "Match in progress" },
-      { url: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80", caption: "Team celebration" },
-      { url: "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=800&q=80", caption: "Award ceremony" },
-      { url: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=800&q=80", caption: "Team photo" },
-    ],
-  },
-];
-
-const categories: GalleryCategory[] = ["All", "Events", "Programs", "Community", "Infrastructure"];
+const categories: ("All" | string)[] = ["All", "Events", "Programs", "Community", "Infrastructure", "General"];
 
 export default function GalleryClient() {
-  const [activeCategory, setActiveCategory] = useState<GalleryCategory>("All");
-  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+  const [galleries, setGalleries] = useState<Gallery[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [selectedItem, setSelectedItem] = useState<Gallery | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    fetchGalleries();
+  }, []);
+
+  const fetchGalleries = async () => {
+    try {
+      setLoading(true);
+      const response = await galleryService.getGalleries();
+      if (response.success && response.data.galleries) {
+        setGalleries(response.data.galleries);
+      } else {
+        setError(response.message || "Failed to load galleries");
+      }
+    } catch (err) {
+      console.error("Error fetching galleries:", err);
+      setError("An unexpected error occurred while loading our moments.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter items by category
   const filteredItems = activeCategory === "All" 
-    ? galleryData 
-    : galleryData.filter(item => item.category === activeCategory);
+    ? galleries 
+    : galleries.filter(item => item.category === activeCategory);
 
   // Open lightbox
-  const openLightbox = (item: GalleryItem) => {
+  const openLightbox = (item: Gallery) => {
     setSelectedItem(item);
     setCurrentImageIndex(0);
   };
@@ -182,7 +67,7 @@ export default function GalleryClient() {
   };
 
   const prevImage = () => {
-    if (selectedItem) {
+    if (selectedItem && selectedItem.images) {
       setCurrentImageIndex((prev) => 
         prev === 0 ? selectedItem.images.length - 1 : prev - 1
       );
@@ -215,8 +100,29 @@ export default function GalleryClient() {
         </div>
       </section>
 
+      {/* Loading & Error States */}
+      {loading && (
+        <div className="py-20 flex flex-col items-center justify-center text-slate-500 gap-3">
+          <Loader2 className="h-10 w-10 animate-spin text-emerald-500" />
+          <p className="animate-pulse">Bringing our moments to life...</p>
+        </div>
+      )}
+
+      {error && !loading && (
+        <div className="py-20 flex flex-col items-center justify-center text-center px-4">
+          <div className="h-16 w-16 bg-red-50 rounded-full flex items-center justify-center mb-4 border border-red-100">
+            <X className="h-8 w-8 text-red-500" />
+          </div>
+          <p className="text-slate-600 max-w-md">{error}</p>
+          <Button onClick={fetchGalleries} variant="outline" className="mt-6 border-emerald-500 text-emerald-600 hover:bg-emerald-50">
+            Reload Gallery
+          </Button>
+        </div>
+      )}
+
       {/* Category Filters */}
-      <section className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-slate-100 shadow-sm">
+      {!loading && !error && (
+        <section className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-slate-100 shadow-sm">
         <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-2 justify-center">
             {categories.map((category) => (
@@ -239,8 +145,10 @@ export default function GalleryClient() {
           </p>
         </div>
       </section>
+      )}
 
       {/* Gallery Grid */}
+      {!loading && !error && (
       <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((item, index) => (
@@ -256,7 +164,7 @@ export default function GalleryClient() {
               {/* Cover Image */}
               <div className="relative h-56 bg-slate-100 overflow-hidden">
                 <Image
-                  src={item.coverImage}
+                  src={getImageUrl(item.cover_image)}
                   alt={item.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -266,7 +174,7 @@ export default function GalleryClient() {
                 {/* Image Count Badge */}
                 <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                   <Images className="h-3 w-3" />
-                  {item.images.length} photos
+                  {item.images?.length || 0} photos
                 </div>
 
                 {/* Category Badge */}
@@ -300,6 +208,7 @@ export default function GalleryClient() {
           ))}
         </div>
       </main>
+      )}
 
       {/* Lightbox Modal */}
       <AnimatePresence>
@@ -346,7 +255,7 @@ export default function GalleryClient() {
                       className="relative w-full h-full"
                     >
                       <Image
-                        src={selectedItem.images[currentImageIndex].url}
+                        src={getImageUrl(selectedItem.images[currentImageIndex].url)}
                         alt={selectedItem.images[currentImageIndex].caption}
                         fill
                         className="object-contain"
@@ -396,7 +305,7 @@ export default function GalleryClient() {
                       }`}
                     >
                       <Image
-                        src={img.url}
+                        src={getImageUrl(img.url)}
                         alt={img.caption}
                         fill
                         className="object-cover"

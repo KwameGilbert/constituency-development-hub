@@ -84,7 +84,7 @@ export default function EditEventPage({ params }: EditEventPageProps) {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Edit Event</h1>
-            <p className="text-slate-500">Update the details for &quot;{event.title}&quot;</p>
+            <p className="text-slate-500">Update the details for &quot;{event.name || event.title}&quot;</p>
           </div>
         </div>
         

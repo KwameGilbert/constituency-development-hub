@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Calendar, MapPin, Briefcase, DollarSign, Users, Clock } from "lucide-react";
+import { Edit, Trash2, Calendar, MapPin, Briefcase, DollarSign, Users } from "lucide-react";
 import { JobPosting, JobApplicant } from "@/lib/services/employment-service";
 import Link from "next/link";
 import {
@@ -73,10 +73,10 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
   const [loadingApplicants, setLoadingApplicants] = useState(false);
 
   useEffect(() => {
-    // Load applicants if there are any
     if (job.applicants_count && job.applicants_count > 0) {
       loadApplicants();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [job.id]);
 
   const loadApplicants = async () => {
@@ -88,6 +88,7 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
       }
     } catch (error) {
       console.error("Failed to load applicants:", error);
+      toast.error("Applicants feature coming soon");
     } finally {
       setLoadingApplicants(false);
     }
@@ -155,7 +156,7 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Job Posting</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{job.title}"? This action cannot be undone and will also remove all applicant data.
+                      Are you sure you want to delete &quot;{job.title}&quot;? This action cannot be undone and will also remove all applicant data.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

@@ -36,6 +36,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>(slide?.image || "");
   const [imagePreview, setImagePreview] = useState<string>(slide?.image || "");
+  const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<HeroSlideFormValues>({
     resolver: zodResolver(heroSlideSchema) as any, // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -49,41 +50,47 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
     },
   });
 
-  function handleUrlChange(url: string) {
-    setImageUrl(url);
-    setImagePreview(url);
-  }
-
   function removeImage() {
     setImageUrl("");
     setImagePreview("");
+    setFile(null);
+    // Reset file input value if possible (requires ref)
+    const fileInput = document.getElementById('image') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   }
 
   async function onSubmit(data: HeroSlideFormValues) {
-    if (!imageUrl) {
-      toast.error("Please add an image URL");
+    if (!file && !imageUrl) {
+      toast.error("Please select an image");
       return;
     }
 
     setIsLoading(true);
     try {
-      const payload = {
-        title: data.title,
-        subtitle: data.subtitle || undefined,
-        image: imageUrl,
-        cta_text: data.cta_text || undefined,
-        cta_link: data.cta_link || undefined,
-        display_order: data.display_order,
-        status: data.status,
-      };
+      // Create FormData for upload
+      const formData = new FormData();
+      formData.append('title', data.title);
+      if (data.subtitle) formData.append('subtitle', data.subtitle);
+      if (data.cta_text) formData.append('cta_text', data.cta_text);
+      if (data.cta_link) formData.append('cta_link', data.cta_link);
+      formData.append('display_order', data.display_order.toString());
+      formData.append('status', data.status);
+      
+      // Append image
+      if (file) {
+        formData.append('image', file);
+      } else if (imageUrl) {
+        // Keeps existing URL if no new file
+        formData.append('image', imageUrl);
+      }
 
-      console.log("Submitting hero slide:", payload);
+      console.log("Submitting hero slide via FormData");
 
       let response;
       if (isEditing && slide?.id) {
-        response = await heroSlidesService.updateSlide(slide.id, payload);
+        response = await heroSlidesService.updateSlide(slide.id, formData);
       } else {
-        response = await heroSlidesService.createSlide(payload);
+        response = await heroSlidesService.createSlide(formData);
       }
 
       if (response.success) {
@@ -134,37 +141,54 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
           <p className="text-xs text-slate-400">A supporting message that appears below the title</p>
         </div>
 
-        {/* Image URL */}
+        {/* Image Upload */}
         <div className="space-y-2">
           <Label>Slide Image *</Label>
           <div className="space-y-4">
-            <Input 
-              type="url"
-              placeholder="https://example.com/slide-image.jpg" 
-              className="border-slate-200 focus:border-purple-500 focus:ring-purple-500"
-              value={imageUrl}
-              onChange={(e) => handleUrlChange(e.target.value)}
-              disabled={isLoading}
-            />
-            <p className="text-xs text-slate-400">Recommended size: 1920x600 pixels</p>
+            <div className="flex items-center gap-4">
+              <Input 
+                id="image" 
+                type="file"
+                accept="image/*"
+                className="cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      toast.error("File size must be less than 5MB");
+                      return;
+                    }
+                    setFile(file);
+                    const objectUrl = URL.createObjectURL(file);
+                    setImagePreview(objectUrl);
+                    setImageUrl(""); // Clear URL input if file is selected
+                  }
+                }}
+                disabled={isLoading}
+              />
+            </div>
+            <p className="text-xs text-slate-400">Supported formats: JPG, PNG, WEBP (Max 5MB). Recommended size: 1920x600 pixels</p>
             
             {/* Image Preview */}
             {imagePreview && (
-              <div className="relative">
+              <div className="relative w-full aspect-[21/9] bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={imagePreview} 
                   alt="Slide preview" 
-                  className="w-full h-48 object-cover rounded-lg border border-slate-200"
+                  className="w-full h-full object-cover"
                   onError={() => {
-                    setImagePreview("");
-                    toast.error("Failed to load image from URL");
+                    // Only clear if it's not a blob URL (which implies a real load error vs initial state)
+                    if (!imagePreview.startsWith('blob:')) {
+                      setImagePreview("");
+                      toast.error("Failed to load image");
+                    }
                   }}
                 />
                 <button
                   type="button"
                   onClick={removeImage}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                  className="absolute top-2 right-2 p-1.5 bg-white/90 text-red-600 rounded-full hover:bg-white transition-colors shadow-sm opacity-0 group-hover:opacity-100 focus:opacity-100"
                   disabled={isLoading}
                 >
                   <X className="h-4 w-4" />

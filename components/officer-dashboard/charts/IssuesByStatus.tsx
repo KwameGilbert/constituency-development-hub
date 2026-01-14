@@ -53,12 +53,22 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function IssuesByStatus() {
-    const [loading, setLoading] = useState(true)
-    const [chartData, setChartData] = useState<ChartDataItem[]>([])
+export interface IssuesByStatusProps {
+    data?: ChartDataItem[]
+}
+
+export function IssuesByStatus({ data: providedData }: IssuesByStatusProps) {
+    const [loading, setLoading] = useState(!providedData)
+    const [chartData, setChartData] = useState<ChartDataItem[]>(providedData || [])
     const [error, setError] = useState(false)
 
     useEffect(() => {
+        if (providedData) {
+            setChartData(providedData)
+            setLoading(false)
+            return
+        }
+
         async function fetchStats() {
             try {
                 const response = await issuesService.getStatistics()
@@ -98,7 +108,7 @@ export function IssuesByStatus() {
             }
         }
         fetchStats()
-    }, [])
+    }, [providedData])
 
     const totalIssues = React.useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.count, 0)

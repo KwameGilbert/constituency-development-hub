@@ -19,6 +19,7 @@ import {
   Megaphone,
   User,
   LogOut,
+  Images,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -118,6 +119,18 @@ export function WebAdminSidebar() {
                   <Link href="/web-admin-dashboard/announcements">
                     <Megaphone />
                     <span>Announcements</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith("/web-admin-dashboard/gallery")}
+                  className="text-violet-200 hover:bg-violet-900 hover:text-white data-[active=true]:bg-violet-600 data-[active=true]:text-white"
+                >
+                  <Link href="/web-admin-dashboard/gallery">
+                    <Images />
+                    <span>Gallery</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -8,6 +8,7 @@ import { Loader2, Search, X, Calendar, Tag, ArrowRight, BookOpen } from "lucide-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 
 const categories = ["All", "News", "Education", "Infrastructure", "Community", "Health", "Youth"];
 
@@ -187,7 +188,7 @@ export default function BlogClient() {
                     {post.image ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
-                        src={post.image}
+                        src={getImageUrl(post.image)}
                         alt={post.title || "Article"}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />

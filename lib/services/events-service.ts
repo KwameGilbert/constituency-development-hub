@@ -2,7 +2,8 @@ import { apiClient } from "../api-client";
 
 export interface Event {
   id: number;
-  title: string;
+  name: string;
+  title?: string;
   slug?: string;
   description?: string;
   image?: string;
@@ -90,19 +91,60 @@ export const eventsService = {
     return apiClient<EventsResponse>(`/admin/events/${id}`);
   },
 
-  // Create new event - accepts any object to handle different backend field requirements
-  createEvent: async (data: Record<string, unknown>) => {
+  // Create new event with FormData support for file upload
+  createEvent: async (data: Record<string, unknown>, imageFile?: File) => {
+    const formData = new FormData();
+    
+    // Add all data fields to FormData
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (typeof value === 'boolean') {
+          formData.append(key, value ? '1' : '0');
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+    
+    // Add image file if provided
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+    
     return apiClient<EventsResponse>("/admin/events", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: formData,
+      isFormData: true,
     });
   },
 
-  // Update event - accepts any object for flexibility
-  updateEvent: async (id: number, data: Record<string, unknown>) => {
+  // Update event with FormData support for file upload
+  updateEvent: async (id: number, data: Record<string, unknown>, imageFile?: File) => {
+    const formData = new FormData();
+    
+    // Add all data fields to FormData
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (typeof value === 'boolean') {
+          formData.append(key, value ? '1' : '0');
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+    
+    // Add image file if provided
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+    
+    // Note: Some servers need _method=PUT in FormData for PUT requests
+    formData.append('_method', 'PUT');
+    
     return apiClient<EventsResponse>(`/admin/events/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
+      method: "POST", // Using POST with _method override for FormData
+      body: formData,
+      isFormData: true,
     });
   },
 

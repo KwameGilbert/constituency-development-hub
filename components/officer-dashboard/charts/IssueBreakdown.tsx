@@ -50,14 +50,28 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function IssueBreakdown() {
+export interface IssueBreakdownProps {
+    data?: {
+        categoryData: ChartDataItem[]
+        priorityData: ChartDataItem[]
+    }
+}
+
+export function IssueBreakdown({ data: providedData }: IssueBreakdownProps) {
     const [activeTab, setActiveTab] = React.useState<"category" | "priority">("category")
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(!providedData)
     const [error, setError] = useState(false)
-    const [categoryData, setCategoryData] = useState<ChartDataItem[]>([])
-    const [priorityData, setPriorityData] = useState<ChartDataItem[]>([])
+    const [categoryData, setCategoryData] = useState<ChartDataItem[]>(providedData?.categoryData || [])
+    const [priorityData, setPriorityData] = useState<ChartDataItem[]>(providedData?.priorityData || [])
 
     useEffect(() => {
+        if (providedData) {
+            setCategoryData(providedData.categoryData)
+            setPriorityData(providedData.priorityData)
+            setLoading(false)
+            return
+        }
+
         async function fetchStats() {
             try {
                 const response = await issuesService.getStatistics()
@@ -116,7 +130,7 @@ export function IssueBreakdown() {
             }
         }
         fetchStats()
-    }, [])
+    }, [providedData])
 
     const data = activeTab === "category" ? categoryData : priorityData
 

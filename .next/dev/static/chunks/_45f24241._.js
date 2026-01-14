@@ -40,14 +40,41 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 
 __turbopack_context__.s([
     "cn",
-    ()=>cn
+    ()=>cn,
+    "getImageUrl",
+    ()=>getImageUrl
 ]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/tailwind-merge@3.4.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs [app-client] (ecmascript)");
 ;
 ;
 function cn(...inputs) {
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["twMerge"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["clsx"])(inputs));
+}
+function getImageUrl(path) {
+    if (!path) return "";
+    if (path.startsWith("data:")) return path;
+    const apiUrl = ("TURBOPACK compile-time value", "http://app.comdevhub-api.com/v1") || "http://localhost:8080";
+    let apiOrigin = "";
+    try {
+        apiOrigin = new URL(apiUrl).origin;
+    } catch  {
+        return path;
+    }
+    // Handle absolute URLs
+    if (path.startsWith("http")) {
+        // If the path contains /uploads/, we force it to use the current API origin
+        // This fixes issues where the DB has localhost/IP URLs but we're on a different domain
+        if (path.includes("/uploads/")) {
+            const relativePath = path.substring(path.indexOf("/uploads/"));
+            return `${apiOrigin}${relativePath}`;
+        }
+        return path;
+    }
+    // Handle relative paths
+    // Ensure we don't have double slashes
+    return `${apiOrigin}/${path.replace(/^\/+/, "")}`;
 }
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
@@ -1575,23 +1602,36 @@ async function apiClient(endpoint, options = {}) {
     if (requiresAuth) {
         // Try to get token from multiple sources
         let token = null;
-        // 1. Try environment variable first
-        const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
-        if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
-            token = envToken;
+        // 1. Try localStorage (for client-side) - Prioritize this!
+        if ("TURBOPACK compile-time truthy", 1) {
+            const localToken = localStorage.getItem('authToken');
+            if (localToken) {
+                token = localToken;
+            }
         }
-        // 2. Fallback to localStorage (for client-side)
-        if (!token && ("TURBOPACK compile-time value", "object") !== 'undefined') {
-            token = localStorage.getItem('authToken');
+        // 2. Fallback to environment variable (for development/testing)
+        if (!token) {
+            const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
+            if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
+                token = envToken;
+            }
         }
         if (token) {
             headers.set("Authorization", `Bearer ${token}`);
         }
     }
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-        ...fetchOptions,
-        headers
-    });
+    let response;
+    try {
+        response = await fetch(`${BASE_URL}${endpoint}`, {
+            ...fetchOptions,
+            headers
+        });
+    } catch (error) {
+        if ("TURBOPACK compile-time truthy", 1) {
+            console.error(`[API Network Error] ${method} ${BASE_URL}${endpoint}`, error);
+        }
+        throw new Error(`Network error: Failed to connect to API at ${BASE_URL}${endpoint}`);
+    }
     // Try to parse JSON response
     let data;
     try {
@@ -1601,6 +1641,14 @@ async function apiClient(endpoint, options = {}) {
         throw new Error(`HTTP ${response.status}: Failed to parse response`);
     }
     if (!response.ok) {
+        // Handle 401 Unauthorized globally
+        if (response.status === 401 && ("TURBOPACK compile-time value", "object") !== 'undefined') {
+            localStorage.removeItem('authToken');
+            // Optional: Redirect to login if not already there
+            if (!window.location.pathname.includes('/login')) {
+                window.location.href = '/login?expired=true';
+            }
+        }
         // Only log detailed errors in development for debugging
         if ("TURBOPACK compile-time truthy", 1) {
             console.warn('[API]', response.status, endpoint, data?.message || data?.error || '');

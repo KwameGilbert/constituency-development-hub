@@ -146,36 +146,36 @@ class EmploymentService {
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
 
-    return apiClient<JobResponse>(`/admin/jobs?${params.toString()}`);
+    return apiClient<JobResponse>(`/jobs?${params.toString()}`);
   }
 
   async getJobById(id: number | string): Promise<JobResponse> {
-    return apiClient<JobResponse>(`/admin/jobs/${id}`);
+    return apiClient<JobResponse>(`/jobs/${id}`);
   }
 
   async createJob(data: CreateJobData): Promise<JobResponse> {
-    return apiClient<JobResponse>("/admin/jobs", {
+    return apiClient<JobResponse>("/jobs", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async updateJob(id: number | string, data: UpdateJobData): Promise<JobResponse> {
-    return apiClient<JobResponse>(`/admin/jobs/${id}`, {
+    return apiClient<JobResponse>(`/jobs/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteJob(id: number | string): Promise<{ success: boolean; message: string }> {
-    return apiClient<{ success: boolean; message: string }>(`/admin/jobs/${id}`, {
+    return apiClient<{ success: boolean; message: string }>(`/jobs/${id}`, {
       method: "DELETE",
     });
   }
 
   // Applicants Management
   async getJobApplicants(jobId: number | string, page = 1, limit = 20): Promise<ApplicantsResponse> {
-    return apiClient<ApplicantsResponse>(`/admin/jobs/${jobId}/applicants?page=${page}&limit=${limit}`);
+    return apiClient<ApplicantsResponse>(`/jobs/${jobId}/applicants?page=${page}&limit=${limit}`);
   }
 
   async updateApplicantStatus(
@@ -184,7 +184,7 @@ class EmploymentService {
     status: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted"
   ): Promise<{ success: boolean; message: string }> {
     return apiClient<{ success: boolean; message: string }>(
-      `/admin/jobs/${jobId}/applicants/${applicantId}`,
+      `/jobs/${jobId}/applicants/${applicantId}`,
       {
         method: "PUT",
         body: JSON.stringify({ status }),

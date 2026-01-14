@@ -1,6 +1,55 @@
-import issuesData from '@/data/issues.json';
-import teamData from '@/data/team.json';
-import metadataData from '@/data/metadata.json';
+// Mock Data Objects
+const issuesData = {
+  issues: [] as Issue[],
+  statistics: {
+    pendingAssessment: 0,
+    underAssessment: 0,
+    assessedThisMonth: 0,
+    totalAssessed: 0,
+    totalIssues: 0,
+    approvedIssues: 0,
+    rejectedIssues: 0,
+    lastUpdated: new Date().toISOString()
+  } as Statistics
+};
+
+const teamData = {
+  assessors: [] as Assessor[],
+  currentUser: {
+    id: "user-1",
+    name: "Test User",
+    email: "test@example.com",
+    role: "admin",
+    avatar: "/avatars/default.png",
+    permissions: [],
+    preferences: {
+      theme: "light",
+      language: "en",
+      notifications: { email: true, push: true, sms: false }
+    }
+  } as User
+};
+
+const metadataData = {
+  statuses: [
+    { value: "submitted", label: "Submitted", color: "blue" },
+    { value: "under_review", label: "Under Review", color: "yellow" },
+    { value: "approved", label: "Approved", color: "green" },
+    { value: "rejected", label: "Rejected", color: "red" }
+  ],
+  priorities: [
+    { level: "low", label: "Low", color: "green" },
+    { level: "medium", label: "Medium", color: "yellow" },
+    { level: "high", label: "High", color: "red" },
+    { level: "urgent", label: "Urgent", color: "red" }
+  ],
+  categories: [
+    { name: "Infrastructure" },
+    { name: "Health" },
+    { name: "Education" },
+    { name: "Environment" }
+  ]
+};
 
 // Types based on JSON structure
 export interface Issue {

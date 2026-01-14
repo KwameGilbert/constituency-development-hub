@@ -13390,27 +13390,7 @@ const configEnv = ("TURBOPACK compile-time value", {
         ("TURBOPACK compile-time value", 384)
     ]),
     "qualities": ("TURBOPACK compile-time value", [
-        ("TURBOPACK compile-time value", 75),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70),
-        ("TURBOPACK compile-time value", 70)
+        ("TURBOPACK compile-time value", 75)
     ]),
     "path": ("TURBOPACK compile-time value", "/_next/image"),
     "loader": ("TURBOPACK compile-time value", "default"),
@@ -13433,6 +13413,14 @@ const configEnv = ("TURBOPACK compile-time value", {
         ("TURBOPACK compile-time value", {
             "protocol": ("TURBOPACK compile-time value", "https"),
             "hostname": ("TURBOPACK compile-time value", "app.comdevhub-api.com")
+        }),
+        ("TURBOPACK compile-time value", {
+            "protocol": ("TURBOPACK compile-time value", "http"),
+            "hostname": ("TURBOPACK compile-time value", "localhost")
+        }),
+        ("TURBOPACK compile-time value", {
+            "protocol": ("TURBOPACK compile-time value", "http"),
+            "hostname": ("TURBOPACK compile-time value", "127.0.0.1")
         })
     ]),
     "localPatterns": ("TURBOPACK compile-time value", [
@@ -13780,27 +13768,7 @@ function getImageProps(imgProps) {
                 ("TURBOPACK compile-time value", 384)
             ]),
             "qualities": ("TURBOPACK compile-time value", [
-                ("TURBOPACK compile-time value", 75),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70),
-                ("TURBOPACK compile-time value", 70)
+                ("TURBOPACK compile-time value", 75)
             ]),
             "path": ("TURBOPACK compile-time value", "/_next/image"),
             "loader": ("TURBOPACK compile-time value", "default"),
@@ -13823,6 +13791,14 @@ function getImageProps(imgProps) {
                 ("TURBOPACK compile-time value", {
                     "protocol": ("TURBOPACK compile-time value", "https"),
                     "hostname": ("TURBOPACK compile-time value", "app.comdevhub-api.com")
+                }),
+                ("TURBOPACK compile-time value", {
+                    "protocol": ("TURBOPACK compile-time value", "http"),
+                    "hostname": ("TURBOPACK compile-time value", "localhost")
+                }),
+                ("TURBOPACK compile-time value", {
+                    "protocol": ("TURBOPACK compile-time value", "http"),
+                    "hostname": ("TURBOPACK compile-time value", "127.0.0.1")
                 })
             ]),
             "localPatterns": ("TURBOPACK compile-time value", [

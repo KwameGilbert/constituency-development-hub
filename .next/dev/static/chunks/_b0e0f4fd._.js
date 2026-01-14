@@ -27,14 +27,19 @@ async function apiClient(endpoint, options = {}) {
     if (requiresAuth) {
         // Try to get token from multiple sources
         let token = null;
-        // 1. Try environment variable first
-        const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
-        if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
-            token = envToken;
+        // 1. Try localStorage (for client-side) - Prioritize this!
+        if ("TURBOPACK compile-time truthy", 1) {
+            const localToken = localStorage.getItem('authToken');
+            if (localToken) {
+                token = localToken;
+            }
         }
-        // 2. Fallback to localStorage (for client-side)
-        if (!token && ("TURBOPACK compile-time value", "object") !== 'undefined') {
-            token = localStorage.getItem('authToken');
+        // 2. Fallback to environment variable (for development/testing)
+        if (!token) {
+            const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
+            if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
+                token = envToken;
+            }
         }
         if (token) {
             headers.set("Authorization", `Bearer ${token}`);
@@ -53,6 +58,14 @@ async function apiClient(endpoint, options = {}) {
         throw new Error(`HTTP ${response.status}: Failed to parse response`);
     }
     if (!response.ok) {
+        // Handle 401 Unauthorized globally
+        if (response.status === 401 && ("TURBOPACK compile-time value", "object") !== 'undefined') {
+            localStorage.removeItem('authToken');
+            // Optional: Redirect to login if not already there
+            if (!window.location.pathname.includes('/login')) {
+                window.location.href = '/login?expired=true';
+            }
+        }
         // Only log detailed errors in development for debugging
         if ("TURBOPACK compile-time truthy", 1) {
             console.warn('[API]', response.status, endpoint, data?.message || data?.error || '');
@@ -102,14 +115,24 @@ const heroSlidesService = {
     createSlide: async (data)=>{
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])("/admin/hero-slides", {
             method: "POST",
-            body: JSON.stringify(data)
+            body: data instanceof FormData ? data : JSON.stringify(data),
+            isFormData: data instanceof FormData
         });
     },
     // Update hero slide
     updateSlide: async (id, data)=>{
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/hero-slides/${id}`, {
-            method: "PUT",
-            body: JSON.stringify(data)
+            method: "POST",
+            // Note: Actually, Laravel/Slim often handles PUT with files better if using _method spoofing, 
+            // but let's try direct PUT or POST based on backend. 
+            // Checking backend controller: it separates store (POST) and update (PUT).
+            // PHP native PUT doesn't handle multipart/form-data well. 
+            // Best practice for PHP is POST with _method=PUT.
+            body: data instanceof FormData ? data : JSON.stringify(data),
+            isFormData: data instanceof FormData,
+            headers: data instanceof FormData ? {
+                "X-HTTP-Method-Override": "PUT"
+            } : undefined // Attempt method override if needed
         });
     },
     // Delete hero slide
@@ -1207,31 +1230,36 @@ function ArticlesGrid() {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "h-48 overflow-hidden relative bg-slate-100",
-                                    children: post.image ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                                        width: 400,
-                                        height: 192,
-                                        src: post.image,
-                                        alt: post.title || "Blog post",
-                                        className: "h-full w-full object-cover"
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                        lineNumber: 113,
-                                        columnNumber: 19
-                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "h-full w-full flex items-center justify-center text-slate-400",
-                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            children: "No image"
+                                    children: [
+                                        "import ",
+                                        getImageUrl,
+                                        ' from "@/lib/utils"; // ... existing code ...',
+                                        post.image ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                            width: 400,
+                                            height: 192,
+                                            src: getImageUrl(post.image),
+                                            alt: post.title || "Blog post",
+                                            className: "h-full w-full object-cover"
                                         }, void 0, false, {
                                             fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                            lineNumber: 122,
-                                            columnNumber: 21
+                                            lineNumber: 117,
+                                            columnNumber: 19
+                                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "h-full w-full flex items-center justify-center text-slate-400",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                children: "No image"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/hero/ArticlesGrid.tsx",
+                                                lineNumber: 126,
+                                                columnNumber: 21
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/hero/ArticlesGrid.tsx",
+                                            lineNumber: 125,
+                                            columnNumber: 19
                                         }, this)
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                        lineNumber: 121,
-                                        columnNumber: 19
-                                    }, this)
-                                }, void 0, false, {
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/components/hero/ArticlesGrid.tsx",
                                     lineNumber: 111,
                                     columnNumber: 15
@@ -1246,12 +1274,12 @@ function ArticlesGrid() {
                                                 children: post.category
                                             }, void 0, false, {
                                                 fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                                lineNumber: 129,
+                                                lineNumber: 133,
                                                 columnNumber: 21
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                            lineNumber: 127,
+                                            lineNumber: 131,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1259,7 +1287,7 @@ function ArticlesGrid() {
                                             children: post.title
                                         }, void 0, false, {
                                             fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                            lineNumber: 134,
+                                            lineNumber: 138,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1267,7 +1295,7 @@ function ArticlesGrid() {
                                             children: post.excerpt
                                         }, void 0, false, {
                                             fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                            lineNumber: 137,
+                                            lineNumber: 141,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1276,13 +1304,13 @@ function ArticlesGrid() {
                                             children: "Read story →"
                                         }, void 0, false, {
                                             fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                            lineNumber: 138,
+                                            lineNumber: 142,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                    lineNumber: 126,
+                                    lineNumber: 130,
                                     columnNumber: 15
                                 }, this)
                             ]
@@ -1307,18 +1335,18 @@ function ArticlesGrid() {
                                 className: "fa-solid fa-arrow-right text-sm"
                             }, void 0, false, {
                                 fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                                lineNumber: 156,
+                                lineNumber: 160,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                        lineNumber: 151,
+                        lineNumber: 155,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/hero/ArticlesGrid.tsx",
-                    lineNumber: 150,
+                    lineNumber: 154,
                     columnNumber: 9
                 }, this)
             ]
@@ -2764,7 +2792,7 @@ function AnnouncementSection() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         className: "py-16 bg-slate-50",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "container mx-auto px-4",
+            className: "mx-auto max-w-6xl px-4",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "flex flex-col md:flex-row justify-between items-center mb-10",
@@ -2951,14 +2979,31 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 
 __turbopack_context__.s([
     "cn",
-    ()=>cn
+    ()=>cn,
+    "getImageUrl",
+    ()=>getImageUrl
 ]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/tailwind-merge@3.4.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs [app-client] (ecmascript)");
 ;
 ;
 function cn(...inputs) {
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["twMerge"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["clsx"])(inputs));
+}
+function getImageUrl(path) {
+    if (!path) return "";
+    if (path.startsWith("http") || path.startsWith("data:")) return path;
+    const apiUrl = ("TURBOPACK compile-time value", "http://app.comdevhub-api.com/v1") || "";
+    try {
+        // Extract origin (e.g., http://localhost:8080) from API URL
+        // Use the origin because uploads are usually at the root /uploads, not under /api or /v1
+        const url = new URL(apiUrl);
+        return `${url.origin}/${path.replace(/^\/+/, "")}`;
+    } catch  {
+        // Fallback if API URL is invalid or relative (though it should be absolute in env)
+        return path;
+    }
 }
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);

@@ -66,18 +66,26 @@ export const heroSlidesService = {
   },
 
   // Create new hero slide
-  createSlide: async (data: CreateHeroSlidePayload) => {
+  createSlide: async (data: CreateHeroSlidePayload | FormData) => {
     return apiClient<HeroSlidesResponse>("/admin/hero-slides", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: data instanceof FormData ? data : JSON.stringify(data),
+      isFormData: data instanceof FormData,
     });
   },
 
   // Update hero slide
-  updateSlide: async (id: number, data: Partial<CreateHeroSlidePayload>) => {
+  updateSlide: async (id: number, data: Partial<CreateHeroSlidePayload> | FormData) => {
     return apiClient<HeroSlidesResponse>(`/admin/hero-slides/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
+      method: "POST", // Changed to POST for FormData support (method spoofing if needed, but standard POST usually works for files)
+      // Note: Actually, Laravel/Slim often handles PUT with files better if using _method spoofing, 
+      // but let's try direct PUT or POST based on backend. 
+      // Checking backend controller: it separates store (POST) and update (PUT).
+      // PHP native PUT doesn't handle multipart/form-data well. 
+      // Best practice for PHP is POST with _method=PUT.
+      body: data instanceof FormData ? data : JSON.stringify(data),
+      isFormData: data instanceof FormData,
+      headers: data instanceof FormData ? { "X-HTTP-Method-Override": "PUT" } : undefined // Attempt method override if needed
     });
   },
 
