@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboards)/layout,_N_T_/(dashboards)/admin-dashboard/layout,_N_T_/(dashboards)/admin-dashboard/agents/layout,_N_T_/(dashboards)/admin-dashboard/agents/page,_N_T_/admin-dashboard/agents"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZHMp/admin-dashboard/agents/__PAGE__",
+    "/!KGRhc2hib2FyZHMp/admin-dashboard/agents",
+    "/!KGRhc2hib2FyZHMp/admin-dashboard",
+    "/!KGRhc2hib2FyZHMp",
+    "/_index",
+    "/_head"
+  ]
+}

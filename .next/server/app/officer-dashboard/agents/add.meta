@@ -1,0 +1,18 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboards)/layout,_N_T_/(dashboards)/officer-dashboard/layout,_N_T_/(dashboards)/officer-dashboard/agents/layout,_N_T_/(dashboards)/officer-dashboard/agents/add/layout,_N_T_/(dashboards)/officer-dashboard/agents/add/page,_N_T_/officer-dashboard/agents/add"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard/agents/add/__PAGE__",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard/agents/add",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard/agents",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard",
+    "/!KGRhc2hib2FyZHMp",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -184,7 +184,7 @@ export default function PendingIssuesPage() {
                 <SelectItem value="all">All Priorities</SelectItem>
                 {metadata.priorities.map((priority) => (
                   <SelectItem key={priority.level} value={priority.level}>
-                    {priority.name}
+                    {priority.label}
                   </SelectItem>
                 ))}
               </SelectContent>

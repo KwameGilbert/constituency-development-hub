@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
-import { AllIssues } from "@/components/officer-dashboard/issues/AllIssues";
+import { AllIssues } from "../../../../components/officer-dashboard/issues/AllIssues";
 import { IssuesStats } from "@/components/admin-dashboard/issues/IssuesStats";
 import { BarChart3, FileText, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
 

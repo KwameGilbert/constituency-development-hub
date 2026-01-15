@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[53324,["/_next/static/chunks/6add43493df4c596.js","/_next/static/chunks/c58a4c9bd124b7e6.js","/_next/static/chunks/ace7927a501c6178.js","/_next/static/chunks/7f0e7a7020aae189.js","/_next/static/chunks/fe1b7ca0c394b34d.js","/_next/static/chunks/c43cdf0625440639.js","/_next/static/chunks/113c6c146d6bb55e.js","/_next/static/chunks/5a4735d27e3ed8f7.js","/_next/static/chunks/8a6eace3d5cce07a.js"],"default"]
+3:I[49975,["/_next/static/chunks/6add43493df4c596.js","/_next/static/chunks/c58a4c9bd124b7e6.js","/_next/static/chunks/ace7927a501c6178.js","/_next/static/chunks/7f0e7a7020aae189.js","/_next/static/chunks/fe1b7ca0c394b34d.js","/_next/static/chunks/c43cdf0625440639.js","/_next/static/chunks/113c6c146d6bb55e.js","/_next/static/chunks/5a4735d27e3ed8f7.js","/_next/static/chunks/8a6eace3d5cce07a.js"],"CarouselList"]
+4:I[31716,["/_next/static/chunks/1baf8567edd0c64b.js","/_next/static/chunks/f5ffc109c16ff777.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+0:{"buildId":"L1PV5k5TQcjgcpjo7biTH","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex flex-col min-h-screen w-full bg-slate-50","children":[["$","$L2",null,{"title":"Carousel Management"}],["$","div",null,{"className":"flex-1 p-8 space-y-8 mx-auto w-full","children":["$","$L3",null,{}]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/8a6eace3d5cce07a.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"loading":null,"isPartial":false}
+6:null

@@ -1,3 +1,5 @@
+"use client";
+
 import AgentDashboardHeader from "@/components/agent-dashboard/AgentDashboardHeader";
 import { MetricsCards } from "@/components/agent-dashboard/MetricsCards";
 import { RecentTasks } from "@/components/agent-dashboard/RecentTasks";
@@ -7,9 +9,14 @@ import { agentService, AgentReport, AgentReportStats } from "@/lib/services/agen
 import React, { useEffect, useState, useMemo } from "react";
 
 // Chart data interfaces
-interface ChartDataItem {
-    label?: string
-    status?: string
+interface StatusChartDataItem {
+    status: string
+    count: number
+    fill: string
+}
+
+interface BreakdownChartDataItem {
+    label: string
     count: number
     fill: string
 }
@@ -62,7 +69,7 @@ function AgentMainPage() {
   const statusChartData = useMemo(() => {
     if (!stats) return undefined;
     
-    const data: ChartDataItem[] = [];
+    const data: StatusChartDataItem[] = [];
     const { resolved, pending, inProgress } = stats;
     
     // Map simplified stats to chart format
@@ -88,7 +95,7 @@ function AgentMainPage() {
         catCounts[cat] = (catCounts[cat] || 0) + 1;
     });
 
-    const categoryData: ChartDataItem[] = Object.entries(catCounts).map(([cat, count]) => {
+    const categoryData: BreakdownChartDataItem[] = Object.entries(catCounts).map(([cat, count]) => {
         const label = cat.charAt(0).toUpperCase() + cat.slice(1);
         return {
             label: label.length > 12 ? label.substring(0, 12) + "..." : label,
@@ -107,7 +114,7 @@ function AgentMainPage() {
     });
 
     const priorityOrder = ["urgent", "high", "medium", "low"];
-    const priorityData: ChartDataItem[] = Object.entries(priCounts).map(([pri, count]) => ({
+    const priorityData: BreakdownChartDataItem[] = Object.entries(priCounts).map(([pri, count]) => ({
         label: pri.charAt(0).toUpperCase() + pri.slice(1),
         count,
         fill: priorityColors[pri] || "#6b7280"
@@ -126,8 +133,8 @@ function AgentMainPage() {
       <div className="flex-1 space-y-6 p-6 pt-6">
         <MetricsCards stats={stats} loading={loading} />
         <div className="grid gap-6 md:grid-cols-2">
-          <IssuesByStatus data={statusChartData as any} />
-          <IssueBreakdown data={breakdownChartData as any} />
+          <IssuesByStatus data={statusChartData} />
+          <IssueBreakdown data={breakdownChartData} />
         </div>
         <RecentTasks reports={reports} loading={loading} />
       </div>

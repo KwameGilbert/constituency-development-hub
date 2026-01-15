@@ -48,6 +48,12 @@ const metadataData = {
     { name: "Health" },
     { name: "Education" },
     { name: "Environment" }
+  ],
+  timelines: [
+    { value: "immediate", label: "Immediate (< 1 month)" },
+    { value: "short_term", label: "Short Term (1-3 months)" },
+    { value: "medium_term", label: "Medium Term (3-6 months)" },
+    { value: "long_term", label: "Long Term (> 6 months)" }
   ]
 };
 

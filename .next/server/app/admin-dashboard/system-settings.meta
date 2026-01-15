@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboards)/layout,_N_T_/(dashboards)/admin-dashboard/layout,_N_T_/(dashboards)/admin-dashboard/system-settings/layout,_N_T_/(dashboards)/admin-dashboard/system-settings/page,_N_T_/admin-dashboard/system-settings"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZHMp/admin-dashboard/system-settings/__PAGE__",
+    "/!KGRhc2hib2FyZHMp/admin-dashboard/system-settings",
+    "/!KGRhc2hib2FyZHMp/admin-dashboard",
+    "/!KGRhc2hib2FyZHMp",
+    "/_index",
+    "/_head"
+  ]
+}

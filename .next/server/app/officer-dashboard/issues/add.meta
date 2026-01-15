@@ -1,0 +1,18 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboards)/layout,_N_T_/(dashboards)/officer-dashboard/layout,_N_T_/(dashboards)/officer-dashboard/issues/layout,_N_T_/(dashboards)/officer-dashboard/issues/add/layout,_N_T_/(dashboards)/officer-dashboard/issues/add/page,_N_T_/officer-dashboard/issues/add"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard/issues/add/__PAGE__",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard/issues/add",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard/issues",
+    "/!KGRhc2hib2FyZHMp/officer-dashboard",
+    "/!KGRhc2hib2FyZHMp",
+    "/_index",
+    "/_head"
+  ]
+}

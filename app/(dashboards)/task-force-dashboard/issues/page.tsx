@@ -191,7 +191,7 @@ export default function IssuesPage() {
               <SelectItem value="all">All Priority</SelectItem>
               {metadata.priorities.map(priority => (
                 <SelectItem key={priority.level} value={priority.level}>
-                  {priority.name}
+                  {priority.label}
                 </SelectItem>
               ))}
             </SelectContent>
