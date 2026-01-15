@@ -18,6 +18,7 @@
   "/(dashboards)/task-force-dashboard/team/page": "app/(dashboards)/task-force-dashboard/team/page.js",
   "/(dashboards)/task-force-dashboard/under-assessment/page": "app/(dashboards)/task-force-dashboard/under-assessment/page.js",
   "/(dashboards)/web-admin-dashboard/page": "app/(dashboards)/web-admin-dashboard/page.js",
+  "/(public)/announcements/page": "app/(public)/announcements/page.js",
   "/(public)/ideas/page": "app/(public)/ideas/page.js",
   "/(public)/page": "app/(public)/page.js",
   "/(public)/youth/page": "app/(public)/youth/page.js",

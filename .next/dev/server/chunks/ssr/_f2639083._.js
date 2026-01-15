@@ -155,10 +155,18 @@ async function apiClient(endpoint, options = {}) {
             headers.set("Authorization", `Bearer ${token}`);
         }
     }
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-        ...fetchOptions,
-        headers
-    });
+    let response;
+    try {
+        response = await fetch(`${BASE_URL}${endpoint}`, {
+            ...fetchOptions,
+            headers
+        });
+    } catch (error) {
+        if ("TURBOPACK compile-time truthy", 1) {
+            console.error(`[API Network Error] ${method} ${BASE_URL}${endpoint}`, error);
+        }
+        throw new Error(`Network error: Failed to connect to API at ${BASE_URL}${endpoint}`);
+    }
     // Try to parse JSON response
     let data;
     try {
