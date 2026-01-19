@@ -206,7 +206,7 @@ export const taskForceService = {
   /**
    * Submit assessment for an issue
    */
-  async submitAssessment(issueId: number, data: {
+  async submitAssessment(issueId: number, data: FormData | {
     assessment_summary: string;
     findings?: string;
     issue_confirmed?: boolean;
@@ -215,9 +215,11 @@ export const taskForceService = {
     estimated_duration?: string;
     recommendations?: string;
   }): Promise<{ success: boolean }> {
+    const isFormData = data instanceof FormData;
     return apiClient(`/task-force/issues/${issueId}/assessment`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
+      isFormData: isFormData,
     });
   },
 

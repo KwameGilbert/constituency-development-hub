@@ -168,6 +168,7 @@ export default function GalleryClient() {
                   alt={item.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 
@@ -260,6 +261,7 @@ export default function GalleryClient() {
                         fill
                         className="object-contain"
                         priority
+                        unoptimized
                       />
                     </motion.div>
                   </AnimatePresence>
@@ -309,6 +311,7 @@ export default function GalleryClient() {
                         alt={img.caption}
                         fill
                         className="object-cover"
+                        unoptimized
                       />
                     </button>
                   ))}

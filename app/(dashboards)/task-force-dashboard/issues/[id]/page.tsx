@@ -203,7 +203,7 @@ export default function IssueDetailPage() {
           <p className="text-gray-600">Issue #{issue.id} • {issue.community}</p>
         </div>
         <div className="flex gap-2">
-          {(issue.status === 'pending_assessment' || issue.status === 'assigned_to_task_force') && (
+          {['submitted', 'pending_assessment', 'assigned_to_task_force', 'assessment_in_progress', 'under_review'].includes(issue.status) && (
             <Link href={`/task-force-dashboard/assess/${issue.id}`}>
               <Button className="bg-purple-600 hover:bg-purple-700">
                 <MessageSquare className="h-4 w-4 mr-2" />

@@ -10,10 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   ArrowLeft,
   MapPin,
@@ -42,6 +40,7 @@ import {
 } from '@/lib/data';
 import { useAssessmentStore } from '@/lib/stores/assessment-store';
 import { issuesService, Issue as ApiIssue, TimelineEvent } from '@/lib/services/issues-service';
+import { taskForceService } from '@/lib/services/task-force-service';
 
 // --- Adapter Logic (Client Side View Model) ---
 
@@ -135,7 +134,7 @@ export default function AssessIssue() {
     resetAssessment,
   } = useAssessmentStore();
 
-  const fileErrors = errors.files ? [errors.files] : [];
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize and Fetch Issue
@@ -146,9 +145,9 @@ export default function AssessIssue() {
       const fetchIssue = async () => {
         setLoading(true);
         try {
-            const response = await issuesService.getIssueById(issueId);
-            if (response.success && response.data.report) {
-                setIssue(adaptIssueToUi(response.data.report));
+            const response = await taskForceService.getIssue(issueId);
+            if (response.success && response.data.issue) {
+                setIssue(adaptIssueToUi(response.data.issue as unknown as ApiIssue));
             }
         } catch (error) {
             console.error("Failed to fetch issue for assessment:", error);
@@ -272,15 +271,30 @@ export default function AssessIssue() {
 
     setSubmitting(true);
     try {
-      // NOTE: We are excluding 'files' from the API call as the endpoint expects JSON.
-      // File upload logic should be added if the API supports multipart/form-data or a separate upload endpoint.
-      await issuesService.submitAssessment(issueId, {
-        decision: assessment.decision as 'approve' | 'reject' | 'request_more_info',
-        comments: assessment.comments,
-        recommendations: assessment.recommendations,
-        estimatedBudget: assessment.estimatedBudget ? parseFloat(assessment.estimatedBudget) : undefined,
-        timeline: assessment.timeline || undefined
+      const formData = new FormData();
+      formData.append('assessment_summary', assessment.comments); // specific field name expected by backend
+      formData.append('decision', assessment.decision as string); // though backend uses this to derive status/logic potentially
+      
+      // Map frontend fields to backend expected fields
+      if (assessment.recommendations) formData.append('recommendations', assessment.recommendations);
+      if (assessment.estimatedBudget) formData.append('estimated_cost', assessment.estimatedBudget.toString());
+      if (assessment.timeline) formData.append('estimated_duration', assessment.timeline);
+      
+      // Additional fields that might be needed/supported
+      formData.append('issue_confirmed', assessment.decision !== 'reject' ? '1' : '0');
+      
+      // Handle file uploads
+      files.forEach((file) => {
+        if (file.file) {
+            if (file.type.startsWith('image/')) {
+                formData.append('images[]', file.file);
+            } else {
+                formData.append('documents[]', file.file);
+            }
+        }
       });
+
+      await taskForceService.submitAssessment(issueId, formData);
       
       alert('Assessment submitted successfully!');
       router.push('/task-force-dashboard/issues');
@@ -326,7 +340,7 @@ export default function AssessIssue() {
         <div className="text-center py-12">
           <AlertTriangle className="h-12 w-12 mx-auto text-red-500 mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Issue Not Found</h2>
-          <p className="text-gray-600 mb-4">The issue you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-600 mb-4">The issue you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           <Link href="/task-force-dashboard/issues">
             <Button>Back to Issues</Button>
           </Link>

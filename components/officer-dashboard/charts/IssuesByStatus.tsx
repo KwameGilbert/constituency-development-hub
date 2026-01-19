@@ -55,10 +55,11 @@ const chartConfig = {
 
 export interface IssuesByStatusProps {
     data?: ChartDataItem[]
+    enableAutoFetch?: boolean
 }
 
-export function IssuesByStatus({ data: providedData }: IssuesByStatusProps) {
-    const [loading, setLoading] = useState(!providedData)
+export function IssuesByStatus({ data: providedData, enableAutoFetch = true }: IssuesByStatusProps) {
+    const [loading, setLoading] = useState(!providedData && enableAutoFetch)
     const [chartData, setChartData] = useState<ChartDataItem[]>(providedData || [])
     const [error, setError] = useState(false)
 
@@ -68,6 +69,8 @@ export function IssuesByStatus({ data: providedData }: IssuesByStatusProps) {
             setLoading(false)
             return
         }
+
+        if (!enableAutoFetch) return
 
         async function fetchStats() {
             try {
@@ -108,7 +111,7 @@ export function IssuesByStatus({ data: providedData }: IssuesByStatusProps) {
             }
         }
         fetchStats()
-    }, [providedData])
+    }, [providedData, enableAutoFetch])
 
     const totalIssues = React.useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.count, 0)

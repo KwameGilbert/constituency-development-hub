@@ -917,13 +917,19 @@ const chartConfig = {
         color: "#f59e0b"
     }
 };
-function IssuesByStatus() {
+function IssuesByStatus({ data: providedData, enableAutoFetch = true }) {
     _s();
-    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
-    const [chartData, setChartData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(!providedData && enableAutoFetch);
+    const [chartData, setChartData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(providedData || []);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "IssuesByStatus.useEffect": ()=>{
+            if (providedData) {
+                setChartData(providedData);
+                setLoading(false);
+                return;
+            }
+            if (!enableAutoFetch) return;
             async function fetchStats() {
                 try {
                     const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$services$2f$issues$2d$service$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["issuesService"].getStatistics();
@@ -975,7 +981,10 @@ function IssuesByStatus() {
             }
             fetchStats();
         }
-    }["IssuesByStatus.useEffect"], []);
+    }["IssuesByStatus.useEffect"], [
+        providedData,
+        enableAutoFetch
+    ]);
     const totalIssues = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"]({
         "IssuesByStatus.useMemo[totalIssues]": ()=>{
             return chartData.reduce({
@@ -995,12 +1004,12 @@ function IssuesByStatus() {
                         className: "h-8 w-8 animate-spin text-gray-400"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                        lineNumber: 111,
+                        lineNumber: 124,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                    lineNumber: 110,
+                    lineNumber: 123,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardHeader"], {
@@ -1010,18 +1019,18 @@ function IssuesByStatus() {
                         children: "Issues by Status"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                        lineNumber: 114,
+                        lineNumber: 127,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                    lineNumber: 113,
+                    lineNumber: 126,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-            lineNumber: 109,
+            lineNumber: 122,
             columnNumber: 13
         }, this);
     }
@@ -1038,25 +1047,25 @@ function IssuesByStatus() {
                                 className: "h-8 w-8 mx-auto mb-2"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                lineNumber: 125,
+                                lineNumber: 138,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: "Unable to load chart"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                lineNumber: 126,
+                                lineNumber: 139,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                        lineNumber: 124,
+                        lineNumber: 137,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                    lineNumber: 123,
+                    lineNumber: 136,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardHeader"], {
@@ -1066,18 +1075,18 @@ function IssuesByStatus() {
                         children: "Issues by Status"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                        lineNumber: 130,
+                        lineNumber: 143,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                    lineNumber: 129,
+                    lineNumber: 142,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-            lineNumber: 122,
+            lineNumber: 135,
             columnNumber: 13
         }, this);
     }
@@ -1097,12 +1106,12 @@ function IssuesByStatus() {
                                     hideLabel: true
                                 }, void 0, false, {
                                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                    lineNumber: 146,
+                                    lineNumber: 159,
                                     columnNumber: 38
                                 }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                lineNumber: 144,
+                                lineNumber: 157,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$recharts$40$2$2e$15$2e$4_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$recharts$2f$es6$2f$polar$2f$Pie$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Pie"], {
@@ -1127,7 +1136,7 @@ function IssuesByStatus() {
                                                         children: totalIssues
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                                        lineNumber: 165,
+                                                        lineNumber: 178,
                                                         columnNumber: 49
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("tspan", {
@@ -1137,25 +1146,25 @@ function IssuesByStatus() {
                                                         children: "Total"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                                        lineNumber: 172,
+                                                        lineNumber: 185,
                                                         columnNumber: 49
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                                lineNumber: 159,
+                                                lineNumber: 172,
                                                 columnNumber: 45
                                             }, void 0);
                                         }
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                    lineNumber: 155,
+                                    lineNumber: 168,
                                     columnNumber: 29
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                lineNumber: 148,
+                                lineNumber: 161,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chart$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ChartLegend"], {
@@ -1163,29 +1172,29 @@ function IssuesByStatus() {
                                     nameKey: "status"
                                 }, void 0, false, {
                                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                    lineNumber: 185,
+                                    lineNumber: 198,
                                     columnNumber: 47
                                 }, void 0),
                                 className: "-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                                lineNumber: 185,
+                                lineNumber: 198,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                        lineNumber: 143,
+                        lineNumber: 156,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                    lineNumber: 139,
+                    lineNumber: 152,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                lineNumber: 138,
+                lineNumber: 151,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardHeader"], {
@@ -1195,22 +1204,22 @@ function IssuesByStatus() {
                     children: "Issues by Status"
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                    lineNumber: 190,
+                    lineNumber: 203,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-                lineNumber: 189,
+                lineNumber: 202,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/officer-dashboard/charts/IssuesByStatus.tsx",
-        lineNumber: 137,
+        lineNumber: 150,
         columnNumber: 9
     }, this);
 }
-_s(IssuesByStatus, "Rc8tnShsQ7uhmUxaGHfqHAgRo2I=");
+_s(IssuesByStatus, "25iE8MH9I67kD/y/fjt12O5jQ8M=");
 _c = IssuesByStatus;
 var _c;
 __turbopack_context__.k.register(_c, "IssuesByStatus");
@@ -1270,15 +1279,22 @@ const chartConfig = {
         label: "Count"
     }
 };
-function IssueBreakdown() {
+function IssueBreakdown({ data: providedData, enableAutoFetch = true }) {
     _s();
     const [activeTab, setActiveTab] = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"]("category");
-    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(!providedData && enableAutoFetch);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [categoryData, setCategoryData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [priorityData, setPriorityData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [categoryData, setCategoryData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(providedData?.categoryData || []);
+    const [priorityData, setPriorityData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(providedData?.priorityData || []);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "IssueBreakdown.useEffect": ()=>{
+            if (providedData) {
+                setCategoryData(providedData.categoryData);
+                setPriorityData(providedData.priorityData);
+                setLoading(false);
+                return;
+            }
+            if (!enableAutoFetch) return;
             async function fetchStats() {
                 try {
                     const response = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$services$2f$issues$2d$service$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["issuesService"].getStatistics();
@@ -1360,7 +1376,10 @@ function IssueBreakdown() {
             }
             fetchStats();
         }
-    }["IssueBreakdown.useEffect"], []);
+    }["IssueBreakdown.useEffect"], [
+        providedData,
+        enableAutoFetch
+    ]);
     const data = activeTab === "category" ? categoryData : priorityData;
     if (loading) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1373,12 +1392,12 @@ function IssueBreakdown() {
                         children: "Issues Breakdown"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 127,
+                        lineNumber: 144,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                    lineNumber: 126,
+                    lineNumber: 143,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1387,18 +1406,18 @@ function IssueBreakdown() {
                         className: "h-8 w-8 animate-spin text-gray-400"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 130,
+                        lineNumber: 147,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                    lineNumber: 129,
+                    lineNumber: 146,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-            lineNumber: 125,
+            lineNumber: 142,
             columnNumber: 13
         }, this);
     }
@@ -1413,12 +1432,12 @@ function IssueBreakdown() {
                         children: "Issues Breakdown"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 140,
+                        lineNumber: 157,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                    lineNumber: 139,
+                    lineNumber: 156,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1430,31 +1449,31 @@ function IssueBreakdown() {
                                 className: "h-8 w-8 mx-auto mb-2"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 144,
+                                lineNumber: 161,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: "Unable to load chart"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 145,
+                                lineNumber: 162,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 143,
+                        lineNumber: 160,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                    lineNumber: 142,
+                    lineNumber: 159,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-            lineNumber: 138,
+            lineNumber: 155,
             columnNumber: 13
         }, this);
     }
@@ -1469,7 +1488,7 @@ function IssueBreakdown() {
                         children: "Issues Breakdown"
                     }, void 0, false, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 155,
+                        lineNumber: 172,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1483,7 +1502,7 @@ function IssueBreakdown() {
                                 children: "Status"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 157,
+                                lineNumber: 174,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1494,19 +1513,19 @@ function IssueBreakdown() {
                                 children: "Priority"
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 165,
+                                lineNumber: 182,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 156,
+                        lineNumber: 173,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                lineNumber: 154,
+                lineNumber: 171,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1521,7 +1540,7 @@ function IssueBreakdown() {
                                 vertical: false
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 178,
+                                lineNumber: 195,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$recharts$40$2$2e$15$2e$4_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$XAxis$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["XAxis"], {
@@ -1532,7 +1551,7 @@ function IssueBreakdown() {
                                 tickFormatter: (value)=>value
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 179,
+                                lineNumber: 196,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$chart$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ChartTooltip"], {
@@ -1541,12 +1560,12 @@ function IssueBreakdown() {
                                     hideLabel: true
                                 }, void 0, false, {
                                     fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                    lineNumber: 188,
+                                    lineNumber: 205,
                                     columnNumber: 38
                                 }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 186,
+                                lineNumber: 203,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$recharts$40$2$2e$15$2e$4_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$recharts$2f$es6$2f$cartesian$2f$Bar$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Bar"], {
@@ -1562,38 +1581,38 @@ function IssueBreakdown() {
                                         fill: entry.fill
                                     }, `cell-${index}`, false, {
                                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                        lineNumber: 192,
+                                        lineNumber: 209,
                                         columnNumber: 33
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                                lineNumber: 190,
+                                lineNumber: 207,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                        lineNumber: 177,
+                        lineNumber: 194,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                    lineNumber: 176,
+                    lineNumber: 193,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-                lineNumber: 175,
+                lineNumber: 192,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/officer-dashboard/charts/IssueBreakdown.tsx",
-        lineNumber: 153,
+        lineNumber: 170,
         columnNumber: 9
     }, this);
 }
-_s(IssueBreakdown, "Th0KAPieVto/kDLqFHRFT2Hm84M=");
+_s(IssueBreakdown, "V2FTH6QyIp4gfspM/VLywinuf8c=");
 _c = IssueBreakdown;
 var _c;
 __turbopack_context__.k.register(_c, "IssueBreakdown");

@@ -17,10 +17,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { projectsService, CreateProjectData, Project } from "@/lib/services/projects-service";
+import { uploadService } from "@/lib/services/upload-service";
 import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
 
 const projectSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -48,6 +50,8 @@ interface ProjectFormProps {
 export function NewProjectForm({ project }: ProjectFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(project?.image || null);
 
   const isEditMode = !!project;
 
@@ -71,10 +75,39 @@ export function NewProjectForm({ project }: ProjectFormProps) {
     },
   });
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
+
   async function onSubmit(data: ProjectFormValues) {
     setIsSubmitting(true);
 
     try {
+      let imageUrl = project?.image; // Default to existing URL if editing
+
+      // 1. Upload Image (if new one selected)
+      if (selectedImage) {
+        try {
+           const uploadResponse = await uploadService.uploadFile(selectedImage, 'projects');
+           imageUrl = uploadResponse.data.url;
+        } catch (uploadError: any) {
+           throw new Error("Failed to upload image: " + uploadError.message);
+        }
+      }
+
       const projectData: CreateProjectData | any = {
         title: data.title,
         description: data.description,
@@ -88,6 +121,7 @@ export function NewProjectForm({ project }: ProjectFormProps) {
         contact_person: data.contact_person || undefined,
         contact_phone: data.contact_phone || undefined,
         is_featured: data.is_featured || false,
+        image: imageUrl, // Attach the image URL
       };
 
       // Add update-specific fields if editing
@@ -156,6 +190,51 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                 {form.formState.errors.description && (
                   <p className="text-red-500 text-sm mt-1">{form.formState.errors.description.message}</p>
                 )}
+              </div>
+
+               {/* Image Upload */}
+               <div className="md:col-span-2">
+                <Label>Project Image</Label>
+                <div className="mt-2 flex items-center gap-4">
+                  {imagePreview ? (
+                    <div className="relative h-32 w-48 overflow-hidden rounded-lg border border-slate-200">
+                      <Image 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        fill 
+                        className="object-cover" 
+                        unoptimized
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:outline-none"
+                        title="Remove image"
+                        disabled={isSubmitting}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex h-32 w-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-400">
+                      <span className="text-sm">No Image</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex-1">
+                     <Input
+                        id="image"
+                        type="file"
+                        accept="image/*"
+                         onChange={handleImageChange}
+                        disabled={isSubmitting}
+                        className="max-w-xs"
+                     />
+                     <p className="mt-1 text-xs text-slate-500">
+                        Supported formats: JPG, PNG, WEBP. Max size: 2MB.
+                     </p>
+                  </div>
+                </div>
               </div>
 
               <div>

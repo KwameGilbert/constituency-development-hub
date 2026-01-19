@@ -99,7 +99,8 @@ function SiteHeader() {
                                 alt: "",
                                 width: 40,
                                 height: 40,
-                                className: "w-10 h-10 object-contain"
+                                className: "w-10 h-10 object-contain",
+                                unoptimized: true
                             }, void 0, false, {
                                 fileName: "[project]/components/hero/SiteHeader.jsx",
                                 lineNumber: 39,

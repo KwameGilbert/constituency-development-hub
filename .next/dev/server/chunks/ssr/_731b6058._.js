@@ -484,9 +484,11 @@ const taskForceService = {
     /**
    * Submit assessment for an issue
    */ async submitAssessment (issueId, data) {
+        const isFormData = data instanceof FormData;
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/task-force/issues/${issueId}/assessment`, {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: isFormData ? data : JSON.stringify(data),
+            isFormData: isFormData
         });
     },
     /**
@@ -651,6 +653,24 @@ const metadataData = {
         },
         {
             name: "Environment"
+        }
+    ],
+    timelines: [
+        {
+            value: "immediate",
+            label: "Immediate (< 1 month)"
+        },
+        {
+            value: "short_term",
+            label: "Short Term (1-3 months)"
+        },
+        {
+            value: "medium_term",
+            label: "Medium Term (3-6 months)"
+        },
+        {
+            value: "long_term",
+            label: "Long Term (> 6 months)"
         }
     ]
 };
@@ -1161,7 +1181,7 @@ function PendingIssuesPage() {
                                             }, this),
                                             metadata.priorities.map((priority)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectItem"], {
                                                     value: priority.level,
-                                                    children: priority.name
+                                                    children: priority.label
                                                 }, priority.level, false, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/pending/page.tsx",
                                                     lineNumber: 186,

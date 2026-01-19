@@ -1142,11 +1142,10 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/api-client.ts [app-ssr] (ecmascript)");
 ;
 const sectorsService = {
-    // Get all sectors (Admin view)
+    // Get all sectors (Public view)
     getSectors: async ()=>{
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])('/admin/sectors', {
-            method: 'GET',
-            requiresAuth: true
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])('/sectors', {
+            method: 'GET'
         });
     },
     // Get single sector

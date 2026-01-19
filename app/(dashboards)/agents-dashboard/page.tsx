@@ -133,8 +133,8 @@ function AgentMainPage() {
       <div className="flex-1 space-y-6 p-6 pt-6">
         <MetricsCards stats={stats} loading={loading} />
         <div className="grid gap-6 md:grid-cols-2">
-          <IssuesByStatus data={statusChartData} />
-          <IssueBreakdown data={breakdownChartData} />
+          <IssuesByStatus data={statusChartData} enableAutoFetch={false} />
+          <IssueBreakdown data={breakdownChartData} enableAutoFetch={false} />
         </div>
         <RecentTasks reports={reports} loading={loading} />
       </div>

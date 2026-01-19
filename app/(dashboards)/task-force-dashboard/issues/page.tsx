@@ -95,9 +95,11 @@ export default function IssuesPage() {
 
     // Filter by tab
     if (activeTab === 'pending') {
-      filtered = filtered.filter(issue => issue.status === 'assigned_to_task_force'); // Mapped to API status
+      filtered = filtered.filter(issue => ['assigned_to_task_force', 'submitted', 'pending_assessment'].includes(issue.status));
     } else if (activeTab === 'under-assessment') {
-      filtered = filtered.filter(issue => issue.status === 'assessment_in_progress'); // Mapped to API status
+      filtered = filtered.filter(issue => ['assessment_in_progress', 'under_review'].includes(issue.status));
+    } else if (activeTab === 'assessments-added') {
+      filtered = filtered.filter(issue => issue.status === 'assessment_submitted');
     } else if (activeTab === 'completed') {
       filtered = filtered.filter(issue => issue.status === 'resolved' || issue.status === 'closed');
     }
@@ -136,9 +138,11 @@ export default function IssuesPage() {
       case 'all':
         return allIssues.length;
       case 'pending':
-        return allIssues.filter(issue => issue.status === 'assigned_to_task_force').length;
+        return allIssues.filter(issue => ['assigned_to_task_force', 'submitted', 'pending_assessment'].includes(issue.status)).length;
       case 'under-assessment':
-        return allIssues.filter(issue => issue.status === 'assessment_in_progress').length;
+        return allIssues.filter(issue => ['assessment_in_progress', 'under_review'].includes(issue.status)).length;
+      case 'assessments-added':
+        return allIssues.filter(issue => issue.status === 'assessment_submitted').length;
       case 'completed':
         return allIssues.filter(issue => issue.status === 'resolved' || issue.status === 'closed').length;
       default:
@@ -214,7 +218,7 @@ export default function IssuesPage() {
 
       {/* Issues Display */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all" className="relative">
             All Issues
             <Badge variant="secondary" className="ml-2">
@@ -231,6 +235,12 @@ export default function IssuesPage() {
             Under Assessment
             <Badge variant="secondary" className="ml-2">
               {getTabCount('under-assessment')}
+            </Badge>
+          </TabsTrigger>
+           <TabsTrigger value="assessments-added" className="relative">
+            Assessments Added
+            <Badge variant="secondary" className="ml-2">
+              {getTabCount('assessments-added')}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="completed" className="relative">
@@ -322,7 +332,7 @@ export default function IssuesPage() {
                             View
                           </Button>
                         </Link>
-                        {issue.status === 'assigned_to_task_force' && (
+                        {['submitted', 'pending_assessment', 'assigned_to_task_force', 'assessment_in_progress', 'under_review'].includes(issue.status) && (
                           <Link href={`/task-force-dashboard/assess/${issue.id}`}>
                             <Button variant="outline" size="sm">
                               Assess

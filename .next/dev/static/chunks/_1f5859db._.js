@@ -585,9 +585,11 @@ const taskForceService = {
     /**
    * Submit assessment for an issue
    */ async submitAssessment (issueId, data) {
+        const isFormData = data instanceof FormData;
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])(`/task-force/issues/${issueId}/assessment`, {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: isFormData ? data : JSON.stringify(data),
+            isFormData: isFormData
         });
     },
     /**

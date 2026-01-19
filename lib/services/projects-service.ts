@@ -24,6 +24,7 @@ export interface Project {
   contact_person?: string;
   contact_phone?: string;
   is_featured?: boolean;
+  image?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -81,6 +82,7 @@ export interface CreateProjectData {
   contact_person?: string;
   contact_phone?: string;
   is_featured?: boolean;
+  image?: string;
 }
 
 export interface UpdateProjectData {
@@ -98,6 +100,7 @@ export interface UpdateProjectData {
   contact_person?: string;
   contact_phone?: string;
   is_featured?: boolean;
+  image?: string;
 }
 
 // --- Service Class ---

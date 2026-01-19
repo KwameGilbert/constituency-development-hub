@@ -55,11 +55,12 @@ export interface IssueBreakdownProps {
         categoryData: ChartDataItem[]
         priorityData: ChartDataItem[]
     }
+    enableAutoFetch?: boolean
 }
 
-export function IssueBreakdown({ data: providedData }: IssueBreakdownProps) {
+export function IssueBreakdown({ data: providedData, enableAutoFetch = true }: IssueBreakdownProps) {
     const [activeTab, setActiveTab] = React.useState<"category" | "priority">("category")
-    const [loading, setLoading] = useState(!providedData)
+    const [loading, setLoading] = useState(!providedData && enableAutoFetch)
     const [error, setError] = useState(false)
     const [categoryData, setCategoryData] = useState<ChartDataItem[]>(providedData?.categoryData || [])
     const [priorityData, setPriorityData] = useState<ChartDataItem[]>(providedData?.priorityData || [])
@@ -71,6 +72,8 @@ export function IssueBreakdown({ data: providedData }: IssueBreakdownProps) {
             setLoading(false)
             return
         }
+
+        if (!enableAutoFetch) return
 
         async function fetchStats() {
             try {
@@ -130,7 +133,7 @@ export function IssueBreakdown({ data: providedData }: IssueBreakdownProps) {
             }
         }
         fetchStats()
-    }, [providedData])
+    }, [providedData, enableAutoFetch])
 
     const data = activeTab === "category" ? categoryData : priorityData
 

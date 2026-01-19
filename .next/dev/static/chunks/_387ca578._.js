@@ -36,7 +36,7 @@ async function apiClient(endpoint, options = {}) {
         }
         // 2. Fallback to environment variable (for development/testing)
         if (!token) {
-            const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
+            const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2ODc3MDI3OSwiZXhwIjoxMDAwMDAwMDE3Njg3NzAyNzgsImRhdGEiOnsiaWQiOjMsImVtYWlsIjoiam9obi5tZW5zYWhAY29uc3RpdHVlbmN5Lmdvdi5naCIsInJvbGUiOiJ3ZWJfYWRtaW4iLCJzdGF0dXMiOiJhY3RpdmUifX0.H0TVhZskuWoZjbBETb76ffO7yvQ6eTP0AFb84MiZgjI");
             if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
                 token = envToken;
             }
@@ -45,10 +45,18 @@ async function apiClient(endpoint, options = {}) {
             headers.set("Authorization", `Bearer ${token}`);
         }
     }
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-        ...fetchOptions,
-        headers
-    });
+    let response;
+    try {
+        response = await fetch(`${BASE_URL}${endpoint}`, {
+            ...fetchOptions,
+            headers
+        });
+    } catch (error) {
+        if ("TURBOPACK compile-time truthy", 1) {
+            console.error(`[API Network Error] ${method} ${BASE_URL}${endpoint}`, error);
+        }
+        throw new Error(`Network error: Failed to connect to API at ${BASE_URL}${endpoint}`);
+    }
     // Try to parse JSON response
     let data;
     try {

@@ -14,8 +14,9 @@ function ArticlesGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPosts() {
+    const fetchPosts = async () => {
       try {
+        setLoading(true);
         // Try featured posts first, fall back to regular posts
         let response = await blogService.getFeaturedPosts(3);
         
