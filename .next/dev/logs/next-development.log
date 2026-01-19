@@ -1,223 +1,262 @@
-[00:00:11.365] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-[00:00:13.366] Server  LOG     ✓ Ready in 11.4s
-[00:02:22.703] Server  LOG     ○ Compiling / ...
-[00:02:27.554] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:30.898] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/announcements/public? {}
-[00:02:30.898] Browser ERROR   Failed to check announcements {}
-[00:02:30.898] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/hero-slides {}
-[00:02:30.898] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/announcements/public?limit=4 {}
-[00:02:30.898] Browser ERROR   Failed to fetch announcements {}
-[00:02:30.898] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/projects/featured?limit=4 {}
-[00:02:30.898] Browser ERROR   {}
-[00:02:30.898] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/blog/featured?limit=3 {}
-[00:02:30.898] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/gallery {}
-[00:02:30.898] Browser ERROR   Error fetching gallery preview: {}
-[00:02:32.901] Browser ERROR   [API Network Error] GET http://app.comdevhub-api.com/v1/events/upcoming?limit=5 {}
-[00:03:07.331] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:09.422] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:03:09.422] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:04:34.710] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:36.053] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:04:36.053] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:04:39.506] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:45.623] Server  LOG     Middleware: Token found, allowing access
-[00:04:47.271] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:04:47.546] Server  LOG     Middleware: Token found, allowing access
-[00:04:47.583] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:04:48.949] Server  LOG     Middleware: Token found, allowing access
-[00:04:49.317] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:04:58.098] Server  LOG     Middleware: Token found, allowing access
-[00:05:00.339] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:07:22.672] Browser WARN    [API] 403 /task-force/issues/7/assessment Issue not assigned to you
-[00:07:22.672] Browser ERROR   Error submitting assessment: {}
-[00:07:53.032] Browser WARN    [API] 403 /task-force/issues/7/assessment Issue not assigned to you
-[00:07:53.032] Browser ERROR   Error submitting assessment: {}
-[00:14:58.018] Server  LOG     Middleware: Token found, allowing access
-[00:14:59.908] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:15:00.856] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:15:54.420] Browser WARN    [API] 500 /task-force/issues/7/assessment Failed to submit assessment
-[00:15:54.420] Browser ERROR   Error submitting assessment: {}
-[00:21:12.024] Server  LOG     Middleware: Token found, allowing access
-[00:21:13.413] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:21:14.196] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:23:45.995] Browser WARN    [API] 500 /task-force/issues/7/assessment [Debug] Failed to submit assessment: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'status' at row 1 (Connection: default, SQL: update `issue_reports` set `status` = assessment_submitted, `issue_reports`.`updated_at` = 2026-01-19 13:28:53 where `id` = 7)
-[00:23:45.995] Browser ERROR   Error submitting assessment: {}
-[00:33:23.841] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:24.518] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:33:24.518] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:33:28.220] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:37.141] Server  LOG     Middleware: Token found, allowing access
-[00:33:38.013] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:38.193] Browser LOG     ProtectedRoute check - Token: true User: admin
-[00:33:49.587] Server  LOG     Middleware: Token found, allowing access
-[00:33:50.262] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:33:50.631] Browser LOG     ProtectedRoute check - Token: true User: officer
-[00:33:53.714] Server  LOG     Middleware: Token found, allowing access
-[00:33:54.092] Browser LOG     ProtectedRoute check - Token: true User: officer
-[00:33:56.863] Server  LOG     Middleware: Token found, allowing access
-[00:33:57.962] Browser LOG     ProtectedRoute check - Token: true User: officer
-[00:34:02.957] Browser WARN    [API] 500 /admin/issues/7/status Failed to update status: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`const_dev_db`.`issue_reports`, CONSTRAINT `issue_reports_ibfk_4` FOREIGN KEY (`acknowledged_by`) REFERENCES `officers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE) (Connection: default, SQL: update `issue_reports` set `status` = under_officer_review, `acknowledged_at` = 2026-01-19 13:39:17, `acknowledged_by` = 6, `issue_reports`.`updated_at` = 2026-01-19 13:39:17 where `id` = 7)
-[00:34:02.957] Browser ERROR   Failed to update issue: {}
-[00:34:35.979] Server  LOG     Middleware: Token found, allowing access
-[00:34:36.692] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:37.043] Browser LOG     ProtectedRoute check - Token: true User: officer
-[00:34:37.043] Browser LOG     User role officer not allowed for task_force, redirecting to login...
-[00:34:40.476] Server  LOG     Middleware: Token found, allowing access
-[00:34:41.212] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:41.495] Browser LOG     ProtectedRoute check - Token: true User: officer
-[00:34:41.495] Browser LOG     User role officer not allowed for task_force, redirecting to login...
-[00:34:49.555] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:50.128] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:34:50.128] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[00:34:53.536] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:56.420] Server  LOG     Middleware: Token found, allowing access
-[00:34:56.721] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:34:57.008] Browser LOG     ProtectedRoute check - Token: true User: officer
-[00:35:09.635] Server  LOG     Middleware: Token found, allowing access
-[00:35:09.965] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:35:10.028] Server  LOG     Middleware: Token found, allowing access
-[00:35:10.087] Server  LOG     Middleware: Token found, allowing access
-[00:35:10.094] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:35:10.350] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:35:32.783] Server  LOG     Middleware: Token found, allowing access
-[00:35:33.021] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:36:12.999] Server  LOG     Middleware: Token found, allowing access
-[00:36:13.377] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:36:22.737] Server  LOG     Middleware: Token found, allowing access
-[00:36:23.806] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:36:59.667] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:37:02.287] Server  LOG     Middleware: Token found, allowing access
-[00:37:02.457] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:37:07.225] Server  LOG     Middleware: Token found, allowing access
-[00:37:07.434] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:38:01.053] Server  LOG     Middleware: Token found, allowing access
-[00:38:01.508] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:38:23.695] Server  LOG     Middleware: Token found, allowing access
-[00:38:23.963] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:38:33.547] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:48:14.892] Server  LOG     ✓ Compiled in 5.1s
-[00:53:11.721] Server  LOG     Middleware: Token found, allowing access
-[00:53:12.784] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:53:13.727] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:53:37.533] Server  LOG     Middleware: Token found, allowing access
-[00:53:37.886] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:54:11.186] Server  LOG     Middleware: Token found, allowing access
-[00:54:11.777] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:54:15.297] Server  LOG     Middleware: Token found, allowing access
-[00:54:15.968] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:54:27.051] Server  LOG     Middleware: Token found, allowing access
-[00:54:27.461] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:55:55.199] Server  LOG     Middleware: Token found, allowing access
-[00:55:55.602] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:56:11.844] Server  LOG     Middleware: Token found, allowing access
-[00:56:12.124] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:56:17.724] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:56:23.180] Server  LOG     Middleware: Token found, allowing access
-[00:56:23.497] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[00:56:28.261] Server  LOG     Middleware: Token found, allowing access
-[00:56:28.644] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[01:29:11.248] Server  LOG     Middleware: No auth token, redirecting to login
-[01:29:12.348] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:55:01.849] Browser WARN    [API] 500 /admin/issues/7/status Failed to update status: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`const_dev_db`.`issue_reports`, CONSTRAINT `issue_reports_ibfk_4` FOREIGN KEY (`acknowledged_by`) REFERENCES `officers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE) (Connection: default, SQL: update `issue_reports` set `status` = under_officer_review, `acknowledged_at` = 2026-01-19 15:00:16, `acknowledged_by` = 14, `issue_reports`.`updated_at` = 2026-01-19 15:00:16 where `id` = 7)
-[01:55:01.850] Browser ERROR   Failed to update issue: {}
-[01:56:00.922] Server  LOG     Middleware: Token found, allowing access
-[01:56:01.423] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[01:56:03.585] Server  LOG     Middleware: Token found, allowing access
-[01:56:04.439] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[01:56:16.081] Server  LOG     Middleware: Token found, allowing access
-[01:56:16.729] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:56:17.046] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[01:56:29.127] Server  LOG     Middleware: Token found, allowing access
-[01:56:29.884] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[01:56:31.375] Server  LOG     Middleware: Token found, allowing access
-[01:56:31.620] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[01:56:38.399] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:56:38.399] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[01:56:38.399] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[01:56:44.821] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:56:52.866] Server  LOG     Middleware: Token found, allowing access
-[01:56:53.556] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:56:53.755] Browser LOG     ProtectedRoute check - Token: true User: web_admin
-[01:56:58.721] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:57:02.606] Server  LOG     Middleware: Token found, allowing access
-[01:57:03.384] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:57:03.638] Browser LOG     ProtectedRoute check - Token: true User: agent
-[01:57:05.854] Server  LOG     Middleware: Token found, allowing access
-[01:57:06.212] Browser LOG     ProtectedRoute check - Token: true User: agent
-[01:57:10.913] Server  LOG     Middleware: Token found, allowing access
-[01:57:11.442] Browser LOG     ProtectedRoute check - Token: true User: agent
-[01:59:47.888] Server  LOG     Middleware: Token found, allowing access
-[01:59:48.077] Browser LOG     ProtectedRoute check - Token: true User: agent
-[01:59:59.851] Server  LOG     Middleware: Token found, allowing access
-[02:00:00.191] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:00:00.391] Browser LOG     ProtectedRoute check - Token: true User: agent
-[02:00:07.407] Server  LOG     Middleware: Token found, allowing access
-[02:00:08.065] Browser LOG     ProtectedRoute check - Token: true User: agent
-[02:00:08.065] Browser LOG     User role agent not allowed for task_force, redirecting to login...
-[02:00:08.407] Browser WARN    [API] 403 /admin/issues?limit=100 Access denied. Required role: admin or web_admin or officer or task_force
-[02:00:08.407] Browser ERROR   Failed to fetch issues: {}
-[02:00:10.817] Server  LOG     Middleware: Token found, allowing access
-[02:00:11.417] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:00:11.735] Browser LOG     ProtectedRoute check - Token: true User: agent
-[02:00:11.735] Browser LOG     User role agent not allowed for task_force, redirecting to login...
-[02:00:20.847] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:00:24.712] Server  LOG     Middleware: Token found, allowing access
-[02:00:25.351] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:00:25.987] Browser LOG     ProtectedRoute check - Token: true User: agent
-[02:00:42.139] Server  LOG     Middleware: Token found, allowing access
-[02:00:42.819] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:00:43.358] Browser LOG     ProtectedRoute check - Token: true User: web_admin
-[02:00:52.078] Server  LOG     Middleware: Token found, allowing access
-[02:00:52.768] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:00:53.689] Browser LOG     ProtectedRoute check - Token: true User: officer
-[02:00:55.432] Server  LOG     Middleware: Token found, allowing access
-[02:00:56.043] Browser LOG     ProtectedRoute check - Token: true User: officer
-[02:01:22.350] Server  LOG     Middleware: Token found, allowing access
-[02:01:22.970] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:01:23.343] Server  LOG     Middleware: Token found, allowing access
-[02:01:23.350] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:01:23.494] Server  LOG     Middleware: Token found, allowing access
-[02:01:24.051] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:01:28.888] Server  LOG     Middleware: Token found, allowing access
-[02:01:29.243] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:01:51.105] Server  LOG     Middleware: Token found, allowing access
-[02:01:52.499] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:01:52.780] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:01:52.780] Browser LOG     User role task_force not allowed for officer, redirecting to login...
-[02:01:58.083] Server  LOG     Middleware: Token found, allowing access
-[02:01:58.753] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:01:59.142] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:01:59.142] Browser LOG     User role task_force not allowed for officer, redirecting to login...
-[02:02:09.839] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:02:59.980] Server  LOG     Middleware: Token found, allowing access
-[02:03:00.573] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:03:00.875] Server  LOG     Middleware: Token found, allowing access
-[02:03:00.988] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:03:00.999] Server  LOG     Middleware: Token found, allowing access
-[02:03:01.465] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:03:04.860] Server  LOG     Middleware: Token found, allowing access
-[02:03:05.191] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:04:44.379] Server  LOG     Middleware: Token found, allowing access
-[02:04:44.717] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:04:44.897] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:04:44.897] Browser LOG     User role task_force not allowed for agent, redirecting to login...
-[02:04:51.114] Server  LOG     Middleware: Token found, allowing access
-[02:04:51.487] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:04:51.620] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:04:51.620] Browser LOG     User role task_force not allowed for agent, redirecting to login...
-[02:04:57.777] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:05:00.359] Server  LOG     Middleware: Token found, allowing access
-[02:05:00.673] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:05:00.769] Server  LOG     Middleware: Token found, allowing access
-[02:05:00.838] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:05:00.851] Server  LOG     Middleware: Token found, allowing access
-[02:05:01.215] Browser LOG     ProtectedRoute check - Token: true User: task_force
-[02:06:14.444] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:06:14.444] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[02:06:14.444] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
-[02:06:19.376] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:07:41.339] Server  LOG     Middleware: Token found, allowing access
-[02:07:41.752] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[02:07:41.924] Browser LOG     ProtectedRoute check - Token: true User: admin
-[02:07:47.150] Server  LOG     Middleware: Token found, allowing access
-[02:07:47.607] Browser LOG     ProtectedRoute check - Token: true User: admin
+[00:00:08.610] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:09.737] Server  LOG     ✓ Ready in 7.7s
+[00:00:14.585] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:17.382] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:17.382] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:50.022] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:56.375] Server  LOG     Middleware: Token found, allowing access
+[00:00:57.642] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:58.038] Server  LOG     Middleware: Token found, allowing access
+[00:00:58.090] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[00:00:58.646] Server  LOG     Middleware: Token found, allowing access
+[00:00:59.252] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[00:01:07.135] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:08.563] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:08.563] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:01:11.281] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:16.359] Server  LOG     Middleware: Token found, allowing access
+[00:01:17.372] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:17.830] Browser LOG     ProtectedRoute check - Token: true User: web_admin
+[00:01:28.837] Server  LOG     Middleware: Token found, allowing access
+[00:01:30.607] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:31.156] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:01:33.549] Server  LOG     Middleware: Token found, allowing access
+[00:01:33.922] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:01:41.962] Server  LOG     Middleware: Token found, allowing access
+[00:01:44.399] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:01:48.562] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:04:00.862] Server  LOG     Middleware: Token found, allowing access
+[00:04:01.631] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:01.829] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:04:10.709] Server  LOG     Middleware: Token found, allowing access
+[00:04:11.478] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:05:10.232] Server  LOG     Middleware: Token found, allowing access
+[00:05:11.036] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:11.311] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:05:11.311] Browser LOG     User role agent not allowed for task_force, redirecting to login...
+[00:05:13.994] Server  LOG     Middleware: Token found, allowing access
+[00:05:14.557] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:14.731] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:05:14.731] Browser LOG     User role agent not allowed for task_force, redirecting to login...
+[00:05:26.631] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:35.976] Server  LOG     Middleware: Token found, allowing access
+[00:05:36.583] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:36.939] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:05:48.157] Server  LOG     Middleware: Token found, allowing access
+[00:05:48.813] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:49.086] Browser LOG     ProtectedRoute check - Token: true User: web_admin
+[00:08:25.311] Server  LOG     Middleware: Token found, allowing access
+[00:08:28.247] Browser LOG     ProtectedRoute check - Token: true User: web_admin
+[00:09:52.760] Browser WARN    [API] 403 /agent/issues Access denied. Required role: agent
+[00:09:52.760] Browser ERROR   Submit error: {}
+[00:10:16.462] Browser WARN    [API] 403 /agent/issues Access denied. Required role: agent
+[00:10:16.463] Browser ERROR   Submit error: {}
+[00:15:51.669] Browser WARN    [API] 404 /agent/issues Agent profile not found
+[00:15:51.669] Browser ERROR   Submit error: {}
+[00:15:56.818] Server  LOG     Middleware: Token found, allowing access
+[00:15:57.993] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:15:58.423] Browser LOG     ProtectedRoute check - Token: true User: web_admin
+[00:15:58.423] Browser LOG     User role web_admin not allowed for agent, redirecting to login...
+[00:16:10.807] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:16.661] Server  LOG     Middleware: Token found, allowing access
+[00:16:17.934] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:18.899] Browser LOG     ProtectedRoute check - Token: true User: web_admin
+[00:16:40.286] Server  LOG     Middleware: Token found, allowing access
+[00:16:41.735] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:16:42.405] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:16:45.587] Server  LOG     Middleware: Token found, allowing access
+[00:16:46.182] Browser LOG     ProtectedRoute check - Token: true User: agent
+[00:16:51.426] Server  LOG     Middleware: Token found, allowing access
+[00:16:52.755] Browser LOG     ProtectedRoute check - Token: true User: agent
+[02:13:46.676] Server  LOG     Middleware: Token found, allowing access
+[02:13:47.194] Browser LOG     ProtectedRoute check - Token: true User: agent
+[02:14:13.377] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:14:14.892] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:14:14.892] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:14:18.221] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:14:25.826] Server  LOG     Middleware: Token found, allowing access
+[02:14:27.197] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:14:27.615] Browser LOG     ProtectedRoute check - Token: true User: officer
+[02:14:54.978] Server  LOG     Middleware: Token found, allowing access
+[02:14:55.540] Browser LOG     ProtectedRoute check - Token: true User: officer
+[02:15:42.728] Server  LOG     Middleware: Token found, allowing access
+[02:15:44.310] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:15:45.362] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:15:49.127] Server  LOG     Middleware: Token found, allowing access
+[02:15:49.902] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:16:00.396] Server  LOG     Middleware: Token found, allowing access
+[02:16:01.021] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:01.596] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:16:11.425] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:12.650] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:16:12.650] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:16:18.733] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:54.953] Server  LOG     Middleware: Token found, allowing access
+[02:16:55.689] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:16:55.844] Server  LOG     Middleware: Token found, allowing access
+[02:16:55.966] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:16:55.981] Server  LOG     Middleware: Token found, allowing access
+[02:16:56.562] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:16:58.346] Server  LOG     Middleware: Token found, allowing access
+[02:16:59.124] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:17:43.520] Server  LOG     Middleware: Token found, allowing access
+[02:17:44.140] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:17:44.342] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:17:44.343] Browser LOG     User role task_force not allowed for admin, redirecting to login...
+[02:17:52.675] Server  LOG     Middleware: Token found, allowing access
+[02:17:53.394] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:17:53.623] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:17:53.623] Browser LOG     User role task_force not allowed for admin, redirecting to login...
+[02:18:01.500] Server  LOG     Middleware: Token found, allowing access
+[02:18:02.157] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:18:02.377] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:18:02.377] Browser LOG     User role task_force not allowed for admin, redirecting to login...
+[02:18:09.727] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:18:11.196] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:18:11.196] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:18:14.296] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:18:22.841] Server  LOG     Middleware: Token found, allowing access
+[02:18:23.425] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:18:23.998] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:18:27.698] Server  LOG     Middleware: Token found, allowing access
+[02:18:28.259] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:26:26.511] Server  LOG     Middleware: Token found, allowing access
+[02:26:27.154] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:26:27.416] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:26:27.417] Browser LOG     User role admin not allowed for task_force, redirecting to login...
+[02:26:35.452] Server  LOG     Middleware: Token found, allowing access
+[02:26:36.096] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:26:36.275] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:26:36.275] Browser LOG     User role admin not allowed for task_force, redirecting to login...
+[02:26:51.542] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:26:52.836] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:26:52.836] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:26:55.633] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:27:29.646] Server  LOG     Middleware: Token found, allowing access
+[02:27:30.475] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:27:30.634] Server  LOG     Middleware: Token found, allowing access
+[02:27:30.771] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:27:30.793] Server  LOG     Middleware: Token found, allowing access
+[02:27:31.386] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:28:08.715] Server  LOG     Middleware: Token found, allowing access
+[02:28:09.166] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:28:16.467] Server  LOG     Middleware: Token found, allowing access
+[02:28:16.962] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:28:17.311] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:39:04.874] Server  LOG     Middleware: Token found, allowing access
+[02:39:05.489] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:39:05.909] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:39:42.972] Server  LOG     Middleware: Token found, allowing access
+[02:39:43.575] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:39:43.856] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:39:43.856] Browser LOG     User role task_force not allowed for admin, redirecting to login...
+[02:39:56.277] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:39:57.634] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:39:57.634] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:40:00.350] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:40:09.331] Server  LOG     Middleware: Token found, allowing access
+[02:40:09.960] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:40:10.283] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:40:14.461] Server  LOG     Middleware: Token found, allowing access
+[02:40:14.945] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:40:33.190] Server  LOG     Middleware: Token found, allowing access
+[02:40:37.975] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:40:37.975] Browser LOG     User role admin not allowed for officer, redirecting to login...
+[02:41:06.275] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:41:07.789] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:41:07.789] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:41:10.669] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:41:20.178] Server  LOG     Middleware: Token found, allowing access
+[02:41:20.771] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:41:21.025] Browser LOG     ProtectedRoute check - Token: true User: officer
+[02:41:27.726] Server  LOG     Middleware: Token found, allowing access
+[02:41:28.083] Browser LOG     ProtectedRoute check - Token: true User: officer
+[02:41:40.763] Server  LOG     Middleware: Token found, allowing access
+[02:41:41.734] Browser LOG     ProtectedRoute check - Token: true User: officer
+[02:41:47.512] Server  LOG     Middleware: Token found, allowing access
+[02:41:48.136] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:41:48.358] Browser LOG     ProtectedRoute check - Token: true User: officer
+[02:41:48.358] Browser LOG     User role officer not allowed for admin, redirecting to login...
+[02:41:54.881] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:41:56.113] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:41:56.113] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:41:59.613] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:42:06.582] Server  LOG     Middleware: Token found, allowing access
+[02:42:07.262] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:42:07.823] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:42:11.277] Server  LOG     Middleware: Token found, allowing access
+[02:42:11.777] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:42:18.139] Server  LOG     Middleware: Token found, allowing access
+[02:42:21.879] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:44:27.528] Server  LOG     Middleware: Token found, allowing access
+[02:44:29.080] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:45:49.724] Server  LOG     Middleware: Token found, allowing access
+[02:45:50.418] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:45:50.721] Browser LOG     ProtectedRoute check - Token: true User: admin
+[02:45:50.721] Browser LOG     User role admin not allowed for task_force, redirecting to login...
+[02:45:56.473] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:45:58.120] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:45:58.120] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[02:46:04.188] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:46:17.612] Server  LOG     Middleware: Token found, allowing access
+[02:46:18.209] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:46:18.401] Server  LOG     Middleware: Token found, allowing access
+[02:46:18.526] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:46:18.545] Server  LOG     Middleware: Token found, allowing access
+[02:46:19.045] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:46:21.439] Server  LOG     Middleware: Token found, allowing access
+[02:46:21.837] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:46:29.978] Server  LOG     Middleware: Token found, allowing access
+[02:46:33.037] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[02:47:49.883] Browser WARN    [API] 403 /task-force/issues/9/assessment Issue is assigned to another member
+[02:47:49.884] Browser ERROR   Error submitting assessment: {}
+[02:54:58.409] Browser WARN    [API] 403 /task-force/issues/9/assessment Issue is assigned to another member
+[02:54:58.409] Browser ERROR   Error submitting assessment: {}
+[02:58:17.960] Server  LOG     Middleware: Token found, allowing access
+[02:58:18.836] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[02:58:19.184] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:00:10.418] Browser WARN    [API] 403 /task-force/issues/9/assessment Issue is assigned to another member
+[03:00:10.418] Browser ERROR   Error submitting assessment: {}
+[03:04:05.549] Server  LOG     Middleware: Token found, allowing access
+[03:04:06.850] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:04:07.587] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:04:52.400] Browser WARN    [API] 403 /task-force/issues/9/assessment Issue is assigned to another member
+[03:04:52.400] Browser ERROR   Error submitting assessment: {}
+[03:09:47.716] Server  LOG     Middleware: Token found, allowing access
+[03:09:49.618] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:09:49.995] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:11:49.116] Browser WARN    [API] 403 /task-force/issues/9/assessment Issue is assigned to another member (Assigned: 1, You: 3)
+[03:11:49.116] Browser ERROR   Error submitting assessment: {}
+[03:17:40.133] Server  LOG     Middleware: Token found, allowing access
+[03:17:41.374] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:17:42.214] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:18:14.470] Server  LOG     Middleware: Token found, allowing access
+[03:18:15.527] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:18:27.215] Server  LOG     Middleware: Token found, allowing access
+[03:18:27.673] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:18:27.674] Browser LOG     User role task_force not allowed for admin, redirecting to login...
+[03:18:33.846] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:18:35.195] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e03c49462c_1768817604.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[03:18:35.195] Browser WARN    Image with src "http://app.comdevhub-api.com/uploads/images/projects/image_696e06fec5d63_1768818430.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[03:18:38.145] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:18:47.860] Server  LOG     Middleware: Token found, allowing access
+[03:18:48.479] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:18:48.746] Browser LOG     ProtectedRoute check - Token: true User: admin
+[03:18:56.391] Server  LOG     Middleware: Token found, allowing access
+[03:18:56.894] Browser LOG     ProtectedRoute check - Token: true User: admin
+[03:19:09.516] Server  LOG     Middleware: Token found, allowing access
+[03:19:11.160] Browser LOG     ProtectedRoute check - Token: true User: admin
+[03:20:08.881] Server  LOG     Middleware: Token found, allowing access
+[03:20:10.855] Browser LOG     ProtectedRoute check - Token: true User: admin
+[03:21:27.118] Server  LOG     Middleware: Token found, allowing access
+[03:21:27.515] Browser LOG     ProtectedRoute check - Token: true User: admin
+[03:21:35.981] Server  LOG     Middleware: Token found, allowing access
+[03:21:37.338] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:21:37.718] Browser LOG     ProtectedRoute check - Token: true User: admin
+[03:21:37.718] Browser LOG     User role admin not allowed for task_force, redirecting to login...
+[03:21:48.412] Server  LOG     Middleware: Token found, allowing access
+[03:21:49.059] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[03:21:49.540] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:21:52.713] Server  LOG     Middleware: Token found, allowing access
+[03:21:54.460] Browser LOG     ProtectedRoute check - Token: true User: task_force
+[03:22:05.509] Browser LOG     ProtectedRoute check - Token: true User: task_force

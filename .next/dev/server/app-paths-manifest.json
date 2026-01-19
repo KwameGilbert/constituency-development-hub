@@ -1,6 +1,8 @@
 {
+  "/(dashboards)/admin-dashboard/issues/[id]/page": "app/(dashboards)/admin-dashboard/issues/[id]/page.js",
   "/(dashboards)/admin-dashboard/issues/page": "app/(dashboards)/admin-dashboard/issues/page.js",
   "/(dashboards)/admin-dashboard/page": "app/(dashboards)/admin-dashboard/page.js",
+  "/(dashboards)/agents-dashboard/issues/[id]/page": "app/(dashboards)/agents-dashboard/issues/[id]/page.js",
   "/(dashboards)/agents-dashboard/issues/add/page": "app/(dashboards)/agents-dashboard/issues/add/page.js",
   "/(dashboards)/agents-dashboard/issues/page": "app/(dashboards)/agents-dashboard/issues/page.js",
   "/(dashboards)/agents-dashboard/page": "app/(dashboards)/agents-dashboard/page.js",
@@ -12,18 +14,9 @@
   "/(dashboards)/task-force-dashboard/issues/[id]/page": "app/(dashboards)/task-force-dashboard/issues/[id]/page.js",
   "/(dashboards)/task-force-dashboard/issues/page": "app/(dashboards)/task-force-dashboard/issues/page.js",
   "/(dashboards)/task-force-dashboard/page": "app/(dashboards)/task-force-dashboard/page.js",
-  "/(dashboards)/task-force-dashboard/pending/page": "app/(dashboards)/task-force-dashboard/pending/page.js",
-  "/(dashboards)/task-force-dashboard/profile/page": "app/(dashboards)/task-force-dashboard/profile/page.js",
-  "/(dashboards)/task-force-dashboard/reports/page": "app/(dashboards)/task-force-dashboard/reports/page.js",
-  "/(dashboards)/task-force-dashboard/settings/page": "app/(dashboards)/task-force-dashboard/settings/page.js",
-  "/(dashboards)/task-force-dashboard/under-assessment/page": "app/(dashboards)/task-force-dashboard/under-assessment/page.js",
+  "/(dashboards)/web-admin-dashboard/blog/[id]/edit/page": "app/(dashboards)/web-admin-dashboard/blog/[id]/edit/page.js",
   "/(dashboards)/web-admin-dashboard/page": "app/(dashboards)/web-admin-dashboard/page.js",
-  "/(public)/blog/[slug]/page": "app/(public)/blog/[slug]/page.js",
-  "/(public)/blog/page": "app/(public)/blog/page.js",
-  "/(public)/gallery/page": "app/(public)/gallery/page.js",
-  "/(public)/ideas/page": "app/(public)/ideas/page.js",
   "/(public)/page": "app/(public)/page.js",
-  "/(public)/youth/page": "app/(public)/youth/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/login/page": "app/login/page.js"
 }
