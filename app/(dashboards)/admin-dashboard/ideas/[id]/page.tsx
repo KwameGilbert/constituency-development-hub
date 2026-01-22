@@ -8,52 +8,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import axios from "axios";
 import { useParams } from "next/navigation";
-
-interface Idea {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  submitter_name: string;
-  submitter_email: string;
-  submitter_contact?: string;
-  status: "pending" | "under_review" | "approved" | "implemented" | "rejected";
-  votes: number;
-  admin_notes?: string;
-  created_at: string;
-  reviewed_at?: string;
-  implemented_at?: string;
-  estimated_cost?: string;
-  priority?: string;
-  location?: string;
-  target_beneficiaries?: string;
-  implementation_timeline?: string;
-  participants?: string;
-}
-
-interface IdeasData {
-  ideas: Idea[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-  };
-  statistics: {
-    total_ideas: number;
-    approved_ideas: number;
-    pending_ideas: number;
-    under_review_ideas: number;
-    implemented_ideas: number;
-    total_votes: number;
-    by_category: Record<string, number>;
-    by_status: Record<string, number>;
-    by_priority: Record<string, number>;
-  };
-}
+import { ideasService, Idea } from "@/lib/services/ideas-service";
 
 export default function IdeaDetailPage() {
   const params = useParams();
@@ -67,10 +23,9 @@ export default function IdeaDetailPage() {
     const fetchIdea = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<IdeasData>('/data/admin-ideas.json');
-        const foundIdea = response.data.ideas.find(i => i.id === parseInt(id));
-        if (foundIdea) {
-          setIdea(foundIdea);
+        const response = await ideasService.getIdeaById(id);
+        if (response.success && response.data.idea) {
+          setIdea(response.data.idea);
           setError(null);
         } else {
           setError('Idea not found');

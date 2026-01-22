@@ -48,11 +48,22 @@ const getStatusBadge = (status: string) => {
   );
 };
 
-export function RecentTasks() {
+export interface RecentTasksProps {
+  reports?: AgentReport[];
+  loading?: boolean;
+}
+
+export function RecentTasks({ reports: providedReports, loading: providedLoading }: RecentTasksProps) {
   const [tasks, setTasks] = useState<AgentReport[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (providedReports !== undefined) {
+      setTasks(providedReports.slice(0, 5));
+      setLoading(providedLoading || false);
+      return;
+    }
+
     const fetchTasks = async () => {
       try {
         setLoading(true);
@@ -71,7 +82,7 @@ export function RecentTasks() {
     };
 
     fetchTasks();
-  }, []);
+  }, [providedReports, providedLoading]);
 
   const formatDate = (dateString: string) => {
     try {

@@ -355,6 +355,7 @@ __turbopack_context__.s([
     "ProfileDetails",
     ()=>ProfileDetails
 ]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/badge.tsx [app-client] (ecmascript)");
@@ -388,6 +389,7 @@ function ProfileDetails() {
     _s();
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [saving, setSaving] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [profile, setProfile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [activity, setActivity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [officerData, setOfficerData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
@@ -403,6 +405,12 @@ function ProfileDetails() {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ProfileDetails.useEffect": ()=>{
             async function fetchData() {
+                // Check if user is authenticated
+                const token = ("TURBOPACK compile-time truthy", 1) ? localStorage.getItem('authToken') : "TURBOPACK unreachable";
+                const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2ODc3MDI3OSwiZXhwIjoxMDAwMDAwMDE3Njg3NzAyNzgsImRhdGEiOnsiaWQiOjMsImVtYWlsIjoiam9obi5tZW5zYWhAY29uc3RpdHVlbmN5Lmdvdi5naCIsInJvbGUiOiJ3ZWJfYWRtaW4iLCJzdGF0dXMiOiJhY3RpdmUifX0.H0TVhZskuWoZjbBETb76ffO7yvQ6eTP0AFb84MiZgjI");
+                const hasToken = token || envToken && envToken !== "YOUR_JWT_TOKEN_HERE";
+                if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+                ;
                 try {
                     const [profileRes, statsRes] = await Promise.all([
                         __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$services$2f$profile$2d$service$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["profileService"].getProfile(),
@@ -433,6 +441,26 @@ function ProfileDetails() {
                     }
                 } catch (error) {
                     console.error("Failed to fetch profile data:", error);
+                    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+                    // Check for specific error types
+                    if (errorMessage.includes("User not found")) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Profile not found. Please contact support if this persists.");
+                        setError("Your profile could not be found. Please contact support or try logging in again.");
+                    } else if (errorMessage.includes("401") || errorMessage.includes("403")) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Session expired. Please log in again.");
+                        setError("Authentication required. Please log in again.");
+                    // Optionally redirect to login
+                    // window.location.href = "/login";
+                    } else if (errorMessage.includes("404")) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Profile endpoint not found. Please contact support.");
+                        setError("Service temporarily unavailable. Please try again later.");
+                    } else if (errorMessage.includes("500") || errorMessage.includes("502") || errorMessage.includes("503")) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Server error. Please try again later.");
+                        setError("Service temporarily unavailable. Please try again later.");
+                    } else {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Failed to load profile data. Please try again.");
+                        setError("Unable to load profile data. Please refresh the page.");
+                    }
                 } finally{
                     setLoading(false);
                 }
@@ -471,7 +499,12 @@ function ProfileDetails() {
                 phone: formData.phone
             });
             if (!updateRes.success) {
-                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(updateRes.message || "Failed to update profile");
+                const errorMessage = updateRes.message || "Failed to update profile";
+                if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Session expired. Please log in again.");
+                    return;
+                }
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(errorMessage);
                 return;
             }
             // Change password if provided
@@ -482,7 +515,12 @@ function ProfileDetails() {
                     new_password_confirmation: formData.confirmPassword
                 });
                 if (!passwordRes.success) {
-                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(passwordRes.message || "Failed to change password");
+                    const errorMessage = passwordRes.message || "Failed to change password";
+                    if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Session expired. Please log in again.");
+                        return;
+                    }
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(errorMessage);
                     return;
                 }
                 // Clear password fields
@@ -498,10 +536,22 @@ function ProfileDetails() {
             const refreshRes = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$services$2f$profile$2d$service$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["profileService"].getProfile();
             if (refreshRes.success) {
                 setProfile(refreshRes.data.user);
+            } else {
+                const errorMessage = refreshRes.message || "Failed to refresh profile data";
+                if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Session expired. Please log in again.");
+                } else {
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Profile updated but failed to refresh data.");
+                }
             }
         } catch (error) {
             console.error("Failed to update profile:", error);
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Failed to update profile. Please try again.");
+            const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+            if (errorMessage.includes("User not found") || errorMessage.includes("401") || errorMessage.includes("403")) {
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Session expired. Please log in again.");
+            } else {
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$sonner$40$2$2e$0$2e$7_react$2d$dom$40$19$2e$2$2e$0_react$40$19$2e$2$2e$0_$5f$react$40$19$2e$2$2e$0$2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error("Failed to update profile. Please try again.");
+            }
         } finally{
             setSaving(false);
         }
@@ -530,12 +580,76 @@ function ProfileDetails() {
                 className: "h-8 w-8 animate-spin text-muted-foreground"
             }, void 0, false, {
                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                lineNumber: 172,
+                lineNumber: 227,
                 columnNumber: 17
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-            lineNumber: 171,
+            lineNumber: 226,
+            columnNumber: 13
+        }, this);
+    }
+    if (error) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex items-center justify-center h-64",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                className: "w-full max-w-md",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
+                    className: "pt-6 text-center",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-red-500 mb-4",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$lucide$2d$react$40$0$2e$555$2e$0_react$40$19$2e$2$2e$0$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$info$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Info$3e$__["Info"], {
+                                className: "h-12 w-12 mx-auto"
+                            }, void 0, false, {
+                                fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                                lineNumber: 238,
+                                columnNumber: 29
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                            lineNumber: 237,
+                            columnNumber: 25
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                            className: "text-lg font-semibold mb-2",
+                            children: "Unable to Load Profile"
+                        }, void 0, false, {
+                            fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                            lineNumber: 240,
+                            columnNumber: 25
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: "text-muted-foreground mb-4",
+                            children: error
+                        }, void 0, false, {
+                            fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                            lineNumber: 241,
+                            columnNumber: 25
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                            onClick: ()=>window.location.reload(),
+                            className: "bg-[#1e1b4b] hover:bg-[#1e1b4b]/90",
+                            children: "Refresh Page"
+                        }, void 0, false, {
+                            fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                            lineNumber: 242,
+                            columnNumber: 25
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                    lineNumber: 236,
+                    columnNumber: 21
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+                lineNumber: 235,
+                columnNumber: 17
+            }, this)
+        }, void 0, false, {
+            fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
+            lineNumber: 234,
             columnNumber: 13
         }, this);
     }
@@ -557,12 +671,12 @@ function ProfileDetails() {
                                             className: "h-12 w-12 text-blue-600"
                                         }, void 0, false, {
                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                            lineNumber: 186,
+                                            lineNumber: 263,
                                             columnNumber: 33
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 185,
+                                        lineNumber: 262,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -570,7 +684,7 @@ function ProfileDetails() {
                                         children: profile?.name || "Officer"
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 188,
+                                        lineNumber: 265,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -578,7 +692,7 @@ function ProfileDetails() {
                                         children: profile?.role || "Officer"
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 189,
+                                        lineNumber: 266,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -586,7 +700,7 @@ function ProfileDetails() {
                                         children: profile?.status ? profile.status.charAt(0).toUpperCase() + profile.status.slice(1) : "Active"
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 190,
+                                        lineNumber: 267,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -600,7 +714,7 @@ function ProfileDetails() {
                                                         children: "Email:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 200,
+                                                        lineNumber: 277,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -608,13 +722,13 @@ function ProfileDetails() {
                                                         children: profile?.email || "N/A"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 201,
+                                                        lineNumber: 278,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 199,
+                                                lineNumber: 276,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -625,7 +739,7 @@ function ProfileDetails() {
                                                         children: "Member Since:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 204,
+                                                        lineNumber: 281,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -633,13 +747,13 @@ function ProfileDetails() {
                                                         children: formatMonthYear(profile?.created_at)
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 205,
+                                                        lineNumber: 282,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 203,
+                                                lineNumber: 280,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -650,7 +764,7 @@ function ProfileDetails() {
                                                         children: "Last Login:"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 208,
+                                                        lineNumber: 285,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -658,30 +772,30 @@ function ProfileDetails() {
                                                         children: formatDate(profile?.last_login)
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 209,
+                                                        lineNumber: 286,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 207,
+                                                lineNumber: 284,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 198,
+                                        lineNumber: 275,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                lineNumber: 184,
+                                lineNumber: 261,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                            lineNumber: 183,
+                            lineNumber: 260,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -692,12 +806,12 @@ function ProfileDetails() {
                                         children: "Activity Overview"
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 218,
+                                        lineNumber: 295,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                    lineNumber: 217,
+                                    lineNumber: 294,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -715,12 +829,12 @@ function ProfileDetails() {
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 224,
+                                                                lineNumber: 301,
                                                                 columnNumber: 41
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 223,
+                                                            lineNumber: 300,
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -728,13 +842,13 @@ function ProfileDetails() {
                                                             children: "Total Issues"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 226,
+                                                            lineNumber: 303,
                                                             columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 222,
+                                                    lineNumber: 299,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -742,13 +856,13 @@ function ProfileDetails() {
                                                     children: activity?.total_issues ?? 0
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 228,
+                                                    lineNumber: 305,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                            lineNumber: 221,
+                                            lineNumber: 298,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -763,12 +877,12 @@ function ProfileDetails() {
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 233,
+                                                                lineNumber: 310,
                                                                 columnNumber: 41
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 232,
+                                                            lineNumber: 309,
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -776,13 +890,13 @@ function ProfileDetails() {
                                                             children: "Pending Review"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 235,
+                                                            lineNumber: 312,
                                                             columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 231,
+                                                    lineNumber: 308,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -790,13 +904,13 @@ function ProfileDetails() {
                                                     children: activity?.pending_review ?? 0
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 237,
+                                                    lineNumber: 314,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                            lineNumber: 230,
+                                            lineNumber: 307,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -811,12 +925,12 @@ function ProfileDetails() {
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 242,
+                                                                lineNumber: 319,
                                                                 columnNumber: 41
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 241,
+                                                            lineNumber: 318,
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -824,13 +938,13 @@ function ProfileDetails() {
                                                             children: "Resolved"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 244,
+                                                            lineNumber: 321,
                                                             columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 240,
+                                                    lineNumber: 317,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -838,13 +952,13 @@ function ProfileDetails() {
                                                     children: activity?.resolved ?? 0
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 246,
+                                                    lineNumber: 323,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                            lineNumber: 239,
+                                            lineNumber: 316,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -859,12 +973,12 @@ function ProfileDetails() {
                                                                 className: "h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 251,
+                                                                lineNumber: 328,
                                                                 columnNumber: 41
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 250,
+                                                            lineNumber: 327,
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -872,13 +986,13 @@ function ProfileDetails() {
                                                             children: "Active Agents"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                            lineNumber: 253,
+                                                            lineNumber: 330,
                                                             columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 249,
+                                                    lineNumber: 326,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -886,31 +1000,31 @@ function ProfileDetails() {
                                                     children: activity?.active_agents ?? 0
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 255,
+                                                    lineNumber: 332,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                            lineNumber: 248,
+                                            lineNumber: 325,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                    lineNumber: 220,
+                                    lineNumber: 297,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                            lineNumber: 216,
+                            lineNumber: 293,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                    lineNumber: 181,
+                    lineNumber: 258,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -923,7 +1037,7 @@ function ProfileDetails() {
                                         children: "Update Profile Information"
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 265,
+                                        lineNumber: 342,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -931,13 +1045,13 @@ function ProfileDetails() {
                                         children: "Keep your profile information up to date"
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 266,
+                                        lineNumber: 343,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                lineNumber: 264,
+                                lineNumber: 341,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -953,20 +1067,20 @@ function ProfileDetails() {
                                                         className: "h-4 w-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 272,
+                                                        lineNumber: 349,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                         children: "Personal Information"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 273,
+                                                        lineNumber: 350,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 271,
+                                                lineNumber: 348,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -984,13 +1098,13 @@ function ProfileDetails() {
                                                                         children: "*"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                        lineNumber: 277,
+                                                                        lineNumber: 354,
                                                                         columnNumber: 77
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 277,
+                                                                lineNumber: 354,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -999,13 +1113,13 @@ function ProfileDetails() {
                                                                 onChange: (e)=>handleChange("name", e.target.value)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 278,
+                                                                lineNumber: 355,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 276,
+                                                        lineNumber: 353,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1020,13 +1134,13 @@ function ProfileDetails() {
                                                                         children: "*"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                        lineNumber: 285,
+                                                                        lineNumber: 362,
                                                                         columnNumber: 78
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 285,
+                                                                lineNumber: 362,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1036,13 +1150,13 @@ function ProfileDetails() {
                                                                 className: "bg-muted"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 286,
+                                                                lineNumber: 363,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 284,
+                                                        lineNumber: 361,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1053,7 +1167,7 @@ function ProfileDetails() {
                                                                 children: "Phone Number"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 294,
+                                                                lineNumber: 371,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1063,13 +1177,13 @@ function ProfileDetails() {
                                                                 onChange: (e)=>handleChange("phone", e.target.value)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 295,
+                                                                lineNumber: 372,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 293,
+                                                        lineNumber: 370,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1080,7 +1194,7 @@ function ProfileDetails() {
                                                                 children: "Department"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 303,
+                                                                lineNumber: 380,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1090,25 +1204,25 @@ function ProfileDetails() {
                                                                 className: "bg-muted"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 304,
+                                                                lineNumber: 381,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 302,
+                                                        lineNumber: 379,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 275,
+                                                lineNumber: 352,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 270,
+                                        lineNumber: 347,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1121,20 +1235,20 @@ function ProfileDetails() {
                                                         className: "h-4 w-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 317,
+                                                        lineNumber: 394,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                         children: "Location Information"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 318,
+                                                        lineNumber: 395,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 316,
+                                                lineNumber: 393,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1147,7 +1261,7 @@ function ProfileDetails() {
                                                                 children: "Assigned Locations"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 322,
+                                                                lineNumber: 399,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1156,13 +1270,13 @@ function ProfileDetails() {
                                                                 className: "bg-muted"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 323,
+                                                                lineNumber: 400,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 321,
+                                                        lineNumber: 398,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1172,7 +1286,7 @@ function ProfileDetails() {
                                                                 children: "Position"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 330,
+                                                                lineNumber: 407,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1181,19 +1295,19 @@ function ProfileDetails() {
                                                                 className: "bg-muted"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 331,
+                                                                lineNumber: 408,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 329,
+                                                        lineNumber: 406,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 320,
+                                                lineNumber: 397,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1203,20 +1317,20 @@ function ProfileDetails() {
                                                         className: "h-3 w-3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 339,
+                                                        lineNumber: 416,
                                                         columnNumber: 37
                                                     }, this),
                                                     " Location information can only be updated by an administrator."
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 338,
+                                                lineNumber: 415,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 315,
+                                        lineNumber: 392,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1229,7 +1343,7 @@ function ProfileDetails() {
                                                         className: "h-4 w-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 346,
+                                                        lineNumber: 423,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1240,19 +1354,19 @@ function ProfileDetails() {
                                                                 children: "(Leave blank to keep current password)"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 347,
+                                                                lineNumber: 424,
                                                                 columnNumber: 57
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 347,
+                                                        lineNumber: 424,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 345,
+                                                lineNumber: 422,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1266,7 +1380,7 @@ function ProfileDetails() {
                                                                 children: "Current Password"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 351,
+                                                                lineNumber: 428,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1277,13 +1391,13 @@ function ProfileDetails() {
                                                                 onChange: (e)=>handleChange("currentPassword", e.target.value)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 352,
+                                                                lineNumber: 429,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 350,
+                                                        lineNumber: 427,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1294,7 +1408,7 @@ function ProfileDetails() {
                                                                 children: "New Password"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 361,
+                                                                lineNumber: 438,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1305,13 +1419,13 @@ function ProfileDetails() {
                                                                 onChange: (e)=>handleChange("newPassword", e.target.value)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 362,
+                                                                lineNumber: 439,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 360,
+                                                        lineNumber: 437,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1322,7 +1436,7 @@ function ProfileDetails() {
                                                                 children: "Confirm New Password"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 371,
+                                                                lineNumber: 448,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1333,25 +1447,25 @@ function ProfileDetails() {
                                                                 onChange: (e)=>handleChange("confirmPassword", e.target.value)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 449,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 370,
+                                                        lineNumber: 447,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 349,
+                                                lineNumber: 426,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 344,
+                                        lineNumber: 421,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1362,7 +1476,7 @@ function ProfileDetails() {
                                                 children: "Account Information"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 385,
+                                                lineNumber: 462,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1376,20 +1490,20 @@ function ProfileDetails() {
                                                                 children: "Account Created:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 388,
+                                                                lineNumber: 465,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: formatDate(profile?.created_at)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 389,
+                                                                lineNumber: 466,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 387,
+                                                        lineNumber: 464,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1400,20 +1514,20 @@ function ProfileDetails() {
                                                                 children: "Last Updated:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 392,
+                                                                lineNumber: 469,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: formatDate(profile?.updated_at)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 393,
+                                                                lineNumber: 470,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 391,
+                                                        lineNumber: 468,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1424,7 +1538,7 @@ function ProfileDetails() {
                                                                 children: "Account Status:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 396,
+                                                                lineNumber: 473,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1432,13 +1546,13 @@ function ProfileDetails() {
                                                                 children: profile?.status ? profile.status.charAt(0).toUpperCase() + profile.status.slice(1) : "Active"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 397,
+                                                                lineNumber: 474,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 395,
+                                                        lineNumber: 472,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1449,7 +1563,7 @@ function ProfileDetails() {
                                                                 children: "User Role:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 406,
+                                                                lineNumber: 483,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1457,25 +1571,25 @@ function ProfileDetails() {
                                                                 children: profile?.role || "Officer"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                                lineNumber: 407,
+                                                                lineNumber: 484,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                        lineNumber: 405,
+                                                        lineNumber: 482,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                lineNumber: 386,
+                                                lineNumber: 463,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 384,
+                                        lineNumber: 461,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1489,57 +1603,57 @@ function ProfileDetails() {
                                                     className: "h-4 w-4 animate-spin"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 419,
+                                                    lineNumber: 496,
                                                     columnNumber: 41
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$lucide$2d$react$40$0$2e$555$2e$0_react$40$19$2e$2$2e$0$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$save$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Save$3e$__["Save"], {
                                                     className: "h-4 w-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                                    lineNumber: 421,
+                                                    lineNumber: 498,
                                                     columnNumber: 41
                                                 }, this),
                                                 "Update Profile"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                            lineNumber: 413,
+                                            lineNumber: 490,
                                             columnNumber: 33
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                        lineNumber: 412,
+                                        lineNumber: 489,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                                lineNumber: 268,
+                                lineNumber: 345,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                        lineNumber: 263,
+                        lineNumber: 340,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-                    lineNumber: 262,
+                    lineNumber: 339,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-            lineNumber: 179,
+            lineNumber: 256,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/officer-dashboard/profile/ProfileDetails.tsx",
-        lineNumber: 178,
+        lineNumber: 255,
         columnNumber: 9
     }, this);
 }
-_s(ProfileDetails, "WRK1YIdRUQfkJVo0khwNVN28ibs=");
+_s(ProfileDetails, "R4lT6Sbe5nqNVNkxby7sopfP0yw=");
 _c = ProfileDetails;
 var _c;
 __turbopack_context__.k.register(_c, "ProfileDetails");

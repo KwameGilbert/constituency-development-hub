@@ -94,7 +94,7 @@ export function WebAdminRecentEvents() {
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-slate-900 line-clamp-1">
-                  {event.title}
+                  {event.name || event.title}
                 </h3>
                 <div className="flex items-center gap-3 text-xs text-slate-500">
                   <span className="flex items-center gap-1">

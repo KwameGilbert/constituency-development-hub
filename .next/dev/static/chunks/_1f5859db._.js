@@ -585,9 +585,11 @@ const taskForceService = {
     /**
    * Submit assessment for an issue
    */ async submitAssessment (issueId, data) {
+        const isFormData = data instanceof FormData;
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])(`/task-force/issues/${issueId}/assessment`, {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: isFormData ? data : JSON.stringify(data),
+            isFormData: isFormData
         });
     },
     /**
@@ -648,9 +650,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$lu
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$lucide$2d$react$40$0$2e$555$2e$0_react$40$19$2e$2$2e$0$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/lucide-react@0.555.0_react@19.2.0/node_modules/lucide-react/dist/esm/icons/triangle-alert.js [app-client] (ecmascript) <export default as AlertTriangle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$lucide$2d$react$40$0$2e$555$2e$0_react$40$19$2e$2$2e$0$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/lucide-react@0.555.0_react@19.2.0/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-client] (ecmascript) <export default as Loader2>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$services$2f$task$2d$force$2d$service$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/services/task-force-service.ts [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/xlsx@0.18.5/node_modules/xlsx/xlsx.mjs [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 'use client';
+;
 ;
 ;
 ;
@@ -756,7 +760,69 @@ function ReportsPage() {
         }));
     const totalIssues = reports?.total_issues || 0;
     const handleExportReport = ()=>{
-        alert(`Exporting report for ${reportPeriod}`);
+        if (!reports) return;
+        const workbook = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].book_new();
+        // 1. Overview Sheet
+        const overviewData = [
+            {
+                Metric: "Total Issues",
+                Value: reports.total_issues
+            },
+            {
+                Metric: "Resolved Issues",
+                Value: reports.resolved_issues
+            },
+            {
+                Metric: "Resolution Rate",
+                Value: `${reports.total_issues ? (reports.resolved_issues / reports.total_issues * 100).toFixed(1) : 0}%`
+            },
+            {
+                Metric: "",
+                Value: ""
+            },
+            {
+                Metric: "Status Distribution",
+                Value: ""
+            },
+            ...statusBreakdown.map((s)=>({
+                    Metric: s.label,
+                    Value: s.count
+                })),
+            {
+                Metric: "",
+                Value: ""
+            },
+            {
+                Metric: "Priority Breakdown",
+                Value: ""
+            },
+            ...priorityBreakdown.map((p)=>({
+                    Metric: p.name,
+                    Value: p.count
+                }))
+        ];
+        const overviewSheet = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].json_to_sheet(overviewData);
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].book_append_sheet(workbook, overviewSheet, "Overview");
+        // 2. Team Performance Sheet
+        const performanceData = teamMembers.map((m)=>({
+                Name: m.name,
+                Role: m.title || m.specialization || 'Task Force Member',
+                Status: m.status,
+                "Assigned Issues": m.assigned_count,
+                "Completed Issues": m.completed_count,
+                "Completion Rate": `${m.assigned_count ? Math.round(m.completed_count / m.assigned_count * 100) : 0}%`
+            }));
+        const performanceSheet = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].json_to_sheet(performanceData);
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].book_append_sheet(workbook, performanceSheet, "Team Performance");
+        // 3. Category Sheet
+        const categoryData = (reports.category_distribution || []).map((c)=>({
+                Category: c.name,
+                Count: c.count,
+                Percentage: `${reports.total_issues ? (c.count / reports.total_issues * 100).toFixed(1) : 0}%`
+            }));
+        const categorySheet = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].json_to_sheet(categoryData);
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].book_append_sheet(workbook, categorySheet, "Categories");
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$0$2e$18$2e$5$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["writeFile"](workbook, `Task_Force_Report_${reportPeriod}.xlsx`);
     };
     if (loading && !reports) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -765,12 +831,12 @@ function ReportsPage() {
                 className: "h-10 w-10 animate-spin text-purple-600"
             }, void 0, false, {
                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                lineNumber: 90,
+                lineNumber: 131,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-            lineNumber: 89,
+            lineNumber: 130,
             columnNumber: 7
         }, this);
     }
@@ -787,7 +853,7 @@ function ReportsPage() {
                                 children: "Reports & Analytics"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 100,
+                                lineNumber: 141,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -795,13 +861,13 @@ function ReportsPage() {
                                 children: "Comprehensive assessment performance insights"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 101,
+                                lineNumber: 142,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 99,
+                        lineNumber: 140,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -815,12 +881,12 @@ function ReportsPage() {
                                         className: "w-[150px]",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectValue"], {}, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 106,
+                                            lineNumber: 147,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 105,
+                                        lineNumber: 146,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -830,7 +896,7 @@ function ReportsPage() {
                                                 children: "This Week"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 109,
+                                                lineNumber: 150,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -838,7 +904,7 @@ function ReportsPage() {
                                                 children: "This Month"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 110,
+                                                lineNumber: 151,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -846,7 +912,7 @@ function ReportsPage() {
                                                 children: "This Quarter"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 111,
+                                                lineNumber: 152,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
@@ -854,19 +920,19 @@ function ReportsPage() {
                                                 children: "This Year"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 112,
+                                                lineNumber: 153,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 108,
+                                        lineNumber: 149,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 104,
+                                lineNumber: 145,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -877,26 +943,26 @@ function ReportsPage() {
                                         className: "h-4 w-4 mr-2"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 116,
+                                        lineNumber: 157,
                                         columnNumber: 13
                                     }, this),
                                     "Export Report"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 115,
+                                lineNumber: 156,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 103,
+                        lineNumber: 144,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                lineNumber: 98,
+                lineNumber: 139,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Tabs"], {
@@ -911,7 +977,7 @@ function ReportsPage() {
                                 children: "Overview"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 124,
+                                lineNumber: 165,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -919,7 +985,7 @@ function ReportsPage() {
                                 children: "Performance"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 125,
+                                lineNumber: 166,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -927,7 +993,7 @@ function ReportsPage() {
                                 children: "Trends"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 126,
+                                lineNumber: 167,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -935,13 +1001,13 @@ function ReportsPage() {
                                 children: "Details"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 127,
+                                lineNumber: 168,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 123,
+                        lineNumber: 164,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -963,12 +1029,12 @@ function ReportsPage() {
                                                             className: "h-6 w-6 text-blue-600"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 137,
+                                                            lineNumber: 178,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 136,
+                                                        lineNumber: 177,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -979,7 +1045,7 @@ function ReportsPage() {
                                                                 children: "Total Issues"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 140,
+                                                                lineNumber: 181,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -987,29 +1053,29 @@ function ReportsPage() {
                                                                 children: reports?.total_issues || 0
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 141,
+                                                                lineNumber: 182,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 139,
+                                                        lineNumber: 180,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 135,
+                                                lineNumber: 176,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 134,
+                                            lineNumber: 175,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 133,
+                                        lineNumber: 174,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1024,12 +1090,12 @@ function ReportsPage() {
                                                             className: "h-6 w-6 text-green-600"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 151,
+                                                            lineNumber: 192,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 150,
+                                                        lineNumber: 191,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1040,7 +1106,7 @@ function ReportsPage() {
                                                                 children: "Resolved"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 154,
+                                                                lineNumber: 195,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1048,29 +1114,29 @@ function ReportsPage() {
                                                                 children: reports?.resolved_issues || 0
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 155,
+                                                                lineNumber: 196,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 153,
+                                                        lineNumber: 194,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 149,
+                                                lineNumber: 190,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 148,
+                                            lineNumber: 189,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 147,
+                                        lineNumber: 188,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1085,12 +1151,12 @@ function ReportsPage() {
                                                             className: "h-6 w-6 text-yellow-600"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 165,
+                                                            lineNumber: 206,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 164,
+                                                        lineNumber: 205,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1101,7 +1167,7 @@ function ReportsPage() {
                                                                 children: "Pending"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 168,
+                                                                lineNumber: 209,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1109,29 +1175,29 @@ function ReportsPage() {
                                                                 children: reports?.status_distribution?.assigned_to_task_force || 0
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 169,
+                                                                lineNumber: 210,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 167,
+                                                        lineNumber: 208,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 163,
+                                                lineNumber: 204,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 162,
+                                            lineNumber: 203,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 161,
+                                        lineNumber: 202,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1146,12 +1212,12 @@ function ReportsPage() {
                                                             className: "h-6 w-6 text-red-600"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 179,
+                                                            lineNumber: 220,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 178,
+                                                        lineNumber: 219,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1162,7 +1228,7 @@ function ReportsPage() {
                                                                 children: "Urgent"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 182,
+                                                                lineNumber: 223,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1170,35 +1236,35 @@ function ReportsPage() {
                                                                 children: reports?.priority_distribution?.urgent || 0
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 183,
+                                                                lineNumber: 224,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 181,
+                                                        lineNumber: 222,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 177,
+                                                lineNumber: 218,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 176,
+                                            lineNumber: 217,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 175,
+                                        lineNumber: 216,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 132,
+                                lineNumber: 173,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1214,19 +1280,19 @@ function ReportsPage() {
                                                             className: "h-5 w-5"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 196,
+                                                            lineNumber: 237,
                                                             columnNumber: 19
                                                         }, this),
                                                         "Status Distribution"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 195,
+                                                    lineNumber: 236,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 194,
+                                                lineNumber: 235,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1242,7 +1308,7 @@ function ReportsPage() {
                                                                             className: `w-4 h-4 rounded-full bg-${status.color}-500`
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 205,
+                                                                            lineNumber: 246,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1250,13 +1316,13 @@ function ReportsPage() {
                                                                             children: status.label
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 206,
+                                                                            lineNumber: 247,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 204,
+                                                                    lineNumber: 245,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1267,7 +1333,7 @@ function ReportsPage() {
                                                                             children: status.count
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 209,
+                                                                            lineNumber: 250,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1278,35 +1344,35 @@ function ReportsPage() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 210,
+                                                                            lineNumber: 251,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 208,
+                                                                    lineNumber: 249,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, status.value, true, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 203,
+                                                            lineNumber: 244,
                                                             columnNumber: 21
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 201,
+                                                    lineNumber: 242,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 200,
+                                                lineNumber: 241,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 193,
+                                        lineNumber: 234,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1319,19 +1385,19 @@ function ReportsPage() {
                                                             className: "h-5 w-5"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 224,
+                                                            lineNumber: 265,
                                                             columnNumber: 19
                                                         }, this),
                                                         "Priority Breakdown"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 223,
+                                                    lineNumber: 264,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 222,
+                                                lineNumber: 263,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1347,7 +1413,7 @@ function ReportsPage() {
                                                                             className: `w-4 h-4 rounded-full bg-${priority.color}-500`
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 233,
+                                                                            lineNumber: 274,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1355,13 +1421,13 @@ function ReportsPage() {
                                                                             children: priority.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 234,
+                                                                            lineNumber: 275,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 232,
+                                                                    lineNumber: 273,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1372,7 +1438,7 @@ function ReportsPage() {
                                                                             children: priority.count
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 237,
+                                                                            lineNumber: 278,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1383,41 +1449,41 @@ function ReportsPage() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 238,
+                                                                            lineNumber: 279,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 236,
+                                                                    lineNumber: 277,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, priority.level, true, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 231,
+                                                            lineNumber: 272,
                                                             columnNumber: 21
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 229,
+                                                    lineNumber: 270,
                                                     columnNumber: 17
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 228,
+                                                lineNumber: 269,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 221,
+                                        lineNumber: 262,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 191,
+                                lineNumber: 232,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1430,19 +1496,19 @@ function ReportsPage() {
                                                     className: "h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 253,
+                                                    lineNumber: 294,
                                                     columnNumber: 17
                                                 }, this),
                                                 "Issues by Category"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 252,
+                                            lineNumber: 293,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 251,
+                                        lineNumber: 292,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1459,7 +1525,7 @@ function ReportsPage() {
                                                                     children: category.name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 262,
+                                                                    lineNumber: 303,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1467,13 +1533,13 @@ function ReportsPage() {
                                                                     children: category.count
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 263,
+                                                                    lineNumber: 304,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 261,
+                                                            lineNumber: 302,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1485,12 +1551,12 @@ function ReportsPage() {
                                                                 }
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 266,
+                                                                lineNumber: 307,
                                                                 columnNumber: 23
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 265,
+                                                            lineNumber: 306,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1501,35 +1567,35 @@ function ReportsPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 273,
+                                                            lineNumber: 314,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, category.name, true, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 260,
+                                                    lineNumber: 301,
                                                     columnNumber: 19
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 258,
+                                            lineNumber: 299,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 257,
+                                        lineNumber: 298,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                lineNumber: 250,
+                                lineNumber: 291,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 130,
+                        lineNumber: 171,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -1546,27 +1612,27 @@ function ReportsPage() {
                                                     className: "h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 288,
+                                                    lineNumber: 329,
                                                     columnNumber: 17
                                                 }, this),
                                                 "Assessor Performance"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 287,
+                                            lineNumber: 328,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                             children: "Assessment activity and completion rates by assessor"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 291,
+                                            lineNumber: 332,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                    lineNumber: 286,
+                                    lineNumber: 327,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1585,12 +1651,12 @@ function ReportsPage() {
                                                                         className: "h-5 w-5 text-purple-600"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 301,
+                                                                        lineNumber: 342,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 300,
+                                                                    lineNumber: 341,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1600,7 +1666,7 @@ function ReportsPage() {
                                                                             children: assessor.name
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 304,
+                                                                            lineNumber: 345,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1608,19 +1674,19 @@ function ReportsPage() {
                                                                             children: assessor.title || assessor.specialization || 'Task Force Member'
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 305,
+                                                                            lineNumber: 346,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 303,
+                                                                    lineNumber: 344,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 299,
+                                                            lineNumber: 340,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1634,7 +1700,7 @@ function ReportsPage() {
                                                                             children: assessor.assignedIssues
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 310,
+                                                                            lineNumber: 351,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1642,13 +1708,13 @@ function ReportsPage() {
                                                                             children: "Assigned"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 311,
+                                                                            lineNumber: 352,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 309,
+                                                                    lineNumber: 350,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1659,7 +1725,7 @@ function ReportsPage() {
                                                                             children: assessor.completedIssues
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 314,
+                                                                            lineNumber: 355,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1667,13 +1733,13 @@ function ReportsPage() {
                                                                             children: "Completed"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 315,
+                                                                            lineNumber: 356,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 313,
+                                                                    lineNumber: 354,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1687,7 +1753,7 @@ function ReportsPage() {
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 318,
+                                                                            lineNumber: 359,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1695,13 +1761,13 @@ function ReportsPage() {
                                                                             children: "Rate"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                            lineNumber: 323,
+                                                                            lineNumber: 364,
                                                                             columnNumber: 25
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 317,
+                                                                    lineNumber: 358,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1709,19 +1775,19 @@ function ReportsPage() {
                                                                     children: assessor.status
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                    lineNumber: 325,
+                                                                    lineNumber: 366,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                            lineNumber: 308,
+                                                            lineNumber: 349,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, assessor.id, true, {
                                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                    lineNumber: 298,
+                                                    lineNumber: 339,
                                                     columnNumber: 19
                                                 }, this)),
                                             assessorPerformance.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1729,29 +1795,29 @@ function ReportsPage() {
                                                 children: "No team members found"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 338,
+                                                lineNumber: 379,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 296,
+                                        lineNumber: 337,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                    lineNumber: 295,
+                                    lineNumber: 336,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                            lineNumber: 285,
+                            lineNumber: 326,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 283,
+                        lineNumber: 324,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -1770,19 +1836,19 @@ function ReportsPage() {
                                                         className: "h-5 w-5 text-green-600"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 353,
+                                                        lineNumber: 394,
                                                         columnNumber: 19
                                                     }, this),
                                                     "Monthly Trends"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 352,
+                                                lineNumber: 393,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 351,
+                                            lineNumber: 392,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1797,7 +1863,7 @@ function ReportsPage() {
                                                                 children: "Issues Submitted"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 360,
+                                                                lineNumber: 401,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1807,7 +1873,7 @@ function ReportsPage() {
                                                                         className: "h-4 w-4 text-green-600"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 362,
+                                                                        lineNumber: 403,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1815,19 +1881,19 @@ function ReportsPage() {
                                                                         children: "+15%"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 363,
+                                                                        lineNumber: 404,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 361,
+                                                                lineNumber: 402,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 359,
+                                                        lineNumber: 400,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1838,7 +1904,7 @@ function ReportsPage() {
                                                                 children: "Assessment Speed"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 367,
+                                                                lineNumber: 408,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1848,7 +1914,7 @@ function ReportsPage() {
                                                                         className: "h-4 w-4 text-green-600"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 369,
+                                                                        lineNumber: 410,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1856,19 +1922,19 @@ function ReportsPage() {
                                                                         children: "+8%"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 370,
+                                                                        lineNumber: 411,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 368,
+                                                                lineNumber: 409,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 366,
+                                                        lineNumber: 407,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1879,7 +1945,7 @@ function ReportsPage() {
                                                                 children: "Resolution Rate"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 374,
+                                                                lineNumber: 415,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1889,7 +1955,7 @@ function ReportsPage() {
                                                                         className: "h-4 w-4 text-green-600"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 376,
+                                                                        lineNumber: 417,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1897,36 +1963,36 @@ function ReportsPage() {
                                                                         children: "+5%"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                        lineNumber: 377,
+                                                                        lineNumber: 418,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 375,
+                                                                lineNumber: 416,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 373,
+                                                        lineNumber: 414,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 358,
+                                                lineNumber: 399,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 357,
+                                            lineNumber: 398,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                    lineNumber: 350,
+                                    lineNumber: 391,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1939,19 +2005,19 @@ function ReportsPage() {
                                                         className: "h-5 w-5"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 387,
+                                                        lineNumber: 428,
                                                         columnNumber: 19
                                                     }, this),
                                                     "Assessment Timeline"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 386,
+                                                lineNumber: 427,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 385,
+                                            lineNumber: 426,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1966,7 +2032,7 @@ function ReportsPage() {
                                                                 children: "Average Assessment Time"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 394,
+                                                                lineNumber: 435,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1974,13 +2040,13 @@ function ReportsPage() {
                                                                 children: "3.2 days"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 395,
+                                                                lineNumber: 436,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 393,
+                                                        lineNumber: 434,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1991,7 +2057,7 @@ function ReportsPage() {
                                                                 children: "Fastest Assessment"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 398,
+                                                                lineNumber: 439,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1999,13 +2065,13 @@ function ReportsPage() {
                                                                 children: "4 hours"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 399,
+                                                                lineNumber: 440,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 397,
+                                                        lineNumber: 438,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2016,7 +2082,7 @@ function ReportsPage() {
                                                                 children: "Longest Assessment"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 402,
+                                                                lineNumber: 443,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2024,41 +2090,41 @@ function ReportsPage() {
                                                                 children: "12 days"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                                lineNumber: 403,
+                                                                lineNumber: 444,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 401,
+                                                        lineNumber: 442,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 392,
+                                                lineNumber: 433,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 391,
+                                            lineNumber: 432,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                    lineNumber: 384,
+                                    lineNumber: 425,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                            lineNumber: 349,
+                            lineNumber: 390,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 347,
+                        lineNumber: 388,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -2072,20 +2138,20 @@ function ReportsPage() {
                                             children: "Summary Statistics"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 415,
+                                            lineNumber: 456,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                                             children: "Overall assessment statistics"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                            lineNumber: 416,
+                                            lineNumber: 457,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                    lineNumber: 414,
+                                    lineNumber: 455,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2100,7 +2166,7 @@ function ReportsPage() {
                                                         children: reports?.total_issues || 0
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 421,
+                                                        lineNumber: 462,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2108,13 +2174,13 @@ function ReportsPage() {
                                                         children: "Total Issues"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 422,
+                                                        lineNumber: 463,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 420,
+                                                lineNumber: 461,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2125,7 +2191,7 @@ function ReportsPage() {
                                                         children: reports?.resolved_issues || 0
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 425,
+                                                        lineNumber: 466,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2133,13 +2199,13 @@ function ReportsPage() {
                                                         children: "Resolved"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 426,
+                                                        lineNumber: 467,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 424,
+                                                lineNumber: 465,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2150,7 +2216,7 @@ function ReportsPage() {
                                                         children: teamMembers.length
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 429,
+                                                        lineNumber: 470,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2158,13 +2224,13 @@ function ReportsPage() {
                                                         children: "Team Members"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 430,
+                                                        lineNumber: 471,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 428,
+                                                lineNumber: 469,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2178,7 +2244,7 @@ function ReportsPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 433,
+                                                        lineNumber: 474,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2186,47 +2252,47 @@ function ReportsPage() {
                                                         children: "Resolution Rate"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                        lineNumber: 438,
+                                                        lineNumber: 479,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                                lineNumber: 432,
+                                                lineNumber: 473,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                        lineNumber: 419,
+                                        lineNumber: 460,
                                         columnNumber: 15
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                                    lineNumber: 418,
+                                    lineNumber: 459,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                            lineNumber: 413,
+                            lineNumber: 454,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                        lineNumber: 411,
+                        lineNumber: 452,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-                lineNumber: 122,
+                lineNumber: 163,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(dashboards)/task-force-dashboard/reports/page.tsx",
-        lineNumber: 96,
+        lineNumber: 137,
         columnNumber: 5
     }, this);
 }

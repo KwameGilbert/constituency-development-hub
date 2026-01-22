@@ -50,11 +50,10 @@ export interface SectorResponse {
 }
 
 export const sectorsService = {
-  // Get all sectors (Admin view)
+  // Get all sectors (Public view)
   getSectors: async (): Promise<SectorsListResponse> => {
-    return apiClient<SectorsListResponse>('/admin/sectors', {
+    return apiClient<SectorsListResponse>('/sectors', {
       method: 'GET',
-      requiresAuth: true,
     });
   },
 

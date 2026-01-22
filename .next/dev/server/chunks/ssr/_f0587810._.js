@@ -933,7 +933,8 @@ class AgentService {
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/admin/agents", {
             method: "POST",
             body: data,
-            requiresAuth: true
+            requiresAuth: true,
+            isFormData: true
         });
     }
     /**
@@ -1001,6 +1002,47 @@ class AgentService {
    * GET /v1/agent/my-reports
    */ async getMyReports() {
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/agent/my-reports", {
+            requiresAuth: true
+        });
+    }
+    /**
+   * Submit a new issue report
+   * POST /v1/agent/issues
+   */ async submitIssue(data) {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/agent/issues", {
+            method: "POST",
+            body: JSON.stringify(data),
+            requiresAuth: true
+        });
+    }
+    /**
+   * Get a single issue by ID
+   * GET /v1/agent/issues/{id}
+   */ async getIssueById(id) {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/agent/issues/${id}`, {
+            requiresAuth: true
+        });
+    }
+    /**
+   * Update agent profile
+   * PUT /v1/agent/profile
+   */ async updateProfile(data) {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/agent/profile", {
+            method: "PUT",
+            body: JSON.stringify(data),
+            requiresAuth: true
+        });
+    }
+    /**
+   * Change password
+   * PUT /v1/agent/password
+   */ async changePassword(currentPassword, newPassword) {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/agent/password", {
+            method: "PUT",
+            body: JSON.stringify({
+                current_password: currentPassword,
+                new_password: newPassword
+            }),
             requiresAuth: true
         });
     }

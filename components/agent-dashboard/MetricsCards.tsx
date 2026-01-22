@@ -22,12 +22,23 @@ const defaultStats: AgentReportStats = {
   rejected: 0,
 };
 
-export function MetricsCards() {
+export interface MetricsCardsProps {
+  stats?: AgentReportStats | null;
+  loading?: boolean;
+}
+
+export function MetricsCards({ stats: providedStats, loading: providedLoading }: MetricsCardsProps) {
   const [stats, setStats] = useState<AgentReportStats>(defaultStats);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (providedStats !== undefined) {
+      setStats(providedStats || defaultStats);
+      setLoading(providedLoading || false);
+      return;
+    }
+
     const fetchStats = async () => {
       try {
         setLoading(true);
@@ -49,7 +60,7 @@ export function MetricsCards() {
     };
 
     fetchStats();
-  }, []);
+  }, [providedStats, providedLoading]);
 
   const metrics = [
     {

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { format } from "date-fns";
 import { use } from "react";
+import { getImageUrl } from "@/lib/utils";
 
 interface ViewEventPageProps {
   params: Promise<{ id: string }>;
@@ -102,8 +103,8 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
               {event.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
-                  src={event.image} 
-                  alt={event.title} 
+                  src={getImageUrl(event.image)} 
+                  alt={event.name || event.title} 
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -127,7 +128,7 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
 
             <div className="p-8 space-y-6">
                 <div>
-                    <h2 className="text-3xl font-bold text-slate-900">{event.title}</h2>
+                    <h2 className="text-3xl font-bold text-slate-900">{event.name || event.title}</h2>
                     {event.slug && (
                       <p className="text-slate-400 text-sm mt-1">/{event.slug}</p>
                     )}

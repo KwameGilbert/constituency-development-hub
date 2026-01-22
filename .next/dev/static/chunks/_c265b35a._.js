@@ -893,18 +893,52 @@ const eventsService = {
     getEventById: async (id)=>{
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/events/${id}`);
     },
-    // Create new event - accepts any object to handle different backend field requirements
-    createEvent: async (data)=>{
+    // Create new event with FormData support for file upload
+    createEvent: async (data, imageFile)=>{
+        const formData = new FormData();
+        // Add all data fields to FormData
+        Object.entries(data).forEach(([key, value])=>{
+            if (value !== undefined && value !== null) {
+                if (typeof value === 'boolean') {
+                    formData.append(key, value ? '1' : '0');
+                } else {
+                    formData.append(key, String(value));
+                }
+            }
+        });
+        // Add image file if provided
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])("/admin/events", {
             method: "POST",
-            body: JSON.stringify(data)
+            body: formData,
+            isFormData: true
         });
     },
-    // Update event - accepts any object for flexibility
-    updateEvent: async (id, data)=>{
+    // Update event with FormData support for file upload
+    updateEvent: async (id, data, imageFile)=>{
+        const formData = new FormData();
+        // Add all data fields to FormData
+        Object.entries(data).forEach(([key, value])=>{
+            if (value !== undefined && value !== null) {
+                if (typeof value === 'boolean') {
+                    formData.append(key, value ? '1' : '0');
+                } else {
+                    formData.append(key, String(value));
+                }
+            }
+        });
+        // Add image file if provided
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+        // Note: Some servers need _method=PUT in FormData for PUT requests
+        formData.append('_method', 'PUT');
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/events/${id}`, {
-            method: "PUT",
-            body: JSON.stringify(data)
+            method: "POST",
+            body: formData,
+            isFormData: true
         });
     },
     // Delete event
@@ -1153,7 +1187,7 @@ function WebAdminRecentEvents() {
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                 className: "text-sm font-medium text-slate-900 line-clamp-1",
-                                                children: event.title
+                                                children: event.name || event.title
                                             }, void 0, false, {
                                                 fileName: "[project]/components/web-admin-dashboard/WebAdminRecentEvents.tsx",
                                                 lineNumber: 96,

@@ -1013,34 +1013,34 @@ class EmploymentService {
         if (filters.category) params.append("category", filters.category);
         if (filters.page) params.append("page", filters.page.toString());
         if (filters.limit) params.append("limit", filters.limit.toString());
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/jobs?${params.toString()}`);
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/jobs?${params.toString()}`);
     }
     async getJobById(id) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/jobs/${id}`);
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/jobs/${id}`);
     }
     async createJob(data) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/admin/jobs", {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])("/jobs", {
             method: "POST",
             body: JSON.stringify(data)
         });
     }
     async updateJob(id, data) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/jobs/${id}`, {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/jobs/${id}`, {
             method: "PUT",
             body: JSON.stringify(data)
         });
     }
     async deleteJob(id) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/jobs/${id}`, {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/jobs/${id}`, {
             method: "DELETE"
         });
     }
     // Applicants Management
     async getJobApplicants(jobId, page = 1, limit = 20) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/jobs/${jobId}/applicants?page=${page}&limit=${limit}`);
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/jobs/${jobId}/applicants?page=${page}&limit=${limit}`);
     }
     async updateApplicantStatus(jobId, applicantId, status) {
-        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/admin/jobs/${jobId}/applicants/${applicantId}`, {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(`/jobs/${jobId}/applicants/${applicantId}`, {
             method: "PUT",
             body: JSON.stringify({
                 status

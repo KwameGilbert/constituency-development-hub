@@ -1,47 +1,65 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Images, Calendar } from "lucide-react";
+import { Images, Calendar, Loader2, AlertCircle } from "lucide-react";
+import { galleryService, Gallery } from "@/lib/services/gallery-service";
 
-// Dummy gallery data for homepage preview
-const galleryPreview = [
-  {
-    id: "1",
-    title: "Youth Skills Workshop",
-    date: "Dec 15, 2025",
-    coverImage: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80",
-    imageCount: 5,
-    category: "Programs",
-  },
-  {
-    id: "2",
-    title: "Health Outreach",
-    date: "Dec 10, 2025",
-    coverImage: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80",
-    imageCount: 4,
-    category: "Events",
-  },
-  {
-    id: "3",
-    title: "Women in Agriculture",
-    date: "Nov 20, 2025",
-    coverImage: "https://images.unsplash.com/photo-1595508064774-5ff825a62d61?auto=format&fit=crop&w=600&q=80",
-    imageCount: 6,
-    category: "Community",
-  },
-  {
-    id: "4",
-    title: "School Renovation",
-    date: "Nov 15, 2025",
-    coverImage: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=600&q=80",
-    imageCount: 4,
-    category: "Events",
-  },
-];
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 
 function GalleryPreview() {
+  const [galleries, setGalleries] = useState<Gallery[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGalleries = async () => {
+      try {
+        const response = await galleryService.getGalleries();
+        if (response.success) {
+          // Sort by date descending and take top 4
+          const sorted = response.data.galleries
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 4);
+          setGalleries(sorted);
+        } else {
+          setError("Failed to load gallery items.");
+        }
+      } catch (err) {
+        console.error("Error fetching gallery preview:", err);
+        setError("Could not load gallery preview.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGalleries();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="bg-emerald-50/50 py-16">
+        <div className="mx-auto max-w-6xl px-4 text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-600" />
+            <p className="mt-2 text-slate-500">Loading moments...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || galleries.length === 0) {
+      // Don't show the section if no data or error (or show a simplified empty state)
+      // For a homepage section, it's often better to return null or "no items" if empty.
+      if (error) return null; 
+      // If just empty, maybe show nothing? Or a checked placeholder? return null for now.
+      return null;
+  }
+
   return (
     <section className="bg-emerald-50/50 py-16">
       <div className="mx-auto max-w-6xl px-4">
@@ -56,7 +74,7 @@ function GalleryPreview() {
         </div>
         
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {galleryPreview.map((item, index) => (
+          {galleries.map((item, index) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 20 }}
@@ -65,20 +83,28 @@ function GalleryPreview() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group relative overflow-hidden rounded-2xl bg-white shadow-md hover:shadow-xl transition-all duration-300"
             >
-              <Link href="/gallery">
+              <Link href={`/gallery/${item.slug}`}>
                 <div className="relative h-48 bg-slate-100">
-                  <Image
-                    src={item.coverImage}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  {item.cover_image ? (
+                     <Image
+                        src={item.cover_image}
+                        alt={item.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        unoptimized
+                     />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-slate-400">
+                        <Images className="h-8 w-8 opacity-50" />
+                    </div>
+                  )}
+                 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   
                   {/* Image Count Badge */}
                   <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                     <Images className="h-3 w-3" />
-                    {item.imageCount}
+                    {item.images ? item.images.length + 1 : 1}
                   </div>
 
                   {/* Content Overlay */}
@@ -91,7 +117,7 @@ function GalleryPreview() {
                     </h3>
                     <span className="flex items-center gap-1 text-white/70 text-xs mt-1">
                       <Calendar className="h-3 w-3" />
-                      {item.date}
+                      {formatDate(item.date)}
                     </span>
                   </div>
                 </div>

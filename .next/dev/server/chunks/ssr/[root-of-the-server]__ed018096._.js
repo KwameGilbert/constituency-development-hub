@@ -58,7 +58,9 @@ __turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$componen
 
 __turbopack_context__.s([
     "cn",
-    ()=>cn
+    ()=>cn,
+    "getImageUrl",
+    ()=>getImageUrl
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/tailwind-merge@3.4.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs [app-rsc] (ecmascript)");
@@ -66,6 +68,28 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$ta
 ;
 function cn(...inputs) {
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["twMerge"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["clsx"])(inputs));
+}
+function getImageUrl(path) {
+    if (!path) return "";
+    if (path.startsWith("data:")) return path;
+    const apiUrl = ("TURBOPACK compile-time value", "http://app.comdevhub-api.com/v1") || "";
+    let apiOrigin = "";
+    try {
+        apiOrigin = new URL(apiUrl).origin;
+    } catch  {
+        return path;
+    }
+    // Handle absolute URLs
+    if (path.startsWith("http")) {
+        // Fix backend default localhost:8000 if it differs from actual API URL
+        if (path.includes("localhost:8000") && apiOrigin && !apiOrigin.includes("8000")) {
+            return path.replace("http://localhost:8000", apiOrigin);
+        }
+        return path;
+    }
+    // Handle relative paths
+    // Ensure we don't have double slashes
+    return `${apiOrigin}/${path.replace(/^\/+/, "")}`;
 }
 }),
 "[project]/components/ui/button.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
@@ -363,14 +387,16 @@ async function apiClient(endpoint, options = {}) {
     if (requiresAuth) {
         // Try to get token from multiple sources
         let token = null;
-        // 1. Try environment variable first
-        const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
-        if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
-            token = envToken;
-        }
-        // 2. Fallback to localStorage (for client-side)
+        // 1. Try localStorage (for client-side) - Prioritize this!
         if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
         ;
+        // 2. Fallback to environment variable (for development/testing)
+        if (!token) {
+            const envToken = ("TURBOPACK compile-time value", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJldmVudGljLWFwaSIsImlhdCI6MTc2NzI4ODQyNiwiZXhwIjoxMDAwMDAwMDE3NjcyODg0MjUsImRhdGEiOnsiaWQiOjE1LCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20iLCJyb2xlIjoid2ViX2FkbWluIiwic3RhdHVzIjoiYWN0aXZlIn19.b5qLBDBWOxOOEcdy58hOd7zYulH9akEUNL8VT8RUrtQ");
+            if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
+                token = envToken;
+            }
+        }
         if (token) {
             headers.set("Authorization", `Bearer ${token}`);
         }
@@ -388,6 +414,9 @@ async function apiClient(endpoint, options = {}) {
         throw new Error(`HTTP ${response.status}: Failed to parse response`);
     }
     if (!response.ok) {
+        // Handle 401 Unauthorized globally
+        if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+        ;
         // Only log detailed errors in development for debugging
         if ("TURBOPACK compile-time truthy", 1) {
             console.warn('[API]', response.status, endpoint, data?.message || data?.error || '');

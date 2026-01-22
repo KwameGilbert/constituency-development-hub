@@ -2,46 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { Loader2 } from "lucide-react";
+import { getImageUrl } from "@/lib/utils";
 
-// Fallback posts if API fails
-const fallbackPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: "Expanding Access to Digital Skills",
-    excerpt: "120 youth completed the accelerated coding bootcamp with new starter kits.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=900&q=80",
-    slug: "expanding-access-digital-skills",
-    category: "news",
-  },
-  {
-    id: 2,
-    title: "Farm-to-Market Roads Resurfaced",
-    excerpt: "15km of feeder roads reopened to ease transport of cocoa and food crops.",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80",
-    slug: "farm-to-market-roads",
-    category: "infrastructure",
-  },
-  {
-    id: 3,
-    title: "Women in Enterprise Showcase",
-    excerpt: "Highlighting micro-grant winners building resilient family businesses.",
-    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80",
-    slug: "women-enterprise-showcase",
-    category: "community",
-  },
-];
+
 
 function ArticlesGrid() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPosts() {
+    const fetchPosts = async () => {
       try {
+        setLoading(true);
         // Try featured posts first, fall back to regular posts
         let response = await blogService.getFeaturedPosts(3);
         
@@ -53,12 +28,12 @@ function ArticlesGrid() {
           if (response.success && response.data.posts && response.data.posts.length > 0) {
             setPosts(response.data.posts);
           } else {
-            setPosts(fallbackPosts);
+            setPosts([]);
           }
         }
       } catch {
-        // API error - use fallback data silently
-        setPosts(fallbackPosts);
+        // API error - show empty state
+        setPosts([]);
       } finally {
         setLoading(false);
       }
@@ -109,11 +84,11 @@ function ArticlesGrid() {
               className="overflow-hidden rounded-2xl bg-white shadow"
             >
               <div className="h-48 overflow-hidden relative bg-slate-100">
+
                 {post.image ? (
-                  <Image
-                    width={400}
-                    height={192}
-                    src={post.image}
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={getImageUrl(post.image)}
                     alt={post.title || "Blog post"}
                     className="h-full w-full object-cover"
                   />

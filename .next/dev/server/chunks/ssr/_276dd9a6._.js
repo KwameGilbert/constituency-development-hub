@@ -345,10 +345,9 @@ const locationsService = {
         if (params?.sort_by) queryParams.append('sort_by', params.sort_by);
         if (params?.sort_order) queryParams.append('sort_order', params.sort_order);
         const queryString = queryParams.toString();
-        const url = `/admin/locations${queryString ? `?${queryString}` : ''}`;
+        const url = `/locations${queryString ? `?${queryString}` : ''}`;
         return (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"])(url, {
-            method: 'GET',
-            requiresAuth: true
+            method: 'GET'
         });
     },
     // Get location by ID

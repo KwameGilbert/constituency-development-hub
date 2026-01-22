@@ -7,7 +7,7 @@ import { eventsService, Event } from "@/lib/services/events-service";
 import { Loader2, Calendar, MapPin, Clock, ArrowLeft, Share2, Users, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import Image from "next/image";
+import { getImageUrl } from "@/lib/utils";
 
 interface EventDetailClientProps {
   initialEvent?: Event | null;
@@ -75,12 +75,11 @@ export default function EventDetailClient({ initialEvent, slug }: EventDetailCli
       {/* Hero Image */}
       <div className="relative h-[400px] lg:h-[500px] bg-slate-900">
         {event.image ? (
-          <Image
-            src={event.image}
-            alt={event.title || "Event image"}
-            fill
-            className="object-cover opacity-80"
-            priority
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={getImageUrl(event.image)}
+            alt={event.name || event.title || "Event image"}
+            className="w-full h-full object-cover opacity-80"
           />
         ) : (
           <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
@@ -124,7 +123,7 @@ export default function EventDetailClient({ initialEvent, slug }: EventDetailCli
                 )}
               </div>
               <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-                {event.title}
+                {event.name || event.title}
               </h1>
             </div>
 

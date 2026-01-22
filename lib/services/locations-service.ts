@@ -144,11 +144,10 @@ export const locationsService = {
     if (params?.sort_order) queryParams.append('sort_order', params.sort_order);
 
     const queryString = queryParams.toString();
-    const url = `/admin/locations${queryString ? `?${queryString}` : ''}`;
+    const url = `/locations${queryString ? `?${queryString}` : ''}`;
 
     return apiClient<LocationsListResponse>(url, {
       method: 'GET',
-      requiresAuth: true,
     });
   },
 

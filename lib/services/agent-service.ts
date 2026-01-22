@@ -69,7 +69,8 @@ export interface IssueSubmission {
   title: string;
   description: string;
   category: string;
-  type?: string;
+  type?: string; // Legacy field
+  issue_type?: "community_based" | "individual_based"; // NEW: Impact type
   priority: string;
   location: string;
   smaller_community?: string;

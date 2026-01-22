@@ -1,11 +1,13 @@
 "use client";
 
+import { use } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { UserProfile } from "@/components/admin-dashboard/users/UserProfile";
 import { Edit, UserX, ArrowLeft, UserCircle, ShieldAlert, Settings2, LogOut } from "lucide-react";
 
-export default function UserProfilePage({ params }: { params: { id: string } }) {
-  // In a real app, use params.id to fetch user data
+export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  // In a real app, use id to fetch user data
   
   return (
     <div className="flex flex-col h-full bg-slate-50">
@@ -24,7 +26,7 @@ export default function UserProfilePage({ params }: { params: { id: string } }) 
             { label: "Logout", icon: LogOut, className: "text-red-600 focus:text-red-600 focus:bg-red-50" },
         ]}
         actionButtons={[
-          { label: "Edit User", href: `/admin-dashboard/users/${params.id}/edit`, icon: Edit, className: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm" }
+          { label: "Edit User", href: `/admin-dashboard/users/${id}/edit`, icon: Edit, className: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm" }
         ]}
       />
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">

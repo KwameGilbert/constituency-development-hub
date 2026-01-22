@@ -3,13 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays, DownloadCloud, MapPin, Loader2, Clock, Users } from "lucide-react";
-import Image from "next/image";
 
 import EventFilters from "@/components/events/EventFilters";
 import EventsHero, { type EventStat } from "@/components/events/EventsHero";
 import { Button } from "@/components/ui/button";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 
 const heroStats: EventStat[] = [
   {
@@ -92,13 +92,11 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       {/* Image */}
       <figure className="relative h-48 w-full overflow-hidden rounded-2xl border border-white/60 bg-slate-100">
         {event.image ? (
-          <Image
-            src={event.image}
-            alt={event.title || "Event"}
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover"
-            priority={index < 2}
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={getImageUrl(event.image)}
+            alt={event.name || event.title || "Event"}
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-slate-400">
@@ -120,7 +118,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
 
       {/* Title & Description */}
       <h3 className="mt-4 text-2xl font-semibold text-slate-900 line-clamp-2">
-        {event.title}
+        {event.name || event.title}
       </h3>
       <p className="mt-2 text-sm text-slate-600 line-clamp-3">{event.description}</p>
 
@@ -161,7 +159,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
 const fallbackEventsData: Event[] = [
   {
     id: 1,
-    title: "Youth Skills Acceleration Clinic",
+    name: "Youth Skills Acceleration Clinic",
     description: "Hands-on mentorship with artisans and digital mentors focused on employability for senior high school graduates.",
     event_date: "2025-02-12",
     start_time: "09:00",
@@ -171,7 +169,7 @@ const fallbackEventsData: Event[] = [
   },
   {
     id: 2,
-    title: "Parliamentary Briefing on Cocoa Roads",
+    name: "Parliamentary Briefing on Cocoa Roads",
     description: "Presented updates to local media and chiefs on the phased rehabilitation of feeder roads across the cocoa belt.",
     event_date: "2025-02-21",
     start_time: "14:30",
@@ -181,7 +179,7 @@ const fallbackEventsData: Event[] = [
   },
   {
     id: 3,
-    title: "Constituency Health Outreach",
+    name: "Constituency Health Outreach",
     description: "Mobile screening with nurses, NHIS officers, and volunteers delivering basic care and insurance renewals.",
     event_date: "2025-03-01",
     start_time: "08:00",
@@ -191,7 +189,7 @@ const fallbackEventsData: Event[] = [
   },
   {
     id: 4,
-    title: "Education Stakeholder Roundtable",
+    name: "Education Stakeholder Roundtable",
     description: "Dialogue with head teachers, PTA leaders, and tertiary alumni on resourcing STEM labs in deprived schools.",
     event_date: "2025-03-09",
     start_time: "16:00",
@@ -239,7 +237,7 @@ export default function EventsClient() {
     if (activeFilter === "All") return events;
     // Filter by matching the status or a category field if available
     return events.filter((event) => 
-      event.status?.toLowerCase() === activeFilter.toLowerCase() ||
+      event.name?.toLowerCase().includes(activeFilter.toLowerCase()) ||
       event.title?.toLowerCase().includes(activeFilter.toLowerCase())
     );
   }, [activeFilter, events]);

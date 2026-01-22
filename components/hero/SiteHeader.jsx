@@ -1,4 +1,5 @@
 "use client";
+import { Menu } from "lucide-react";
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -8,7 +9,9 @@ import Image from "next/image";
 
 const navLinks = [
   { label: "Home", href: "/" },
+  { label: "Announcements", href: "/announcements" },
   { label: "Youth", href: "/youth" },
+  { label: "Ideas", href: "/ideas" },
   { label: "Media Center", href: "/gallery" },
   { label: "Blog", href: "/blog" },
   { label: "About Us", href: "/about" },
@@ -33,7 +36,7 @@ function SiteHeader() {
     <header className="bg-red-700 text-white sticky top-0 z-40 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <Image src={coatOfArmsSrc} alt="" width={40} height={40} className="w-10 h-10 object-contain" />
+          <Image src={coatOfArmsSrc} alt="" width={40} height={40} className="w-10 h-10 object-contain" unoptimized />
           <div className="font-semibold text-sm sm:text-lg leading-tight">
             Hon. Kofi Benteh Afful
             <span className="block text-white/70 text-xs">
@@ -65,7 +68,7 @@ function SiteHeader() {
           className="md:hidden rounded-lg border border-white/30 p-2"
           onClick={() => setOpen((prev) => !prev)}
         >
-          <i className="fa-solid fa-bars"></i>
+         <Menu className="h-6 w-6" />
         </button>
       </div>
 

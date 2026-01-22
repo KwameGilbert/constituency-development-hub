@@ -143,7 +143,7 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
               </div>
               {priority && (
                 <Badge className={`bg-${priority.color}-100 text-${priority.color}-800`}>
-                  {priority.name}
+                  {priority.label}
                 </Badge>
               )}
             </div>

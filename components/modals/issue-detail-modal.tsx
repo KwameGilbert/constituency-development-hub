@@ -98,7 +98,7 @@ export function IssueDetailModal({ issue, isOpen, onClose, onAssess, onEdit }: I
                 <Badge className={`bg-${priority.color}-100 text-${priority.color}-800 border-${priority.color}-200`}>
                   <div className="flex items-center gap-1">
                     {getPriorityIcon(issue.priority)}
-                    {priority.name}
+                    {priority.label}
                   </div>
                 </Badge>
               )}

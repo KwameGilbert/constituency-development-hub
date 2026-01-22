@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { Calendar, Plus, MapPin, Clock, Eye, Edit, Trash2, Loader2, Search, X } from "lucide-react";
+import { Calendar, Plus, MapPin, Clock, Eye, Edit, Trash2, Loader2, Search, X, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +43,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
     
     const query = searchQuery.toLowerCase();
     return events.filter(event => 
-      event.title?.toLowerCase().includes(query) ||
+      (event.name?.toLowerCase().includes(query) || event.title?.toLowerCase().includes(query)) ||
       event.location?.toLowerCase().includes(query) ||
       event.description?.toLowerCase().includes(query) ||
       event.status?.toLowerCase().includes(query)
@@ -151,6 +152,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 font-medium">Image</th>
                 <th className="px-6 py-4 font-medium">Event Name</th>
                 <th className="px-6 py-4 font-medium">Date & Time</th>
                 <th className="px-6 py-4 font-medium">Location</th>
@@ -171,12 +173,26 @@ export function EventsList({ initialEvents }: EventsListProps) {
                   return (
                     <tr key={event.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4">
+                        <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                          {event.image ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img 
+                              src={getImageUrl(event.image)} 
+                              alt="" 
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <ImageIcon className="h-5 w-5 text-slate-300" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <div className="h-10 w-10 rounded-lg bg-violet-50 flex-shrink-0 flex items-center justify-center border border-violet-100 text-violet-600 font-bold text-sm">
                             {format(new Date(event.event_date), "dd")}
                           </div>
                           <span className="font-medium text-slate-900 line-clamp-1">
-                            {event.title}
+                            {event.name || event.title}
                           </span>
                         </div>
                       </td>
@@ -240,7 +256,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Delete Event</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete &quot;{event.title}&quot;? This action cannot be undone.
+                                  Are you sure you want to delete &quot;{event.name || event.title}&quot;? This action cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

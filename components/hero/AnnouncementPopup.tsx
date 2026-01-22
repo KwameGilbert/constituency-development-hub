@@ -13,21 +13,20 @@ export default function AnnouncementPopup() {
   useEffect(() => {
     const checkAnnouncements = async () => {
       try {
-        // Fetch urgent announcements
-        const response = await announcementsService.getPublicAnnouncements({ 
-             priority: "urgent",
-             limit: 1 
-        });
-        
-        if (response.success && response.data.announcements.length > 0) {
-          const urgentAnnouncement = response.data.announcements[0];
-          
-          // Check if already seen in this session
-          const seenKey = `seen_announcement_${urgentAnnouncement.id}`;
-          if (!sessionStorage.getItem(seenKey)) {
-             setAnnouncement(urgentAnnouncement);
-             // Small delay for better UX
-             setTimeout(() => setOpen(true), 2000);
+        const response = await announcementsService.getPublicAnnouncements();
+        if (response.success && response.data.announcements) {
+          // Assuming 'readAnnouncements' would be managed elsewhere, for now, we'll just take the first one if any.
+          // The original code was looking for 'urgent' and checking sessionStorage.
+          // Let's try to reconcile with the original intent of showing an urgent, unseen announcement.
+          const urgentAnnouncement = response.data.announcements.find(ann => ann.priority === "urgent");
+
+          if (urgentAnnouncement) {
+            const seenKey = `seen_announcement_${urgentAnnouncement.id}`;
+            if (!sessionStorage.getItem(seenKey)) {
+              setAnnouncement(urgentAnnouncement);
+              // Small delay for better UX
+              setTimeout(() => setOpen(true), 2000);
+            }
           }
         }
       } catch (error) {

@@ -94,7 +94,9 @@ __turbopack_context__.n(__TURBOPACK__imported__module__$5b$project$5d2f$componen
 
 __turbopack_context__.s([
     "cn",
-    ()=>cn
+    ()=>cn,
+    "getImageUrl",
+    ()=>getImageUrl
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/tailwind-merge@3.4.0/node_modules/tailwind-merge/dist/bundle-mjs.mjs [app-rsc] (ecmascript)");
@@ -102,6 +104,30 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$ta
 ;
 function cn(...inputs) {
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$tailwind$2d$merge$40$3$2e$4$2e$0$2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["twMerge"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$clsx$40$2$2e$1$2e$1$2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["clsx"])(inputs));
+}
+function getImageUrl(path) {
+    if (!path) return "";
+    if (path.startsWith("data:")) return path;
+    const apiUrl = ("TURBOPACK compile-time value", "http://app.comdevhub-api.com/v1") || "http://localhost:8080";
+    let apiOrigin = "";
+    try {
+        apiOrigin = new URL(apiUrl).origin;
+    } catch  {
+        return path;
+    }
+    // Handle absolute URLs
+    if (path.startsWith("http")) {
+        // If the path contains /uploads/, we force it to use the current API origin
+        // This fixes issues where the DB has localhost/IP URLs but we're on a different domain
+        if (path.includes("/uploads/")) {
+            const relativePath = path.substring(path.indexOf("/uploads/"));
+            return `${apiOrigin}${relativePath}`;
+        }
+        return path;
+    }
+    // Handle relative paths
+    // Ensure we don't have double slashes
+    return `${apiOrigin}/${path.replace(/^\/+/, "")}`;
 }
 }),
 "[project]/components/web-admin-dashboard/WebAdminQuickActions.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
