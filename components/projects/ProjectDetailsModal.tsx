@@ -1,7 +1,17 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Calendar, MapPin, Tag, Share2, Facebook, Twitter, Linkedin, MessageCircle } from "lucide-react";
+import {
+  X,
+  Calendar,
+  MapPin,
+  Tag,
+  Share2,
+  Facebook,
+  Twitter,
+  Linkedin,
+  MessageCircle,
+} from "lucide-react";
 import Image from "next/image";
 import { Project } from "@/lib/services/projects-service";
 import { Button } from "@/components/ui/button";
@@ -12,10 +22,17 @@ interface ProjectDetailsModalProps {
   onClose: () => void;
 }
 
-export default function ProjectDetailsModal({ project, isOpen, onClose }: ProjectDetailsModalProps) {
+export default function ProjectDetailsModal({
+  project,
+  isOpen,
+  onClose,
+}: ProjectDetailsModalProps) {
   if (!project) return null;
 
-  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/projects/${project.slug}` : '';
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/projects/${project.slug}`
+      : "";
   const shareText = `Check out this project: ${project.title}`;
 
   const shareLinks = [
@@ -111,7 +128,7 @@ export default function ProjectDetailsModal({ project, isOpen, onClose }: Projec
                 <div className="absolute top-4 left-4">
                   <span
                     className={`inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide shadow-sm ${getStatusColor(
-                      project.status
+                      project.status,
                     )}`}
                   >
                     {project.status}
@@ -136,7 +153,9 @@ export default function ProjectDetailsModal({ project, isOpen, onClose }: Projec
                     <Calendar className="h-5 w-5 text-slate-400" />
                     <span>
                       {formatDate(project.start_date)}
-                      {project.end_date ? ` - ${formatDate(project.end_date)}` : " - Ongoing"}
+                      {project.end_date
+                        ? ` - ${formatDate(project.end_date)}`
+                        : " - Ongoing"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -146,25 +165,29 @@ export default function ProjectDetailsModal({ project, isOpen, onClose }: Projec
                 </div>
 
                 <div className="prose prose-slate prose-sm mb-8 max-w-none">
-                  <h3 className="text-lg font-semibold text-slate-900">About this Project</h3>
-                  <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">{project.description}</p>
+                  <h3 className="text-lg font-semibold text-slate-900">
+                    About this Project
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
+                    {project.description}
+                  </p>
                 </div>
 
                 {/* Additional Details (Budget/Progress) - Optional based on privacy */}
-                 {project.progress_percent !== undefined && (
-                    <div className="mb-8">
-                        <div className="flex justify-between text-sm font-medium mb-2">
-                           <span>Progress</span>
-                           <span>{project.progress_percent}%</span>
-                        </div>
-                        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                           <div 
-                              className="h-full bg-emerald-500 rounded-full" 
-                              style={{ width: `${project.progress_percent}%` }}
-                           />
-                        </div>
+                {project.progress_percent !== undefined && (
+                  <div className="mb-8">
+                    <div className="flex justify-between text-sm font-medium mb-2">
+                      <span>Progress</span>
+                      <span>{project.progress_percent}%</span>
                     </div>
-                 )}
+                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full"
+                        style={{ width: `${project.progress_percent}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="border-t border-slate-100 pt-6">
                   <div className="flex items-center justify-between">

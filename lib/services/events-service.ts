@@ -68,8 +68,8 @@ export const eventsService = {
 
   // Get single event by slug (public)
   getEventBySlug: async (slug: string) => {
-    return apiClient<EventsResponse>(`/events/${slug}`, { 
-      requiresAuth: false 
+    return apiClient<EventsResponse>(`/events/${slug}`, {
+      requiresAuth: false,
     });
   },
 
@@ -94,23 +94,23 @@ export const eventsService = {
   // Create new event with FormData support for file upload
   createEvent: async (data: Record<string, unknown>, imageFile?: File) => {
     const formData = new FormData();
-    
+
     // Add all data fields to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        if (typeof value === 'boolean') {
-          formData.append(key, value ? '1' : '0');
+        if (typeof value === "boolean") {
+          formData.append(key, value ? "1" : "0");
         } else {
           formData.append(key, String(value));
         }
       }
     });
-    
+
     // Add image file if provided
     if (imageFile) {
-      formData.append('image', imageFile);
+      formData.append("image", imageFile);
     }
-    
+
     return apiClient<EventsResponse>("/admin/events", {
       method: "POST",
       body: formData,
@@ -119,28 +119,32 @@ export const eventsService = {
   },
 
   // Update event with FormData support for file upload
-  updateEvent: async (id: number, data: Record<string, unknown>, imageFile?: File) => {
+  updateEvent: async (
+    id: number,
+    data: Record<string, unknown>,
+    imageFile?: File,
+  ) => {
     const formData = new FormData();
-    
+
     // Add all data fields to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        if (typeof value === 'boolean') {
-          formData.append(key, value ? '1' : '0');
+        if (typeof value === "boolean") {
+          formData.append(key, value ? "1" : "0");
         } else {
           formData.append(key, String(value));
         }
       }
     });
-    
+
     // Add image file if provided
     if (imageFile) {
-      formData.append('image', imageFile);
+      formData.append("image", imageFile);
     }
-    
+
     // Note: Some servers need _method=PUT in FormData for PUT requests
-    formData.append('_method', 'PUT');
-    
+    formData.append("_method", "PUT");
+
     return apiClient<EventsResponse>(`/admin/events/${id}`, {
       method: "POST", // Using POST with _method override for FormData
       body: formData,
@@ -150,8 +154,11 @@ export const eventsService = {
 
   // Delete event
   deleteEvent: async (id: number) => {
-    return apiClient<{ success: boolean; message: string }>(`/admin/events/${id}`, {
-      method: "DELETE",
-    });
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/events/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
   },
 };

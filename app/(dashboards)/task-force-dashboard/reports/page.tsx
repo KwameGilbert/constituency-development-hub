@@ -1,11 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BarChart3,
   TrendingUp,
@@ -18,16 +30,20 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Loader2
-} from 'lucide-react';
-import { taskForceService, TeamMember, TaskForceReports } from '@/lib/services/task-force-service';
-import * as XLSX from 'xlsx';
+  Loader2,
+} from "lucide-react";
+import {
+  taskForceService,
+  TeamMember,
+  TaskForceReports,
+} from "@/lib/services/task-force-service";
+import * as XLSX from "xlsx";
 
 export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [reports, setReports] = useState<TaskForceReports | null>(null);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [reportPeriod, setReportPeriod] = useState('month');
+  const [reportPeriod, setReportPeriod] = useState("month");
 
   // Fetch data
   useEffect(() => {
@@ -46,7 +62,7 @@ export default function ReportsPage() {
           setTeamMembers(teamRes.data.members);
         }
       } catch (error) {
-        console.error('Failed to fetch reports data:', error);
+        console.error("Failed to fetch reports data:", error);
       } finally {
         setLoading(false);
       }
@@ -56,24 +72,70 @@ export default function ReportsPage() {
   }, []);
 
   // Calculate metrics from stats
-  const statusBreakdown = reports ? [
-    { value: 'pending', label: 'Pending Assessment', count: reports.status_distribution?.assigned_to_task_force || 0, color: 'yellow' },
-    { value: 'in_progress', label: 'In Progress', count: (reports.status_distribution?.assessment_in_progress || 0) + (reports.status_distribution?.resolution_in_progress || 0), color: 'blue' },
-    { value: 'resolved', label: 'Resolved', count: reports.status_distribution?.resolved || 0, color: 'green' },
-    { value: 'closed', label: 'Closed', count: reports.status_distribution?.closed || 0, color: 'gray' },
-  ] : [];
+  const statusBreakdown = reports
+    ? [
+        {
+          value: "pending",
+          label: "Pending Assessment",
+          count: reports.status_distribution?.assigned_to_task_force || 0,
+          color: "yellow",
+        },
+        {
+          value: "in_progress",
+          label: "In Progress",
+          count:
+            (reports.status_distribution?.assessment_in_progress || 0) +
+            (reports.status_distribution?.resolution_in_progress || 0),
+          color: "blue",
+        },
+        {
+          value: "resolved",
+          label: "Resolved",
+          count: reports.status_distribution?.resolved || 0,
+          color: "green",
+        },
+        {
+          value: "closed",
+          label: "Closed",
+          count: reports.status_distribution?.closed || 0,
+          color: "gray",
+        },
+      ]
+    : [];
 
-  const priorityBreakdown = reports ? [
-    { level: 'urgent', name: 'Urgent', count: reports.priority_distribution?.urgent || 0, color: 'red' },
-    { level: 'high', name: 'High', count: reports.priority_distribution?.high || 0, color: 'orange' },
-    { level: 'medium', name: 'Medium', count: reports.priority_distribution?.medium || 0, color: 'yellow' },
-    { level: 'low', name: 'Low', count: reports.priority_distribution?.low || 0, color: 'green' },
-  ] : [];
+  const priorityBreakdown = reports
+    ? [
+        {
+          level: "urgent",
+          name: "Urgent",
+          count: reports.priority_distribution?.urgent || 0,
+          color: "red",
+        },
+        {
+          level: "high",
+          name: "High",
+          count: reports.priority_distribution?.high || 0,
+          color: "orange",
+        },
+        {
+          level: "medium",
+          name: "Medium",
+          count: reports.priority_distribution?.medium || 0,
+          color: "yellow",
+        },
+        {
+          level: "low",
+          name: "Low",
+          count: reports.priority_distribution?.low || 0,
+          color: "green",
+        },
+      ]
+    : [];
 
   // Note: Category breakdown would need to be added to the API if needed
   const categoryBreakdown = reports?.category_distribution || [];
 
-  const assessorPerformance = teamMembers.map(m => ({
+  const assessorPerformance = teamMembers.map((m) => ({
     ...m,
     assignedIssues: m.assigned_count,
     completedIssues: m.completed_count,
@@ -90,34 +152,41 @@ export default function ReportsPage() {
     const overviewData = [
       { Metric: "Total Issues", Value: reports.total_issues },
       { Metric: "Resolved Issues", Value: reports.resolved_issues },
-      { Metric: "Resolution Rate", Value: `${reports.total_issues ? ((reports.resolved_issues / reports.total_issues) * 100).toFixed(1) : 0}%` },
+      {
+        Metric: "Resolution Rate",
+        Value: `${reports.total_issues ? ((reports.resolved_issues / reports.total_issues) * 100).toFixed(1) : 0}%`,
+      },
       { Metric: "", Value: "" }, // Spacer
       { Metric: "Status Distribution", Value: "" },
-      ...statusBreakdown.map(s => ({ Metric: s.label, Value: s.count })),
+      ...statusBreakdown.map((s) => ({ Metric: s.label, Value: s.count })),
       { Metric: "", Value: "" },
       { Metric: "Priority Breakdown", Value: "" },
-      ...priorityBreakdown.map(p => ({ Metric: p.name, Value: p.count }))
+      ...priorityBreakdown.map((p) => ({ Metric: p.name, Value: p.count })),
     ];
     const overviewSheet = XLSX.utils.json_to_sheet(overviewData);
     XLSX.utils.book_append_sheet(workbook, overviewSheet, "Overview");
 
     // 2. Team Performance Sheet
-    const performanceData = teamMembers.map(m => ({
+    const performanceData = teamMembers.map((m) => ({
       Name: m.name,
-      Role: m.title || m.specialization || 'Task Force Member',
+      Role: m.title || m.specialization || "Task Force Member",
       Status: m.status,
       "Assigned Issues": m.assigned_count,
       "Completed Issues": m.completed_count,
-      "Completion Rate": `${m.assigned_count ? Math.round((m.completed_count / m.assigned_count) * 100) : 0}%`
+      "Completion Rate": `${m.assigned_count ? Math.round((m.completed_count / m.assigned_count) * 100) : 0}%`,
     }));
     const performanceSheet = XLSX.utils.json_to_sheet(performanceData);
-    XLSX.utils.book_append_sheet(workbook, performanceSheet, "Team Performance");
+    XLSX.utils.book_append_sheet(
+      workbook,
+      performanceSheet,
+      "Team Performance",
+    );
 
     // 3. Category Sheet
-    const categoryData = (reports.category_distribution || []).map(c => ({
+    const categoryData = (reports.category_distribution || []).map((c) => ({
       Category: c.name,
       Count: c.count,
-      Percentage: `${reports.total_issues ? ((c.count / reports.total_issues) * 100).toFixed(1) : 0}%`
+      Percentage: `${reports.total_issues ? ((c.count / reports.total_issues) * 100).toFixed(1) : 0}%`,
     }));
     const categorySheet = XLSX.utils.json_to_sheet(categoryData);
     XLSX.utils.book_append_sheet(workbook, categorySheet, "Categories");
@@ -138,8 +207,12 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-          <p className="text-gray-600 mt-1">Comprehensive assessment performance insights</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Reports & Analytics
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Comprehensive assessment performance insights
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <Select value={reportPeriod} onValueChange={setReportPeriod}>
@@ -153,7 +226,10 @@ export default function ReportsPage() {
               <SelectItem value="year">This Year</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={handleExportReport} className="bg-purple-600 hover:bg-purple-700">
+          <Button
+            onClick={handleExportReport}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export Report
           </Button>
@@ -178,8 +254,12 @@ export default function ReportsPage() {
                     <FileText className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Total Issues</p>
-                    <p className="text-2xl font-bold text-gray-900">{reports?.total_issues || 0}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Total Issues
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {reports?.total_issues || 0}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -192,8 +272,12 @@ export default function ReportsPage() {
                     <CheckCircle className="h-6 w-6 text-green-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600">Resolved</p>
-                    <p className="text-2xl font-bold text-gray-900">{reports?.resolved_issues || 0}</p>
+                    <p className="text-sm font-medium text-gray-600">
+                      Resolved
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {reports?.resolved_issues || 0}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -207,7 +291,10 @@ export default function ReportsPage() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Pending</p>
-                    <p className="text-2xl font-bold text-gray-900">{reports?.status_distribution?.assigned_to_task_force || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {reports?.status_distribution?.assigned_to_task_force ||
+                        0}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -221,7 +308,9 @@ export default function ReportsPage() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Urgent</p>
-                    <p className="text-2xl font-bold text-gray-900">{reports?.priority_distribution?.urgent || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {reports?.priority_distribution?.urgent || 0}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -241,15 +330,27 @@ export default function ReportsPage() {
               <CardContent>
                 <div className="space-y-4">
                   {statusBreakdown.map((status) => (
-                    <div key={status.value} className="flex items-center justify-between">
+                    <div
+                      key={status.value}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`w-4 h-4 rounded-full bg-${status.color}-500`}></div>
-                        <span className="text-sm font-medium">{status.label}</span>
+                        <div
+                          className={`w-4 h-4 rounded-full bg-${status.color}-500`}
+                        ></div>
+                        <span className="text-sm font-medium">
+                          {status.label}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">{status.count}</span>
+                        <span className="text-sm text-gray-600">
+                          {status.count}
+                        </span>
                         <Badge variant="outline">
-                          {totalIssues > 0 ? ((status.count / totalIssues) * 100).toFixed(1) : 0}%
+                          {totalIssues > 0
+                            ? ((status.count / totalIssues) * 100).toFixed(1)
+                            : 0}
+                          %
                         </Badge>
                       </div>
                     </div>
@@ -269,15 +370,27 @@ export default function ReportsPage() {
               <CardContent>
                 <div className="space-y-4">
                   {priorityBreakdown.map((priority) => (
-                    <div key={priority.level} className="flex items-center justify-between">
+                    <div
+                      key={priority.level}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-3">
-                        <div className={`w-4 h-4 rounded-full bg-${priority.color}-500`}></div>
-                        <span className="text-sm font-medium">{priority.name}</span>
+                        <div
+                          className={`w-4 h-4 rounded-full bg-${priority.color}-500`}
+                        ></div>
+                        <span className="text-sm font-medium">
+                          {priority.name}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">{priority.count}</span>
+                        <span className="text-sm text-gray-600">
+                          {priority.count}
+                        </span>
                         <Badge variant="outline">
-                          {totalIssues > 0 ? ((priority.count / totalIssues) * 100).toFixed(1) : 0}%
+                          {totalIssues > 0
+                            ? ((priority.count / totalIssues) * 100).toFixed(1)
+                            : 0}
+                          %
                         </Badge>
                       </div>
                     </div>
@@ -298,21 +411,29 @@ export default function ReportsPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categoryBreakdown.map((category) => (
-                  <div key={category.name} className="p-4 border border-gray-200 rounded-lg">
+                  <div
+                    key={category.name}
+                    className="p-4 border border-gray-200 rounded-lg"
+                  >
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 capitalize">{category.name}</h4>
+                      <h4 className="font-medium text-gray-900 capitalize">
+                        {category.name}
+                      </h4>
                       <Badge variant="outline">{category.count}</Badge>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
                         className="bg-purple-600 h-2 rounded-full"
                         style={{
-                          width: `${Math.max((category.count / totalIssues) * 100, 5)}%`
+                          width: `${Math.max((category.count / totalIssues) * 100, 5)}%`,
                         }}
                       ></div>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
-                      {totalIssues > 0 ? ((category.count / totalIssues) * 100).toFixed(1) : 0}% of total issues
+                      {totalIssues > 0
+                        ? ((category.count / totalIssues) * 100).toFixed(1)
+                        : 0}
+                      % of total issues
                     </p>
                   </div>
                 ))}
@@ -336,38 +457,56 @@ export default function ReportsPage() {
             <CardContent>
               <div className="space-y-4">
                 {assessorPerformance.map((assessor) => (
-                  <div key={assessor.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                  <div
+                    key={assessor.id}
+                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                         <Users className="h-5 w-5 text-purple-600" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{assessor.name}</h4>
-                        <p className="text-sm text-gray-600">{assessor.title || assessor.specialization || 'Task Force Member'}</p>
+                        <h4 className="font-medium text-gray-900">
+                          {assessor.name}
+                        </h4>
+                        <p className="text-sm text-gray-600">
+                          {assessor.title ||
+                            assessor.specialization ||
+                            "Task Force Member"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-6 text-sm">
                       <div className="text-center">
-                        <p className="font-medium text-gray-900">{assessor.assignedIssues}</p>
+                        <p className="font-medium text-gray-900">
+                          {assessor.assignedIssues}
+                        </p>
                         <p className="text-gray-600">Assigned</p>
                       </div>
                       <div className="text-center">
-                        <p className="font-medium text-gray-900">{assessor.completedIssues}</p>
+                        <p className="font-medium text-gray-900">
+                          {assessor.completedIssues}
+                        </p>
                         <p className="text-gray-600">Completed</p>
                       </div>
                       <div className="text-center">
                         <p className="font-medium text-gray-900">
-                          {assessor.assignedIssues > 0 
-                            ? Math.round((assessor.completedIssues / assessor.assignedIssues) * 100)
-                            : 0}%
+                          {assessor.assignedIssues > 0
+                            ? Math.round(
+                                (assessor.completedIssues /
+                                  assessor.assignedIssues) *
+                                  100,
+                              )
+                            : 0}
+                          %
                         </p>
                         <p className="text-gray-600">Rate</p>
                       </div>
-                      <Badge 
+                      <Badge
                         className={
-                          assessor.status === 'active' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-800'
+                          assessor.status === "active"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
                         }
                       >
                         {assessor.status}
@@ -398,21 +537,27 @@ export default function ReportsPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Issues Submitted</span>
+                    <span className="text-sm text-gray-600">
+                      Issues Submitted
+                    </span>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-green-600" />
                       <span className="font-medium">+15%</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Assessment Speed</span>
+                    <span className="text-sm text-gray-600">
+                      Assessment Speed
+                    </span>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-green-600" />
                       <span className="font-medium">+8%</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Resolution Rate</span>
+                    <span className="text-sm text-gray-600">
+                      Resolution Rate
+                    </span>
                     <div className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4 text-green-600" />
                       <span className="font-medium">+5%</span>
@@ -432,15 +577,21 @@ export default function ReportsPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Average Assessment Time</span>
+                    <span className="text-sm text-gray-600">
+                      Average Assessment Time
+                    </span>
                     <span className="font-medium">3.2 days</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Fastest Assessment</span>
+                    <span className="text-sm text-gray-600">
+                      Fastest Assessment
+                    </span>
                     <span className="font-medium">4 hours</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Longest Assessment</span>
+                    <span className="text-sm text-gray-600">
+                      Longest Assessment
+                    </span>
                     <span className="font-medium">12 days</span>
                   </div>
                 </div>
@@ -459,22 +610,32 @@ export default function ReportsPage() {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-900">{reports?.total_issues || 0}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {reports?.total_issues || 0}
+                  </p>
                   <p className="text-sm text-gray-600">Total Issues</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-900">{reports?.resolved_issues || 0}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {reports?.resolved_issues || 0}
+                  </p>
                   <p className="text-sm text-gray-600">Resolved</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-900">{teamMembers.length}</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {teamMembers.length}
+                  </p>
                   <p className="text-sm text-gray-600">Team Members</p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-2xl font-bold text-gray-900">
-                    {reports?.total_issues && reports.resolved_issues 
-                      ? Math.round((reports.resolved_issues / reports.total_issues) * 100)
-                      : 0}%
+                    {reports?.total_issues && reports.resolved_issues
+                      ? Math.round(
+                          (reports.resolved_issues / reports.total_issues) *
+                            100,
+                        )
+                      : 0}
+                    %
                   </p>
                   <p className="text-sm text-gray-600">Resolution Rate</p>
                 </div>

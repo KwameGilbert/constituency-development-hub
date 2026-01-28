@@ -1,8 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { announcementsService, Announcement } from "@/lib/services/announcements-service";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  announcementsService,
+  Announcement,
+} from "@/lib/services/announcements-service";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 
@@ -18,7 +27,9 @@ export default function AnnouncementPopup() {
           // Assuming 'readAnnouncements' would be managed elsewhere, for now, we'll just take the first one if any.
           // The original code was looking for 'urgent' and checking sessionStorage.
           // Let's try to reconcile with the original intent of showing an urgent, unseen announcement.
-          const urgentAnnouncement = response.data.announcements.find(ann => ann.priority === "urgent");
+          const urgentAnnouncement = response.data.announcements.find(
+            (ann) => ann.priority === "urgent",
+          );
 
           if (urgentAnnouncement) {
             const seenKey = `seen_announcement_${urgentAnnouncement.id}`;
@@ -38,10 +49,10 @@ export default function AnnouncementPopup() {
   }, []);
 
   const handleClose = () => {
-      setOpen(false);
-      if (announcement) {
-          sessionStorage.setItem(`seen_announcement_${announcement.id}`, "true");
-      }
+    setOpen(false);
+    if (announcement) {
+      sessionStorage.setItem(`seen_announcement_${announcement.id}`, "true");
+    }
   };
 
   if (!announcement) return null;
@@ -51,23 +62,21 @@ export default function AnnouncementPopup() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="space-y-3">
           <div className="mx-auto bg-red-100 p-3 rounded-full w-fit">
-               <Bell className="h-6 w-6 text-red-600" />
+            <Bell className="h-6 w-6 text-red-600" />
           </div>
           <DialogTitle className="text-center text-xl text-red-700">
-             {announcement.title}
+            {announcement.title}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="py-2">
-            <p className="text-center text-gray-600">
-                {announcement.content}
-            </p>
+          <p className="text-center text-gray-600">{announcement.content}</p>
         </div>
 
         <DialogFooter className="sm:justify-center">
-          <Button 
-            type="button" 
-            variant="default" 
+          <Button
+            type="button"
+            variant="default"
             className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
             onClick={handleClose}
           >

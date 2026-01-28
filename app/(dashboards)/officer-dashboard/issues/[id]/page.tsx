@@ -83,13 +83,13 @@ export default function OfficerIssueDetailPage() {
       await issuesService.updateStatus(
         issue.id,
         "under_officer_review",
-        "Issue taken under officer review"
+        "Issue taken under officer review",
       );
       // Then forward to admin
       const response = await issuesService.updateStatus(
         issue.id,
         "forwarded_to_admin",
-        comment || "Forwarded to admin for further action"
+        comment || "Forwarded to admin for further action",
       );
       if (response.success) {
         toast.success("Issue reviewed and forwarded to admin");
@@ -110,7 +110,7 @@ export default function OfficerIssueDetailPage() {
       const response = await issuesService.updateStatus(
         issue.id,
         "under_officer_review",
-        comment || "Issue is now under officer review"
+        comment || "Issue is now under officer review",
       );
       if (response.success) {
         toast.success("Issue marked as under review");

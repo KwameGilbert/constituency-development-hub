@@ -4,7 +4,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <ProtectedRoute allowedRoles={['officer']}>
+    <ProtectedRoute allowedRoles={["officer"]}>
       <SidebarProvider>
         <OfficerSidebar />
         <SidebarInset className="w-full">

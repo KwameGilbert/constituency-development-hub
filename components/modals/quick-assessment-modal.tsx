@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   CheckCircle,
   XCircle,
@@ -13,10 +25,10 @@ import {
   Clock,
   User,
   MapPin,
-  Calendar
-} from 'lucide-react';
-import type { Issue } from '@/lib/data';
-import { createAssessment, getMetadata } from '@/lib/data';
+  Calendar,
+} from "lucide-react";
+import type { Issue } from "@/lib/data";
+import { createAssessment, getMetadata } from "@/lib/data";
 
 interface QuickAssessmentModalProps {
   issue: Issue | null;
@@ -25,41 +37,52 @@ interface QuickAssessmentModalProps {
   onSubmit?: (issueId: string, decision: string, reason: string) => void;
 }
 
-export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: QuickAssessmentModalProps) {
-  const [decision, setDecision] = useState('');
-  const [reason, setReason] = useState('');
+export function QuickAssessmentModal({
+  issue,
+  isOpen,
+  onClose,
+  onSubmit,
+}: QuickAssessmentModalProps) {
+  const [decision, setDecision] = useState("");
+  const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   if (!issue) return null;
 
   const metadata = getMetadata();
-  const priority = metadata.priorities.find(p => p.level === issue.priority);
+  const priority = metadata.priorities.find((p) => p.level === issue.priority);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!decision) {
-      setError('Please select a decision');
+      setError("Please select a decision");
       return;
     }
 
     if (!reason.trim()) {
-      setError('Please provide a reason for your decision');
+      setError("Please provide a reason for your decision");
       return;
     }
 
     setIsSubmitting(true);
-    setError('');
+    setError("");
 
     try {
       // Create assessment record
       const assessment = {
         decision: decision,
         comments: reason.trim(),
-        recommendations: decision === 'approved' ? 'Implementation Planning, Budget Allocation' : 'Issue Resolution, Community Notification',
-        estimatedBudget: decision === 'approved' ? issue.impactAssessment?.estimatedCost : undefined,
-        timeline: decision === 'approved' ? '2-3 months' : '1 week'
+        recommendations:
+          decision === "approved"
+            ? "Implementation Planning, Budget Allocation"
+            : "Issue Resolution, Community Notification",
+        estimatedBudget:
+          decision === "approved"
+            ? issue.impactAssessment?.estimatedCost
+            : undefined,
+        timeline: decision === "approved" ? "2-3 months" : "1 week",
       };
 
       // Call the data function
@@ -71,11 +94,11 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
       }
 
       // Reset form
-      setDecision('');
-      setReason('');
+      setDecision("");
+      setReason("");
       onClose();
     } catch (err) {
-      setError('Failed to submit assessment. Please try again.');
+      setError("Failed to submit assessment. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -83,37 +106,37 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
 
   const handleClose = () => {
     if (!isSubmitting) {
-      setDecision('');
-      setReason('');
-      setError('');
+      setDecision("");
+      setReason("");
+      setError("");
       onClose();
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const getDecisionColor = (decision: string) => {
     switch (decision) {
-      case 'approved':
-        return 'text-green-600 bg-green-50 border-green-200';
-      case 'rejected':
-        return 'text-red-600 bg-red-50 border-red-200';
+      case "approved":
+        return "text-green-600 bg-green-50 border-green-200";
+      case "rejected":
+        return "text-red-600 bg-red-50 border-red-200";
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   };
 
   const getDecisionIcon = (decision: string) => {
     switch (decision) {
-      case 'approved':
+      case "approved":
         return <CheckCircle className="h-5 w-5" />;
-      case 'rejected':
+      case "rejected":
         return <XCircle className="h-5 w-5" />;
       default:
         return <Clock className="h-5 w-5" />;
@@ -142,12 +165,14 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
                 <p className="text-sm text-gray-600 mt-1">ID: {issue.id}</p>
               </div>
               {priority && (
-                <Badge className={`bg-${priority.color}-100 text-${priority.color}-800`}>
+                <Badge
+                  className={`bg-${priority.color}-100 text-${priority.color}-800`}
+                >
                   {priority.label}
                 </Badge>
               )}
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-gray-500" />
@@ -159,18 +184,23 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-gray-700">{formatDate(issue.submissionDate)}</span>
+                <span className="text-gray-700">
+                  {formatDate(issue.submissionDate)}
+                </span>
               </div>
             </div>
 
             <div className="mt-3">
-              <p className="text-gray-700 text-sm line-clamp-3">{issue.description}</p>
+              <p className="text-gray-700 text-sm line-clamp-3">
+                {issue.description}
+              </p>
             </div>
 
             {issue.impactAssessment?.estimatedCost && (
               <div className="mt-3 pt-3 border-t border-gray-200">
                 <span className="text-sm font-medium text-gray-900">
-                  Estimated Cost: ${issue.impactAssessment.estimatedCost.toLocaleString()}
+                  Estimated Cost: $
+                  {issue.impactAssessment.estimatedCost.toLocaleString()}
                 </span>
               </div>
             )}
@@ -183,7 +213,9 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
                 Assessment Decision <span className="text-red-500">*</span>
               </label>
               <Select value={decision} onValueChange={setDecision}>
-                <SelectTrigger className={decision ? getDecisionColor(decision) : ''}>
+                <SelectTrigger
+                  className={decision ? getDecisionColor(decision) : ""}
+                >
                   <div className="flex items-center gap-2">
                     {decision && getDecisionIcon(decision)}
                     <SelectValue placeholder="Select your decision" />
@@ -213,11 +245,11 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
               </label>
               <Textarea
                 placeholder={
-                  decision === 'approved'
-                    ? 'Explain why this issue should be approved for implementation...'
-                    : decision === 'rejected'
-                    ? 'Explain why this issue cannot be approved...'
-                    : 'Provide detailed reasoning for your assessment decision...'
+                  decision === "approved"
+                    ? "Explain why this issue should be approved for implementation..."
+                    : decision === "rejected"
+                      ? "Explain why this issue cannot be approved..."
+                      : "Provide detailed reasoning for your assessment decision..."
                 }
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
@@ -233,9 +265,10 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                <strong>Assessment Guidelines:</strong> Consider feasibility, budget impact, community benefit, 
-                alignment with development priorities, and available resources. Provide clear, constructive feedback 
-                regardless of your decision.
+                <strong>Assessment Guidelines:</strong> Consider feasibility,
+                budget impact, community benefit, alignment with development
+                priorities, and available resources. Provide clear, constructive
+                feedback regardless of your decision.
               </AlertDescription>
             </Alert>
 
@@ -254,26 +287,31 @@ export function QuickAssessmentModal({ issue, isOpen, onClose, onSubmit }: Quick
                 This assessment will be recorded in the issue timeline.
               </div>
               <div className="flex gap-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={handleClose}
                   disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  disabled={!decision || !reason.trim() || reason.trim().length < 20 || isSubmitting}
+                <Button
+                  type="submit"
+                  disabled={
+                    !decision ||
+                    !reason.trim() ||
+                    reason.trim().length < 20 ||
+                    isSubmitting
+                  }
                   className={
-                    decision === 'approved' 
-                      ? 'bg-green-600 hover:bg-green-700' 
-                      : decision === 'rejected'
-                      ? 'bg-red-600 hover:bg-red-700'
-                      : 'bg-purple-600 hover:bg-purple-700'
+                    decision === "approved"
+                      ? "bg-green-600 hover:bg-green-700"
+                      : decision === "rejected"
+                        ? "bg-red-600 hover:bg-red-700"
+                        : "bg-purple-600 hover:bg-purple-700"
                   }
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Assessment'}
+                  {isSubmitting ? "Submitting..." : "Submit Assessment"}
                 </Button>
               </div>
             </div>

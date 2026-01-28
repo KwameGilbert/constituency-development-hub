@@ -8,12 +8,10 @@ export default function WebAdminDashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute allowedRoles={['web_admin']}>
+    <ProtectedRoute allowedRoles={["web_admin"]}>
       <SidebarProvider>
         <WebAdminSidebar />
-        <SidebarInset className="bg-slate-50">
-          {children}
-        </SidebarInset>
+        <SidebarInset className="bg-slate-50">{children}</SidebarInset>
       </SidebarProvider>
     </ProtectedRoute>
   );

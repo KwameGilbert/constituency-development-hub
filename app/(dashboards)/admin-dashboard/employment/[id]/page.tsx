@@ -9,7 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { useParams } from "next/navigation";
-import { employmentService, JobPosting } from "@/lib/services/employment-service";
+import {
+  employmentService,
+  JobPosting,
+} from "@/lib/services/employment-service";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -28,11 +31,11 @@ export default function JobDetailPage() {
           setJob(response.data.job);
           setError(null);
         } else {
-          setError('Job not found');
+          setError("Job not found");
         }
       } catch (err) {
-        console.error('Failed to load job data:', err);
-        setError('Failed to load job data');
+        console.error("Failed to load job data:", err);
+        setError("Failed to load job data");
       } finally {
         setLoading(false);
       }
@@ -50,7 +53,11 @@ export default function JobDetailPage() {
         <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-4">
             <Link href="/admin-dashboard/employment">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -115,19 +122,31 @@ export default function JobDetailPage() {
         <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-4">
             <Link href="/admin-dashboard/employment">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-slate-900">Job Not Found</h1>
-              <p className="text-slate-500">The requested job could not be found</p>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Job Not Found
+              </h1>
+              <p className="text-slate-500">
+                The requested job could not be found
+              </p>
             </div>
           </div>
 
           <Card className="p-12 text-center">
-            <p className="text-red-600 text-lg font-medium">{error || 'Job not found'}</p>
-            <p className="text-slate-500 mt-2">Please check the job ID and try again</p>
+            <p className="text-red-600 text-lg font-medium">
+              {error || "Job not found"}
+            </p>
+            <p className="text-slate-500 mt-2">
+              Please check the job ID and try again
+            </p>
             <div className="mt-6">
               <Link href="/admin-dashboard/employment">
                 <Button>Back to Jobs</Button>
@@ -145,7 +164,11 @@ export default function JobDetailPage() {
       <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/admin-dashboard/employment">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>

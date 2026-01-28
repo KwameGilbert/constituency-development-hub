@@ -11,19 +11,20 @@ interface PageProps {
 
 export async function generateMetadata(
   { params }: PageProps,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const slug = params.slug;
   const defaultTitle = "Event Details | Kofi Benteh Afful";
-  const defaultDesc = "Join Hon. Kofi Benteh Afful for upcoming community events and engagements.";
+  const defaultDesc =
+    "Join Hon. Kofi Benteh Afful for upcoming community events and engagements.";
 
   try {
     const response = await eventsService.getEventBySlug(slug);
-    
+
     if (response.success && response.data.event) {
       const event = response.data.event;
       const previousImages = (await parent).openGraph?.images || [];
-      
+
       const title = `${event.name || event.title} | Events`;
       const description = event.description || defaultDesc;
 
@@ -33,8 +34,10 @@ export async function generateMetadata(
         openGraph: {
           title: title,
           description: description,
-          images: event.image ? [getImageUrl(event.image), ...previousImages] : previousImages,
-          type: "website", 
+          images: event.image
+            ? [getImageUrl(event.image), ...previousImages]
+            : previousImages,
+          type: "website",
         },
         twitter: {
           card: "summary_large_image",
@@ -67,31 +70,42 @@ export default async function EventDetailPage({ params }: PageProps) {
     console.error("Failed to fetch event details for rendering:", error);
   }
 
-  const jsonLd = initialEvent ? {
-    "@context": "https://schema.org",
-    "@type": "Event",
-    "name": initialEvent.name || initialEvent.title,
-    "description": initialEvent.description,
-    "startDate": initialEvent.event_date && initialEvent.start_time ? `${initialEvent.event_date}T${initialEvent.start_time}` : initialEvent.event_date,
-    "endDate": initialEvent.event_date && initialEvent.end_time ? `${initialEvent.event_date}T${initialEvent.end_time}` : undefined,
-    "eventStatus": initialEvent.status === 'cancelled' ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
-    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "location": {
-      "@type": "Place",
-      "name": initialEvent.location,
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Sefwi Wiawso",
-        "addressCountry": "GH"
+  const jsonLd = initialEvent
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        name: initialEvent.name || initialEvent.title,
+        description: initialEvent.description,
+        startDate:
+          initialEvent.event_date && initialEvent.start_time
+            ? `${initialEvent.event_date}T${initialEvent.start_time}`
+            : initialEvent.event_date,
+        endDate:
+          initialEvent.event_date && initialEvent.end_time
+            ? `${initialEvent.event_date}T${initialEvent.end_time}`
+            : undefined,
+        eventStatus:
+          initialEvent.status === "cancelled"
+            ? "https://schema.org/EventCancelled"
+            : "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        location: {
+          "@type": "Place",
+          name: initialEvent.location,
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Sefwi Wiawso",
+            addressCountry: "GH",
+          },
+        },
+        image: initialEvent.image ? [getImageUrl(initialEvent.image)] : [],
+        organizer: {
+          "@type": "Person",
+          name: "Kofi Benteh Afful",
+          url: "https://kofibentehafful.com",
+        },
       }
-    },
-    "image": initialEvent.image ? [getImageUrl(initialEvent.image)] : [],
-    "organizer": {
-      "@type": "Person",
-      "name": "Kofi Benteh Afful",
-      "url": "https://kofibentehafful.com"
-    }
-  } : null;
+    : null;
 
   return (
     <>

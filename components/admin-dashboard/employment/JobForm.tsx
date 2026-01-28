@@ -19,7 +19,11 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
-import { employmentService, CreateJobData, JobPosting } from "@/lib/services/employment-service";
+import {
+  employmentService,
+  CreateJobData,
+  JobPosting,
+} from "@/lib/services/employment-service";
 
 const jobSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -93,15 +97,26 @@ export function NewJobForm({ job }: JobFormProps) {
       }
 
       if (response.success) {
-        toast.success(isEditMode ? "Job updated successfully" : "Job posted successfully");
+        toast.success(
+          isEditMode ? "Job updated successfully" : "Job posted successfully",
+        );
         router.push("/admin-dashboard/employment");
         router.refresh();
       } else {
-        toast.error(response.message || `Failed to ${isEditMode ? "update" : "create"} job`);
+        toast.error(
+          response.message ||
+            `Failed to ${isEditMode ? "update" : "create"} job`,
+        );
       }
     } catch (error: any) {
-      console.error(`Error ${isEditMode ? "updating" : "creating"} job:`, error);
-      toast.error(error.message || `An error occurred while ${isEditMode ? "updating" : "creating"} the job`);
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} job:`,
+        error,
+      );
+      toast.error(
+        error.message ||
+          `An error occurred while ${isEditMode ? "updating" : "creating"} the job`,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -113,8 +128,10 @@ export function NewJobForm({ job }: JobFormProps) {
         <CardContent className="pt-6 space-y-6">
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Basic Information</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Basic Information
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Label htmlFor="title">Job Title *</Label>
@@ -125,7 +142,9 @@ export function NewJobForm({ job }: JobFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.title && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.title.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.title.message}
+                  </p>
                 )}
               </div>
 
@@ -148,14 +167,18 @@ export function NewJobForm({ job }: JobFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.location && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.location.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.location.message}
+                  </p>
                 )}
               </div>
 
               <div>
                 <Label htmlFor="job_type">Job Type *</Label>
-                <Select 
-                  onValueChange={(value: any) => form.setValue("job_type", value)}
+                <Select
+                  onValueChange={(value: any) =>
+                    form.setValue("job_type", value)
+                  }
                   defaultValue={form.getValues("job_type")}
                   disabled={isSubmitting}
                 >
@@ -170,13 +193,15 @@ export function NewJobForm({ job }: JobFormProps) {
                   </SelectContent>
                 </Select>
                 {form.formState.errors.job_type && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.job_type.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.job_type.message}
+                  </p>
                 )}
               </div>
 
               <div>
                 <Label htmlFor="category">Category</Label>
-                <Select 
+                <Select
                   onValueChange={(value) => form.setValue("category", value)}
                   defaultValue={form.getValues("category")}
                   disabled={isSubmitting}
@@ -185,14 +210,22 @@ export function NewJobForm({ job }: JobFormProps) {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="administration">Administration</SelectItem>
+                    <SelectItem value="administration">
+                      Administration
+                    </SelectItem>
                     <SelectItem value="technical">Technical</SelectItem>
                     <SelectItem value="health">Health</SelectItem>
                     <SelectItem value="education">Education</SelectItem>
-                    <SelectItem value="social_services">Social Services</SelectItem>
+                    <SelectItem value="social_services">
+                      Social Services
+                    </SelectItem>
                     <SelectItem value="finance">Finance</SelectItem>
-                    <SelectItem value="communications">Communications</SelectItem>
-                    <SelectItem value="monitoring_evaluation">Monitoring & Evaluation</SelectItem>
+                    <SelectItem value="communications">
+                      Communications
+                    </SelectItem>
+                    <SelectItem value="monitoring_evaluation">
+                      Monitoring & Evaluation
+                    </SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -202,8 +235,10 @@ export function NewJobForm({ job }: JobFormProps) {
 
           {/* Job Description */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Job Description</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Job Description
+            </h3>
+
             <div>
               <Label htmlFor="description">Description *</Label>
               <Textarea
@@ -214,7 +249,9 @@ export function NewJobForm({ job }: JobFormProps) {
                 disabled={isSubmitting}
               />
               {form.formState.errors.description && (
-                <p className="text-red-500 text-sm mt-1">{form.formState.errors.description.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {form.formState.errors.description.message}
+                </p>
               )}
             </div>
 
@@ -230,7 +267,9 @@ export function NewJobForm({ job }: JobFormProps) {
             </div>
 
             <div>
-              <Label htmlFor="requirements">Requirements & Qualifications</Label>
+              <Label htmlFor="requirements">
+                Requirements & Qualifications
+              </Label>
               <Textarea
                 id="requirements"
                 placeholder="List the required qualifications, skills, and experience..."
@@ -243,8 +282,10 @@ export function NewJobForm({ job }: JobFormProps) {
 
           {/* Employment Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Employment Details</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Employment Details
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="salary_range">Salary Range</Label>
@@ -258,8 +299,10 @@ export function NewJobForm({ job }: JobFormProps) {
 
               <div>
                 <Label htmlFor="experience_level">Experience Level</Label>
-                <Select 
-                  onValueChange={(value) => form.setValue("experience_level", value)}
+                <Select
+                  onValueChange={(value) =>
+                    form.setValue("experience_level", value)
+                  }
                   defaultValue={form.getValues("experience_level")}
                   disabled={isSubmitting}
                 >
@@ -276,7 +319,9 @@ export function NewJobForm({ job }: JobFormProps) {
               </div>
 
               <div>
-                <Label htmlFor="application_deadline">Application Deadline *</Label>
+                <Label htmlFor="application_deadline">
+                  Application Deadline *
+                </Label>
                 <Input
                   id="application_deadline"
                   type="date"
@@ -284,13 +329,15 @@ export function NewJobForm({ job }: JobFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.application_deadline && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.application_deadline.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.application_deadline.message}
+                  </p>
                 )}
               </div>
 
               <div>
                 <Label htmlFor="status">Publication Status *</Label>
-                <Select 
+                <Select
                   onValueChange={(value: any) => form.setValue("status", value)}
                   defaultValue={form.getValues("status")}
                   disabled={isSubmitting}
@@ -305,7 +352,9 @@ export function NewJobForm({ job }: JobFormProps) {
                   </SelectContent>
                 </Select>
                 {form.formState.errors.status && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.status.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.status.message}
+                  </p>
                 )}
               </div>
             </div>

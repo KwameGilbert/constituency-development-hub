@@ -9,7 +9,11 @@ import { galleryService, Gallery } from "@/lib/services/gallery-service";
 
 function formatDate(dateString: string) {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function GalleryPreview() {
@@ -24,7 +28,9 @@ function GalleryPreview() {
         if (response.success) {
           // Sort by date descending and take top 4
           const sorted = response.data.galleries
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+            )
             .slice(0, 4);
           setGalleries(sorted);
         } else {
@@ -45,19 +51,19 @@ function GalleryPreview() {
     return (
       <section className="bg-emerald-50/50 py-16">
         <div className="mx-auto max-w-6xl px-4 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-600" />
-            <p className="mt-2 text-slate-500">Loading moments...</p>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-emerald-600" />
+          <p className="mt-2 text-slate-500">Loading moments...</p>
         </div>
       </section>
     );
   }
 
   if (error || galleries.length === 0) {
-      // Don't show the section if no data or error (or show a simplified empty state)
-      // For a homepage section, it's often better to return null or "no items" if empty.
-      if (error) return null; 
-      // If just empty, maybe show nothing? Or a checked placeholder? return null for now.
-      return null;
+    // Don't show the section if no data or error (or show a simplified empty state)
+    // For a homepage section, it's often better to return null or "no items" if empty.
+    if (error) return null;
+    // If just empty, maybe show nothing? Or a checked placeholder? return null for now.
+    return null;
   }
 
   return (
@@ -72,7 +78,7 @@ function GalleryPreview() {
           </h2>
           <div className="mt-2 h-1 w-20 bg-emerald-500" />
         </div>
-        
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {galleries.map((item, index) => (
             <motion.div
@@ -86,21 +92,21 @@ function GalleryPreview() {
               <Link href={`/gallery/${item.slug}`}>
                 <div className="relative h-48 bg-slate-100">
                   {item.cover_image ? (
-                     <Image
-                        src={item.cover_image}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        unoptimized
-                     />
+                    <Image
+                      src={item.cover_image}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      unoptimized
+                    />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-slate-400">
-                        <Images className="h-8 w-8 opacity-50" />
+                      <Images className="h-8 w-8 opacity-50" />
                     </div>
                   )}
-                 
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  
+
                   {/* Image Count Badge */}
                   <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
                     <Images className="h-3 w-3" />
@@ -125,10 +131,10 @@ function GalleryPreview() {
             </motion.div>
           ))}
         </div>
-        
+
         {/* View All Link */}
         <div className="mt-10 text-center">
-          <Link 
+          <Link
             href="/gallery"
             className="inline-flex items-center gap-2 text-base font-semibold text-slate-700 hover:text-emerald-600 transition-colors"
           >

@@ -1,12 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Search,
   Filter,
@@ -18,30 +30,33 @@ import {
   FileText,
   Clock,
   AlertTriangle,
-  Loader2
-} from 'lucide-react';
-import { taskForceService, TaskForceIssue } from '@/lib/services/task-force-service';
-import { 
-  getStatusColor, 
-  getPriorityColor, 
-  formatDate, 
-  getMetadata
-} from '@/lib/data';
+  Loader2,
+} from "lucide-react";
+import {
+  taskForceService,
+  TaskForceIssue,
+} from "@/lib/services/task-force-service";
+import {
+  getStatusColor,
+  getPriorityColor,
+  formatDate,
+  getMetadata,
+} from "@/lib/data";
 
 export default function PendingIssuesPage() {
   const metadata = getMetadata();
-  
+
   const [issues, setIssues] = useState<TaskForceIssue[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     total: 0,
     highPriority: 0,
-    overdue: 0
+    overdue: 0,
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   // Fetch pending issues
   useEffect(() => {
@@ -49,10 +64,10 @@ export default function PendingIssuesPage() {
       setLoading(true);
       try {
         const response = await taskForceService.getAllTaskForceIssues({
-          status: 'assigned_to_task_force',
+          status: "assigned_to_task_force",
           // search: searchTerm || undefined, // Search not yet supported in taskForceService endpoint params directly unless added
-          priority: priorityFilter !== 'all' ? priorityFilter : undefined,
-          category: categoryFilter !== 'all' ? categoryFilter : undefined,
+          priority: priorityFilter !== "all" ? priorityFilter : undefined,
+          category: categoryFilter !== "all" ? categoryFilter : undefined,
           limit: 50,
         });
 
@@ -61,32 +76,36 @@ export default function PendingIssuesPage() {
 
           // Client-side search for now (or update backend to support search)
           if (searchTerm) {
-             fetchedIssues = fetchedIssues.filter(i => 
-               i.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-               i.description.toLowerCase().includes(searchTerm.toLowerCase())
-             );
+            fetchedIssues = fetchedIssues.filter(
+              (i) =>
+                i.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                i.description.toLowerCase().includes(searchTerm.toLowerCase()),
+            );
           }
 
           setIssues(fetchedIssues);
-          
+
           // Calculate stats
           const allIssues = response.data.issues;
-          const highPriority = allIssues.filter(i => i.priority === 'high' || i.priority === 'urgent').length;
-          const overdue = allIssues.filter(i => {
+          const highPriority = allIssues.filter(
+            (i) => i.priority === "high" || i.priority === "urgent",
+          ).length;
+          const overdue = allIssues.filter((i) => {
             const daysSince = Math.floor(
-              (new Date().getTime() - new Date(i.created_at).getTime()) / (1000 * 60 * 60 * 24)
+              (new Date().getTime() - new Date(i.created_at).getTime()) /
+                (1000 * 60 * 60 * 24),
             );
             return daysSince >= 7;
           }).length;
-          
+
           setStats({
             total: response.data.pagination.total,
             highPriority,
-            overdue
+            overdue,
           });
         }
       } catch (error) {
-        console.error('Failed to fetch pending issues:', error);
+        console.error("Failed to fetch pending issues:", error);
       } finally {
         setLoading(false);
       }
@@ -98,7 +117,8 @@ export default function PendingIssuesPage() {
 
   const getDaysSinceSubmission = (createdAt: string) => {
     return Math.floor(
-      (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
+      (new Date().getTime() - new Date(createdAt).getTime()) /
+        (1000 * 60 * 60 * 24),
     );
   };
 
@@ -123,8 +143,12 @@ export default function PendingIssuesPage() {
                 <Clock className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Pending</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Pending
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -137,8 +161,12 @@ export default function PendingIssuesPage() {
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">High Priority</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.highPriority}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  High Priority
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.highPriority}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -151,8 +179,12 @@ export default function PendingIssuesPage() {
                 <FileText className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Overdue (7+ days)</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.overdue}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Overdue (7+ days)
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.overdue}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -229,14 +261,16 @@ export default function PendingIssuesPage() {
               </div>
             ) : (
               issues.map((issue) => {
-                const daysSinceSubmission = getDaysSinceSubmission(issue.created_at);
+                const daysSinceSubmission = getDaysSinceSubmission(
+                  issue.created_at,
+                );
                 const isOverdue = daysSinceSubmission >= 7;
 
                 return (
                   <div
                     key={issue.id}
                     className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
-                      isOverdue ? 'border-red-200 bg-red-50' : 'border-gray-200'
+                      isOverdue ? "border-red-200 bg-red-50" : "border-gray-200"
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -244,30 +278,35 @@ export default function PendingIssuesPage() {
                         <div className="flex items-start gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <h3 className="font-semibold text-gray-900">{issue.title}</h3>
+                              <h3 className="font-semibold text-gray-900">
+                                {issue.title}
+                              </h3>
                               {isOverdue && (
                                 <Badge className="bg-red-100 text-red-800">
                                   Overdue ({daysSinceSubmission} days)
                                 </Badge>
                               )}
                             </div>
-                            
+
                             <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                               {issue.description}
                             </p>
-                            
+
                             <div className="flex flex-wrap gap-2 mb-3">
-                              <Badge variant="outline" className={getStatusColor(issue.status)}>
+                              <Badge
+                                variant="outline"
+                                className={getStatusColor(issue.status)}
+                              >
                                 Pending Assessment
                               </Badge>
-                              <Badge className={getPriorityColor(issue.priority)}>
+                              <Badge
+                                className={getPriorityColor(issue.priority)}
+                              >
                                 {issue.priority} Priority
                               </Badge>
-                              <Badge variant="outline">
-                                {issue.category}
-                              </Badge>
+                              <Badge variant="outline">{issue.category}</Badge>
                             </div>
-                            
+
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
@@ -275,7 +314,7 @@ export default function PendingIssuesPage() {
                               </div>
                               <div className="flex items-center gap-1">
                                 <User className="h-4 w-4" />
-                                {issue.reporter_name || 'Anonymous'}
+                                {issue.reporter_name || "Anonymous"}
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
@@ -283,16 +322,23 @@ export default function PendingIssuesPage() {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
-                            <Link href={`/task-force-dashboard/issues/${issue.id}`}>
+                            <Link
+                              href={`/task-force-dashboard/issues/${issue.id}`}
+                            >
                               <Button size="sm" variant="outline">
                                 <Eye className="h-4 w-4 mr-1" />
                                 View
                               </Button>
                             </Link>
-                            <Link href={`/task-force-dashboard/assess/${issue.id}`}>
-                              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                            <Link
+                              href={`/task-force-dashboard/assess/${issue.id}`}
+                            >
+                              <Button
+                                size="sm"
+                                className="bg-purple-600 hover:bg-purple-700"
+                              >
                                 <MessageSquare className="h-4 w-4 mr-1" />
                                 Assess Now
                               </Button>

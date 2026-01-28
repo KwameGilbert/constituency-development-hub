@@ -26,7 +26,9 @@ export default function ProjectsPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await projectsService.getPublicProjects({ limit: 100 });
+        const response = await projectsService.getPublicProjects({
+          limit: 100,
+        });
         if (response.success) {
           setProjects(response.data.projects);
         } else {
@@ -74,11 +76,10 @@ export default function ProjectsPage() {
 
       <section className="bg-slate-50 py-16 min-h-screen">
         <div className="mx-auto max-w-6xl px-4">
-          
           {error && (
-             <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-4 mb-8 text-center">
-                {error}. Please try again later.
-             </div>
+            <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-4 mb-8 text-center">
+              {error}. Please try again later.
+            </div>
           )}
 
           {isLoading ? (
@@ -104,9 +105,9 @@ export default function ProjectsPage() {
           ) : (
             <>
               {projects.length === 0 ? (
-                 <div className="text-center py-20 text-slate-500">
-                    <p className="text-xl">No projects found.</p>
-                 </div>
+                <div className="text-center py-20 text-slate-500">
+                  <p className="text-xl">No projects found.</p>
+                </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {projects.map((project, index) => (
@@ -141,7 +142,7 @@ export default function ProjectsPage() {
                           <span>{project.sector?.name || "General"}</span>
                           <span
                             className={`rounded-full px-2 py-0.5 ${getStatusColor(
-                              project.status
+                              project.status,
                             )}`}
                           >
                             {project.status}
@@ -159,14 +160,21 @@ export default function ProjectsPage() {
                             <span className="block text-xs font-bold text-slate-400 uppercase">
                               Location
                             </span>
-                            <span className="text-slate-700 font-medium truncate block" title={project.location}>{project.location}</span>
+                            <span
+                              className="text-slate-700 font-medium truncate block"
+                              title={project.location}
+                            >
+                              {project.location}
+                            </span>
                           </p>
                           <p className="text-right">
                             <span className="block text-xs font-bold text-slate-400 uppercase">
                               Timeline
                             </span>
                             <span className="text-slate-700 font-medium">
-                               {project.end_date ? formatDate(project.end_date) : "Ongoing"}
+                              {project.end_date
+                                ? formatDate(project.end_date)
+                                : "Ongoing"}
                             </span>
                           </p>
                         </div>
@@ -178,11 +186,11 @@ export default function ProjectsPage() {
             </>
           )}
         </div>
-        
-        <ProjectDetailsModal 
-          project={selectedProject} 
-          isOpen={!!selectedProject} 
-          onClose={() => setSelectedProject(null)} 
+
+        <ProjectDetailsModal
+          project={selectedProject}
+          isOpen={!!selectedProject}
+          onClose={() => setSelectedProject(null)}
         />
       </section>
     </>

@@ -7,7 +7,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
-export default async function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditProjectPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let project = null;
   let error = null;
@@ -30,7 +34,9 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
         <AdminHeader title="Project Not Found" />
         <div className="flex-1 p-8 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-red-600 text-lg mb-4">{error || "Project not found"}</p>
+            <p className="text-red-600 text-lg mb-4">
+              {error || "Project not found"}
+            </p>
             <Link href="/admin-dashboard/projects">
               <Button>Back to Projects</Button>
             </Link>
@@ -46,7 +52,11 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href={`/admin-dashboard/projects/${project.id}`}>
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
@@ -55,7 +65,7 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
             <p className="text-slate-500">{project.title}</p>
           </div>
         </div>
-        
+
         <NewProjectForm project={project} />
       </div>
     </div>

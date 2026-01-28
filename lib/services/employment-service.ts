@@ -160,35 +160,46 @@ class EmploymentService {
     });
   }
 
-  async updateJob(id: number | string, data: UpdateJobData): Promise<JobResponse> {
+  async updateJob(
+    id: number | string,
+    data: UpdateJobData,
+  ): Promise<JobResponse> {
     return apiClient<JobResponse>(`/jobs/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
-  async deleteJob(id: number | string): Promise<{ success: boolean; message: string }> {
+  async deleteJob(
+    id: number | string,
+  ): Promise<{ success: boolean; message: string }> {
     return apiClient<{ success: boolean; message: string }>(`/jobs/${id}`, {
       method: "DELETE",
     });
   }
 
   // Applicants Management
-  async getJobApplicants(jobId: number | string, page = 1, limit = 20): Promise<ApplicantsResponse> {
-    return apiClient<ApplicantsResponse>(`/jobs/${jobId}/applicants?page=${page}&limit=${limit}`);
+  async getJobApplicants(
+    jobId: number | string,
+    page = 1,
+    limit = 20,
+  ): Promise<ApplicantsResponse> {
+    return apiClient<ApplicantsResponse>(
+      `/jobs/${jobId}/applicants?page=${page}&limit=${limit}`,
+    );
   }
 
   async updateApplicantStatus(
     jobId: number | string,
     applicantId: number | string,
-    status: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted"
+    status: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted",
   ): Promise<{ success: boolean; message: string }> {
     return apiClient<{ success: boolean; message: string }>(
       `/jobs/${jobId}/applicants/${applicantId}`,
       {
         method: "PUT",
         body: JSON.stringify({ status }),
-      }
+      },
     );
   }
 }

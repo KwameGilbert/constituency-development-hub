@@ -8,7 +8,7 @@ export interface Sector {
   icon: string | null;
   color: string | null;
   display_order: number;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   projects_count?: number;
   created_at?: string;
   updated_at?: string;
@@ -20,7 +20,7 @@ export interface CreateSectorRequest {
   icon?: string;
   color?: string;
   display_order?: number;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
 }
 
 export interface UpdateSectorRequest {
@@ -30,7 +30,7 @@ export interface UpdateSectorRequest {
   icon?: string;
   color?: string;
   display_order?: number;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
 }
 
 export interface SectorsListResponse {
@@ -52,51 +52,64 @@ export interface SectorResponse {
 export const sectorsService = {
   // Get all sectors (Public view)
   getSectors: async (): Promise<SectorsListResponse> => {
-    return apiClient<SectorsListResponse>('/sectors', {
-      method: 'GET',
+    return apiClient<SectorsListResponse>("/sectors", {
+      method: "GET",
     });
   },
 
   // Get single sector
   getSector: async (id: number): Promise<SectorResponse> => {
     return apiClient<SectorResponse>(`/admin/sectors/${id}`, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Create new sector
   createSector: async (data: CreateSectorRequest): Promise<SectorResponse> => {
-    return apiClient<SectorResponse>('/admin/sectors', {
-      method: 'POST',
+    return apiClient<SectorResponse>("/admin/sectors", {
+      method: "POST",
       body: JSON.stringify(data),
       requiresAuth: true,
     });
   },
 
   // Update sector
-  updateSector: async (id: number, data: UpdateSectorRequest): Promise<SectorResponse> => {
+  updateSector: async (
+    id: number,
+    data: UpdateSectorRequest,
+  ): Promise<SectorResponse> => {
     return apiClient<SectorResponse>(`/admin/sectors/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
     });
   },
 
   // Delete sector
-  deleteSector: async (id: number): Promise<{ success: boolean; message: string }> => {
-    return apiClient<{ success: boolean; message: string }>(`/admin/sectors/${id}`, {
-      method: 'DELETE',
-      requiresAuth: true,
-    });
+  deleteSector: async (
+    id: number,
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/sectors/${id}`,
+      {
+        method: "DELETE",
+        requiresAuth: true,
+      },
+    );
   },
 
   // Reorder sectors
-  reorderSectors: async (orderedIds: number[]): Promise<{ success: boolean; message: string }> => {
-    return apiClient<{ success: boolean; message: string }>('/admin/sectors/reorder', {
-      method: 'PUT',
-      body: JSON.stringify({ order: orderedIds }),
-      requiresAuth: true,
-    });
+  reorderSectors: async (
+    orderedIds: number[],
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient<{ success: boolean; message: string }>(
+      "/admin/sectors/reorder",
+      {
+        method: "PUT",
+        body: JSON.stringify({ order: orderedIds }),
+        requiresAuth: true,
+      },
+    );
   },
 };

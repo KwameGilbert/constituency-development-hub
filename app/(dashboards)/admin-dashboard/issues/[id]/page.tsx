@@ -1,7 +1,14 @@
 import React from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { issuesService, Issue } from "@/lib/services/issues-service";
-import { ArrowLeft, MapPin, Calendar, User, Phone, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  User,
+  Phone,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
@@ -9,7 +16,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IssueActions } from "@/components/admin-dashboard/issues/IssueActions";
 
-export default async function IssueDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function IssueDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let issue: Issue | null = null;
 
@@ -67,7 +78,9 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
           </Link>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-slate-900">{issue.title}</h1>
+              <h1 className="text-2xl font-bold text-slate-900">
+                {issue.title}
+              </h1>
               <Badge className={`${getStatusColor(issue.status)} border-0`}>
                 {issue.status.replace(/_/g, " ")}
               </Badge>
@@ -75,7 +88,9 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
                 {issue.priority}
               </Badge>
             </div>
-            <p className="text-slate-500 text-sm">Case ID: {issue.case_id || `#${issue.id}`}</p>
+            <p className="text-slate-500 text-sm">
+              Case ID: {issue.case_id || `#${issue.id}`}
+            </p>
           </div>
         </div>
 
@@ -90,8 +105,12 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
           <CardContent className="space-y-6">
             {/* Description */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Description</h3>
-              <p className="text-gray-600 whitespace-pre-wrap">{issue.description}</p>
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                Description
+              </h3>
+              <p className="text-gray-600 whitespace-pre-wrap">
+                {issue.description}
+              </p>
             </div>
 
             {/* Metadata Grid */}
@@ -112,7 +131,9 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
               <div className="flex items-start gap-3">
                 <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Date Submitted</p>
+                  <p className="text-sm font-medium text-gray-700">
+                    Date Submitted
+                  </p>
                   <p className="text-gray-600">
                     {new Date(issue.created_at).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -127,7 +148,9 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
                 <User className="h-5 w-5 text-gray-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Reporter</p>
-                  <p className="text-gray-600">{issue.reporter_name || "Anonymous"}</p>
+                  <p className="text-gray-600">
+                    {issue.reporter_name || "Anonymous"}
+                  </p>
                 </div>
               </div>
 
@@ -135,7 +158,9 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
                 <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-700">Contact</p>
-                  <p className="text-gray-600">{issue.reporter_phone || "N/A"}</p>
+                  <p className="text-gray-600">
+                    {issue.reporter_phone || "N/A"}
+                  </p>
                 </div>
               </div>
 
@@ -151,7 +176,9 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
             {/* Images */}
             {issue.images && issue.images.length > 0 && (
               <div className="pt-4 border-t">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">Images</h3>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Images
+                </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {issue.images.map((image, index) => (
                     <div
@@ -163,7 +190,8 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
                         alt={`Issue image ${index + 1}`}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/400x300?text=Image+Not+Available";
+                          e.currentTarget.src =
+                            "https://via.placeholder.com/400x300?text=Image+Not+Available";
                         }}
                       />
                     </div>
@@ -182,14 +210,18 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Allocated Budget</p>
+                <p className="text-sm font-medium text-gray-700 mb-1">
+                  Allocated Budget
+                </p>
                 <p className="text-2xl font-bold text-green-600">
                   GHS {issue.allocated_budget.toLocaleString()}
                 </p>
               </div>
 
               <div className="pt-4 border-t">
-                <p className="text-sm font-medium text-gray-700 mb-3">Resources</p>
+                <p className="text-sm font-medium text-gray-700 mb-3">
+                  Resources
+                </p>
                 <div className="space-y-2">
                   {issue.allocated_resources.map((resource, index) => (
                     <div
@@ -197,10 +229,16 @@ export default async function IssueDetailPage({ params }: { params: Promise<{ id
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                     >
                       <div>
-                        <p className="font-medium text-gray-900">{resource.item}</p>
-                        <p className="text-sm text-gray-500 capitalize">{resource.type}</p>
+                        <p className="font-medium text-gray-900">
+                          {resource.item}
+                        </p>
+                        <p className="text-sm text-gray-500 capitalize">
+                          {resource.type}
+                        </p>
                       </div>
-                      <Badge variant="secondary">Qty: {resource.quantity}</Badge>
+                      <Badge variant="secondary">
+                        Qty: {resource.quantity}
+                      </Badge>
                     </div>
                   ))}
                 </div>

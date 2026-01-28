@@ -15,7 +15,7 @@ export const Header = () => {
       <div
         className={cn(
           " items-center justify-between gap-4",
-          isMobile ? "hidden" : "flex px-8 h-12 py-2 bg-red-600"
+          isMobile ? "hidden" : "flex px-8 h-12 py-2 bg-red-600",
         )}
       >
         <div className="text-white font-semibold text-lg">
@@ -33,7 +33,7 @@ export const Header = () => {
       <div
         className={cn(
           "relative items-center justify-between",
-          isMobile ? "flex px-8 h-12 py-2 bg-red-600" : "hidden"
+          isMobile ? "flex px-8 h-12 py-2 bg-red-600" : "hidden",
         )}
       >
         <div className="font-bold text-2xl">Logo here</div>

@@ -10,7 +10,10 @@ interface ProtectedRouteProps {
   allowedRoles?: string[];
 }
 
-export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
+export function ProtectedRoute({
+  children,
+  allowedRoles,
+}: ProtectedRouteProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [isChecking, setIsChecking] = useState(true);
@@ -22,12 +25,19 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
       const token = authService.getToken();
       const user = authService.getCurrentUser();
 
-      console.log("ProtectedRoute check - Token:", !!token, "User:", user?.role);
+      console.log(
+        "ProtectedRoute check - Token:",
+        !!token,
+        "User:",
+        user?.role,
+      );
 
       // 1. Check if authenticated and token is valid
       if (!token || !user || authService.isTokenExpired(token)) {
-        console.log("Not authenticated or token expired, redirecting to login...");
-        
+        console.log(
+          "Not authenticated or token expired, redirecting to login...",
+        );
+
         // Clear any stale auth data
         authService.logout();
 
@@ -39,8 +49,10 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
       // 2. Check role permissions if permitted roles are defined
       if (allowedRoles && allowedRoles.length > 0) {
         if (!allowedRoles.includes(user.role)) {
-          console.log(`User role ${user.role} not allowed for ${allowedRoles.join(', ')}, redirecting to login...`);
-          
+          console.log(
+            `User role ${user.role} not allowed for ${allowedRoles.join(", ")}, redirecting to login...`,
+          );
+
           // Clear auth so user can log in with correct account
           authService.logout();
 
@@ -75,4 +87,3 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   return <>{children}</>;
 }
-

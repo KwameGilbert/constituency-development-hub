@@ -7,7 +7,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
-export default async function EditAnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditAnnouncementPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let announcement = null;
 
@@ -36,7 +40,9 @@ export default async function EditAnnouncementPage({ params }: { params: Promise
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Edit Announcement</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Edit Announcement
+            </h1>
             <p className="text-slate-500">{announcement.title}</p>
           </div>
         </div>

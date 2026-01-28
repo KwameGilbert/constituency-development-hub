@@ -1,7 +1,19 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { Plus, Eye, Edit, Trash2, Loader2, Search, X, ImageIcon, Calendar, MapPin, Images } from "lucide-react";
+import {
+  Plus,
+  Eye,
+  Edit,
+  Trash2,
+  Loader2,
+  Search,
+  X,
+  ImageIcon,
+  Calendar,
+  MapPin,
+  Images,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -68,10 +80,11 @@ export default function GalleryList() {
   };
 
   const filteredGalleries = useMemo(() => {
-    return galleries.filter((gallery) =>
-      gallery.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      gallery.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      gallery.location.toLowerCase().includes(searchQuery.toLowerCase())
+    return galleries.filter(
+      (gallery) =>
+        gallery.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        gallery.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        gallery.location.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [galleries, searchQuery]);
 
@@ -90,9 +103,15 @@ export default function GalleryList() {
         <div className="h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
           <X className="h-6 w-6 text-red-600" />
         </div>
-        <h3 className="text-lg font-semibold text-red-900 mb-1">Error Loading Galleries</h3>
+        <h3 className="text-lg font-semibold text-red-900 mb-1">
+          Error Loading Galleries
+        </h3>
         <p className="text-red-600 max-w-md mb-4">{error}</p>
-        <Button onClick={fetchGalleries} variant="outline" className="border-red-200 hover:bg-red-50">
+        <Button
+          onClick={fetchGalleries}
+          variant="outline"
+          className="border-red-200 hover:bg-red-50"
+        >
           Try Again
         </Button>
       </div>
@@ -145,12 +164,22 @@ export default function GalleryList() {
             <tbody className="divide-y divide-slate-100">
               {filteredGalleries.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-slate-500"
+                  >
                     <div className="flex flex-col items-center gap-2">
                       <ImageIcon className="h-10 w-10 text-slate-200" />
-                      <p>{searchQuery ? "No albums match your search" : "No gallery albums found"}</p>
+                      <p>
+                        {searchQuery
+                          ? "No albums match your search"
+                          : "No gallery albums found"}
+                      </p>
                       {!searchQuery && (
-                        <Link href="/web-admin-dashboard/gallery/new" className="text-emerald-600 hover:underline font-medium mt-2">
+                        <Link
+                          href="/web-admin-dashboard/gallery/new"
+                          className="text-emerald-600 hover:underline font-medium mt-2"
+                        >
                           Create your first gallery album
                         </Link>
                       )}
@@ -159,14 +188,17 @@ export default function GalleryList() {
                 </tr>
               ) : (
                 filteredGalleries.map((gallery) => (
-                  <tr key={gallery.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr
+                    key={gallery.id}
+                    className="hover:bg-slate-50/50 transition-colors"
+                  >
                     <td className="px-6 py-4">
                       <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center">
                         {gallery.cover_image ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
-                          <img 
-                            src={getImageUrl(gallery.cover_image)} 
-                            alt="" 
+                          <img
+                            src={getImageUrl(gallery.cover_image)}
+                            alt=""
                             className="h-full w-full object-cover"
                           />
                         ) : (
@@ -176,9 +208,11 @@ export default function GalleryList() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-medium text-slate-900 line-clamp-1">{gallery.title}</span>
+                        <span className="font-medium text-slate-900 line-clamp-1">
+                          {gallery.title}
+                        </span>
                         <span className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                           <MapPin className="h-3 w-3" /> {gallery.location}
+                          <MapPin className="h-3 w-3" /> {gallery.location}
                         </span>
                       </div>
                     </td>
@@ -200,30 +234,46 @@ export default function GalleryList() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        gallery.status === 'active' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-slate-100 text-slate-600'
-                      }`}>
-                        {gallery.status === 'active' ? 'Published' : 'Draft'}
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                          gallery.status === "active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        {gallery.status === "active" ? "Published" : "Draft"}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Link href={`/gallery`} target="_blank">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-emerald-600">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-400 hover:text-emerald-600"
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Link href={`/web-admin-dashboard/gallery/${gallery.id}/edit`}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-blue-600">
+                        <Link
+                          href={`/web-admin-dashboard/gallery/${gallery.id}/edit`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-400 hover:text-blue-600"
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                         </Link>
-                        
+
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-400 hover:text-red-600"
+                            >
                               {isDeleting === gallery.id ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
                               ) : (
@@ -233,9 +283,13 @@ export default function GalleryList() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
                               <AlertDialogDescription>
-                                This will permanently delete the gallery album &quot;{gallery.title}&quot; and all its associated photos from the server.
+                                This will permanently delete the gallery album
+                                &quot;{gallery.title}&quot; and all its
+                                associated photos from the server.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

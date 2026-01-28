@@ -270,73 +270,89 @@ export type DashboardStatsResponse = AdminStatsResponse;
 export const dashboardService = {
   // Admin dashboard stats
   getAdminStats: async (): Promise<AdminStatsResponse> => {
-    return apiClient<AdminStatsResponse>('/admin/dashboard/stats', {
-      method: 'GET',
+    return apiClient<AdminStatsResponse>("/admin/dashboard/stats", {
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Officer dashboard stats
   getOfficerStats: async (): Promise<OfficerStatsResponse> => {
-    return apiClient<OfficerStatsResponse>('/officer/dashboard/stats', {
-      method: 'GET',
+    return apiClient<OfficerStatsResponse>("/officer/dashboard/stats", {
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Agent dashboard stats
   getAgentStats: async (): Promise<AgentStatsResponse> => {
-    return apiClient<AgentStatsResponse>('/agent/dashboard/stats', {
-      method: 'GET',
+    return apiClient<AgentStatsResponse>("/agent/dashboard/stats", {
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Task Force dashboard stats
   getTaskForceStats: async (): Promise<TaskForceStatsResponse> => {
-    return apiClient<TaskForceStatsResponse>('/task-force/dashboard/stats', {
-      method: 'GET',
+    return apiClient<TaskForceStatsResponse>("/task-force/dashboard/stats", {
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Admin charts data
   getAdminCharts: async (): Promise<AdminChartsResponse> => {
-    return apiClient<AdminChartsResponse>('/admin/data/analytics/charts', {
-      method: 'GET',
+    return apiClient<AdminChartsResponse>("/admin/data/analytics/charts", {
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Recent issues data
-  getRecentIssues: async (limit: number = 10): Promise<RecentIssuesResponse> => {
-    return apiClient<RecentIssuesResponse>(`/admin/data/recent-issues?limit=${limit}`, {
-      method: 'GET',
-      requiresAuth: true,
-    });
+  getRecentIssues: async (
+    limit: number = 10,
+  ): Promise<RecentIssuesResponse> => {
+    return apiClient<RecentIssuesResponse>(
+      `/admin/data/recent-issues?limit=${limit}`,
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 
   // Recent activity (audit logs)
-  getRecentActivity: async (limit: number = 10): Promise<RecentActivityResponse> => {
-    return apiClient<RecentActivityResponse>(`/admin/data/audit-logs?limit=${limit}`, {
-      method: 'GET',
-      requiresAuth: true,
-    });
+  getRecentActivity: async (
+    limit: number = 10,
+  ): Promise<RecentActivityResponse> => {
+    return apiClient<RecentActivityResponse>(
+      `/admin/data/audit-logs?limit=${limit}`,
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 
   // Analytics metrics
   getAnalyticsMetrics: async (): Promise<AnalyticsMetricsResponse> => {
-    return apiClient<AnalyticsMetricsResponse>('/admin/data/analytics/metrics', {
-      method: 'GET',
-      requiresAuth: true,
-    });
+    return apiClient<AnalyticsMetricsResponse>(
+      "/admin/data/analytics/metrics",
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 
   // Analytics insights
   getAnalyticsInsights: async (): Promise<AnalyticsInsightsResponse> => {
-    return apiClient<AnalyticsInsightsResponse>('/admin/data/analytics/insights', {
-      method: 'GET',
-      requiresAuth: true,
-    });
+    return apiClient<AnalyticsInsightsResponse>(
+      "/admin/data/analytics/insights",
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 };

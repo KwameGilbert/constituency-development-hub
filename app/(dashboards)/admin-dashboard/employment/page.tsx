@@ -6,7 +6,10 @@ import { JobsHeader } from "@/components/admin-dashboard/employment/JobsHeader";
 import { JobsTable } from "@/components/admin-dashboard/employment/JobsTable";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import { employmentService, JobPosting } from "@/lib/services/employment-service";
+import {
+  employmentService,
+  JobPosting,
+} from "@/lib/services/employment-service";
 
 interface PaginationType {
   page: number;
@@ -17,7 +20,9 @@ interface PaginationType {
 
 export default function JobsListPage() {
   const [jobs, setJobs] = useState<JobPosting[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | undefined>(undefined);
+  const [pagination, setPagination] = useState<PaginationType | undefined>(
+    undefined,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,8 +35,8 @@ export default function JobsListPage() {
         setPagination(response.data.pagination);
         setError(null);
       } catch (err) {
-        console.error('Failed to load jobs data:', err);
-        setError('Failed to load jobs data');
+        console.error("Failed to load jobs data:", err);
+        setError("Failed to load jobs data");
       } finally {
         setLoading(false);
       }
@@ -51,7 +56,10 @@ export default function JobsListPage() {
           <Card className="p-6">
             <div className="space-y-4">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="space-y-2">
                     <Skeleton className="h-5 w-64" />
                     <Skeleton className="h-4 w-48" />
@@ -71,7 +79,9 @@ export default function JobsListPage() {
         {error && !loading && (
           <Card className="p-12 text-center">
             <p className="text-red-600 text-lg font-medium">{error}</p>
-            <p className="text-slate-500 mt-2">Please try refreshing the page</p>
+            <p className="text-slate-500 mt-2">
+              Please try refreshing the page
+            </p>
           </Card>
         )}
 

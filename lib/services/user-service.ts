@@ -5,8 +5,8 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
-  role: 'web_admin' | 'officer' | 'agent' | 'task_force' | 'admin';
-  status: 'active' | 'inactive';
+  role: "web_admin" | "officer" | "agent" | "task_force" | "admin";
+  status: "active" | "inactive";
   location?: string;
   bio?: string;
   created_at?: string;
@@ -19,9 +19,9 @@ export interface CreateUserRequest {
   email: string;
   phone: string;
   password: string;
-  role: User['role'];
+  role: User["role"];
   location: string;
-  status?: User['status'];
+  status?: User["status"];
 }
 
 export interface UpdateUserRequest {
@@ -32,11 +32,11 @@ export interface UpdateUserRequest {
 }
 
 export interface UpdateUserRoleRequest {
-  role: User['role'];
+  role: User["role"];
 }
 
 export interface UpdateUserStatusRequest {
-  status: User['status'];
+  status: User["status"];
   reason?: string;
 }
 
@@ -93,17 +93,17 @@ export const userService = {
     search?: string;
   }): Promise<UsersListResponse> => {
     const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.role) queryParams.append('role', params.role);
-    if (params?.status) queryParams.append('status', params.status);
-    if (params?.search) queryParams.append('search', params.search);
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.role) queryParams.append("role", params.role);
+    if (params?.status) queryParams.append("status", params.status);
+    if (params?.search) queryParams.append("search", params.search);
 
     const queryString = queryParams.toString();
-    const url = `/admin/users${queryString ? `?${queryString}` : ''}`;
+    const url = `/admin/users${queryString ? `?${queryString}` : ""}`;
 
     return apiClient<UsersListResponse>(url, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
@@ -111,42 +111,53 @@ export const userService = {
   // Get user by ID
   getUserById: async (id: number): Promise<UserResponse> => {
     return apiClient<UserResponse>(`/admin/users/${id}`, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Create new user
-  createUser: async (userData: CreateUserRequest): Promise<CreateUserResponse> => {
-    return apiClient<CreateUserResponse>('/admin/users', {
-      method: 'POST',
+  createUser: async (
+    userData: CreateUserRequest,
+  ): Promise<CreateUserResponse> => {
+    return apiClient<CreateUserResponse>("/admin/users", {
+      method: "POST",
       body: JSON.stringify(userData),
       requiresAuth: true,
     });
   },
 
   // Update user details
-  updateUser: async (id: number, userData: UpdateUserRequest): Promise<UpdateUserResponse> => {
+  updateUser: async (
+    id: number,
+    userData: UpdateUserRequest,
+  ): Promise<UpdateUserResponse> => {
     return apiClient<UpdateUserResponse>(`/admin/users/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(userData),
       requiresAuth: true,
     });
   },
 
   // Update user role
-  updateUserRole: async (id: number, roleData: UpdateUserRoleRequest): Promise<UpdateUserResponse> => {
+  updateUserRole: async (
+    id: number,
+    roleData: UpdateUserRoleRequest,
+  ): Promise<UpdateUserResponse> => {
     return apiClient<UpdateUserResponse>(`/admin/users/${id}/role`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(roleData),
       requiresAuth: true,
     });
   },
 
   // Update user status
-  updateUserStatus: async (id: number, statusData: UpdateUserStatusRequest): Promise<UpdateUserResponse> => {
+  updateUserStatus: async (
+    id: number,
+    statusData: UpdateUserStatusRequest,
+  ): Promise<UpdateUserResponse> => {
     return apiClient<UpdateUserResponse>(`/admin/users/${id}/status`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(statusData),
       requiresAuth: true,
     });
@@ -155,7 +166,7 @@ export const userService = {
   // Delete user
   deleteUser: async (id: number): Promise<DeleteUserResponse> => {
     return apiClient<DeleteUserResponse>(`/admin/users/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       requiresAuth: true,
     });
   },

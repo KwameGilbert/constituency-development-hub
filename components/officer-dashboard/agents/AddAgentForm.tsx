@@ -76,7 +76,7 @@ export function AddAgentForm() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [locations, setLocations] = useState<Location[]>([]);
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -124,7 +124,7 @@ export function AddAgentForm() {
       if (formData.assigned_communities)
         apiFormData.append(
           "assigned_communities",
-          formData.assigned_communities
+          formData.assigned_communities,
         );
       if (formData.id_type) apiFormData.append("id_type", formData.id_type);
       if (formData.id_number)
@@ -133,24 +133,24 @@ export function AddAgentForm() {
       if (formData.emergency_contact_name)
         apiFormData.append(
           "emergency_contact_name",
-          formData.emergency_contact_name
+          formData.emergency_contact_name,
         );
       if (formData.emergency_contact_phone)
         apiFormData.append(
           "emergency_contact_phone",
-          formData.emergency_contact_phone
+          formData.emergency_contact_phone,
         );
       apiFormData.append(
         "can_submit_reports",
-        formData.can_submit_reports ? "1" : "0"
+        formData.can_submit_reports ? "1" : "0",
       );
       apiFormData.append(
         "can_collect_data",
-        formData.can_collect_data ? "1" : "0"
+        formData.can_collect_data ? "1" : "0",
       );
       apiFormData.append(
         "can_register_residents",
-        formData.can_register_residents ? "1" : "0"
+        formData.can_register_residents ? "1" : "0",
       );
 
       const response = await agentService.createAgent(apiFormData);
@@ -160,7 +160,7 @@ export function AddAgentForm() {
           setGeneratedPassword(response.data.generated_password);
           toast.success(
             `Agent created! Generated password: ${response.data.generated_password}`,
-            { duration: 10000 }
+            { duration: 10000 },
           );
         } else {
           toast.success("Agent created successfully");

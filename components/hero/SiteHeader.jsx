@@ -36,7 +36,14 @@ function SiteHeader() {
     <header className="bg-red-700 text-white sticky top-0 z-40 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <Image src={coatOfArmsSrc} alt="" width={40} height={40} className="w-10 h-10 object-contain" unoptimized />
+          <Image
+            src={coatOfArmsSrc}
+            alt=""
+            width={40}
+            height={40}
+            className="w-10 h-10 object-contain"
+            unoptimized
+          />
           <div className="font-semibold text-sm sm:text-lg leading-tight">
             Hon. Kofi Benteh Afful
             <span className="block text-white/70 text-xs">
@@ -68,7 +75,7 @@ function SiteHeader() {
           className="md:hidden rounded-lg border border-white/30 p-2"
           onClick={() => setOpen((prev) => !prev)}
         >
-         <Menu className="h-6 w-6" />
+          <Menu className="h-6 w-6" />
         </button>
       </div>
 

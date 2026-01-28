@@ -1,6 +1,12 @@
 import { apiClient } from "@/lib/api-client";
 
-export type GalleryCategory = "All" | "Events" | "Programs" | "Community" | "Infrastructure" | "General";
+export type GalleryCategory =
+  | "All"
+  | "Events"
+  | "Programs"
+  | "Community"
+  | "Infrastructure"
+  | "General";
 
 export interface GalleryImage {
   url: string;
@@ -17,7 +23,7 @@ export interface Gallery {
   location: string;
   cover_image: string;
   images: GalleryImage[];
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   created_at?: string;
   updated_at?: string;
 }
@@ -91,27 +97,32 @@ export const galleryService = {
    */
   createGallery: async (data: CreateGalleryPayload) => {
     const formData = new FormData();
-    
+
     // Add simple fields
     Object.entries(data).forEach(([key, value]) => {
-      if (key !== 'cover_image' && key !== 'gallery_images' && key !== 'gallery_captions' && value !== undefined) {
+      if (
+        key !== "cover_image" &&
+        key !== "gallery_images" &&
+        key !== "gallery_captions" &&
+        value !== undefined
+      ) {
         formData.append(key, String(value));
       }
     });
 
     // Add cover image
-    formData.append('cover_image', data.cover_image);
+    formData.append("cover_image", data.cover_image);
 
     // Add gallery images and captions
     if (data.gallery_images) {
       data.gallery_images.forEach((file) => {
-        formData.append('gallery_images[]', file);
+        formData.append("gallery_images[]", file);
       });
     }
 
     if (data.gallery_captions) {
       data.gallery_captions.forEach((caption) => {
-        formData.append('gallery_captions[]', caption);
+        formData.append("gallery_captions[]", caption);
       });
     }
 
@@ -132,11 +143,11 @@ export const galleryService = {
     // Add simple fields
     Object.entries(data).forEach(([key, value]) => {
       if (
-        key !== 'cover_image' && 
-        key !== 'gallery_images' && 
-        key !== 'new_gallery_captions' && 
-        key !== 'existing_images' && 
-        key !== '_method' && 
+        key !== "cover_image" &&
+        key !== "gallery_images" &&
+        key !== "new_gallery_captions" &&
+        key !== "existing_images" &&
+        key !== "_method" &&
         value !== undefined
       ) {
         formData.append(key, String(value));
@@ -145,25 +156,25 @@ export const galleryService = {
 
     // Add cover image
     if (data.cover_image) {
-      formData.append('cover_image', data.cover_image);
+      formData.append("cover_image", data.cover_image);
     }
 
     // Add new gallery images and captions
     if (data.gallery_images) {
       data.gallery_images.forEach((file) => {
-        formData.append('gallery_images[]', file);
+        formData.append("gallery_images[]", file);
       });
     }
 
     if (data.new_gallery_captions) {
       data.new_gallery_captions.forEach((caption) => {
-        formData.append('new_gallery_captions[]', caption);
+        formData.append("new_gallery_captions[]", caption);
       });
     }
 
     // Add existing images to keep
     if (data.existing_images) {
-      formData.append('existing_images', JSON.stringify(data.existing_images));
+      formData.append("existing_images", JSON.stringify(data.existing_images));
     }
 
     return apiClient<GalleryResponse>(`/admin/gallery/${id}`, {
@@ -177,8 +188,11 @@ export const galleryService = {
    * Delete gallery
    */
   deleteGallery: async (id: number) => {
-    return apiClient<{ success: boolean; message: string }>(`/admin/gallery/${id}`, {
-      method: "DELETE",
-    });
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/gallery/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
   },
 };

@@ -39,24 +39,27 @@ export function AdminCharts() {
     const fetchChartData = async () => {
       try {
         const response = await dashboardService.getAdminCharts();
-        
+
         if (response.success && response.data?.charts) {
           // Transform API response to component format
           const transformedData: ChartData = {
-            issuesStatusDistribution: response.data.charts.issueStatusDistribution || [],
-            monthlyTrends: (response.data.charts.monthlyTrends || []).map(item => ({
-              name: item.name,
-              total: item.issues,
-              resolved: item.resolved,
-            })),
+            issuesStatusDistribution:
+              response.data.charts.issueStatusDistribution || [],
+            monthlyTrends: (response.data.charts.monthlyTrends || []).map(
+              (item) => ({
+                name: item.name,
+                total: item.issues,
+                resolved: item.resolved,
+              }),
+            ),
           };
           setChartData(transformedData);
         } else {
-          setError(response.message || 'Failed to load chart data');
+          setError(response.message || "Failed to load chart data");
         }
       } catch (err) {
-        setError('Failed to load chart data');
-        console.error('Error fetching chart data:', err);
+        setError("Failed to load chart data");
+        console.error("Error fetching chart data:", err);
       } finally {
         setLoading(false);
       }
@@ -89,7 +92,7 @@ export function AdminCharts() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center text-red-600">
-              {error || 'No chart data available'}
+              {error || "No chart data available"}
             </div>
           </CardContent>
         </Card>
@@ -102,8 +105,12 @@ export function AdminCharts() {
       {/* Issues Status Distribution */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-lg font-semibold text-gray-800">Issues Status Distribution</CardTitle>
-          <a href="#" className="text-sm text-blue-600 hover:underline">View All →</a>
+          <CardTitle className="text-lg font-semibold text-gray-800">
+            Issues Status Distribution
+          </CardTitle>
+          <a href="#" className="text-sm text-blue-600 hover:underline">
+            View All →
+          </a>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] w-full">
@@ -124,14 +131,20 @@ export function AdminCharts() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} 
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "none",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  }}
                 />
-                <Legend 
-                    verticalAlign="bottom" 
-                    height={36} 
-                    iconType="circle"
-                    formatter={(value) => <span className="text-xs text-gray-600 ml-1">{value}</span>}
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  iconType="circle"
+                  formatter={(value) => (
+                    <span className="text-xs text-gray-600 ml-1">{value}</span>
+                  )}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -142,39 +155,64 @@ export function AdminCharts() {
       {/* Monthly Trends */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg font-semibold text-gray-800">Monthly Trends</CardTitle>
-            <a href="#" className="text-sm text-blue-600 hover:underline flex items-center">
-                Detailed Analytics 
-            </a>
+          <CardTitle className="text-lg font-semibold text-gray-800">
+            Monthly Trends
+          </CardTitle>
+          <a
+            href="#"
+            className="text-sm text-blue-600 hover:underline flex items-center"
+          >
+            Detailed Analytics
+          </a>
         </CardHeader>
         <CardContent>
-            <div className="h-[300px] w-full bg-white rounded-lg">
-                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                        data={chartData.monthlyTrends}
-                        margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                        <XAxis 
-                            dataKey="name" 
-                            axisLine={false} 
-                            tickLine={false} 
-                            tick={{ fill: '#6b7280', fontSize: 12 }}
-                            dy={10}
-                        />
-                        <YAxis 
-                            axisLine={false} 
-                            tickLine={false} 
-                            tick={{ fill: '#6b7280', fontSize: 12 }}
-                        />
-                        <Tooltip />
-                        <Legend verticalAlign="top" height={36} iconType="circle" />
-                        <Line type="monotone" dataKey="total" name="Total Issues" stroke="#ef4444" strokeWidth={2} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6 }} />
-                        <Line type="monotone" dataKey="resolved" name="Resolved Issues" stroke="#10b981" strokeWidth={2} dot={{ r: 4, strokeWidth: 2, fill: '#fff' }} activeDot={{ r: 6 }} />
-                        {/* Area for fill effect if desired, but Line matches image better */}
-                    </LineChart>
-                 </ResponsiveContainer>
-            </div>
+          <div className="h-[300px] w-full bg-white rounded-lg">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={chartData.monthlyTrends}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f0f0f0"
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#6b7280", fontSize: 12 }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#6b7280", fontSize: 12 }}
+                />
+                <Tooltip />
+                <Legend verticalAlign="top" height={36} iconType="circle" />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  name="Total Issues"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="resolved"
+                  name="Resolved Issues"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                  activeDot={{ r: 6 }}
+                />
+                {/* Area for fill effect if desired, but Line matches image better */}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     </div>

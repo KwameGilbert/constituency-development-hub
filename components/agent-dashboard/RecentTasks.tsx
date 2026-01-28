@@ -18,31 +18,40 @@ import { FileX } from "lucide-react";
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
-  const statusLower = status?.toLowerCase() || '';
-  
+  const statusLower = status?.toLowerCase() || "";
+
   const statusConfig: Record<string, { className: string; label: string }> = {
     submitted: { className: "bg-blue-100 text-blue-700", label: "Submitted" },
     pending: { className: "bg-yellow-100 text-yellow-700", label: "Pending" },
-    under_officer_review: { className: "bg-orange-100 text-orange-700", label: "Under Review" },
-    forwarded_to_admin: { className: "bg-indigo-100 text-indigo-700", label: "Forwarded" },
+    under_officer_review: {
+      className: "bg-orange-100 text-orange-700",
+      label: "Under Review",
+    },
+    forwarded_to_admin: {
+      className: "bg-indigo-100 text-indigo-700",
+      label: "Forwarded",
+    },
     approved: { className: "bg-indigo-100 text-indigo-700", label: "Approved" },
-    assigned_to_task_force: { className: "bg-purple-100 text-purple-700", label: "Assigned" },
-    in_progress: { className: "bg-purple-100 text-purple-700", label: "In Progress" },
+    assigned_to_task_force: {
+      className: "bg-purple-100 text-purple-700",
+      label: "Assigned",
+    },
+    in_progress: {
+      className: "bg-purple-100 text-purple-700",
+      label: "In Progress",
+    },
     resolved: { className: "bg-green-100 text-green-700", label: "Resolved" },
     closed: { className: "bg-gray-100 text-gray-700", label: "Closed" },
     rejected: { className: "bg-red-100 text-red-700", label: "Rejected" },
   };
 
-  const config = statusConfig[statusLower] || { 
-    className: "bg-gray-100 text-gray-700", 
-    label: status || "Unknown" 
+  const config = statusConfig[statusLower] || {
+    className: "bg-gray-100 text-gray-700",
+    label: status || "Unknown",
   };
 
   return (
-    <Badge 
-      variant="outline" 
-      className={`${config.className} border-none`}
-    >
+    <Badge variant="outline" className={`${config.className} border-none`}>
       {config.label}
     </Badge>
   );
@@ -53,7 +62,10 @@ export interface RecentTasksProps {
   loading?: boolean;
 }
 
-export function RecentTasks({ reports: providedReports, loading: providedLoading }: RecentTasksProps) {
+export function RecentTasks({
+  reports: providedReports,
+  loading: providedLoading,
+}: RecentTasksProps) {
   const [tasks, setTasks] = useState<AgentReport[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,7 +80,7 @@ export function RecentTasks({ reports: providedReports, loading: providedLoading
       try {
         setLoading(true);
         const response = await agentService.getMyReports();
-        
+
         if (response.success && response.data?.reports) {
           // Get the 5 most recent reports
           const recentReports = response.data.reports.slice(0, 5);
@@ -123,8 +135,8 @@ export function RecentTasks({ reports: providedReports, loading: providedLoading
     <Card className="shadow-sm border-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-medium">Recent Activity</CardTitle>
-        <Link 
-          href="/agents-dashboard/issues" 
+        <Link
+          href="/agents-dashboard/issues"
           className="text-sm text-blue-600 hover:underline"
         >
           View all →
@@ -160,9 +172,7 @@ export function RecentTasks({ reports: providedReports, loading: providedLoading
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    {getStatusBadge(task.status)}
-                  </TableCell>
+                  <TableCell>{getStatusBadge(task.status)}</TableCell>
                   <TableCell className="text-slate-500">
                     {task.category}
                   </TableCell>
@@ -170,7 +180,7 @@ export function RecentTasks({ reports: providedReports, loading: providedLoading
                     {formatDate(task.created_at)}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Link 
+                    <Link
                       href={`/agents-dashboard/issues/${task.id}`}
                       className="text-sm text-blue-600 hover:underline"
                     >

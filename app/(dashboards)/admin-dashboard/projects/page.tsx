@@ -25,7 +25,7 @@ export default async function ProjectsListPage() {
       <AdminHeader title="Projects" />
       <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
         <ProjectsHeader />
-        
+
         {error ? (
           <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
             Error: {error}

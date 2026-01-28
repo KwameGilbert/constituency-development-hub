@@ -32,7 +32,11 @@ interface ActionModalsProps {
   onClose: () => void;
 }
 
-export function IssueActionModals({ issueId, activeAction, onClose }: ActionModalsProps) {
+export function IssueActionModals({
+  issueId,
+  activeAction,
+  onClose,
+}: ActionModalsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -46,11 +50,15 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
   ]);
 
   // Review Assessment state
-  const [assessmentAction, setAssessmentAction] = useState<"approve" | "reject" | "revision">("approve");
+  const [assessmentAction, setAssessmentAction] = useState<
+    "approve" | "reject" | "revision"
+  >("approve");
   const [assessmentNotes, setAssessmentNotes] = useState("");
 
   // Review Resolution state
-  const [resolutionAction, setResolutionAction] = useState<"approve" | "reject">("approve");
+  const [resolutionAction, setResolutionAction] = useState<
+    "approve" | "reject"
+  >("approve");
   const [resolutionNotes, setResolutionNotes] = useState("");
 
   // Update Status state
@@ -65,7 +73,11 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
     setResources(resources.filter((_, i) => i !== index));
   }
 
-  function updateResource(index: number, field: keyof ResourceItem, value: string | number) {
+  function updateResource(
+    index: number,
+    field: keyof ResourceItem,
+    value: string | number,
+  ) {
     const updated = [...resources];
     updated[index] = { ...updated[index], [field]: value };
     setResources(updated);
@@ -79,7 +91,10 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
 
     setLoading(true);
     try {
-      const response = await issuesService.assignTaskForce(issueId, parseInt(taskForceId));
+      const response = await issuesService.assignTaskForce(
+        issueId,
+        parseInt(taskForceId),
+      );
       if (response.success) {
         toast.success("Task force assigned successfully");
         router.refresh();
@@ -134,7 +149,11 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
 
     setLoading(true);
     try {
-      const response = await issuesService.reviewAssessment(issueId, assessmentAction, assessmentNotes);
+      const response = await issuesService.reviewAssessment(
+        issueId,
+        assessmentAction,
+        assessmentNotes,
+      );
       if (response.success) {
         toast.success(`Assessment ${assessmentAction}d successfully`);
         router.refresh();
@@ -157,7 +176,11 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
 
     setLoading(true);
     try {
-      const response = await issuesService.reviewResolution(issueId, resolutionAction, resolutionNotes);
+      const response = await issuesService.reviewResolution(
+        issueId,
+        resolutionAction,
+        resolutionNotes,
+      );
       if (response.success) {
         toast.success(`Resolution ${resolutionAction}d successfully`);
         router.refresh();
@@ -180,7 +203,11 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
 
     setLoading(true);
     try {
-      const response = await issuesService.updateStatus(issueId, newStatus, statusComment);
+      const response = await issuesService.updateStatus(
+        issueId,
+        newStatus,
+        statusComment,
+      );
       if (response.success) {
         toast.success("Status updated successfully");
         router.refresh();
@@ -272,7 +299,9 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
                     <Label className="text-xs">Type</Label>
                     <Select
                       value={resource.type}
-                      onValueChange={(value) => updateResource(index, "type", value)}
+                      onValueChange={(value) =>
+                        updateResource(index, "type", value)
+                      }
                     >
                       <SelectTrigger className="h-9">
                         <SelectValue />
@@ -290,7 +319,9 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
                       placeholder="Item name"
                       className="h-9"
                       value={resource.item}
-                      onChange={(e) => updateResource(index, "item", e.target.value)}
+                      onChange={(e) =>
+                        updateResource(index, "item", e.target.value)
+                      }
                     />
                   </div>
                   <div className="col-span-2">
@@ -300,7 +331,13 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
                       className="h-9"
                       min="1"
                       value={resource.quantity}
-                      onChange={(e) => updateResource(index, "quantity", parseInt(e.target.value) || 1)}
+                      onChange={(e) =>
+                        updateResource(
+                          index,
+                          "quantity",
+                          parseInt(e.target.value) || 1,
+                        )
+                      }
                     />
                   </div>
                   <div className="col-span-1">
@@ -331,7 +368,10 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
       </Dialog>
 
       {/* Review Assessment Modal */}
-      <Dialog open={activeAction === "review-assessment"} onOpenChange={onClose}>
+      <Dialog
+        open={activeAction === "review-assessment"}
+        onOpenChange={onClose}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Review Assessment</DialogTitle>
@@ -342,22 +382,36 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
           <div className="space-y-4">
             <div className="space-y-3">
               <Label>Action</Label>
-              <RadioGroup value={assessmentAction} onValueChange={(v) => setAssessmentAction(v as "approve" | "reject" | "revision")}>
+              <RadioGroup
+                value={assessmentAction}
+                onValueChange={(v) =>
+                  setAssessmentAction(v as "approve" | "reject" | "revision")
+                }
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="approve" id="approve-assessment" />
-                  <Label htmlFor="approve-assessment" className="font-normal cursor-pointer">
+                  <Label
+                    htmlFor="approve-assessment"
+                    className="font-normal cursor-pointer"
+                  >
                     Approve - Proceed with resource allocation
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="revision" id="revision-assessment" />
-                  <Label htmlFor="revision-assessment" className="font-normal cursor-pointer">
+                  <Label
+                    htmlFor="revision-assessment"
+                    className="font-normal cursor-pointer"
+                  >
                     Request Revision - Send back for more details
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="reject" id="reject-assessment" />
-                  <Label htmlFor="reject-assessment" className="font-normal cursor-pointer">
+                  <Label
+                    htmlFor="reject-assessment"
+                    className="font-normal cursor-pointer"
+                  >
                     Reject - Assessment not acceptable
                   </Label>
                 </div>
@@ -388,7 +442,10 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
       </Dialog>
 
       {/* Review Resolution Modal */}
-      <Dialog open={activeAction === "review-resolution"} onOpenChange={onClose}>
+      <Dialog
+        open={activeAction === "review-resolution"}
+        onOpenChange={onClose}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Review Resolution</DialogTitle>
@@ -399,16 +456,27 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
           <div className="space-y-4">
             <div className="space-y-3">
               <Label>Action</Label>
-              <RadioGroup value={resolutionAction} onValueChange={(v) => setResolutionAction(v as "approve" | "reject")}>
+              <RadioGroup
+                value={resolutionAction}
+                onValueChange={(v) =>
+                  setResolutionAction(v as "approve" | "reject")
+                }
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="approve" id="approve-resolution" />
-                  <Label htmlFor="approve-resolution" className="font-normal cursor-pointer">
+                  <Label
+                    htmlFor="approve-resolution"
+                    className="font-normal cursor-pointer"
+                  >
                     Approve - Mark issue as resolved
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="reject" id="reject-resolution" />
-                  <Label htmlFor="reject-resolution" className="font-normal cursor-pointer">
+                  <Label
+                    htmlFor="reject-resolution"
+                    className="font-normal cursor-pointer"
+                  >
                     Reject - Resolution not satisfactory
                   </Label>
                 </div>
@@ -456,14 +524,30 @@ export function IssueActionModals({ issueId, activeAction, onClose }: ActionModa
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="submitted">Submitted</SelectItem>
-                  <SelectItem value="under_officer_review">Under Officer Review</SelectItem>
-                  <SelectItem value="forwarded_to_admin">Forwarded to Admin</SelectItem>
-                  <SelectItem value="assigned_to_task_force">Assigned to Task Force</SelectItem>
-                  <SelectItem value="assessment_in_progress">Assessment In Progress</SelectItem>
-                  <SelectItem value="assessment_submitted">Assessment Submitted</SelectItem>
-                  <SelectItem value="resources_allocated">Resources Allocated</SelectItem>
-                  <SelectItem value="resolution_in_progress">Resolution In Progress</SelectItem>
-                  <SelectItem value="resolution_submitted">Resolution Submitted</SelectItem>
+                  <SelectItem value="under_officer_review">
+                    Under Officer Review
+                  </SelectItem>
+                  <SelectItem value="forwarded_to_admin">
+                    Forwarded to Admin
+                  </SelectItem>
+                  <SelectItem value="assigned_to_task_force">
+                    Assigned to Task Force
+                  </SelectItem>
+                  <SelectItem value="assessment_in_progress">
+                    Assessment In Progress
+                  </SelectItem>
+                  <SelectItem value="assessment_submitted">
+                    Assessment Submitted
+                  </SelectItem>
+                  <SelectItem value="resources_allocated">
+                    Resources Allocated
+                  </SelectItem>
+                  <SelectItem value="resolution_in_progress">
+                    Resolution In Progress
+                  </SelectItem>
+                  <SelectItem value="resolution_submitted">
+                    Resolution Submitted
+                  </SelectItem>
                   <SelectItem value="resolved">Resolved</SelectItem>
                   <SelectItem value="closed">Closed</SelectItem>
                 </SelectContent>

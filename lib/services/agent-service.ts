@@ -149,11 +149,13 @@ class AgentService {
   }): Promise<ApiResponse<{ agents: AgentProfile[] }>> {
     const queryParams = new URLSearchParams();
     if (params?.location) queryParams.append("location", params.location);
-    if (params?.verified !== undefined) queryParams.append("verified", params.verified.toString());
-    if (params?.supervisor) queryParams.append("supervisor", params.supervisor.toString());
+    if (params?.verified !== undefined)
+      queryParams.append("verified", params.verified.toString());
+    if (params?.supervisor)
+      queryParams.append("supervisor", params.supervisor.toString());
 
     const url = `/admin/agents${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    
+
     return apiClient(url, {
       method: "GET",
       requiresAuth: true,
@@ -164,7 +166,11 @@ class AgentService {
    * Admin: Create new agent
    * POST /v1/admin/agents
    */
-  async createAgent(data: FormData): Promise<ApiResponse<{ agent: AgentProfile; generated_password?: string }>> {
+  async createAgent(
+    data: FormData,
+  ): Promise<
+    ApiResponse<{ agent: AgentProfile; generated_password?: string }>
+  > {
     return apiClient("/admin/agents", {
       method: "POST",
       body: data,
@@ -177,7 +183,9 @@ class AgentService {
    * Admin: Get single agent by ID
    * GET /v1/admin/agents/{id}
    */
-  async getAgentById(id: number): Promise<ApiResponse<{ agent: AgentProfile }>> {
+  async getAgentById(
+    id: number,
+  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
     return apiClient(`/admin/agents/${id}`, {
       method: "GET",
       requiresAuth: true,
@@ -188,7 +196,10 @@ class AgentService {
    * Admin: Update agent
    * PUT /v1/admin/agents/{id}
    */
-  async updateAgent(id: number, data: Partial<AgentProfile>): Promise<ApiResponse<{ agent: AgentProfile }>> {
+  async updateAgent(
+    id: number,
+    data: Partial<AgentProfile>,
+  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
     return apiClient(`/admin/agents/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
@@ -200,7 +211,10 @@ class AgentService {
    * Admin: Update agent with file upload
    * POST /v1/admin/agents/{id}?_method=PUT (Used for FormData updates)
    */
-  async updateAgentWithFile(id: number, data: FormData): Promise<ApiResponse<{ agent: AgentProfile }>> {
+  async updateAgentWithFile(
+    id: number,
+    data: FormData,
+  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
     // API might support PUT with FormData directly or require special handling
     // Assuming backend handles PUT or POST for updates correctly
     // If straight PUT with FormData is an issue, often we use POST with _method=PUT or separate endpoints
@@ -249,7 +263,9 @@ class AgentService {
    * Get the agent's submitted reports
    * GET /v1/agent/my-reports
    */
-  async getMyReports(): Promise<ApiResponse<{ reports: AgentReport[]; total_submitted: number }>> {
+  async getMyReports(): Promise<
+    ApiResponse<{ reports: AgentReport[]; total_submitted: number }>
+  > {
     return apiClient("/agent/my-reports", {
       requiresAuth: true,
     });
@@ -259,7 +275,9 @@ class AgentService {
    * Submit a new issue report
    * POST /v1/agent/issues
    */
-  async submitIssue(data: IssueSubmission): Promise<ApiResponse<{ issue: AgentReport }>> {
+  async submitIssue(
+    data: IssueSubmission,
+  ): Promise<ApiResponse<{ issue: AgentReport }>> {
     return apiClient("/agent/issues", {
       method: "POST",
       body: JSON.stringify(data),
@@ -281,7 +299,9 @@ class AgentService {
    * Update agent profile
    * PUT /v1/agent/profile
    */
-  async updateProfile(data: ProfileUpdate): Promise<ApiResponse<{ agent: AgentProfile }>> {
+  async updateProfile(
+    data: ProfileUpdate,
+  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
     return apiClient("/agent/profile", {
       method: "PUT",
       body: JSON.stringify(data),
@@ -293,7 +313,10 @@ class AgentService {
    * Change password
    * PUT /v1/agent/password
    */
-  async changePassword(currentPassword: string, newPassword: string): Promise<ApiResponse<null>> {
+  async changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<ApiResponse<null>> {
     return apiClient("/agent/password", {
       method: "PUT",
       body: JSON.stringify({
@@ -319,25 +342,33 @@ class AgentService {
 
     reports.forEach((report) => {
       const status = report.status?.toLowerCase();
-      
+
       // Map statuses to our categories
-      if (status === 'submitted' || status === 'pending' || status === 'under_officer_review') {
+      if (
+        status === "submitted" ||
+        status === "pending" ||
+        status === "under_officer_review"
+      ) {
         stats.pending++;
-      } else if (status === 'forwarded_to_admin' || status === 'approved' || status === 'assigned_to_task_force') {
+      } else if (
+        status === "forwarded_to_admin" ||
+        status === "approved" ||
+        status === "assigned_to_task_force"
+      ) {
         stats.approved++;
       } else if (
-        status === 'pending_assessment' ||
-        status === 'assessment_in_progress' ||
-        status === 'assessment_submitted' ||
-        status === 'resources_allocated' ||
-        status === 'resolution_in_progress' ||
-        status === 'resolution_submitted' ||
-        status === 'in_progress'
+        status === "pending_assessment" ||
+        status === "assessment_in_progress" ||
+        status === "assessment_submitted" ||
+        status === "resources_allocated" ||
+        status === "resolution_in_progress" ||
+        status === "resolution_submitted" ||
+        status === "in_progress"
       ) {
         stats.inProgress++;
-      } else if (status === 'resolved' || status === 'closed') {
+      } else if (status === "resolved" || status === "closed") {
         stats.resolved++;
-      } else if (status === 'rejected') {
+      } else if (status === "rejected") {
         stats.rejected++;
       }
     });
@@ -347,4 +378,3 @@ class AgentService {
 }
 
 export const agentService = new AgentService();
-

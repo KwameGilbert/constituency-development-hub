@@ -17,7 +17,9 @@ interface PaginationType {
 
 export default function IdeasListPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | undefined>(undefined);
+  const [pagination, setPagination] = useState<PaginationType | undefined>(
+    undefined,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +55,10 @@ export default function IdeasListPage() {
           <Card className="p-6">
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="space-y-2 flex-1">
                     <Skeleton className="h-5 w-64" />
                     <Skeleton className="h-4 w-96" />
@@ -72,7 +77,9 @@ export default function IdeasListPage() {
         {error && !loading && (
           <Card className="p-12 text-center">
             <p className="text-red-600 text-lg font-medium">{error}</p>
-            <p className="text-slate-500 mt-2">Please try refreshing the page</p>
+            <p className="text-slate-500 mt-2">
+              Please try refreshing the page
+            </p>
           </Card>
         )}
 

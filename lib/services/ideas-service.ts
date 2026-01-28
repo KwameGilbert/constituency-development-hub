@@ -89,7 +89,10 @@ class IdeasService {
     });
   }
 
-  async voteIdea(id: number | string, voteType: 'up' | 'down' = 'up'): Promise<IdeaResponse> {
+  async voteIdea(
+    id: number | string,
+    voteType: "up" | "down" = "up",
+  ): Promise<IdeaResponse> {
     return apiClient<IdeaResponse>(`/ideas/${id}/vote`, {
       method: "POST",
       body: JSON.stringify({ type: voteType }),
@@ -114,7 +117,7 @@ class IdeasService {
 
   async updateIdeaStatus(
     id: number | string,
-    data: UpdateIdeaStatusData
+    data: UpdateIdeaStatusData,
   ): Promise<IdeaResponse> {
     return apiClient<IdeaResponse>(`/ideas/${id}/status`, {
       method: "POST",
@@ -122,7 +125,9 @@ class IdeasService {
     });
   }
 
-  async deleteIdea(id: number | string): Promise<{ success: boolean; message: string }> {
+  async deleteIdea(
+    id: number | string,
+  ): Promise<{ success: boolean; message: string }> {
     return apiClient<{ success: boolean; message: string }>(`/ideas/${id}`, {
       method: "DELETE",
     });

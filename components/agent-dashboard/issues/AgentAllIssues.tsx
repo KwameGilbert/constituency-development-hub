@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { ChevronUp, ChevronDown, RotateCcw, Loader2, AlertCircle, FileX } from "lucide-react";
+import {
+  ChevronUp,
+  ChevronDown,
+  RotateCcw,
+  Loader2,
+  AlertCircle,
+  FileX,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,29 +33,41 @@ import Link from "next/link";
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
-  const statusLower = status?.toLowerCase() || '';
-  
+  const statusLower = status?.toLowerCase() || "";
+
   const statusConfig: Record<string, { className: string; label: string }> = {
     submitted: { className: "bg-blue-100 text-blue-700", label: "Submitted" },
     pending: { className: "bg-yellow-100 text-yellow-700", label: "Pending" },
-    under_officer_review: { className: "bg-orange-100 text-orange-700", label: "Under Review" },
-    forwarded_to_admin: { className: "bg-indigo-100 text-indigo-700", label: "Forwarded" },
+    under_officer_review: {
+      className: "bg-orange-100 text-orange-700",
+      label: "Under Review",
+    },
+    forwarded_to_admin: {
+      className: "bg-indigo-100 text-indigo-700",
+      label: "Forwarded",
+    },
     approved: { className: "bg-indigo-100 text-indigo-700", label: "Approved" },
-    assigned_to_task_force: { className: "bg-purple-100 text-purple-700", label: "Assigned" },
-    in_progress: { className: "bg-purple-100 text-purple-700", label: "In Progress" },
+    assigned_to_task_force: {
+      className: "bg-purple-100 text-purple-700",
+      label: "Assigned",
+    },
+    in_progress: {
+      className: "bg-purple-100 text-purple-700",
+      label: "In Progress",
+    },
     resolved: { className: "bg-green-100 text-green-700", label: "Resolved" },
     closed: { className: "bg-gray-100 text-gray-700", label: "Closed" },
     rejected: { className: "bg-red-100 text-red-700", label: "Rejected" },
   };
 
-  const config = statusConfig[statusLower] || { 
-    className: "bg-gray-100 text-gray-700", 
-    label: status || "Unknown" 
+  const config = statusConfig[statusLower] || {
+    className: "bg-gray-100 text-gray-700",
+    label: status || "Unknown",
   };
 
   return (
-    <Badge 
-      variant="secondary" 
+    <Badge
+      variant="secondary"
       className={`${config.className} hover:${config.className}/80 border-0`}
     >
       {config.label}
@@ -87,7 +106,7 @@ export function AgentAllIssues() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(true);
-  
+
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
@@ -99,7 +118,7 @@ export function AgentAllIssues() {
         setLoading(true);
         setError(null);
         const response = await agentService.getMyReports();
-        
+
         if (response.success && response.data?.reports) {
           setIssues(response.data.reports);
         } else {
@@ -121,18 +140,23 @@ export function AgentAllIssues() {
     return issues.filter((issue) => {
       // Search filter
       const searchLower = searchQuery.toLowerCase();
-      const matchesSearch = !searchQuery || 
+      const matchesSearch =
+        !searchQuery ||
         issue.title?.toLowerCase().includes(searchLower) ||
         issue.description?.toLowerCase().includes(searchLower) ||
         issue.location?.toLowerCase().includes(searchLower);
 
       // Category filter
-      const matchesCategory = categoryFilter === "All Categories" || 
+      const matchesCategory =
+        categoryFilter === "All Categories" ||
         issue.category?.toLowerCase() === categoryFilter.toLowerCase();
 
       // Status filter
-      const matchesStatus = statusFilter === "All Statuses" || 
-        issue.status?.toLowerCase().includes(statusFilter.toLowerCase().replace(" ", "_"));
+      const matchesStatus =
+        statusFilter === "All Statuses" ||
+        issue.status
+          ?.toLowerCase()
+          .includes(statusFilter.toLowerCase().replace(" ", "_"));
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -185,22 +209,24 @@ export function AgentAllIssues() {
           <h3 className="font-semibold leading-none tracking-tight">
             Filter Issues
           </h3>
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             className="h-8 w-8"
             onClick={() => setShowFilters(!showFilters)}
           >
-            {showFilters ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            {showFilters ? (
+              <ChevronUp className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
           </Button>
         </div>
 
         {showFilters && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium leading-none">
-                Search
-              </label>
+              <label className="text-sm font-medium leading-none">Search</label>
               <Input
                 placeholder="Search by title, description, or location..."
                 className="w-full"
@@ -211,28 +237,39 @@ export function AgentAllIssues() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">Category</label>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <label className="text-sm font-medium leading-none">
+                  Category
+                </label>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
                     {CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">Status</label>
+                <label className="text-sm font-medium leading-none">
+                  Status
+                </label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
                     {STATUSES.map((status) => (
-                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -240,7 +277,11 @@ export function AgentAllIssues() {
             </div>
 
             <div className="flex justify-end">
-              <Button variant="outline" className="gap-2" onClick={resetFilters}>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={resetFilters}
+              >
                 <RotateCcw className="h-4 w-4" />
                 Reset Filters
               </Button>
@@ -256,8 +297,8 @@ export function AgentAllIssues() {
             <FileX className="h-12 w-12 mb-4" />
             <p className="text-lg font-medium">No issues found</p>
             <p className="text-sm">
-              {issues.length === 0 
-                ? "You haven't submitted any issues yet." 
+              {issues.length === 0
+                ? "You haven't submitted any issues yet."
                 : "Try adjusting your filters."}
             </p>
             {issues.length === 0 && (

@@ -32,7 +32,6 @@ function HeroCarousel() {
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="absolute inset-0"
           >
-                                                                                                               
             <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-transparent" />
             <div className="relative h-full flex flex-col justify-center text-white px-6 sm:px-10 lg:px-20">
               <motion.p

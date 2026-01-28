@@ -82,7 +82,10 @@ export function AgentAddIssues() {
       try {
         setLoadingData(true);
         const [locRes, secRes] = await Promise.all([
-          locationsService.getLocations({ type: 'community', status: 'active' }),
+          locationsService.getLocations({
+            type: "community",
+            status: "active",
+          }),
           sectorsService.getSectors(),
         ]);
 
@@ -108,17 +111,27 @@ export function AgentAddIssues() {
       // Reset sub-locations when main location changes
       setSmallerCommunities([]);
       setSuburbs([]);
-      
+
       if (!formData.location) return;
 
-      const selectedLocation = locations.find(l => l.name === formData.location);
+      const selectedLocation = locations.find(
+        (l) => l.name === formData.location,
+      );
       if (!selectedLocation) return;
 
       setLoadingSubLocations(true);
       try {
         const [smallerRes, suburbRes] = await Promise.all([
-          locationsService.getLocations({ parent_id: selectedLocation.id, type: 'smaller_community', status: 'active' }),
-          locationsService.getLocations({ parent_id: selectedLocation.id, type: 'suburb', status: 'active' })
+          locationsService.getLocations({
+            parent_id: selectedLocation.id,
+            type: "smaller_community",
+            status: "active",
+          }),
+          locationsService.getLocations({
+            parent_id: selectedLocation.id,
+            type: "suburb",
+            status: "active",
+          }),
         ]);
 
         if (smallerRes.success && smallerRes.data?.locations) {
@@ -142,12 +155,21 @@ export function AgentAddIssues() {
     setActiveTab(nextTab);
   };
 
-  const updateField = (field: keyof IssueSubmission, value: string | number | undefined) => {
+  const updateField = (
+    field: keyof IssueSubmission,
+    value: string | number | undefined,
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateForm = (): boolean => {
-    const required = ["title", "description", "category", "priority", "location"];
+    const required = [
+      "title",
+      "description",
+      "category",
+      "priority",
+      "location",
+    ];
     for (const field of required) {
       if (!formData[field as keyof IssueSubmission]) {
         toast.error(`Please fill in the ${field.replace("_", " ")} field`);
@@ -225,8 +247,8 @@ export function AgentAddIssues() {
               />
             </FormItem>
             <FormItem label="Impact Type" required>
-              <Select 
-                value={formData.issue_type || "community_based"} 
+              <Select
+                value={formData.issue_type || "community_based"}
                 onValueChange={(v) => {
                   updateField("issue_type", v);
                   // Reset people_affected if switching to individual
@@ -248,7 +270,7 @@ export function AgentAddIssues() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-slate-500 mt-1">
-                {formData.issue_type === "community_based" 
+                {formData.issue_type === "community_based"
                   ? "Affects multiple people in the community"
                   : "Affects a single person or household"}
               </p>
@@ -266,7 +288,10 @@ export function AgentAddIssues() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Category" required>
-              <Select value={formData.category} onValueChange={(v) => updateField("category", v)}>
+              <Select
+                value={formData.category}
+                onValueChange={(v) => updateField("category", v)}
+              >
                 <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Category" />
                 </SelectTrigger>
@@ -280,7 +305,10 @@ export function AgentAddIssues() {
               </Select>
             </FormItem>
             <FormItem label="Priority" required>
-              <Select value={formData.priority} onValueChange={(v) => updateField("priority", v)}>
+              <Select
+                value={formData.priority}
+                onValueChange={(v) => updateField("priority", v)}
+              >
                 <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Priority" />
                 </SelectTrigger>
@@ -296,8 +324,8 @@ export function AgentAddIssues() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Sector">
-              <Select 
-                value={formData.sector || ""} 
+              <Select
+                value={formData.sector || ""}
                 onValueChange={(v) => {
                   updateField("sector", v);
                   updateField("subsector", ""); // Reset subsector when sector changes
@@ -305,7 +333,9 @@ export function AgentAddIssues() {
                 disabled={loadingData}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder={loadingData ? "Loading..." : "Select Sector"} />
+                  <SelectValue
+                    placeholder={loadingData ? "Loading..." : "Select Sector"}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {sectors.map((sec) => (
@@ -317,8 +347,8 @@ export function AgentAddIssues() {
               </Select>
             </FormItem>
             <FormItem label="Subsector">
-              <Select 
-                value={formData.subsector || ""} 
+              <Select
+                value={formData.subsector || ""}
                 onValueChange={(v) => updateField("subsector", v)}
                 disabled={!formData.sector || subsectors.length === 0}
               >
@@ -343,7 +373,12 @@ export function AgentAddIssues() {
                 type="number"
                 placeholder="e.g., 100"
                 value={formData.people_affected || ""}
-                onChange={(e) => updateField("people_affected", e.target.value ? parseInt(e.target.value) : undefined)}
+                onChange={(e) =>
+                  updateField(
+                    "people_affected",
+                    e.target.value ? parseInt(e.target.value) : undefined,
+                  )
+                }
                 className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
               />
               <p className="text-xs text-slate-500 mt-1">
@@ -455,7 +490,11 @@ export function AgentAddIssues() {
                 disabled={loadingData}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder={loadingData ? "Loading..." : "Select Main Community"} />
+                  <SelectValue
+                    placeholder={
+                      loadingData ? "Loading..." : "Select Main Community"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {locations.map((loc) => (
@@ -467,17 +506,21 @@ export function AgentAddIssues() {
               </Select>
             </FormItem>
             <FormItem label="Smaller Community">
-              <Select 
-                value={formData.smaller_community || ""} 
+              <Select
+                value={formData.smaller_community || ""}
                 onValueChange={(v) => updateField("smaller_community", v)}
                 disabled={!formData.location || loadingSubLocations}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder={
-                    loadingSubLocations 
-                      ? "Loading..." 
-                      : (!formData.location ? "Select Main Community first" : "Select Smaller Community (Optional)")
-                  } />
+                  <SelectValue
+                    placeholder={
+                      loadingSubLocations
+                        ? "Loading..."
+                        : !formData.location
+                          ? "Select Main Community first"
+                          : "Select Smaller Community (Optional)"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {smallerCommunities.map((loc) => (
@@ -492,17 +535,21 @@ export function AgentAddIssues() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Suburb">
-              <Select 
-                value={formData.suburb || ""} 
+              <Select
+                value={formData.suburb || ""}
                 onValueChange={(v) => updateField("suburb", v)}
                 disabled={!formData.location || loadingSubLocations}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder={
-                    loadingSubLocations 
-                      ? "Loading..." 
-                      : (!formData.location ? "Select Main Community first" : "Select Suburb (Optional)")
-                  } />
+                  <SelectValue
+                    placeholder={
+                      loadingSubLocations
+                        ? "Loading..."
+                        : !formData.location
+                          ? "Select Main Community first"
+                          : "Select Suburb (Optional)"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {suburbs.map((loc) => (
@@ -540,7 +587,8 @@ export function AgentAddIssues() {
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Submitting...
                   </>
                 ) : (
                   <>

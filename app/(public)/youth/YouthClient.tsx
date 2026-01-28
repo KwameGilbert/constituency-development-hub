@@ -113,7 +113,7 @@ export default function YouthClient() {
     formState: { errors, isSubmitting },
   } = useForm<YouthFormInputValues, undefined, YouthFormValues>({
     resolver: zodResolver<YouthFormInputValues, undefined, YouthFormValues>(
-      youthFormSchema
+      youthFormSchema,
     ),
     defaultValues: youthDefaultValues,
     mode: "onBlur",
@@ -126,7 +126,7 @@ export default function YouthClient() {
       hidden: { opacity: 0, y: 24 },
       visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
     }),
-    []
+    [],
   );
 
   const formSteps = [
@@ -294,8 +294,8 @@ export default function YouthClient() {
                   index === currentStep
                     ? "border-emerald-400 bg-emerald-50 text-slate-900"
                     : index < currentStep
-                    ? "border-slate-200 bg-white text-slate-700"
-                    : "border-slate-100 bg-slate-50 text-slate-400"
+                      ? "border-slate-200 bg-white text-slate-700"
+                      : "border-slate-100 bg-slate-50 text-slate-400"
                 }`}
               >
                 <p className="text-xs font-semibold uppercase tracking-wide">

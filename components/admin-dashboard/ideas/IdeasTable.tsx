@@ -36,14 +36,17 @@ const getStatusColor = (status: string) => {
 };
 
 const formatStatus = (status: string) => {
-  return status.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   });
 };
 
@@ -52,7 +55,9 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
     return (
       <Card className="p-12 text-center">
         <p className="text-slate-500 text-lg">No ideas submitted yet</p>
-        <p className="text-slate-400 text-sm mt-2">Community suggestions will appear here</p>
+        <p className="text-slate-400 text-sm mt-2">
+          Community suggestions will appear here
+        </p>
       </Card>
     );
   }
@@ -89,11 +94,18 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
               {ideas.map((idea) => (
-                <tr key={idea.id} className="hover:bg-slate-50 transition-colors">
+                <tr
+                  key={idea.id}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   <td className="px-6 py-4">
                     <div>
-                      <p className="font-medium text-slate-900 max-w-md">{idea.title}</p>
-                      <p className="text-sm text-slate-500 truncate max-w-md mt-1">{idea.description}</p>
+                      <p className="font-medium text-slate-900 max-w-md">
+                        {idea.title}
+                      </p>
+                      <p className="text-sm text-slate-500 truncate max-w-md mt-1">
+                        {idea.description}
+                      </p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -103,8 +115,12 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
                   </td>
                   <td className="px-6 py-4">
                     <div>
-                      <p className="text-sm font-medium text-slate-900">{idea.submitter_name}</p>
-                      <p className="text-xs text-slate-500">{idea.submitter_email}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {idea.submitter_name}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {idea.submitter_email}
+                      </p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -119,12 +135,18 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-slate-700">{formatDate(idea.created_at)}</span>
+                    <span className="text-sm text-slate-700">
+                      {formatDate(idea.created_at)}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end">
                       <Link href={`/admin-dashboard/ideas/${idea.id}`}>
-                        <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-slate-600 hover:text-slate-900"
+                        >
                           <Eye className="w-4 h-4 mr-1" />
                           Review
                         </Button>
@@ -141,8 +163,9 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
       {pagination && pagination.total_pages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            Showing {((pagination.page - 1) * pagination.limit) + 1} to{" "}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} ideas
+            Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+            {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
+            {pagination.total} ideas
           </p>
           <div className="flex gap-2">
             <p className="text-sm text-slate-500">

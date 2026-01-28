@@ -1,7 +1,7 @@
 import { apiClient } from "../api-client";
 
 // Report Types
-export type ReportType = 'issues' | 'projects' | 'users';
+export type ReportType = "issues" | "projects" | "users";
 
 // Column Configuration
 export interface ReportColumn {
@@ -95,11 +95,11 @@ export const usersColumns: ReportColumn[] = [
 // Helper to get columns for a report type
 export function getColumnsForType(type: ReportType): ReportColumn[] {
   switch (type) {
-    case 'issues':
+    case "issues":
       return [...issuesColumns];
-    case 'projects':
+    case "projects":
       return [...projectsColumns];
-    case 'users':
+    case "users":
       return [...usersColumns];
     default:
       return [...issuesColumns];
@@ -107,39 +107,43 @@ export function getColumnsForType(type: ReportType): ReportColumn[] {
 }
 
 // Helper to convert report data to CSV
-export function convertToCSV(columns: string[], rows: ReportRow[], columnDefs: ReportColumn[]): string {
+export function convertToCSV(
+  columns: string[],
+  rows: ReportRow[],
+  columnDefs: ReportColumn[],
+): string {
   // Get column labels for header
-  const columnMap = new Map(columnDefs.map(c => [c.id, c.label]));
-  const headers = columns.map(col => columnMap.get(col) || col);
-  
+  const columnMap = new Map(columnDefs.map((c) => [c.id, c.label]));
+  const headers = columns.map((col) => columnMap.get(col) || col);
+
   // Build CSV
-  const csvLines = [headers.join(',')];
-  
+  const csvLines = [headers.join(",")];
+
   for (const row of rows) {
-    const values = columns.map(col => {
+    const values = columns.map((col) => {
       const value = row[col];
-      if (value === null || value === undefined) return '';
+      if (value === null || value === undefined) return "";
       // Escape quotes and wrap in quotes if contains comma
       const strValue = String(value);
-      if (strValue.includes(',') || strValue.includes('"')) {
+      if (strValue.includes(",") || strValue.includes('"')) {
         return `"${strValue.replace(/"/g, '""')}"`;
       }
       return strValue;
     });
-    csvLines.push(values.join(','));
+    csvLines.push(values.join(","));
   }
-  
-  return csvLines.join('\n');
+
+  return csvLines.join("\n");
 }
 
 // Helper to download CSV file
 export function downloadCSV(csvContent: string, filename: string): void {
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename);
-  link.style.visibility = 'hidden';
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  link.style.visibility = "hidden";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -151,19 +155,19 @@ export const reportsService = {
    * Generate a custom report based on parameters
    */
   async generateReport(params: GenerateReportParams): Promise<ReportResponse> {
-    return apiClient<ReportResponse>('/admin/data/reports/generate', {
-      method: 'POST',
+    return apiClient<ReportResponse>("/admin/data/reports/generate", {
+      method: "POST",
       requiresAuth: true,
       body: JSON.stringify(params),
     });
   },
-  
+
   /**
    * Export report as CSV and trigger download
    */
   exportAsCSV(data: ReportData, columnDefs: ReportColumn[]): void {
     const csvContent = convertToCSV(data.columns, data.rows, columnDefs);
-    const timestamp = new Date().toISOString().split('T')[0];
+    const timestamp = new Date().toISOString().split("T")[0];
     const filename = `${data.reportType}-report-${timestamp}.csv`;
     downloadCSV(csvContent, filename);
   },

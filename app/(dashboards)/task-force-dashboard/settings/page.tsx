@@ -1,13 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 // import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 // import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -18,8 +30,8 @@ import {
   Shield,
   Download,
   Upload,
-  RefreshCw
-} from 'lucide-react';
+  RefreshCw,
+} from "lucide-react";
 
 export interface SettingsState {
   notifications: {
@@ -56,75 +68,83 @@ export default function SettingsPage() {
       weeklyReport: false,
     },
     appearance: {
-      theme: 'light',
-      language: 'en',
-      timezone: 'GMT+0',
+      theme: "light",
+      language: "en",
+      timezone: "GMT+0",
     },
     security: {
       twoFactor: false,
-      sessionTimeout: '30',
+      sessionTimeout: "30",
       loginNotifications: true,
-    }
+    },
   });
 
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [emailForm, setEmailForm] = useState({
-    frequency: 'immediate',
-    types: ['assignments', 'status', 'reports']
+    frequency: "immediate",
+    types: ["assignments", "status", "reports"],
   });
 
-  const handleSettingChange = (category: keyof SettingsState, key: string, value: string | boolean) => {
+  const handleSettingChange = (
+    category: keyof SettingsState,
+    key: string,
+    value: string | boolean,
+  ) => {
     setSettings((prev) => ({
       ...prev,
       [category]: {
         ...prev[category],
-        [key]: value
-      }
+        [key]: value,
+      },
     }));
   };
 
   const handleSave = () => {
     // TODO: Implement settings save
-    console.log('Saving settings:', settings);
+    console.log("Saving settings:", settings);
   };
 
   const handleExport = () => {
     // TODO: Implement data export
-    console.log('Exporting data...');
+    console.log("Exporting data...");
   };
 
   const handleImport = () => {
     // TODO: Implement data import
-    console.log('Importing data...');
+    console.log("Importing data...");
   };
 
   const handlePasswordChange = () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert('New passwords do not match');
+      alert("New passwords do not match");
       return;
     }
     if (passwordForm.newPassword.length < 8) {
-      alert('Password must be at least 8 characters long');
+      alert("Password must be at least 8 characters long");
       return;
     }
     // TODO: Implement password change
-    console.log('Changing password...');
+    console.log("Changing password...");
     setShowPasswordDialog(false);
-    setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    alert('Password changed successfully!');
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+    alert("Password changed successfully!");
   };
 
   const handleEmailConfig = () => {
     // TODO: Implement email configuration
-    console.log('Configuring email settings:', emailForm);
+    console.log("Configuring email settings:", emailForm);
     setShowEmailDialog(false);
-    alert('Email preferences updated successfully!');
+    alert("Email preferences updated successfully!");
   };
 
   return (
@@ -133,7 +153,9 @@ export default function SettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">Manage your application preferences and configuration</p>
+          <p className="text-gray-600 mt-1">
+            Manage your application preferences and configuration
+          </p>
         </div>
         <Button onClick={handleSave} className="flex items-center gap-2">
           <RefreshCw className="h-4 w-4" />
@@ -149,63 +171,99 @@ export default function SettingsPage() {
               <Bell className="h-5 w-5" />
               Notifications
             </CardTitle>
-            <CardDescription>Configure how you receive notifications</CardDescription>
+            <CardDescription>
+              Configure how you receive notifications
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="email-notifications">Email Notifications</Label>
-                  <p className="text-sm text-gray-600">Receive notifications via email</p>
+                  <Label htmlFor="email-notifications">
+                    Email Notifications
+                  </Label>
+                  <p className="text-sm text-gray-600">
+                    Receive notifications via email
+                  </p>
                 </div>
                 <Switch
                   id="email-notifications"
                   checked={settings.notifications.email}
-                  onCheckedChange={(checked) => handleSettingChange('notifications', 'email', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange("notifications", "email", checked)
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="push-notifications">Push Notifications</Label>
-                  <p className="text-sm text-gray-600">Receive browser push notifications</p>
+                  <p className="text-sm text-gray-600">
+                    Receive browser push notifications
+                  </p>
                 </div>
                 <Switch
                   id="push-notifications"
                   checked={settings.notifications.push}
-                  onCheckedChange={(checked) => handleSettingChange('notifications', 'push', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange("notifications", "push", checked)
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="new-assignments">New Assignment Alerts</Label>
-                  <p className="text-sm text-gray-600">Get notified when assigned new issues</p>
+                  <p className="text-sm text-gray-600">
+                    Get notified when assigned new issues
+                  </p>
                 </div>
                 <Switch
                   id="new-assignments"
                   checked={settings.notifications.newAssignments}
-                  onCheckedChange={(checked) => handleSettingChange('notifications', 'newAssignments', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange(
+                      "notifications",
+                      "newAssignments",
+                      checked,
+                    )
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="status-updates">Status Updates</Label>
-                  <p className="text-sm text-gray-600">Get notified of issue status changes</p>
+                  <p className="text-sm text-gray-600">
+                    Get notified of issue status changes
+                  </p>
                 </div>
                 <Switch
                   id="status-updates"
                   checked={settings.notifications.statusUpdates}
-                  onCheckedChange={(checked) => handleSettingChange('notifications', 'statusUpdates', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange(
+                      "notifications",
+                      "statusUpdates",
+                      checked,
+                    )
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="weekly-report">Weekly Reports</Label>
-                  <p className="text-sm text-gray-600">Receive weekly summary reports</p>
+                  <p className="text-sm text-gray-600">
+                    Receive weekly summary reports
+                  </p>
                 </div>
                 <Switch
                   id="weekly-report"
                   checked={settings.notifications.weeklyReport}
-                  onCheckedChange={(checked) => handleSettingChange('notifications', 'weeklyReport', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange(
+                      "notifications",
+                      "weeklyReport",
+                      checked,
+                    )
+                  }
                 />
               </div>
             </div>
@@ -219,7 +277,9 @@ export default function SettingsPage() {
               <Palette className="h-5 w-5" />
               Appearance
             </CardTitle>
-            <CardDescription>Customize the look and feel of the application</CardDescription>
+            <CardDescription>
+              Customize the look and feel of the application
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -227,7 +287,9 @@ export default function SettingsPage() {
                 <Label htmlFor="theme">Theme</Label>
                 <Select
                   value={settings.appearance.theme}
-                  onValueChange={(value) => handleSettingChange('appearance', 'theme', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange("appearance", "theme", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select theme" />
@@ -243,7 +305,9 @@ export default function SettingsPage() {
                 <Label htmlFor="language">Language</Label>
                 <Select
                   value={settings.appearance.language}
-                  onValueChange={(value) => handleSettingChange('appearance', 'language', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange("appearance", "language", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select language" />
@@ -266,39 +330,63 @@ export default function SettingsPage() {
               <Shield className="h-5 w-5" />
               Security
             </CardTitle>
-            <CardDescription>Manage your account security settings</CardDescription>
+            <CardDescription>
+              Manage your account security settings
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="two-factor">Two-Factor Authentication</Label>
-                  <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                  <p className="text-sm text-gray-600">
+                    Add an extra layer of security to your account
+                  </p>
                 </div>
                 <Switch
                   id="two-factor"
                   checked={settings.security.twoFactor}
-                  onCheckedChange={(checked) => handleSettingChange('security', 'twoFactor', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange("security", "twoFactor", checked)
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="login-notifications">Login Notifications</Label>
-                  <p className="text-sm text-gray-600">Get notified of new login attempts</p>
+                  <Label htmlFor="login-notifications">
+                    Login Notifications
+                  </Label>
+                  <p className="text-sm text-gray-600">
+                    Get notified of new login attempts
+                  </p>
                 </div>
                 <Switch
                   id="login-notifications"
                   checked={settings.security.loginNotifications}
-                  onCheckedChange={(checked) => handleSettingChange('security', 'loginNotifications', checked)}
+                  onCheckedChange={(checked) =>
+                    handleSettingChange(
+                      "security",
+                      "loginNotifications",
+                      checked,
+                    )
+                  }
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="session-timeout">Session Timeout (minutes)</Label>
+                <Label htmlFor="session-timeout">
+                  Session Timeout (minutes)
+                </Label>
                 <Input
                   id="session-timeout"
                   type="number"
                   value={settings.security.sessionTimeout}
-                  onChange={(e) => handleSettingChange('security', 'sessionTimeout', e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange(
+                      "security",
+                      "sessionTimeout",
+                      e.target.value,
+                    )
+                  }
                   className="w-32"
                 />
               </div>
@@ -313,15 +401,25 @@ export default function SettingsPage() {
               <Database className="h-5 w-5" />
               Data Management
             </CardTitle>
-            <CardDescription>Export or import your assessment data</CardDescription>
+            <CardDescription>
+              Export or import your assessment data
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button onClick={handleExport} variant="outline" className="flex items-center gap-2">
+              <Button
+                onClick={handleExport}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
                 <Download className="h-4 w-4" />
                 Export Data
               </Button>
-              <Button onClick={handleImport} variant="outline" className="flex items-center gap-2">
+              <Button
+                onClick={handleImport}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
                 <Upload className="h-4 w-4" />
                 Import Data
               </Button>

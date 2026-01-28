@@ -91,7 +91,9 @@ class OfficerReportsService {
    * Get recent activity feed
    * GET /v1/officer/reports/recent-activity
    */
-  async getRecentActivity(limit: number = 10): Promise<ApiResponse<{ activities: RecentActivity[] }>> {
+  async getRecentActivity(
+    limit: number = 10,
+  ): Promise<ApiResponse<{ activities: RecentActivity[] }>> {
     return apiClient(`/officer/reports/recent-activity?limit=${limit}`, {
       method: "GET",
       requiresAuth: true,
@@ -102,7 +104,9 @@ class OfficerReportsService {
    * Get monthly trends data for charts
    * GET /v1/officer/reports/trends
    */
-  async getTrends(months: number = 12): Promise<ApiResponse<{ trends: TrendData[] }>> {
+  async getTrends(
+    months: number = 12,
+  ): Promise<ApiResponse<{ trends: TrendData[] }>> {
     return apiClient(`/officer/reports/trends?months=${months}`, {
       method: "GET",
       requiresAuth: true,
@@ -113,7 +117,9 @@ class OfficerReportsService {
    * Get status distribution for pie chart
    * GET /v1/officer/reports/status-distribution
    */
-  async getStatusDistribution(): Promise<ApiResponse<{ distribution: StatusDistributionItem[] }>> {
+  async getStatusDistribution(): Promise<
+    ApiResponse<{ distribution: StatusDistributionItem[] }>
+  > {
     return apiClient("/officer/reports/status-distribution", {
       method: "GET",
       requiresAuth: true,
@@ -124,7 +130,9 @@ class OfficerReportsService {
    * Get top agent performance metrics
    * GET /v1/officer/reports/agent-performance
    */
-  async getAgentPerformance(limit: number = 10): Promise<ApiResponse<{ agents: AgentPerformance[] }>> {
+  async getAgentPerformance(
+    limit: number = 10,
+  ): Promise<ApiResponse<{ agents: AgentPerformance[] }>> {
     return apiClient(`/officer/reports/agent-performance?limit=${limit}`, {
       method: "GET",
       requiresAuth: true,

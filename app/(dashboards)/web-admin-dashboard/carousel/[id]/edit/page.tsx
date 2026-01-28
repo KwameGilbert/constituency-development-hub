@@ -13,7 +13,9 @@ interface EditCarouselItemPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function EditCarouselItemPage({ params }: EditCarouselItemPageProps) {
+export default function EditCarouselItemPage({
+  params,
+}: EditCarouselItemPageProps) {
   const { id } = use(params);
   const [slide, setSlide] = useState<HeroSlide | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,9 @@ export default function EditCarouselItemPage({ params }: EditCarouselItemPagePro
         }
       } catch (err: unknown) {
         console.error("Failed to fetch hero slide:", err);
-        setError(err instanceof Error ? err.message : "Failed to load hero slide");
+        setError(
+          err instanceof Error ? err.message : "Failed to load hero slide",
+        );
       } finally {
         setLoading(false);
       }
@@ -59,8 +63,12 @@ export default function EditCarouselItemPage({ params }: EditCarouselItemPagePro
           <div className="bg-red-50 p-4 rounded-full mb-4">
             <AlertCircle className="h-8 w-8 text-red-500" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">Hero Slide Not Found</h2>
-          <p className="text-slate-500 mb-4">{error || "The hero slide you're trying to edit doesn't exist."}</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Hero Slide Not Found
+          </h2>
+          <p className="text-slate-500 mb-4">
+            {error || "The hero slide you're trying to edit doesn't exist."}
+          </p>
           <Link href="/web-admin-dashboard/carousel">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -78,16 +86,24 @@ export default function EditCarouselItemPage({ params }: EditCarouselItemPagePro
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/web-admin-dashboard/carousel">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Edit Hero Slide</h1>
-            <p className="text-slate-500">Update the details for &quot;{slide.title}&quot;</p>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Edit Hero Slide
+            </h1>
+            <p className="text-slate-500">
+              Update the details for &quot;{slide.title}&quot;
+            </p>
           </div>
         </div>
-        
+
         <CarouselForm slide={slide} isEditing={true} />
       </div>
     </div>

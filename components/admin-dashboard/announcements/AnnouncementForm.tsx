@@ -9,11 +9,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
-import { announcementsService, CreateAnnouncementData, Announcement } from "@/lib/services/announcements-service";
+import {
+  announcementsService,
+  CreateAnnouncementData,
+  Announcement,
+} from "@/lib/services/announcements-service";
 
 const announcementSchema = z.object({
   title: z.string().min(3, "Title required"),
@@ -32,7 +42,10 @@ interface AnnouncementFormProps {
   redirectPath?: string;
 }
 
-export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashboard/announcements" }: AnnouncementFormProps) {
+export function NewAnnouncementForm({
+  announcement,
+  redirectPath = "/admin-dashboard/announcements",
+}: AnnouncementFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditMode = !!announcement;
@@ -65,13 +78,19 @@ export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashb
 
       let response;
       if (isEditMode && announcement) {
-        response = await announcementsService.updateAnnouncement(announcement.id, announcementData);
+        response = await announcementsService.updateAnnouncement(
+          announcement.id,
+          announcementData,
+        );
       } else {
-        response = await announcementsService.createAnnouncement(announcementData);
+        response =
+          await announcementsService.createAnnouncement(announcementData);
       }
 
       if (response.success) {
-        toast.success(isEditMode ? "Announcement updated" : "Announcement created");
+        toast.success(
+          isEditMode ? "Announcement updated" : "Announcement created",
+        );
         router.push(redirectPath);
         router.refresh();
       } else {
@@ -93,33 +112,70 @@ export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashb
             <div className="grid gap-4">
               <div>
                 <Label htmlFor="title">Title *</Label>
-                <Input id="title" {...form.register("title")} disabled={isSubmitting} />
-                {form.formState.errors.title && <p className="text-red-500 text-sm mt-1">{form.formState.errors.title.message}</p>}
+                <Input
+                  id="title"
+                  {...form.register("title")}
+                  disabled={isSubmitting}
+                />
+                {form.formState.errors.title && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.title.message}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="content">Content *</Label>
-                <Textarea id="content" rows={6} {...form.register("content")} disabled={isSubmitting} />
-                {form.formState.errors.content && <p className="text-red-500 text-sm mt-1">{form.formState.errors.content.message}</p>}
+                <Textarea
+                  id="content"
+                  rows={6}
+                  {...form.register("content")}
+                  disabled={isSubmitting}
+                />
+                {form.formState.errors.content && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.content.message}
+                  </p>
+                )}
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="category">Category *</Label>
-                  <Select onValueChange={(value) => form.setValue("category", value)} defaultValue={form.getValues("category")} disabled={isSubmitting}>
-                    <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                  <Select
+                    onValueChange={(value) => form.setValue("category", value)}
+                    defaultValue={form.getValues("category")}
+                    disabled={isSubmitting}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="events">Events</SelectItem>
-                      <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                      <SelectItem value="infrastructure">
+                        Infrastructure
+                      </SelectItem>
                       <SelectItem value="health">Health</SelectItem>
                       <SelectItem value="education">Education</SelectItem>
                       <SelectItem value="general">General</SelectItem>
                     </SelectContent>
                   </Select>
-                  {form.formState.errors.category && <p className="text-red-500 text-sm mt-1">{form.formState.errors.category.message}</p>}
+                  {form.formState.errors.category && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {form.formState.errors.category.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="priority">Priority *</Label>
-                  <Select onValueChange={(value: "low" | "medium" | "high" | "urgent") => form.setValue("priority", value)} defaultValue={form.getValues("priority")} disabled={isSubmitting}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select
+                    onValueChange={(
+                      value: "low" | "medium" | "high" | "urgent",
+                    ) => form.setValue("priority", value)}
+                    defaultValue={form.getValues("priority")}
+                    disabled={isSubmitting}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="low">Low</SelectItem>
                       <SelectItem value="medium">Medium</SelectItem>
@@ -132,8 +188,16 @@ export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashb
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="status">Status *</Label>
-                  <Select onValueChange={(value: "draft" | "published" | "archived") => form.setValue("status", value)} defaultValue={form.getValues("status")} disabled={isSubmitting}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select
+                    onValueChange={(
+                      value: "draft" | "published" | "archived",
+                    ) => form.setValue("status", value)}
+                    defaultValue={form.getValues("status")}
+                    disabled={isSubmitting}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="draft">Draft</SelectItem>
                       <SelectItem value="published">Published</SelectItem>
@@ -143,11 +207,21 @@ export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashb
                 </div>
                 <div>
                   <Label htmlFor="publish_date">Publish Date</Label>
-                  <Input id="publish_date" type="date" {...form.register("publish_date")} disabled={isSubmitting} />
+                  <Input
+                    id="publish_date"
+                    type="date"
+                    {...form.register("publish_date")}
+                    disabled={isSubmitting}
+                  />
                 </div>
                 <div>
                   <Label htmlFor="expiry_date">Expiry Date</Label>
-                  <Input id="expiry_date" type="date" {...form.register("expiry_date")} disabled={isSubmitting} />
+                  <Input
+                    id="expiry_date"
+                    type="date"
+                    {...form.register("expiry_date")}
+                    disabled={isSubmitting}
+                  />
                 </div>
               </div>
             </div>
@@ -155,9 +229,30 @@ export function NewAnnouncementForm({ announcement, redirectPath = "/admin-dashb
         </CardContent>
       </Card>
       <div className="flex justify-end gap-4">
-        <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>Cancel</Button>
-        <Button type="submit" className="bg-red-600 hover:bg-red-700" disabled={isSubmitting}>
-          {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{isEditMode ? "Updating..." : "Creating..."}</> : <><Save className="mr-2 h-4 w-4" />{isEditMode ? "Update" : "Create"}</>}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.back()}
+          disabled={isSubmitting}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          className="bg-red-600 hover:bg-red-700"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {isEditMode ? "Updating..." : "Creating..."}
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              {isEditMode ? "Update" : "Create"}
+            </>
+          )}
         </Button>
       </div>
     </form>

@@ -31,7 +31,9 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
         }
       } catch (err: unknown) {
         console.error("Failed to fetch blog post:", err);
-        setError(err instanceof Error ? err.message : "Failed to load blog post");
+        setError(
+          err instanceof Error ? err.message : "Failed to load blog post",
+        );
       } finally {
         setLoading(false);
       }
@@ -59,8 +61,13 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
           <div className="bg-red-50 p-4 rounded-full mb-4">
             <AlertCircle className="h-8 w-8 text-red-500" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">Blog Post Not Found</h2>
-          <p className="text-slate-500 mb-4">{error || "The blog post you&apos;re trying to edit doesn&apos;t exist."}</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Blog Post Not Found
+          </h2>
+          <p className="text-slate-500 mb-4">
+            {error ||
+              "The blog post you&apos;re trying to edit doesn&apos;t exist."}
+          </p>
           <Link href="/web-admin-dashboard/blog">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -78,16 +85,22 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/web-admin-dashboard/blog">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Edit Blog Post</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Edit Blog Post
+            </h1>
             <p className="text-slate-500">Update &quot;{post.title}&quot;</p>
           </div>
         </div>
-        
+
         <EditBlogPostForm post={post} />
       </div>
     </div>

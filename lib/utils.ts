@@ -1,14 +1,14 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "";
   if (path.startsWith("data:")) return path;
-  
+
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
   let apiOrigin = "";
   try {
@@ -27,7 +27,7 @@ export function getImageUrl(path: string | null | undefined): string {
     }
     return path;
   }
-  
+
   // Handle relative paths
   // Ensure we don't have double slashes
   return `${apiOrigin}/${path.replace(/^\/+/, "")}`;

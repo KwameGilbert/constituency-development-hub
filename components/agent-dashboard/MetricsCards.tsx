@@ -27,7 +27,10 @@ export interface MetricsCardsProps {
   loading?: boolean;
 }
 
-export function MetricsCards({ stats: providedStats, loading: providedLoading }: MetricsCardsProps) {
+export function MetricsCards({
+  stats: providedStats,
+  loading: providedLoading,
+}: MetricsCardsProps) {
   const [stats, setStats] = useState<AgentReportStats>(defaultStats);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,9 +47,11 @@ export function MetricsCards({ stats: providedStats, loading: providedLoading }:
         setLoading(true);
         setError(null);
         const response = await agentService.getMyReports();
-        
+
         if (response.success && response.data?.reports) {
-          const calculatedStats = agentService.calculateReportStats(response.data.reports);
+          const calculatedStats = agentService.calculateReportStats(
+            response.data.reports,
+          );
           setStats(calculatedStats);
         } else {
           setError(response.message || "Failed to fetch statistics");

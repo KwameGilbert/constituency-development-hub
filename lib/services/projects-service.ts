@@ -107,7 +107,9 @@ export interface UpdateProjectData {
 
 class ProjectsService {
   // Public Routes (No Authentication)
-  async getPublicProjects(filters: ProjectFilters = {}): Promise<ProjectResponse> {
+  async getPublicProjects(
+    filters: ProjectFilters = {},
+  ): Promise<ProjectResponse> {
     const params = new URLSearchParams();
     if (filters.status) params.append("status", filters.status);
     if (filters.sector) params.append("sector", filters.sector.toString());
@@ -138,7 +140,9 @@ class ProjectsService {
   }
 
   // Admin Routes (Requires Authentication)
-  async getAdminProjects(filters: ProjectFilters = {}): Promise<ProjectResponse> {
+  async getAdminProjects(
+    filters: ProjectFilters = {},
+  ): Promise<ProjectResponse> {
     const params = new URLSearchParams();
     if (filters.status) params.append("status", filters.status);
     if (filters.sector) params.append("sector", filters.sector.toString());
@@ -159,17 +163,25 @@ class ProjectsService {
     });
   }
 
-  async updateProject(id: number | string, data: UpdateProjectData): Promise<ProjectResponse> {
+  async updateProject(
+    id: number | string,
+    data: UpdateProjectData,
+  ): Promise<ProjectResponse> {
     return apiClient<ProjectResponse>(`/admin/projects/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
-  async deleteProject(id: number | string): Promise<{ success: boolean; message: string }> {
-    return apiClient<{ success: boolean; message: string }>(`/admin/projects/${id}`, {
-      method: "DELETE",
-    });
+  async deleteProject(
+    id: number | string,
+  ): Promise<{ success: boolean; message: string }> {
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/projects/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
   }
 }
 

@@ -75,33 +75,45 @@ export const heroSlidesService = {
   },
 
   // Update hero slide
-  updateSlide: async (id: number, data: Partial<CreateHeroSlidePayload> | FormData) => {
+  updateSlide: async (
+    id: number,
+    data: Partial<CreateHeroSlidePayload> | FormData,
+  ) => {
     return apiClient<HeroSlidesResponse>(`/admin/hero-slides/${id}`, {
       method: "POST", // Changed to POST for FormData support (method spoofing if needed, but standard POST usually works for files)
-      // Note: Actually, Laravel/Slim often handles PUT with files better if using _method spoofing, 
-      // but let's try direct PUT or POST based on backend. 
+      // Note: Actually, Laravel/Slim often handles PUT with files better if using _method spoofing,
+      // but let's try direct PUT or POST based on backend.
       // Checking backend controller: it separates store (POST) and update (PUT).
-      // PHP native PUT doesn't handle multipart/form-data well. 
+      // PHP native PUT doesn't handle multipart/form-data well.
       // Best practice for PHP is POST with _method=PUT.
       body: data instanceof FormData ? data : JSON.stringify(data),
       isFormData: data instanceof FormData,
-      headers: data instanceof FormData ? { "X-HTTP-Method-Override": "PUT" } : undefined // Attempt method override if needed
+      headers:
+        data instanceof FormData
+          ? { "X-HTTP-Method-Override": "PUT" }
+          : undefined, // Attempt method override if needed
     });
   },
 
   // Delete hero slide
   deleteSlide: async (id: number) => {
-    return apiClient<{ success: boolean; message: string }>(`/admin/hero-slides/${id}`, {
-      method: "DELETE",
-    });
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/hero-slides/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
   },
 
   // Reorder hero slides
   reorderSlides: async (orderedIds: number[]) => {
-    return apiClient<{ success: boolean; message: string }>("/admin/hero-slides/reorder", {
-      method: "PUT",
-      body: JSON.stringify({ order: orderedIds }),
-    });
+    return apiClient<{ success: boolean; message: string }>(
+      "/admin/hero-slides/reorder",
+      {
+        method: "PUT",
+        body: JSON.stringify({ order: orderedIds }),
+      },
+    );
   },
 };
 

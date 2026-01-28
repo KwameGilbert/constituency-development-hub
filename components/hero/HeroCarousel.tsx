@@ -12,7 +12,8 @@ const fallbackSlides: HeroSlide[] = [
     id: 1,
     title: "Sefwi Wiawso Constituency",
     subtitle: "Hon. Kofi Benteh Afful · Office of the MP",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80",
     cta_text: "Explore Projects",
     cta_link: "/projects",
     display_order: 0,
@@ -30,9 +31,15 @@ function HeroCarousel() {
     async function fetchSlides() {
       try {
         const response = await heroSlidesService.getActiveSlides();
-        if (response.success && response.data.slides && response.data.slides.length > 0) {
+        if (
+          response.success &&
+          response.data.slides &&
+          response.data.slides.length > 0
+        ) {
           // Sort by display_order
-          const sortedSlides = response.data.slides.sort((a, b) => a.display_order - b.display_order);
+          const sortedSlides = response.data.slides.sort(
+            (a, b) => a.display_order - b.display_order,
+          );
           setSlides(sortedSlides);
         } else {
           setSlides(fallbackSlides);
@@ -50,7 +57,7 @@ function HeroCarousel() {
 
   useEffect(() => {
     if (slides.length <= 1) return;
-    
+
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % slides.length);
     }, slideDuration);

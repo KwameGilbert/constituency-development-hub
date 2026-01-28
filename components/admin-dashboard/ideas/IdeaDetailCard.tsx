@@ -13,7 +13,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ThumbsUp, Mail, Phone, Calendar, Tag, CheckCircle, XCircle, Clock } from "lucide-react";
+import {
+  ThumbsUp,
+  Mail,
+  Phone,
+  Calendar,
+  Tag,
+  CheckCircle,
+  XCircle,
+  Clock,
+} from "lucide-react";
 import { Idea } from "@/lib/services/ideas-service";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -41,14 +50,17 @@ const getStatusColor = (status: string) => {
 };
 
 const formatStatus = (status: string) => {
-  return status.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
   });
 };
 
@@ -79,7 +91,9 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
           <div className="space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">{idea.title}</h2>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                  {idea.title}
+                </h2>
                 <Badge className={getStatusColor(idea.status)}>
                   {formatStatus(idea.status)}
                 </Badge>
@@ -95,7 +109,9 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
 
             <div>
               <h3 className="font-semibold text-slate-900 mb-2">Description</h3>
-              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{idea.description}</p>
+              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                {idea.description}
+              </p>
             </div>
 
             <Separator />
@@ -108,8 +124,12 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Submitted By</p>
-                  <p className="font-medium text-slate-900">{idea.submitter_name}</p>
-                  <p className="text-sm text-slate-600">{idea.submitter_email}</p>
+                  <p className="font-medium text-slate-900">
+                    {idea.submitter_name}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {idea.submitter_email}
+                  </p>
                 </div>
               </div>
 
@@ -120,7 +140,9 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Contact</p>
-                    <p className="font-medium text-slate-900">{idea.submitter_contact}</p>
+                    <p className="font-medium text-slate-900">
+                      {idea.submitter_contact}
+                    </p>
                   </div>
                 </div>
               )}
@@ -131,7 +153,9 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Category</p>
-                  <p className="font-medium text-slate-900 capitalize">{idea.category}</p>
+                  <p className="font-medium text-slate-900 capitalize">
+                    {idea.category}
+                  </p>
                 </div>
               </div>
 
@@ -141,7 +165,9 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Submitted On</p>
-                  <p className="font-medium text-slate-900">{formatDate(idea.created_at)}</p>
+                  <p className="font-medium text-slate-900">
+                    {formatDate(idea.created_at)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -221,8 +247,12 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
 
           {idea.admin_notes && (
             <div className="p-4 bg-slate-50 rounded-lg">
-              <p className="text-sm font-medium text-slate-700 mb-1">Previous Notes:</p>
-              <p className="text-sm text-slate-600 whitespace-pre-wrap">{idea.admin_notes}</p>
+              <p className="text-sm font-medium text-slate-700 mb-1">
+                Previous Notes:
+              </p>
+              <p className="text-sm text-slate-600 whitespace-pre-wrap">
+                {idea.admin_notes}
+              </p>
             </div>
           )}
         </CardContent>

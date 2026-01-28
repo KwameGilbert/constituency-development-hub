@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { Plus, GripVertical, Edit, Trash2, Info, Loader2, ImageIcon, ExternalLink, Search, X } from "lucide-react";
+import {
+  Plus,
+  GripVertical,
+  Edit,
+  Trash2,
+  Info,
+  Loader2,
+  ImageIcon,
+  ExternalLink,
+  Search,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -32,13 +43,14 @@ export function CarouselList() {
   // Filter slides based on search query
   const filteredSlides = useMemo(() => {
     if (!searchQuery.trim()) return slides;
-    
+
     const query = searchQuery.toLowerCase();
-    return slides.filter(slide => 
-      slide.title?.toLowerCase().includes(query) ||
-      slide.subtitle?.toLowerCase().includes(query) ||
-      slide.cta_text?.toLowerCase().includes(query) ||
-      slide.cta_link?.toLowerCase().includes(query)
+    return slides.filter(
+      (slide) =>
+        slide.title?.toLowerCase().includes(query) ||
+        slide.subtitle?.toLowerCase().includes(query) ||
+        slide.cta_text?.toLowerCase().includes(query) ||
+        slide.cta_link?.toLowerCase().includes(query),
     );
   }, [slides, searchQuery]);
 
@@ -48,7 +60,9 @@ export function CarouselList() {
       const response = await heroSlidesService.getAllSlides();
       if (response.success && response.data.slides) {
         // Sort by display_order
-        const sortedSlides = response.data.slides.sort((a, b) => a.display_order - b.display_order);
+        const sortedSlides = response.data.slides.sort(
+          (a, b) => a.display_order - b.display_order,
+        );
         setSlides(sortedSlides);
       }
     } catch (error) {
@@ -64,7 +78,7 @@ export function CarouselList() {
       setDeletingId(id);
       const response = await heroSlidesService.deleteSlide(id);
       if (response.success) {
-        setSlides(slides.filter(slide => slide.id !== id));
+        setSlides(slides.filter((slide) => slide.id !== id));
         toast.success("Hero slide deleted successfully");
       }
     } catch (error) {
@@ -89,7 +103,9 @@ export function CarouselList() {
       <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-lg font-bold text-slate-900">Hero Slides</h2>
-          <p className="text-sm text-slate-500">Manage sliding images that appear on the homepage hero section</p>
+          <p className="text-sm text-slate-500">
+            Manage sliding images that appear on the homepage hero section
+          </p>
         </div>
         <Link href="/web-admin-dashboard/carousel/new">
           <Button className="bg-purple-600 hover:bg-purple-700 text-white">
@@ -121,7 +137,9 @@ export function CarouselList() {
         </div>
         {searchQuery && (
           <p className="text-sm text-slate-500 mt-2">
-            Found {filteredSlides.length} {filteredSlides.length === 1 ? 'slide' : 'slides'} matching &quot;{searchQuery}&quot;
+            Found {filteredSlides.length}{" "}
+            {filteredSlides.length === 1 ? "slide" : "slides"} matching &quot;
+            {searchQuery}&quot;
           </p>
         )}
       </div>
@@ -132,7 +150,9 @@ export function CarouselList() {
             <ImageIcon className="h-8 w-8 text-purple-600" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-slate-900">No Hero Slides</h3>
+            <h3 className="text-xl font-semibold text-slate-900">
+              No Hero Slides
+            </h3>
             <p className="text-slate-500 max-w-sm mx-auto">
               Add your first hero slide to display on the homepage.
             </p>
@@ -141,7 +161,9 @@ export function CarouselList() {
       ) : filteredSlides.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-4 min-h-[200px]">
           <Search className="h-8 w-8 text-slate-300" />
-          <p className="text-slate-500">No slides matching &quot;{searchQuery}&quot;</p>
+          <p className="text-slate-500">
+            No slides matching &quot;{searchQuery}&quot;
+          </p>
           <Button variant="outline" onClick={() => setSearchQuery("")}>
             Clear Search
           </Button>
@@ -151,29 +173,35 @@ export function CarouselList() {
           {/* Info Alert */}
           <div className="flex items-center gap-2 text-sm text-slate-600 px-2">
             <Info className="h-4 w-4 text-slate-400" />
-            <span>Slides are displayed in order of their display order. Lower numbers appear first.</span>
+            <span>
+              Slides are displayed in order of their display order. Lower
+              numbers appear first.
+            </span>
           </div>
 
           {/* List Section */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="divide-y divide-slate-100">
               {filteredSlides.map((slide) => (
-                <div key={slide.id} className="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group">
+                <div
+                  key={slide.id}
+                  className="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group"
+                >
                   <div className="cursor-move text-slate-300 hover:text-slate-500">
                     <GripVertical className="h-5 w-5" />
                   </div>
-                  
+
                   {/* Order Badge */}
                   <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold">
                     {slide.display_order}
                   </div>
-                  
+
                   <div className="h-16 w-24 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 relative">
                     {slide.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img 
-                        src={slide.image} 
-                        alt={slide.title} 
+                      <img
+                        src={slide.image}
+                        alt={slide.title}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -184,9 +212,13 @@ export function CarouselList() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-slate-900 truncate">{slide.title}</h3>
+                    <h3 className="text-sm font-bold text-slate-900 truncate">
+                      {slide.title}
+                    </h3>
                     {slide.subtitle && (
-                      <p className="text-xs text-slate-500 truncate">{slide.subtitle}</p>
+                      <p className="text-xs text-slate-500 truncate">
+                        {slide.subtitle}
+                      </p>
                     )}
                     {slide.cta_link && (
                       <p className="text-xs text-purple-600 flex items-center gap-1 mt-1">
@@ -197,26 +229,34 @@ export function CarouselList() {
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                      slide.status === 'active' 
-                        ? 'bg-green-50 text-green-700' 
-                        : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {slide.status === 'active' ? 'Active' : 'Inactive'}
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                        slide.status === "active"
+                          ? "bg-green-50 text-green-700"
+                          : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {slide.status === "active" ? "Active" : "Inactive"}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Link href={`/web-admin-dashboard/carousel/${slide.id}/edit`}>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-purple-600 hover:bg-purple-50 hover:text-purple-700">
+                    <Link
+                      href={`/web-admin-dashboard/carousel/${slide.id}/edit`}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-8 w-8 text-red-400 hover:bg-red-50 hover:text-red-600"
                           disabled={deletingId === slide.id}
                         >
@@ -231,7 +271,8 @@ export function CarouselList() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Hero Slide</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete &quot;{slide.title}&quot;? This action cannot be undone.
+                            Are you sure you want to delete &quot;{slide.title}
+                            &quot;? This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

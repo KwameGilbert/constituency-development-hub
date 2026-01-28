@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface AssessmentFile {
   id: string;
@@ -23,7 +23,7 @@ interface AssessmentState {
   isSubmitting: boolean;
   errors: Record<string, string>;
   touched: Record<string, boolean>;
-  
+
   // Actions
   setCurrentIssue: (issueId: number) => void;
   updateAssessment: (field: string, value: string) => void;
@@ -39,11 +39,11 @@ interface AssessmentState {
 export const useAssessmentStore = create<AssessmentState>((set, get) => ({
   currentIssueId: null,
   assessment: {
-    decision: '',
-    comments: '',
-    recommendations: '',
-    estimatedBudget: '',
-    timeline: '',
+    decision: "",
+    comments: "",
+    recommendations: "",
+    estimatedBudget: "",
+    timeline: "",
   },
   files: [],
   isSubmitting: false,
@@ -75,7 +75,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
       uploadDate: new Date().toISOString(),
       file,
     };
-    
+
     set((state) => ({
       files: [...state.files, assessmentFile],
     }));
@@ -100,7 +100,7 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     set((state) => ({
       errors: {
         ...state.errors,
-        [field]: '',
+        [field]: "",
       },
     }));
   },
@@ -122,11 +122,11 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     set({
       currentIssueId: null,
       assessment: {
-        decision: '',
-        comments: '',
-        recommendations: '',
-        estimatedBudget: '',
-        timeline: '',
+        decision: "",
+        comments: "",
+        recommendations: "",
+        estimatedBudget: "",
+        timeline: "",
       },
       files: [],
       isSubmitting: false,

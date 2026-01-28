@@ -28,11 +28,11 @@ export default function IdeaDetailPage() {
           setIdea(response.data.idea);
           setError(null);
         } else {
-          setError('Idea not found');
+          setError("Idea not found");
         }
       } catch (err) {
-        console.error('Failed to load idea data:', err);
-        setError('Failed to load idea data');
+        console.error("Failed to load idea data:", err);
+        setError("Failed to load idea data");
       } finally {
         setLoading(false);
       }
@@ -50,7 +50,11 @@ export default function IdeaDetailPage() {
         <div className="flex-1 p-8 space-y-6 max-w-5xl mx-auto w-full">
           <div className="flex items-center gap-4">
             <Link href="/admin-dashboard/ideas">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -105,7 +109,9 @@ export default function IdeaDetailPage() {
         <AdminHeader title="Idea Not Found" />
         <div className="flex-1 p-8 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-red-600 text-lg mb-4">{error || 'Idea not found'}</p>
+            <p className="text-red-600 text-lg mb-4">
+              {error || "Idea not found"}
+            </p>
             <Link href="/admin-dashboard/ideas">
               <Button>Back to Ideas</Button>
             </Link>
@@ -121,7 +127,11 @@ export default function IdeaDetailPage() {
       <div className="flex-1 p-8 space-y-6 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/admin-dashboard/ideas">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>

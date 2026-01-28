@@ -3,7 +3,7 @@ import { apiClient } from "../api-client";
 export interface Location {
   id: number;
   name: string;
-  type: 'community' | 'suburb' | 'cottage' | 'smaller_community';
+  type: "community" | "suburb" | "cottage" | "smaller_community";
   parent_id: number | null;
   parent_name: string | null;
   population: number | null;
@@ -13,7 +13,7 @@ export interface Location {
     longitude: number | null;
   };
   description: string | null;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   children_count: number;
   created_at: string;
   updated_at: string;
@@ -33,26 +33,26 @@ export interface LocationStats {
 
 export interface CreateLocationRequest {
   name: string;
-  type: Location['type'];
+  type: Location["type"];
   parent_id?: number | null;
   population?: number;
   area_size?: number;
   latitude?: number;
   longitude?: number;
   description?: string;
-  status?: Location['status'];
+  status?: Location["status"];
 }
 
 export interface UpdateLocationRequest {
   name?: string;
-  type?: Location['type'];
+  type?: Location["type"];
   parent_id?: number | null;
   population?: number;
   area_size?: number;
   latitude?: number;
   longitude?: number;
   description?: string;
-  status?: Location['status'];
+  status?: Location["status"];
 }
 
 export interface LocationsListResponse {
@@ -131,30 +131,31 @@ export const locationsService = {
     parent_id?: string | number;
     search?: string;
     sort_by?: string;
-    sort_order?: 'asc' | 'desc';
+    sort_order?: "asc" | "desc";
   }): Promise<LocationsListResponse> => {
     const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.type) queryParams.append('type', params.type);
-    if (params?.status) queryParams.append('status', params.status);
-    if (params?.parent_id !== undefined) queryParams.append('parent_id', String(params.parent_id));
-    if (params?.search) queryParams.append('search', params.search);
-    if (params?.sort_by) queryParams.append('sort_by', params.sort_by);
-    if (params?.sort_order) queryParams.append('sort_order', params.sort_order);
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.type) queryParams.append("type", params.type);
+    if (params?.status) queryParams.append("status", params.status);
+    if (params?.parent_id !== undefined)
+      queryParams.append("parent_id", String(params.parent_id));
+    if (params?.search) queryParams.append("search", params.search);
+    if (params?.sort_by) queryParams.append("sort_by", params.sort_by);
+    if (params?.sort_order) queryParams.append("sort_order", params.sort_order);
 
     const queryString = queryParams.toString();
-    const url = `/locations${queryString ? `?${queryString}` : ''}`;
+    const url = `/locations${queryString ? `?${queryString}` : ""}`;
 
     return apiClient<LocationsListResponse>(url, {
-      method: 'GET',
+      method: "GET",
     });
   },
 
   // Get location by ID
   getLocationById: async (id: number): Promise<LocationResponse> => {
     return apiClient<LocationResponse>(`/admin/locations/${id}`, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
@@ -162,49 +163,59 @@ export const locationsService = {
   // Get location statistics
   getLocationStats: async (id: number): Promise<LocationStatsResponse> => {
     return apiClient<LocationStatsResponse>(`/admin/locations/${id}/stats`, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Get location types summary
   getLocationTypes: async (): Promise<LocationTypesResponse> => {
-    return apiClient<LocationTypesResponse>('/admin/locations/types', {
-      method: 'GET',
+    return apiClient<LocationTypesResponse>("/admin/locations/types", {
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Get dashboard statistics
   getDashboardStats: async (): Promise<LocationDashboardStatsResponse> => {
-    return apiClient<LocationDashboardStatsResponse>('/admin/locations/dashboard-stats', {
-      method: 'GET',
-      requiresAuth: true,
-    });
+    return apiClient<LocationDashboardStatsResponse>(
+      "/admin/locations/dashboard-stats",
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 
   // Create new location
-  createLocation: async (data: CreateLocationRequest): Promise<LocationResponse> => {
-    return apiClient<LocationResponse>('/admin/locations', {
-      method: 'POST',
+  createLocation: async (
+    data: CreateLocationRequest,
+  ): Promise<LocationResponse> => {
+    return apiClient<LocationResponse>("/admin/locations", {
+      method: "POST",
       body: JSON.stringify(data),
       requiresAuth: true,
     });
   },
 
   // Update location
-  updateLocation: async (id: number, data: UpdateLocationRequest): Promise<LocationResponse> => {
+  updateLocation: async (
+    id: number,
+    data: UpdateLocationRequest,
+  ): Promise<LocationResponse> => {
     return apiClient<LocationResponse>(`/admin/locations/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
     });
   },
 
   // Delete location
-  deleteLocation: async (id: number): Promise<{ success: boolean; message: string }> => {
+  deleteLocation: async (
+    id: number,
+  ): Promise<{ success: boolean; message: string }> => {
     return apiClient(`/admin/locations/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       requiresAuth: true,
     });
   },

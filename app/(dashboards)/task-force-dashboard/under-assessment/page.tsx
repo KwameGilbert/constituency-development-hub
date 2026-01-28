@@ -1,12 +1,24 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Search,
   Filter,
@@ -18,15 +30,18 @@ import {
   FileText,
   AlertCircle,
   Clock,
-  Loader2
-} from 'lucide-react';
-import { taskForceService, TaskForceIssue } from '@/lib/services/task-force-service';
-import { 
-  getStatusColor, 
-  getPriorityColor, 
-  formatDate, 
-  getMetadata
-} from '@/lib/data';
+  Loader2,
+} from "lucide-react";
+import {
+  taskForceService,
+  TaskForceIssue,
+} from "@/lib/services/task-force-service";
+import {
+  getStatusColor,
+  getPriorityColor,
+  formatDate,
+  getMetadata,
+} from "@/lib/data";
 
 export default function UnderAssessmentPage() {
   const metadata = getMetadata();
@@ -36,12 +51,12 @@ export default function UnderAssessmentPage() {
   const [stats, setStats] = useState({
     total: 0,
     highPriority: 0,
-    longDuration: 0
+    longDuration: 0,
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   // Fetch issues under assessment
   useEffect(() => {
@@ -49,10 +64,10 @@ export default function UnderAssessmentPage() {
       setLoading(true);
       try {
         const response = await taskForceService.getAllTaskForceIssues({
-          status: 'assessment_in_progress',
+          status: "assessment_in_progress",
           // search: searchTerm || undefined,
-          priority: priorityFilter !== 'all' ? priorityFilter : undefined,
-          category: categoryFilter !== 'all' ? categoryFilter : undefined,
+          priority: priorityFilter !== "all" ? priorityFilter : undefined,
+          category: categoryFilter !== "all" ? categoryFilter : undefined,
           limit: 50,
         });
 
@@ -60,32 +75,36 @@ export default function UnderAssessmentPage() {
           let fetchedIssues = response.data.issues;
 
           if (searchTerm) {
-             fetchedIssues = fetchedIssues.filter(i => 
-               i.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-               i.description.toLowerCase().includes(searchTerm.toLowerCase())
-             );
+            fetchedIssues = fetchedIssues.filter(
+              (i) =>
+                i.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                i.description.toLowerCase().includes(searchTerm.toLowerCase()),
+            );
           }
 
           setIssues(fetchedIssues);
-          
+
           // Calculate stats
           const allIssues = response.data.issues;
-          const highPriority = allIssues.filter(i => i.priority === 'high' || i.priority === 'urgent').length;
-          const longDuration = allIssues.filter(i => {
+          const highPriority = allIssues.filter(
+            (i) => i.priority === "high" || i.priority === "urgent",
+          ).length;
+          const longDuration = allIssues.filter((i) => {
             const daysSince = Math.floor(
-              (new Date().getTime() - new Date(i.created_at).getTime()) / (1000 * 60 * 60 * 24)
+              (new Date().getTime() - new Date(i.created_at).getTime()) /
+                (1000 * 60 * 60 * 24),
             );
             return daysSince >= 5;
           }).length;
-          
+
           setStats({
             total: response.data.pagination.total,
             highPriority,
-            longDuration
+            longDuration,
           });
         }
       } catch (error) {
-        console.error('Failed to fetch issues under assessment:', error);
+        console.error("Failed to fetch issues under assessment:", error);
       } finally {
         setLoading(false);
       }
@@ -97,7 +116,8 @@ export default function UnderAssessmentPage() {
 
   const getAssessmentDuration = (createdAt: string) => {
     return Math.floor(
-      (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
+      (new Date().getTime() - new Date(createdAt).getTime()) /
+        (1000 * 60 * 60 * 24),
     );
   };
 
@@ -106,7 +126,9 @@ export default function UnderAssessmentPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Issues Under Assessment</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Issues Under Assessment
+          </h1>
           <p className="text-gray-600 mt-1">
             Currently being reviewed - {issues.length} of {stats.total} issues
           </p>
@@ -122,8 +144,12 @@ export default function UnderAssessmentPage() {
                 <AlertCircle className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Under Review</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Under Review
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -136,8 +162,12 @@ export default function UnderAssessmentPage() {
                 <Clock className="h-6 w-6 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Long Duration (5+ days)</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.longDuration}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Long Duration (5+ days)
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.longDuration}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -150,8 +180,12 @@ export default function UnderAssessmentPage() {
                 <FileText className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">High Priority</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.highPriority}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  High Priority
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.highPriority}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -228,14 +262,18 @@ export default function UnderAssessmentPage() {
               </div>
             ) : (
               issues.map((issue) => {
-                const assessmentDuration = getAssessmentDuration(issue.created_at);
+                const assessmentDuration = getAssessmentDuration(
+                  issue.created_at,
+                );
                 const isLongDuration = assessmentDuration >= 5;
 
                 return (
                   <div
                     key={issue.id}
                     className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
-                      isLongDuration ? 'border-yellow-200 bg-yellow-50' : 'border-gray-200'
+                      isLongDuration
+                        ? "border-yellow-200 bg-yellow-50"
+                        : "border-gray-200"
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -243,30 +281,35 @@ export default function UnderAssessmentPage() {
                         <div className="flex items-start gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <h3 className="font-semibold text-gray-900">{issue.title}</h3>
+                              <h3 className="font-semibold text-gray-900">
+                                {issue.title}
+                              </h3>
                               {isLongDuration && (
                                 <Badge className="bg-yellow-100 text-yellow-800">
                                   Long Duration ({assessmentDuration} days)
                                 </Badge>
                               )}
                             </div>
-                            
+
                             <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                               {issue.description}
                             </p>
-                            
+
                             <div className="flex flex-wrap gap-2 mb-3">
-                              <Badge variant="outline" className={getStatusColor(issue.status)}>
+                              <Badge
+                                variant="outline"
+                                className={getStatusColor(issue.status)}
+                              >
                                 Under Assessment
                               </Badge>
-                              <Badge className={getPriorityColor(issue.priority)}>
+                              <Badge
+                                className={getPriorityColor(issue.priority)}
+                              >
                                 {issue.priority} Priority
                               </Badge>
-                              <Badge variant="outline">
-                                {issue.category}
-                              </Badge>
+                              <Badge variant="outline">{issue.category}</Badge>
                             </div>
-                            
+
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
@@ -274,7 +317,7 @@ export default function UnderAssessmentPage() {
                               </div>
                               <div className="flex items-center gap-1">
                                 <User className="h-4 w-4" />
-                                {issue.reporter_name || 'Anonymous'}
+                                {issue.reporter_name || "Anonymous"}
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
@@ -286,16 +329,23 @@ export default function UnderAssessmentPage() {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
-                            <Link href={`/task-force-dashboard/issues/${issue.id}`}>
+                            <Link
+                              href={`/task-force-dashboard/issues/${issue.id}`}
+                            >
                               <Button size="sm" variant="outline">
                                 <Eye className="h-4 w-4 mr-1" />
                                 View
                               </Button>
                             </Link>
-                            <Link href={`/task-force-dashboard/assess/${issue.id}`}>
-                              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                            <Link
+                              href={`/task-force-dashboard/assess/${issue.id}`}
+                            >
+                              <Button
+                                size="sm"
+                                className="bg-purple-600 hover:bg-purple-700"
+                              >
                                 <MessageSquare className="h-4 w-4 mr-1" />
                                 Continue Assessment
                               </Button>

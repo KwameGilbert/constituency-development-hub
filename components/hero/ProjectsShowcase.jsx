@@ -16,7 +16,7 @@ const cardVariants = {
 
 import ProjectDetailsModal from "@/components/projects/ProjectDetailsModal";
 
-// ... (existing imports, but we need to make sure we don't duplicate imports if not replaced cleanly. 
+// ... (existing imports, but we need to make sure we don't duplicate imports if not replaced cleanly.
 // I'll replace the whole file content structure to be safe or use targeted replacement carefully.
 // Targeted replacement is better. I'll add imports at top, state inside, and modal at bottom.)
 
@@ -70,7 +70,7 @@ function ProjectsShowcase() {
   };
 
   if (error) {
-    return null; 
+    return null;
   }
 
   return (
@@ -92,7 +92,7 @@ function ProjectsShowcase() {
         </div>
 
         {isLoading ? (
-           // Loading state same
+          // Loading state same
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div
@@ -146,7 +146,7 @@ function ProjectsShowcase() {
                     <span>{project.sector?.name || "General"}</span>
                     <span
                       className={`rounded-full px-2 py-0.5 ${getStatusColor(
-                        project.status
+                        project.status,
                       )}`}
                     >
                       {project.status}
@@ -182,10 +182,10 @@ function ProjectsShowcase() {
         )}
       </div>
 
-      <ProjectDetailsModal 
-        project={selectedProject} 
-        isOpen={!!selectedProject} 
-        onClose={() => setSelectedProject(null)} 
+      <ProjectDetailsModal
+        project={selectedProject}
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
       />
     </section>
   );

@@ -30,8 +30,8 @@ export const uploadService = {
     if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
       token = envToken;
     }
-    if (!token && typeof window !== 'undefined') {
-      token = localStorage.getItem('authToken');
+    if (!token && typeof window !== "undefined") {
+      token = localStorage.getItem("authToken");
     }
 
     const headers: HeadersInit = {};

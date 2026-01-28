@@ -44,16 +44,19 @@ export function WebAdminSidebar() {
   const handleLogout = () => {
     authService.logout();
     toast.success("Logged out successfully");
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
-    <Sidebar className="bg-violet-950 border-r border-violet-900 text-white" collapsible="icon">
+    <Sidebar
+      className="bg-violet-950 border-r border-violet-900 text-white"
+      collapsible="icon"
+    >
       <SidebarHeader className="h-16 border-b border-violet-900 bg-violet-950">
         <div className="flex items-center gap-3 px-4 py-2">
-            {/* Placeholder for Coat of Arms */}
+          {/* Placeholder for Coat of Arms */}
           <div className="flex h-8 w-8 items-center justify-center">
-             <span className="text-2xl">🇬🇭</span> 
+            <span className="text-2xl">🇬🇭</span>
           </div>
           <span className="font-bold text-lg text-white">Admin Panel</span>
         </div>
@@ -101,7 +104,9 @@ export function WebAdminSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname.startsWith("/web-admin-dashboard/carousel")}
+                  isActive={pathname.startsWith(
+                    "/web-admin-dashboard/carousel",
+                  )}
                   className="text-violet-200 hover:bg-violet-900 hover:text-white data-[active=true]:bg-violet-600 data-[active=true]:text-white"
                 >
                   <Link href="/web-admin-dashboard/carousel">
@@ -113,7 +118,9 @@ export function WebAdminSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname.startsWith("/web-admin-dashboard/announcements")}
+                  isActive={pathname.startsWith(
+                    "/web-admin-dashboard/announcements",
+                  )}
                   className="text-violet-200 hover:bg-violet-900 hover:text-white data-[active=true]:bg-violet-600 data-[active=true]:text-white"
                 >
                   <Link href="/web-admin-dashboard/announcements">
@@ -139,9 +146,9 @@ export function WebAdminSidebar() {
         </SidebarGroup>
 
         <SidebarGroup className="mt-auto">
-            <div className="px-4 py-2 text-xs font-semibold text-violet-400 uppercase tracking-wider">
-                Settings
-            </div>
+          <div className="px-4 py-2 text-xs font-semibold text-violet-400 uppercase tracking-wider">
+            Settings
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -159,9 +166,7 @@ export function WebAdminSidebar() {
               <SidebarMenuItem>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <SidebarMenuButton
-                      className="text-red-300 hover:bg-violet-900 hover:text-red-200 cursor-pointer"
-                    >
+                    <SidebarMenuButton className="text-red-300 hover:bg-violet-900 hover:text-red-200 cursor-pointer">
                       <LogOut />
                       <span>Logout</span>
                     </SidebarMenuButton>
@@ -170,7 +175,8 @@ export function WebAdminSidebar() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to log out? You will need to sign in again to access the admin dashboard.
+                        Are you sure you want to log out? You will need to sign
+                        in again to access the admin dashboard.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

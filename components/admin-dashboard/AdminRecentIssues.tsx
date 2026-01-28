@@ -4,35 +4,38 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Inbox } from "lucide-react";
-import { dashboardService, RecentIssue } from "@/lib/services/dashboard-service";
+import {
+  dashboardService,
+  RecentIssue,
+} from "@/lib/services/dashboard-service";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
-    case 'resolved':
-      return 'bg-green-100 text-green-800';
-    case 'in progress':
-      return 'bg-blue-100 text-blue-800';
-    case 'pending review':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'approved':
-      return 'bg-purple-100 text-purple-800';
+    case "resolved":
+      return "bg-green-100 text-green-800";
+    case "in progress":
+      return "bg-blue-100 text-blue-800";
+    case "pending review":
+      return "bg-yellow-100 text-yellow-800";
+    case "approved":
+      return "bg-purple-100 text-purple-800";
     default:
-      return 'bg-gray-100 text-gray-800';
+      return "bg-gray-100 text-gray-800";
   }
 };
 
 const getSeverityColor = (severity: string) => {
   switch (severity.toLowerCase()) {
-    case 'critical':
-      return 'bg-red-100 text-red-800';
-    case 'high':
-      return 'bg-orange-100 text-orange-800';
-    case 'medium':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'low':
-      return 'bg-green-100 text-green-800';
+    case "critical":
+      return "bg-red-100 text-red-800";
+    case "high":
+      return "bg-orange-100 text-orange-800";
+    case "medium":
+      return "bg-yellow-100 text-yellow-800";
+    case "low":
+      return "bg-green-100 text-green-800";
     default:
-      return 'bg-gray-100 text-gray-800';
+      return "bg-gray-100 text-gray-800";
   }
 };
 
@@ -45,15 +48,15 @@ export function AdminRecentIssues() {
     const fetchIssues = async () => {
       try {
         const response = await dashboardService.getRecentIssues(10);
-        
+
         if (response.success && response.data?.recentIssues) {
           setIssues(response.data.recentIssues);
         } else {
-          setError(response.message || 'Failed to load recent issues');
+          setError(response.message || "Failed to load recent issues");
         }
       } catch (err) {
-        setError('Failed to load recent issues');
-        console.error('Error fetching issues:', err);
+        setError("Failed to load recent issues");
+        console.error("Error fetching issues:", err);
       } finally {
         setLoading(false);
       }
@@ -66,8 +69,12 @@ export function AdminRecentIssues() {
     return (
       <Card className="flex-1">
         <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-800">Recent Issues</CardTitle>
-          <a href="#" className="text-sm text-blue-600 hover:underline">View All Issues →</a>
+          <CardTitle className="text-lg font-semibold text-gray-800">
+            Recent Issues
+          </CardTitle>
+          <a href="#" className="text-sm text-blue-600 hover:underline">
+            View All Issues →
+          </a>
         </CardHeader>
         <CardContent className="p-0">
           <div className="bg-white">
@@ -97,8 +104,12 @@ export function AdminRecentIssues() {
     return (
       <Card className="flex-1">
         <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-800">Recent Issues</CardTitle>
-          <a href="#" className="text-sm text-blue-600 hover:underline">View All Issues →</a>
+          <CardTitle className="text-lg font-semibold text-gray-800">
+            Recent Issues
+          </CardTitle>
+          <a href="#" className="text-sm text-blue-600 hover:underline">
+            View All Issues →
+          </a>
         </CardHeader>
         <CardContent className="p-0">
           <div className="bg-white">
@@ -129,8 +140,12 @@ export function AdminRecentIssues() {
   return (
     <Card className="flex-1">
       <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-        <CardTitle className="text-lg font-semibold text-gray-800">Recent Issues</CardTitle>
-        <a href="#" className="text-sm text-blue-600 hover:underline">View All Issues →</a>
+        <CardTitle className="text-lg font-semibold text-gray-800">
+          Recent Issues
+        </CardTitle>
+        <a href="#" className="text-sm text-blue-600 hover:underline">
+          View All Issues →
+        </a>
       </CardHeader>
       <CardContent className="p-0">
         <div className="bg-white">
@@ -149,12 +164,21 @@ export function AdminRecentIssues() {
           {issues.length > 0 ? (
             <div className="divide-y divide-gray-100">
               {issues.map((issue) => (
-                <div key={issue.id} className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors">
+                <div
+                  key={issue.id}
+                  className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+                >
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-900 truncate" title={issue.title}>
+                    <span
+                      className="text-sm font-medium text-gray-900 truncate"
+                      title={issue.title}
+                    >
                       {issue.title}
                     </span>
-                    <span className="text-xs text-gray-500 truncate" title={issue.description}>
+                    <span
+                      className="text-xs text-gray-500 truncate"
+                      title={issue.description}
+                    >
                       {issue.description}
                     </span>
                   </div>
@@ -162,18 +186,22 @@ export function AdminRecentIssues() {
                     <span className="text-sm text-gray-900">{issue.agent}</span>
                   </div>
                   <div className="flex items-center">
-                    <Badge className={`text-xs ${getStatusColor(issue.status)}`}>
+                    <Badge
+                      className={`text-xs ${getStatusColor(issue.status)}`}
+                    >
                       {issue.status}
                     </Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <Badge className={`text-xs justify-center ${getSeverityColor(issue.severity)}`}>
+                    <Badge
+                      className={`text-xs justify-center ${getSeverityColor(issue.severity)}`}
+                    >
                       {issue.severity}
                     </Badge>
                     <span className="text-xs text-gray-500 text-right">
-                      {new Date(issue.date).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short'
+                      {new Date(issue.date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
                       })}
                     </span>
                   </div>

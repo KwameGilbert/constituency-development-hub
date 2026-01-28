@@ -6,18 +6,23 @@ import { AnnouncementsHeader } from "@/components/admin-dashboard/announcements/
 import { AnnouncementsTable } from "@/components/admin-dashboard/announcements/AnnouncementsTable";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { announcementsService, Announcement } from "@/lib/services/announcements-service";
+import {
+  announcementsService,
+  Announcement,
+} from "@/lib/services/announcements-service";
 
 interface Pagination {
   page: number;
-    limit: number;
+  limit: number;
   total: number;
   total_pages: number;
 }
 
 export default function AnnouncementsListPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [pagination, setPagination] = useState<Pagination | undefined>(undefined);
+  const [pagination, setPagination] = useState<Pagination | undefined>(
+    undefined,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,11 +37,11 @@ export default function AnnouncementsListPage() {
           setPagination(response.data.pagination);
           setError(null);
         } else {
-            setError(response.message || "Failed to load announcements");
+          setError(response.message || "Failed to load announcements");
         }
       } catch (err) {
-        console.error('Failed to load announcements data:', err);
-        setError('Failed to load announcements data');
+        console.error("Failed to load announcements data:", err);
+        setError("Failed to load announcements data");
       } finally {
         setLoading(false);
       }
@@ -87,7 +92,9 @@ export default function AnnouncementsListPage() {
           <AnnouncementsHeader />
           <Card className="p-12 text-center">
             <p className="text-red-600 text-lg font-medium">{error}</p>
-            <p className="text-slate-500 mt-2">Please try refreshing the page</p>
+            <p className="text-slate-500 mt-2">
+              Please try refreshing the page
+            </p>
           </Card>
         </div>
       </div>
@@ -99,7 +106,10 @@ export default function AnnouncementsListPage() {
       <AdminHeader title="Announcements" />
       <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
         <AnnouncementsHeader />
-        <AnnouncementsTable announcements={announcements} pagination={pagination} />
+        <AnnouncementsTable
+          announcements={announcements}
+          pagination={pagination}
+        />
       </div>
     </div>
   );

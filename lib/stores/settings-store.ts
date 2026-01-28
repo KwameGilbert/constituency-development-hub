@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface SettingsState {
   notifications: {
@@ -10,7 +10,7 @@ interface SettingsState {
     weeklyReport: boolean;
   };
   appearance: {
-    theme: 'light' | 'dark' | 'auto';
+    theme: "light" | "dark" | "auto";
     language: string;
     timezone: string;
   };
@@ -19,12 +19,12 @@ interface SettingsState {
     sessionTimeout: string;
     loginNotifications: boolean;
   };
-  
+
   // Modals
   showPasswordModal: boolean;
   showEmailConfigModal: boolean;
   showTwoFactorModal: boolean;
-  
+
   // Actions
   updateNotificationSetting: (key: string, value: boolean) => void;
   updateAppearanceSetting: (key: string, value: string) => void;
@@ -48,16 +48,16 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     weeklyReport: false,
   },
   appearance: {
-    theme: 'light',
-    language: 'en',
-    timezone: 'GMT+0',
+    theme: "light",
+    language: "en",
+    timezone: "GMT+0",
   },
   security: {
     twoFactor: false,
-    sessionTimeout: '30',
+    sessionTimeout: "30",
     loginNotifications: true,
   },
-  
+
   // Modals
   showPasswordModal: false,
   showEmailConfigModal: false,
@@ -99,7 +99,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
 
   saveSettings: async () => {
     // TODO: Implement settings save to backend
-    console.log('Saving settings:', get());
+    console.log("Saving settings:", get());
     return new Promise((resolve) => {
       setTimeout(resolve, 1000);
     });

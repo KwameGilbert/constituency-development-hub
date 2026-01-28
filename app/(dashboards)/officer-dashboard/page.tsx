@@ -12,16 +12,13 @@ import { RecentIssuesSummary } from "@/components/officer-dashboard/RecentIssues
 import { authService } from "@/lib/services/auth-service";
 
 function OfficerMainDashboardPage() {
-    const userName = useMemo(() => {
-        const user = authService.getCurrentUser();
-        return user?.name || user?.email?.split('@')[0] || "Officer";
-    }, []);
+  const userName = useMemo(() => {
+    const user = authService.getCurrentUser();
+    return user?.name || user?.email?.split("@")[0] || "Officer";
+  }, []);
   return (
     <div>
-      <DashboardHeader
-        title="Dashboard"
-        subtitle={`Welcome back, ${userName}`}
-      >
+      <DashboardHeader title="Dashboard" subtitle={`Welcome back, ${userName}`}>
         <Button className="bg-indigo-700 hover:bg-indigo-800" asChild>
           <Link href="/officer-dashboard/issues">
             <List className="mr-2 h-4 w-4" />
@@ -42,8 +39,8 @@ function OfficerMainDashboardPage() {
           <IssueBreakdown />
         </div>
 
-        <RecentIssuesSummary/>
-      </div>    
+        <RecentIssuesSummary />
+      </div>
     </div>
   );
 }

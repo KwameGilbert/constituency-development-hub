@@ -8,7 +8,11 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default async function AnnouncementDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AnnouncementDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let announcement = null;
 
@@ -37,7 +41,9 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
             </Button>
           </Link>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-slate-900">{announcement.title}</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              {announcement.title}
+            </h1>
           </div>
           <Link href={`/admin-dashboard/announcements/${announcement.id}/edit`}>
             <Button className="bg-blue-600 hover:bg-blue-700">Edit</Button>
@@ -51,7 +57,9 @@ export default async function AnnouncementDetailPage({ params }: { params: Promi
                 <Badge>{announcement.priority}</Badge>
                 <Badge variant="outline">{announcement.category}</Badge>
               </div>
-              <p className="text-slate-700 whitespace-pre-wrap">{announcement.content}</p>
+              <p className="text-slate-700 whitespace-pre-wrap">
+                {announcement.content}
+              </p>
             </div>
           </CardContent>
         </Card>

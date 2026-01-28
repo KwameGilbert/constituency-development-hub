@@ -38,8 +38,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
-  
-  const basePath = readOnly ? "/admin-dashboard/issues" : "/officer-dashboard/issues";
+
+  const basePath = readOnly
+    ? "/admin-dashboard/issues"
+    : "/officer-dashboard/issues";
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
@@ -285,7 +287,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                       <Badge
                         variant="outline"
                         className={`border-0 ${getPriorityColor(
-                          issue.priority
+                          issue.priority,
                         )}`}
                       >
                         {issue.priority}

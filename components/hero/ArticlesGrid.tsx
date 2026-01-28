@@ -7,8 +7,6 @@ import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { Loader2 } from "lucide-react";
 import { getImageUrl } from "@/lib/utils";
 
-
-
 function ArticlesGrid() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,13 +17,21 @@ function ArticlesGrid() {
         setLoading(true);
         // Try featured posts first, fall back to regular posts
         let response = await blogService.getFeaturedPosts(3);
-        
-        if (response.success && response.data.posts && response.data.posts.length > 0) {
+
+        if (
+          response.success &&
+          response.data.posts &&
+          response.data.posts.length > 0
+        ) {
           setPosts(response.data.posts.slice(0, 3));
         } else {
           // Fall back to regular posts
           response = await blogService.getAllPosts(1, 3);
-          if (response.success && response.data.posts && response.data.posts.length > 0) {
+          if (
+            response.success &&
+            response.data.posts &&
+            response.data.posts.length > 0
+          ) {
             setPosts(response.data.posts);
           } else {
             setPosts([]);
@@ -37,7 +43,7 @@ function ArticlesGrid() {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchPosts();
   }, []);
@@ -84,7 +90,6 @@ function ArticlesGrid() {
               className="overflow-hidden rounded-2xl bg-white shadow"
             >
               <div className="h-48 overflow-hidden relative bg-slate-100">
-
                 {post.image ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
@@ -109,9 +114,11 @@ function ArticlesGrid() {
                 <h3 className="text-xl font-semibold text-slate-900 line-clamp-2">
                   {post.title}
                 </h3>
-                <p className="text-sm text-slate-500 line-clamp-2">{post.excerpt}</p>
-                <Link 
-                  href={`/blog/${post.slug}`} 
+                <p className="text-sm text-slate-500 line-clamp-2">
+                  {post.excerpt}
+                </p>
+                <Link
+                  href={`/blog/${post.slug}`}
                   className="text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
                 >
                   Read story →
@@ -120,10 +127,10 @@ function ArticlesGrid() {
             </motion.article>
           ))}
         </div>
-        
+
         {/* View All Link */}
         <div className="mt-10 text-center">
-          <Link 
+          <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-base font-semibold text-slate-700 hover:text-red-600 transition-colors"
           >

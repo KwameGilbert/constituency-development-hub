@@ -15,9 +15,7 @@ function AppHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">
-                Task Force Dashboard
-              </BreadcrumbLink>
+              <BreadcrumbLink href="#">Task Force Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>

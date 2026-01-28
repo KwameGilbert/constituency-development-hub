@@ -9,7 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, Clock, Loader2, Upload, X, ImageIcon } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  Loader2,
+  Upload,
+  X,
+  ImageIcon,
+} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -47,7 +54,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(
-    event?.image ? getImageUrl(event.image) : ""
+    event?.image ? getImageUrl(event.image) : "",
   );
   const [removeExistingImage, setRemoveExistingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -127,17 +134,32 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         payload.image = "";
       }
 
-      console.log("Submitting event:", payload, imageFile ? "with image file" : "no image file");
+      console.log(
+        "Submitting event:",
+        payload,
+        imageFile ? "with image file" : "no image file",
+      );
 
       let response;
       if (isEditing && event?.id) {
-        response = await eventsService.updateEvent(event.id, payload, imageFile || undefined);
+        response = await eventsService.updateEvent(
+          event.id,
+          payload,
+          imageFile || undefined,
+        );
       } else {
-        response = await eventsService.createEvent(payload, imageFile || undefined);
+        response = await eventsService.createEvent(
+          payload,
+          imageFile || undefined,
+        );
       }
 
       if (response.success) {
-        toast.success(isEditing ? "Event updated successfully!" : "Event created successfully!");
+        toast.success(
+          isEditing
+            ? "Event updated successfully!"
+            : "Event created successfully!",
+        );
         router.push("/web-admin-dashboard/events");
         router.refresh();
       } else {
@@ -145,7 +167,8 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
       }
     } catch (error: unknown) {
       console.error("Error saving event:", error);
-      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -153,35 +176,42 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 space-y-8">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 space-y-8"
+    >
       <div className="space-y-6">
         {/* Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Event Title *</Label>
-          <Input 
-            id="title" 
-            placeholder="Community Town Hall Meeting" 
+          <Input
+            id="title"
+            placeholder="Community Town Hall Meeting"
             className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
             {...form.register("title")}
             disabled={isLoading}
           />
           {form.formState.errors.title && (
-            <p className="text-red-500 text-sm">{form.formState.errors.title.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.title.message}
+            </p>
           )}
         </div>
 
         {/* Location */}
         <div className="space-y-2">
           <Label htmlFor="location">Location *</Label>
-          <Input 
-            id="location" 
-            placeholder="Community Center, Main Street" 
+          <Input
+            id="location"
+            placeholder="Community Center, Main Street"
             className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
             {...form.register("location")}
             disabled={isLoading}
           />
           {form.formState.errors.location && (
-            <p className="text-red-500 text-sm">{form.formState.errors.location.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.location.message}
+            </p>
           )}
         </div>
 
@@ -190,27 +220,29 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           <div className="space-y-2">
             <Label htmlFor="event_date">Event Date *</Label>
             <div className="relative">
-              <Input 
-                id="event_date" 
+              <Input
+                id="event_date"
                 type="date"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10" 
+                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
                 {...form.register("event_date")}
                 disabled={isLoading}
               />
               <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             </div>
             {form.formState.errors.event_date && (
-              <p className="text-red-500 text-sm">{form.formState.errors.event_date.message}</p>
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.event_date.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="start_time">Start Time</Label>
             <div className="relative">
-              <Input 
-                id="start_time" 
+              <Input
+                id="start_time"
                 type="time"
                 placeholder="08:00"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10" 
+                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
                 {...form.register("start_time")}
                 disabled={isLoading}
               />
@@ -220,11 +252,11 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           <div className="space-y-2">
             <Label htmlFor="end_time">End Time</Label>
             <div className="relative">
-              <Input 
-                id="end_time" 
+              <Input
+                id="end_time"
                 type="time"
                 placeholder="16:00"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10" 
+                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
                 {...form.register("end_time")}
                 disabled={isLoading}
               />
@@ -240,9 +272,9 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
             {imagePreview ? (
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={imagePreview} 
-                  alt="Event preview" 
+                <img
+                  src={imagePreview}
+                  alt="Event preview"
                   className="w-full h-48 object-cover rounded-lg"
                 />
                 <button
@@ -260,15 +292,19 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
                 )}
               </div>
             ) : (
-              <div 
+              <div
                 className="flex flex-col items-center justify-center cursor-pointer py-6"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <div className="p-3 bg-violet-50 rounded-full mb-3">
                   <ImageIcon className="h-6 w-6 text-violet-600" />
                 </div>
-                <p className="text-sm font-medium text-slate-700">Click to select image</p>
-                <p className="text-xs text-slate-500 mt-1">PNG, JPG up to 5MB</p>
+                <p className="text-sm font-medium text-slate-700">
+                  Click to select image
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  PNG, JPG up to 5MB
+                </p>
               </div>
             )}
             <input
@@ -296,7 +332,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description">Event Description</Label>
-          <Textarea 
+          <Textarea
             id="description"
             placeholder="Describe the event details, what attendees can expect, and any important information..."
             className="min-h-[150px] border-slate-200 focus:border-violet-500 focus:ring-violet-500"
@@ -309,23 +345,29 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
             <div>
-              <Label htmlFor="registration_required" className="cursor-pointer">Registration Required</Label>
-              <p className="text-sm text-slate-500">Enable if attendees need to register</p>
+              <Label htmlFor="registration_required" className="cursor-pointer">
+                Registration Required
+              </Label>
+              <p className="text-sm text-slate-500">
+                Enable if attendees need to register
+              </p>
             </div>
-            <Switch 
+            <Switch
               id="registration_required"
               checked={form.watch("registration_required")}
-              onCheckedChange={(checked) => form.setValue("registration_required", checked)}
+              onCheckedChange={(checked) =>
+                form.setValue("registration_required", checked)
+              }
               disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="max_attendees">Max Attendees</Label>
-            <Input 
-              id="max_attendees" 
+            <Input
+              id="max_attendees"
               type="number"
               min="0"
-              placeholder="Leave empty for unlimited" 
+              placeholder="Leave empty for unlimited"
               className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
               onChange={(e) => {
                 const val = e.target.value;
@@ -340,9 +382,11 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         {/* Status */}
         <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
-          <Select 
-            value={form.watch("status")} 
-            onValueChange={(value: "upcoming" | "past" | "cancelled") => form.setValue("status", value)}
+          <Select
+            value={form.watch("status")}
+            onValueChange={(value: "upcoming" | "past" | "cancelled") =>
+              form.setValue("status", value)
+            }
             disabled={isLoading}
           >
             <SelectTrigger className="border-slate-200 focus:border-violet-500 focus:ring-violet-500">
@@ -360,18 +404,29 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
       {/* Form Actions */}
       <div className="flex justify-end gap-4 pt-4 border-t border-slate-100">
         <Link href="/web-admin-dashboard/events">
-          <Button type="button" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50" disabled={isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            className="border-slate-200 text-slate-600 hover:bg-slate-50"
+            disabled={isLoading}
+          >
             Cancel
           </Button>
         </Link>
-        <Button type="submit" className="bg-violet-600 hover:bg-violet-700 text-white" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="bg-violet-600 hover:bg-violet-700 text-white"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {isEditing ? "Updating..." : "Creating..."}
             </>
+          ) : isEditing ? (
+            "Update Event"
           ) : (
-            isEditing ? "Update Event" : "Create Event"
+            "Create Event"
           )}
         </Button>
       </div>

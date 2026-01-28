@@ -1,10 +1,10 @@
 /**
  * Task Force Service
- * 
+ *
  * API service for Task Force Dashboard operations
  */
 
-import { apiClient } from '../api-client';
+import { apiClient } from "../api-client";
 
 // Types
 export interface DashboardOverview {
@@ -111,8 +111,11 @@ export const taskForceService = {
   /**
    * Get dashboard statistics
    */
-  async getDashboardStats(): Promise<{ success: boolean; data: DashboardStats }> {
-    return apiClient('/task-force/dashboard');
+  async getDashboardStats(): Promise<{
+    success: boolean;
+    data: DashboardStats;
+  }> {
+    return apiClient("/task-force/dashboard");
   },
 
   /**
@@ -123,10 +126,11 @@ export const taskForceService = {
     specialization?: string;
   }): Promise<{ success: boolean; data: TeamResponse }> {
     const searchParams = new URLSearchParams();
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    if (params?.specialization) searchParams.append('specialization', params.specialization);
-    
-    const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.specialization)
+      searchParams.append("specialization", params.specialization);
+
+    const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
     return apiClient(`/task-force/team${query}`);
   },
 
@@ -141,13 +145,13 @@ export const taskForceService = {
     page?: number;
   }): Promise<{ success: boolean; data: IssuesResponse }> {
     const searchParams = new URLSearchParams();
-    if (params?.status) searchParams.append('status', params.status);
-    if (params?.priority) searchParams.append('priority', params.priority);
-    if (params?.category) searchParams.append('category', params.category);
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    if (params?.page) searchParams.append('page', params.page.toString());
-    
-    const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    if (params?.status) searchParams.append("status", params.status);
+    if (params?.priority) searchParams.append("priority", params.priority);
+    if (params?.category) searchParams.append("category", params.category);
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.page) searchParams.append("page", params.page.toString());
+
+    const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
     return apiClient(`/task-force/all${query}`);
   },
 
@@ -162,13 +166,13 @@ export const taskForceService = {
     page?: number;
   }): Promise<{ success: boolean; data: IssuesResponse }> {
     const searchParams = new URLSearchParams();
-    if (params?.status) searchParams.append('status', params.status);
-    if (params?.priority) searchParams.append('priority', params.priority);
-    if (params?.category) searchParams.append('category', params.category);
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    if (params?.page) searchParams.append('page', params.page.toString());
-    
-    const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    if (params?.status) searchParams.append("status", params.status);
+    if (params?.priority) searchParams.append("priority", params.priority);
+    if (params?.category) searchParams.append("category", params.category);
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.page) searchParams.append("page", params.page.toString());
+
+    const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
     return apiClient(`/task-force/issues${query}`);
   },
 
@@ -180,44 +184,53 @@ export const taskForceService = {
     limit?: number;
   }): Promise<{ success: boolean; data: AssignmentsResponse }> {
     const searchParams = new URLSearchParams();
-    if (params?.status) searchParams.append('status', params.status);
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    
-    const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
+    if (params?.status) searchParams.append("status", params.status);
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+
+    const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
     return apiClient(`/task-force/my-assignments${query}`);
   },
 
   /**
    * Get single issue details
    */
-  async getIssue(id: number | string): Promise<{ success: boolean; data: { issue: TaskForceIssue } }> {
+  async getIssue(
+    id: number | string,
+  ): Promise<{ success: boolean; data: { issue: TaskForceIssue } }> {
     return apiClient(`/task-force/issues/${id}`);
   },
 
   /**
    * Start assessment on an issue
    */
-  async startAssessment(issueId: number): Promise<{ success: boolean; data: { issue: TaskForceIssue } }> {
+  async startAssessment(
+    issueId: number,
+  ): Promise<{ success: boolean; data: { issue: TaskForceIssue } }> {
     return apiClient(`/task-force/issues/${issueId}/start-assessment`, {
-      method: 'POST',
+      method: "POST",
     });
   },
 
   /**
    * Submit assessment for an issue
    */
-  async submitAssessment(issueId: number, data: FormData | {
-    assessment_summary: string;
-    findings?: string;
-    issue_confirmed?: boolean;
-    severity?: string;
-    estimated_cost?: number;
-    estimated_duration?: string;
-    recommendations?: string;
-  }): Promise<{ success: boolean }> {
+  async submitAssessment(
+    issueId: number,
+    data:
+      | FormData
+      | {
+          assessment_summary: string;
+          findings?: string;
+          issue_confirmed?: boolean;
+          severity?: string;
+          estimated_cost?: number;
+          estimated_duration?: string;
+          recommendations?: string;
+        },
+  ): Promise<{ success: boolean }> {
     const isFormData = data instanceof FormData;
     return apiClient(`/task-force/issues/${issueId}/assessment`, {
-      method: 'POST',
+      method: "POST",
       body: isFormData ? data : JSON.stringify(data),
       isFormData: isFormData,
     });
@@ -226,24 +239,29 @@ export const taskForceService = {
   /**
    * Start resolution on an issue
    */
-  async startResolution(issueId: number): Promise<{ success: boolean; data: { issue: TaskForceIssue } }> {
+  async startResolution(
+    issueId: number,
+  ): Promise<{ success: boolean; data: { issue: TaskForceIssue } }> {
     return apiClient(`/task-force/issues/${issueId}/start-resolution`, {
-      method: 'POST',
+      method: "POST",
     });
   },
 
   /**
    * Submit resolution for an issue
    */
-  async submitResolution(issueId: number, data: {
-    resolution_summary: string;
-    work_description?: string;
-    start_date?: string;
-    completion_date?: string;
-    actual_cost?: number;
-  }): Promise<{ success: boolean }> {
+  async submitResolution(
+    issueId: number,
+    data: {
+      resolution_summary: string;
+      work_description?: string;
+      start_date?: string;
+      completion_date?: string;
+      actual_cost?: number;
+    },
+  ): Promise<{ success: boolean }> {
     return apiClient(`/task-force/issues/${issueId}/resolution`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
@@ -251,15 +269,18 @@ export const taskForceService = {
   /**
    * Get task force profile
    */
-  async getProfile(): Promise<{ success: boolean; data: { member: TeamMember } }> {
-    return apiClient('/task-force/profile');
+  async getProfile(): Promise<{
+    success: boolean;
+    data: { member: TeamMember };
+  }> {
+    return apiClient("/task-force/profile");
   },
 
   /**
    * Get reports/analytics
    */
   async getReports(): Promise<{ success: boolean; data: TaskForceReports }> {
-    return apiClient('/task-force/reports');
+    return apiClient("/task-force/reports");
   },
 };
 

@@ -43,10 +43,15 @@ export default function LoginPage() {
         const dashboardUrl = authService.getDashboardForRole(user.role);
 
         // Sync auth state with Zustand store
-        const { useAuthStore } = await import('@/lib/stores/auth-store');
+        const { useAuthStore } = await import("@/lib/stores/auth-store");
         useAuthStore.getState().login(
-          { id: String(user.id), name: user.name || '', email: user.email, role: user.role },
-          token
+          {
+            id: String(user.id),
+            name: user.name || "",
+            email: user.email,
+            role: user.role,
+          },
+          token,
         );
 
         // Check for returnUrl
@@ -54,17 +59,22 @@ export default function LoginPage() {
         const returnUrl = params.get("returnUrl");
 
         toast.success(`Welcome back, ${user.name || user.email}!`);
-        
+
         // Use window.location.href to force a full page reload
         // This ensures middleware sees the new cookies immediately
         // Prioritize returnUrl if it exists, otherwise use role-based dashboard
-        window.location.href = returnUrl ? decodeURIComponent(returnUrl) : dashboardUrl;
+        window.location.href = returnUrl
+          ? decodeURIComponent(returnUrl)
+          : dashboardUrl;
       } else {
         toast.error(response.message || "Login failed");
       }
     } catch (error: unknown) {
       console.error("Login error:", error);
-      const errorMessage = error instanceof Error ? error.message : "An error occurred during login";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred during login";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -75,7 +85,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-violet-950 to-slate-900 p-4">
       {/* Background pattern */}
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-      
+
       <div className="relative w-full max-w-md">
         {/* Logo/Branding */}
         <div className="text-center mb-8">
@@ -85,9 +95,7 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-white mb-2">
             Constituency Development Hub
           </h1>
-          <p className="text-violet-300/70">
-            Sign in to access your dashboard
-          </p>
+          <p className="text-violet-300/70">Sign in to access your dashboard</p>
         </div>
 
         {/* Login Card */}
@@ -191,7 +199,10 @@ export default function LoginPage() {
           {/* Help Text */}
           <p className="text-center text-sm text-white/50">
             Need help?{" "}
-            <Link href="/contact" className="text-violet-400 hover:text-violet-300">
+            <Link
+              href="/contact"
+              className="text-violet-400 hover:text-violet-300"
+            >
               Contact Support
             </Link>
           </p>
@@ -199,7 +210,10 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div className="text-center mt-8">
-          <Link href="/" className="text-white/40 hover:text-white/60 text-sm transition-colors">
+          <Link
+            href="/"
+            className="text-white/40 hover:text-white/60 text-sm transition-colors"
+          >
             ← Back to Home
           </Link>
         </div>

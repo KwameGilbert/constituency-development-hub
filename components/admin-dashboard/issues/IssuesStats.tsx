@@ -3,18 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { issuesService, IssueStatistics } from "@/lib/services/issues-service";
-import { 
-  AlertCircle, 
-  CheckCircle2, 
-  Clock, 
+import {
+  AlertCircle,
+  CheckCircle2,
+  Clock,
   TrendingUp,
   AlertTriangle,
-  Activity
+  Activity,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 // Mock data fallback
-
 
 export function IssuesStats() {
   const [stats, setStats] = useState<IssueStatistics | null>(null);
@@ -94,7 +93,6 @@ export function IssuesStats() {
 
   return (
     <div className="space-y-6">
-
       {/* Primary Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {primaryMetrics.map((metric, index) => (

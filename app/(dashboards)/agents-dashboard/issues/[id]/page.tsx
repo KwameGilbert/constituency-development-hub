@@ -267,7 +267,9 @@ export default function AgentIssueDetailPage({
                   )}
                   {issue.subsector && (
                     <div>
-                      <label className="text-sm text-slate-500">Subsector</label>
+                      <label className="text-sm text-slate-500">
+                        Subsector
+                      </label>
                       <p className="mt-1 font-medium text-slate-900">
                         {issue.subsector}
                       </p>
@@ -340,7 +342,9 @@ export default function AgentIssueDetailPage({
                   </div>
                   <div>
                     <p className="text-sm text-slate-500">Status</p>
-                    <p className="font-medium">{getStatusBadge(issue.status)}</p>
+                    <p className="font-medium">
+                      {getStatusBadge(issue.status)}
+                    </p>
                   </div>
                 </div>
 
