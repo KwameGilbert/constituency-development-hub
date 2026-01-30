@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Loader2, X } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -144,12 +144,18 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
         {/* Subtitle */}
         <div className="space-y-2">
           <Label htmlFor="subtitle">Subtitle</Label>
-          <Textarea
-            id="subtitle"
-            placeholder="Building a better community together"
-            className="border-slate-200 focus:border-purple-500 focus:ring-purple-500 min-h-[80px]"
-            {...form.register("subtitle")}
-            disabled={isLoading}
+          <Controller
+            name="subtitle"
+            control={form.control}
+            render={({ field }) => (
+              <RichTextEditor
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Building a better community together"
+                disabled={isLoading}
+                height={200}
+              />
+            )}
           />
           <p className="text-xs text-slate-400">
             A supporting message that appears below the title
