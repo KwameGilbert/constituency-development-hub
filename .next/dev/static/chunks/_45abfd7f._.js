@@ -12,10 +12,16 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$ne
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$framer$2d$motion$40$12$2e$23$2e$26_reac_af3f220a974878ee62300544df5db6e6$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/framer-motion@12.23.26_reac_af3f220a974878ee62300544df5db6e6/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$framer$2d$motion$40$12$2e$23$2e$26_reac_af3f220a974878ee62300544df5db6e6$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/framer-motion@12.23.26_reac_af3f220a974878ee62300544df5db6e6/node_modules/framer-motion/dist/es/components/AnimatePresence/index.mjs [app-client] (ecmascript)");
+(()=>{
+    const e = new Error("Cannot find module '../../public/'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/.pnpm/next@16.1.1_@babel+core@7.2_27d3faa9b1a9d8cd0e1872aee1c051b9/node_modules/next/image.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -76,7 +82,7 @@ function SiteHeader() {
                                 className: "w-10 h-10 object-contain"
                             }, void 0, false, {
                                 fileName: "[project]/components/hero/SiteHeader.jsx",
-                                lineNumber: 36,
+                                lineNumber: 37,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -88,19 +94,19 @@ function SiteHeader() {
                                         children: "Office of the MP · Sefwi Wiawso"
                                     }, void 0, false, {
                                         fileName: "[project]/components/hero/SiteHeader.jsx",
-                                        lineNumber: 39,
+                                        lineNumber: 40,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/hero/SiteHeader.jsx",
-                                lineNumber: 37,
+                                lineNumber: 38,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/hero/SiteHeader.jsx",
-                        lineNumber: 35,
+                        lineNumber: 36,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -113,13 +119,13 @@ function SiteHeader() {
                                 children: link.label
                             }, link.label, false, {
                                 fileName: "[project]/components/hero/SiteHeader.jsx",
-                                lineNumber: 48,
+                                lineNumber: 49,
                                 columnNumber: 15
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/components/hero/SiteHeader.jsx",
-                        lineNumber: 44,
+                        lineNumber: 45,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -131,18 +137,18 @@ function SiteHeader() {
                             className: "fa-solid fa-bars"
                         }, void 0, false, {
                             fileName: "[project]/components/hero/SiteHeader.jsx",
-                            lineNumber: 68,
+                            lineNumber: 69,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/hero/SiteHeader.jsx",
-                        lineNumber: 62,
+                        lineNumber: 63,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/hero/SiteHeader.jsx",
-                lineNumber: 34,
+                lineNumber: 35,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$1$2e$1_$40$babel$2b$core$40$7$2e$2_27d3faa9b1a9d8cd0e1872aee1c051b9$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$framer$2d$motion$40$12$2e$23$2e$26_reac_af3f220a974878ee62300544df5db6e6$2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$components$2f$AnimatePresence$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AnimatePresence"], {
@@ -171,29 +177,29 @@ function SiteHeader() {
                                 children: link.label
                             }, link.label, false, {
                                 fileName: "[project]/components/hero/SiteHeader.jsx",
-                                lineNumber: 84,
+                                lineNumber: 85,
                                 columnNumber: 19
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/components/hero/SiteHeader.jsx",
-                        lineNumber: 80,
+                        lineNumber: 81,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/hero/SiteHeader.jsx",
-                    lineNumber: 74,
+                    lineNumber: 75,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/hero/SiteHeader.jsx",
-                lineNumber: 72,
+                lineNumber: 73,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/hero/SiteHeader.jsx",
-        lineNumber: 33,
+        lineNumber: 34,
         columnNumber: 5
     }, this);
 }
