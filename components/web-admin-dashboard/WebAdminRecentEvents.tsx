@@ -43,8 +43,13 @@ export function WebAdminRecentEvents() {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-slate-900">Recent Events</h2>
-          <Link href="/web-admin-dashboard/events" className="text-sm text-green-600 hover:text-green-700 font-medium">
+          <h2 className="text-lg font-semibold text-slate-900">
+            Recent Events
+          </h2>
+          <Link
+            href="/web-admin-dashboard/events"
+            className="text-sm text-green-600 hover:text-green-700 font-medium"
+          >
             View All
           </Link>
         </div>
@@ -59,8 +64,13 @@ export function WebAdminRecentEvents() {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-slate-900">Recent Events</h2>
-          <Link href="/web-admin-dashboard/events" className="text-sm text-green-600 hover:text-green-700 font-medium">
+          <h2 className="text-lg font-semibold text-slate-900">
+            Recent Events
+          </h2>
+          <Link
+            href="/web-admin-dashboard/events"
+            className="text-sm text-green-600 hover:text-green-700 font-medium"
+          >
             View All
           </Link>
         </div>
@@ -69,7 +79,10 @@ export function WebAdminRecentEvents() {
             <Calendar className="h-6 w-6 text-green-600" />
           </div>
           <p className="text-sm text-slate-500">{error || "No events found"}</p>
-          <Link href="/web-admin-dashboard/events/new" className="text-sm text-green-600 hover:underline mt-2">
+          <Link
+            href="/web-admin-dashboard/events/new"
+            className="text-sm text-green-600 hover:underline mt-2"
+          >
             Create your first event
           </Link>
         </div>
@@ -81,20 +94,26 @@ export function WebAdminRecentEvents() {
     <div className="bg-white rounded-xl shadow-sm border border-slate-100 flex flex-col h-full">
       <div className="p-6 border-b border-slate-100 flex justify-between items-center">
         <h2 className="text-lg font-semibold text-slate-900">Recent Events</h2>
-        <Link href="/web-admin-dashboard/events" className="text-sm text-green-600 hover:text-green-700 font-medium">
+        <Link
+          href="/web-admin-dashboard/events"
+          className="text-sm text-green-600 hover:text-green-700 font-medium"
+        >
           View All
         </Link>
       </div>
       <div className="divide-y divide-slate-50">
         {events.map((event) => (
-          <div key={event.id} className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-start gap-4">
+          <div
+            key={event.id}
+            className="p-4 hover:bg-slate-50 transition-colors flex justify-between items-start gap-4"
+          >
             <div className="flex items-start gap-3">
               <div className="h-10 w-10 rounded-lg bg-green-50 flex-shrink-0 flex items-center justify-center border border-green-100 text-green-600 font-bold text-sm">
                 {format(new Date(event.event_date), "dd")}
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-medium text-slate-900 line-clamp-1">
-                  {event.title}
+                  {event.name || event.title}
                 </h3>
                 <div className="flex items-center gap-3 text-xs text-slate-500">
                   <span className="flex items-center gap-1">
@@ -104,7 +123,9 @@ export function WebAdminRecentEvents() {
                   {event.location && (
                     <span className="flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      <span className="truncate max-w-[100px]">{event.location}</span>
+                      <span className="truncate max-w-[100px]">
+                        {event.location}
+                      </span>
                     </span>
                   )}
                 </div>
@@ -122,4 +143,3 @@ export function WebAdminRecentEvents() {
     </div>
   );
 }
-

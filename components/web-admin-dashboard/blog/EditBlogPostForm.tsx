@@ -7,7 +7,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -41,8 +41,10 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(post.image || "");
-  const [existingImageUrl, setExistingImageUrl] = useState<string>(post.image || "");
-  
+  const [existingImageUrl, setExistingImageUrl] = useState<string>(
+    post.image || "",
+  );
+
   // Hardcoded categories as per blog.http example
   const categories = ["news", "projects", "community", "events"];
 
@@ -62,19 +64,19 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
         return;
       }
-      
+
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size must be less than 5MB');
+        toast.error("Image size must be less than 5MB");
         return;
       }
-      
+
       setSelectedFile(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -89,8 +91,10 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
     setImagePreview("");
     setExistingImageUrl("");
     // Reset file input
-    const fileInput = document.getElementById('featured-image') as HTMLInputElement;
-    if (fileInput) fileInput.value = '';
+    const fileInput = document.getElementById(
+      "featured-image",
+    ) as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
   }
 
   async function onSubmit(data: BlogFormValues) {
@@ -101,7 +105,7 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
       if (imagePreview && imagePreview !== existingImageUrl) {
         imageUrl = imagePreview; // URL changed
       }
-      
+
       const payload = {
         title: data.title,
         content: data.content || "",
@@ -112,8 +116,12 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
       };
 
       console.log("Updating post with payload:", payload);
-      const response = await blogService.updatePost(post.id, payload, selectedFile || undefined);
-      
+      const response = await blogService.updatePost(
+        post.id,
+        payload,
+        selectedFile || undefined,
+      );
+
       if (response.success) {
         toast.success("Blog post updated successfully!");
         router.push("/web-admin-dashboard/blog");
@@ -123,7 +131,8 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
       }
     } catch (error: unknown) {
       console.error("Error updating blog post:", error);
-      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -140,20 +149,25 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 space-y-8">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 space-y-8"
+    >
       <div className="space-y-6">
         {/* Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Post Title *</Label>
-          <Input 
-            id="title" 
-            placeholder="Enter post title" 
-            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
+          <Input
+            id="title"
+            placeholder="Enter post title"
+            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
             {...form.register("title")}
             disabled={isLoading}
           />
           {form.formState.errors.title && (
-            <p className="text-red-500 text-sm">{form.formState.errors.title.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.title.message}
+            </p>
           )}
         </div>
 
@@ -161,16 +175,16 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
         <div className="space-y-2">
           <Label htmlFor="slug">URL Slug</Label>
           <div className="flex gap-2">
-            <Input 
-              id="slug" 
-              placeholder="my-post-url" 
-              className="border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
+            <Input
+              id="slug"
+              placeholder="my-post-url"
+              className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
               {...form.register("slug")}
               disabled={isLoading}
             />
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={generateSlug}
               className="bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200"
               disabled={isLoading}
@@ -178,14 +192,16 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
               Generate
             </Button>
           </div>
-          <p className="text-xs text-slate-400">This will be used in the post&apos;s URL</p>
+          <p className="text-xs text-slate-400">
+            This will be used in the post&apos;s URL
+          </p>
         </div>
 
         {/* Category */}
         <div className="space-y-2">
           <Label>Category *</Label>
-          <Select 
-            onValueChange={(value) => form.setValue("category", value)} 
+          <Select
+            onValueChange={(value) => form.setValue("category", value)}
             defaultValue={form.getValues("category")}
             disabled={isLoading}
           >
@@ -201,7 +217,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
             </SelectContent>
           </Select>
           {form.formState.errors.category && (
-            <p className="text-red-500 text-sm">{form.formState.errors.category.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.category.message}
+            </p>
           )}
         </div>
 
@@ -214,9 +232,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
               <div className="space-y-3">
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={imagePreview} 
-                    alt="Featured image preview" 
+                  <img
+                    src={imagePreview}
+                    alt="Featured image preview"
                     className="w-full h-48 object-cover rounded-lg border border-slate-200"
                   />
                   <Button
@@ -233,9 +251,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
                 {/* Change Image Button */}
                 <div className="space-y-3">
                   {/* URL Input for editing */}
-                  <Input 
+                  <Input
                     type="url"
-                    placeholder="Or change to URL: https://example.com/image.jpg" 
+                    placeholder="Or change to URL: https://example.com/image.jpg"
                     className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
                     value={!selectedFile ? imagePreview : ""}
                     onChange={(e) => {
@@ -263,7 +281,8 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
                     </label>
                     {selectedFile && (
                       <p className="mt-2 text-xs text-slate-500">
-                        New: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+                        New: {selectedFile.name} (
+                        {(selectedFile.size / 1024).toFixed(2)} KB)
                       </p>
                     )}
                   </div>
@@ -272,9 +291,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
             ) : (
               <div className="space-y-3">
                 {/* URL Input */}
-                <Input 
+                <Input
                   type="url"
-                  placeholder="Enter image URL: https://example.com/image.jpg" 
+                  placeholder="Enter image URL: https://example.com/image.jpg"
                   className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
                   value={imagePreview}
                   onChange={(e) => {
@@ -316,37 +335,48 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
 
         {/* Excerpt */}
         <div className="space-y-2">
-          <Label htmlFor="excerpt">Excerpt * <span className="text-slate-400 font-normal">(Short summary)</span></Label>
-          <Textarea 
-            id="excerpt" 
-            placeholder="A brief summary of your blog post..."
-            className="min-h-[100px] border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
-            {...form.register("excerpt")}
+          <Label htmlFor="excerpt">
+            Excerpt *{" "}
+            <span className="text-slate-400 font-normal">(Short summary)</span>
+          </Label>
+          <RichTextEditor
+            value={form.watch("excerpt")}
+            onChange={(content) => form.setValue("excerpt", content)}
             disabled={isLoading}
+            error={!!form.formState.errors.excerpt}
+            placeholder="A brief summary of your blog post..."
+            height={150}
           />
           {form.formState.errors.excerpt && (
-            <p className="text-red-500 text-sm">{form.formState.errors.excerpt.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.excerpt.message}
+            </p>
           )}
         </div>
 
         {/* Content */}
         <div className="space-y-2">
           <Label htmlFor="content">Post Content</Label>
-          <Textarea 
-            id="content" 
-            placeholder="Write your full post content here..."
-            className="min-h-[300px] border-slate-200 focus:border-violet-500 focus:ring-violet-500" 
-            {...form.register("content")}
+          <RichTextEditor
+            value={form.watch("content")}
+            onChange={(content) => form.setValue("content", content)}
             disabled={isLoading}
+            error={!!form.formState.errors.content}
+            placeholder="Write your full post content here..."
+            height={400}
           />
-          <p className="text-xs text-slate-400">Tip: You can use markdown formatting for rich text</p>
+          <p className="text-xs text-slate-400">
+            Use the rich text editor for formatting your content
+          </p>
         </div>
 
         {/* Status */}
         <div className="space-y-2">
           <Label>Publish Status</Label>
-          <Select 
-            onValueChange={(value) => form.setValue("status", value as "draft" | "published")} 
+          <Select
+            onValueChange={(value) =>
+              form.setValue("status", value as "draft" | "published")
+            }
             defaultValue={form.getValues("status")}
             disabled={isLoading}
           >
@@ -359,24 +389,25 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
             </SelectContent>
           </Select>
           <p className="text-xs text-slate-400">
-            Draft posts are only visible to admins. Published posts are visible to the public.
+            Draft posts are only visible to admins. Published posts are visible
+            to the public.
           </p>
         </div>
       </div>
 
       <div className="flex justify-end gap-4 pt-4 border-t border-slate-100">
         <Link href="/web-admin-dashboard/blog">
-          <Button 
-            type="button" 
-            variant="outline" 
+          <Button
+            type="button"
+            variant="outline"
             className="border-slate-200 text-slate-600 hover:bg-slate-50"
             disabled={isLoading}
           >
             Cancel
           </Button>
         </Link>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="bg-violet-600 hover:bg-violet-700 text-white"
           disabled={isLoading}
         >

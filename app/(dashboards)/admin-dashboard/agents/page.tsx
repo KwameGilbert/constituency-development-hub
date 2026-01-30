@@ -42,9 +42,9 @@ interface AgentsData {
 }
 
 const getStatusColor = (status: string) => {
-  return status?.toLowerCase() === 'active'
-    ? 'bg-green-100 text-green-700 hover:bg-green-200'
-    : 'bg-red-100 text-red-700 hover:bg-red-200';
+  return status?.toLowerCase() === "active"
+    ? "bg-green-100 text-green-700 hover:bg-green-200"
+    : "bg-red-100 text-red-700 hover:bg-red-200";
 };
 
 export default function AgentsPage() {
@@ -52,7 +52,9 @@ export default function AgentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
 
   const handleDelete = async (id: number) => {
     try {
@@ -61,23 +63,29 @@ export default function AgentsPage() {
         toast.success("Agent deleted successfully");
         // Update local state
         if (agentsData) {
-            const updatedAgents = agentsData.agents.filter(a => a.id !== id);
-            setAgentsData({
-                ...agentsData,
-                agents: updatedAgents,
-                summary: {
-                    ...agentsData.summary,
-                    total: agentsData.summary.total - 1,
-                    active: updatedAgents.filter(a => a.user.status === 'active').length,
-                    inactive: updatedAgents.filter(a => a.user.status !== 'active').length
-                }
-            });
+          const updatedAgents = agentsData.agents.filter((a) => a.id !== id);
+          setAgentsData({
+            ...agentsData,
+            agents: updatedAgents,
+            summary: {
+              ...agentsData.summary,
+              total: agentsData.summary.total - 1,
+              active: updatedAgents.filter((a) => a.user.status === "active")
+                .length,
+              inactive: updatedAgents.filter((a) => a.user.status !== "active")
+                .length,
+            },
+          });
         }
       } else {
-        toast.error("Failed to delete agent", { description: response.message });
+        toast.error("Failed to delete agent", {
+          description: response.message,
+        });
       }
     } catch (error: any) {
-      toast.error("An error occurred", { description: error.message || "Unknown error" });
+      toast.error("An error occurred", {
+        description: error.message || "Unknown error",
+      });
     }
   };
 
@@ -87,10 +95,12 @@ export default function AgentsPage() {
         const response = await agentService.getAllAgents();
         if (response.success && response.data.agents) {
           const agents = response.data.agents;
-          
+
           // Calculate summary stats
           const total = agents.length;
-          const active = agents.filter(a => a.user.status === 'active').length;
+          const active = agents.filter(
+            (a) => a.user.status === "active",
+          ).length;
           const inactive = total - active;
 
           setAgentsData({
@@ -98,13 +108,13 @@ export default function AgentsPage() {
             summary: {
               total,
               active,
-              inactive
-            }
+              inactive,
+            },
           });
         }
       } catch (err) {
-        setError('Failed to load agents data');
-        console.error('Error fetching agents:', err);
+        setError("Failed to load agents data");
+        console.error("Error fetching agents:", err);
       } finally {
         setLoading(false);
       }
@@ -113,15 +123,18 @@ export default function AgentsPage() {
     fetchAgents();
   }, []);
 
-  const filteredAgents = agentsData?.agents.filter(agent => {
-    const matchesSearch = agent.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         agent.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (agent.user.phone && agent.user.phone.includes(searchTerm));
+  const filteredAgents =
+    agentsData?.agents.filter((agent) => {
+      const matchesSearch =
+        agent.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        agent.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (agent.user.phone && agent.user.phone.includes(searchTerm));
 
-    const matchesStatus = statusFilter === "all" || agent.user.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "all" || agent.user.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  }) || [];
+      return matchesSearch && matchesStatus;
+    }) || [];
 
   if (loading) {
     return (
@@ -176,7 +189,7 @@ export default function AgentsPage() {
               <div className="animate-pulse">
                 <div className="h-12 bg-gray-200 rounded mb-4"></div>
                 <div className="space-y-3">
-                  {[1, 2, 3].map(i => (
+                  {[1, 2, 3].map((i) => (
                     <div key={i} className="h-16 bg-gray-200 rounded"></div>
                   ))}
                 </div>
@@ -233,7 +246,7 @@ export default function AgentsPage() {
           <div className="max-w-[1600px] mx-auto space-y-6">
             <Card className="p-4 bg-white">
               <div className="text-center text-red-600 py-8">
-                {error || 'No agents data available'}
+                {error || "No agents data available"}
               </div>
             </Card>
           </div>
@@ -265,7 +278,7 @@ export default function AgentsPage() {
             label: "System Settings",
             href: "/admin-dashboard/system-settings",
             icon: Settings2,
-            },
+          },
           {
             label: "Logout",
             icon: LogOut,
@@ -289,7 +302,9 @@ export default function AgentsPage() {
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
               <div className="space-y-1">
                 <h3 className="font-semibold text-gray-700">Agents</h3>
-                <p className="text-sm text-gray-500">Total: {agentsData.summary.total} agents</p>
+                <p className="text-sm text-gray-500">
+                  Total: {agentsData.summary.total} agents
+                </p>
               </div>
               <div className="flex flex-1 w-full md:w-auto gap-3 items-center justify-end">
                 <div className="relative w-full md:w-96">
@@ -305,7 +320,11 @@ export default function AgentsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={statusFilter === "all" ? "bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-800" : "hover:bg-gray-200 text-gray-600"}
+                    className={
+                      statusFilter === "all"
+                        ? "bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:text-indigo-800"
+                        : "hover:bg-gray-200 text-gray-600"
+                    }
                     onClick={() => setStatusFilter("all")}
                   >
                     All ({agentsData.summary.total})
@@ -313,7 +332,11 @@ export default function AgentsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={statusFilter === "active" ? "bg-green-100 text-green-700 hover:bg-green-200" : "hover:bg-gray-200 text-gray-600"}
+                    className={
+                      statusFilter === "active"
+                        ? "bg-green-100 text-green-700 hover:bg-green-200"
+                        : "hover:bg-gray-200 text-gray-600"
+                    }
                     onClick={() => setStatusFilter("active")}
                   >
                     Active ({agentsData.summary.active})
@@ -321,7 +344,11 @@ export default function AgentsPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className={statusFilter === "inactive" ? "bg-red-100 text-red-700 hover:bg-red-200" : "hover:bg-gray-200 text-gray-600"}
+                    className={
+                      statusFilter === "inactive"
+                        ? "bg-red-100 text-red-700 hover:bg-red-200"
+                        : "hover:bg-gray-200 text-gray-600"
+                    }
                     onClick={() => setStatusFilter("inactive")}
                   >
                     Inactive ({agentsData.summary.inactive})
@@ -348,15 +375,22 @@ export default function AgentsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {filteredAgents.map((agent) => (
-                    <tr key={agent.id} className="hover:bg-gray-50/50 transition-colors group">
+                    <tr
+                      key={agent.id}
+                      className="hover:bg-gray-50/50 transition-colors group"
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold overflow-hidden">
-                             {agent.profile_image ? (
-                               <img src={agent.profile_image} alt={agent.user.name} className="w-full h-full object-cover" />
-                             ) : (
-                               <UserCircle className="w-6 h-6" />
-                             )}
+                            {agent.profile_image ? (
+                              <img
+                                src={agent.profile_image}
+                                alt={agent.user.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <UserCircle className="w-6 h-6" />
+                            )}
                           </div>
                           <div className="flex flex-col">
                             <span className="font-medium text-gray-900">
@@ -369,12 +403,18 @@ export default function AgentsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-gray-900">{agent.assigned_location || 'Unassigned'}</span>
+                        <span className="text-gray-900">
+                          {agent.assigned_location || "Unassigned"}
+                        </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col gap-1">
-                          <Badge className={`${getStatusColor(agent.user.status)} border-none px-2 py-0.5 w-fit font-normal`}>
-                            {agent.user.status === 'active' ? 'Active' : 'Inactive'}
+                          <Badge
+                            className={`${getStatusColor(agent.user.status)} border-none px-2 py-0.5 w-fit font-normal`}
+                          >
+                            {agent.user.status === "active"
+                              ? "Active"
+                              : "Inactive"}
                           </Badge>
                           <span className="text-xs text-gray-500">
                             Code: {agent.agent_code}
@@ -399,34 +439,43 @@ export default function AgentsPage() {
                             className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50 bg-blue-50"
                             asChild
                           >
-                            <Link href={`/admin-dashboard/agents/${agent.id}/edit`}>
+                            <Link
+                              href={`/admin-dashboard/agents/${agent.id}/edit`}
+                            >
                               <Edit className="w-4 h-4" />
                             </Link>
                           </Button>
-                          
+
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 bg-red-50"
-                                >
-                                    <UserX className="w-4 h-4" />
-                                </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 bg-red-50"
+                              >
+                                <UserX className="w-4 h-4" />
+                              </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete the agent account and remove their data from the servers.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => handleDelete(agent.id)}>
-                                        Delete Agent
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently delete the agent account and
+                                  remove their data from the servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-600 hover:bg-red-700"
+                                  onClick={() => handleDelete(agent.id)}
+                                >
+                                  Delete Agent
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
 

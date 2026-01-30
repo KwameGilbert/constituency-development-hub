@@ -8,7 +8,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -17,10 +17,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
-import { projectsService, CreateProjectData, Project } from "@/lib/services/projects-service";
+import {
+  projectsService,
+  CreateProjectData,
+  Project,
+} from "@/lib/services/projects-service";
+import { uploadService } from "@/lib/services/upload-service";
 import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
 
 const projectSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -48,6 +54,10 @@ interface ProjectFormProps {
 export function NewProjectForm({ project }: ProjectFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    project?.image || null,
+  );
 
   const isEditMode = !!project;
 
@@ -71,10 +81,42 @@ export function NewProjectForm({ project }: ProjectFormProps) {
     },
   });
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
+
   async function onSubmit(data: ProjectFormValues) {
     setIsSubmitting(true);
 
     try {
+      let imageUrl = project?.image; // Default to existing URL if editing
+
+      // 1. Upload Image (if new one selected)
+      if (selectedImage) {
+        try {
+          const uploadResponse = await uploadService.uploadFile(
+            selectedImage,
+            "projects",
+          );
+          imageUrl = uploadResponse.data.url;
+        } catch (uploadError: any) {
+          throw new Error("Failed to upload image: " + uploadError.message);
+        }
+      }
+
       const projectData: CreateProjectData | any = {
         title: data.title,
         description: data.description,
@@ -88,6 +130,7 @@ export function NewProjectForm({ project }: ProjectFormProps) {
         contact_person: data.contact_person || undefined,
         contact_phone: data.contact_phone || undefined,
         is_featured: data.is_featured || false,
+        image: imageUrl, // Attach the image URL
       };
 
       // Add update-specific fields if editing
@@ -108,15 +151,28 @@ export function NewProjectForm({ project }: ProjectFormProps) {
       }
 
       if (response.success) {
-        toast.success(isEditMode ? "Project updated successfully" : "Project created successfully");
+        toast.success(
+          isEditMode
+            ? "Project updated successfully"
+            : "Project created successfully",
+        );
         router.push("/admin-dashboard/projects");
         router.refresh();
       } else {
-        toast.error(response.message || `Failed to ${isEditMode ? "update" : "create"} project`);
+        toast.error(
+          response.message ||
+            `Failed to ${isEditMode ? "update" : "create"} project`,
+        );
       }
     } catch (error: any) {
-      console.error(`Error ${isEditMode ? "updating" : "creating"} project:`, error);
-      toast.error(error.message || `An error occurred while ${isEditMode ? "updating" : "creating"} the project`);
+      console.error(
+        `Error ${isEditMode ? "updating" : "creating"} project:`,
+        error,
+      );
+      toast.error(
+        error.message ||
+          `An error occurred while ${isEditMode ? "updating" : "creating"} the project`,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -128,8 +184,10 @@ export function NewProjectForm({ project }: ProjectFormProps) {
         <CardContent className="pt-6 space-y-6">
           {/* Basic Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Basic Information</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Basic Information
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Label htmlFor="title">Project Title *</Label>
@@ -140,27 +198,77 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.title && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.title.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.title.message}
+                  </p>
                 )}
               </div>
 
               <div className="md:col-span-2">
                 <Label htmlFor="description">Description *</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Detailed description of the project..."
-                  rows={4}
-                  {...form.register("description")}
+                <RichTextEditor
+                  value={form.watch("description")}
+                  onChange={(content) => form.setValue("description", content)}
                   disabled={isSubmitting}
+                  error={!!form.formState.errors.description}
+                  placeholder="Detailed description of the project..."
+                  height={200}
                 />
                 {form.formState.errors.description && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.description.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.description.message}
+                  </p>
                 )}
+              </div>
+
+              {/* Image Upload */}
+              <div className="md:col-span-2">
+                <Label>Project Image</Label>
+                <div className="mt-2 flex items-center gap-4">
+                  {imagePreview ? (
+                    <div className="relative h-32 w-48 overflow-hidden rounded-lg border border-slate-200">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 focus:outline-none"
+                        title="Remove image"
+                        disabled={isSubmitting}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex h-32 w-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-400">
+                      <span className="text-sm">No Image</span>
+                    </div>
+                  )}
+
+                  <div className="flex-1">
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      disabled={isSubmitting}
+                      className="max-w-xs"
+                    />
+                    <p className="mt-1 text-xs text-slate-500">
+                      Supported formats: JPG, PNG, WEBP. Max size: 2MB.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div>
                 <Label htmlFor="sector_id">Sector *</Label>
-                <Select 
+                <Select
                   onValueChange={(value) => form.setValue("sector_id", value)}
                   defaultValue={form.getValues("sector_id")}
                   disabled={isSubmitting}
@@ -178,7 +286,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   </SelectContent>
                 </Select>
                 {form.formState.errors.sector_id && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.sector_id.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.sector_id.message}
+                  </p>
                 )}
               </div>
 
@@ -191,7 +301,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.location && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.location.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.location.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -199,12 +311,14 @@ export function NewProjectForm({ project }: ProjectFormProps) {
 
           {/* Status and Progress */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Status & Progress</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Status & Progress
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="status">Status *</Label>
-                <Select 
+                <Select
                   onValueChange={(value: any) => form.setValue("status", value)}
                   defaultValue={form.getValues("status")}
                   disabled={isSubmitting}
@@ -220,7 +334,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   </SelectContent>
                 </Select>
                 {form.formState.errors.status && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.status.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.status.message}
+                  </p>
                 )}
               </div>
 
@@ -243,8 +359,10 @@ export function NewProjectForm({ project }: ProjectFormProps) {
 
           {/* Financial Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Financial Information</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Financial Information
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="budget">Budget (₵) *</Label>
@@ -257,7 +375,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.budget && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.budget.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.budget.message}
+                  </p>
                 )}
               </div>
 
@@ -280,7 +400,7 @@ export function NewProjectForm({ project }: ProjectFormProps) {
           {/* Timeline */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-slate-900">Timeline</h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="start_date">Start Date *</Label>
@@ -291,7 +411,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.start_date && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.start_date.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.start_date.message}
+                  </p>
                 )}
               </div>
 
@@ -304,7 +426,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.end_date && (
-                  <p className="text-red-500 text-sm mt-1">{form.formState.errors.end_date.message}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {form.formState.errors.end_date.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -312,8 +436,10 @@ export function NewProjectForm({ project }: ProjectFormProps) {
 
           {/* Contractor Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Contractor Information</h3>
-            
+            <h3 className="text-lg font-semibold text-slate-900">
+              Contractor Information
+            </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Label htmlFor="contractor">Contractor Name</Label>
@@ -353,10 +479,15 @@ export function NewProjectForm({ project }: ProjectFormProps) {
               <Checkbox
                 id="is_featured"
                 checked={form.watch("is_featured")}
-                onCheckedChange={(checked) => form.setValue("is_featured", checked as boolean)}
+                onCheckedChange={(checked) =>
+                  form.setValue("is_featured", checked as boolean)
+                }
                 disabled={isSubmitting}
               />
-              <Label htmlFor="is_featured" className="text-sm font-normal cursor-pointer">
+              <Label
+                htmlFor="is_featured"
+                className="text-sm font-normal cursor-pointer"
+              >
                 Feature this project on the public website
               </Label>
             </div>

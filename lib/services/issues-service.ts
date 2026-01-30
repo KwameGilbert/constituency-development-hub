@@ -1,4 +1,3 @@
-
 import { apiClient } from "@/lib/api-client";
 
 // --- Interfaces ---
@@ -12,18 +11,18 @@ export interface Issue {
   location: string; // The API seems to return this as a string based on usage
   latitude?: number;
   longitude?: number;
-  status: 
-    | "submitted" 
-    | "under_officer_review" 
-    | "forwarded_to_admin" 
-    | "assigned_to_task_force" 
+  status:
+    | "submitted"
+    | "under_officer_review"
+    | "forwarded_to_admin"
+    | "assigned_to_task_force"
     | "pending_assessment"
-    | "assessment_in_progress" 
-    | "assessment_submitted" 
-    | "resources_allocated" 
-    | "resolution_in_progress" 
-    | "resolution_submitted" 
-    | "resolved" 
+    | "assessment_in_progress"
+    | "assessment_submitted"
+    | "resources_allocated"
+    | "resolution_in_progress"
+    | "resolution_submitted"
+    | "resolved"
     | "closed";
   priority: "low" | "medium" | "high" | "urgent";
   images: string[];
@@ -64,7 +63,7 @@ export interface IssueFilters {
 }
 
 export interface AssessmentData {
-  decision: 'approve' | 'reject' | 'request_more_info';
+  decision: "approve" | "reject" | "request_more_info";
   comments: string;
   recommendations?: string;
   estimatedBudget?: number;
@@ -100,7 +99,14 @@ export interface ApiResponse<T> {
 // --- Service Class ---
 
 class IssuesService {
-  async getAllIssues(filters: IssueFilters = {}): Promise<ApiResponse<{ reports: Issue[]; total: number; page: number; limit: number }>> {
+  async getAllIssues(filters: IssueFilters = {}): Promise<
+    ApiResponse<{
+      reports: Issue[];
+      total: number;
+      page: number;
+      limit: number;
+    }>
+  > {
     const params = new URLSearchParams();
     if (filters.search) params.append("search", filters.search);
     if (filters.status) params.append("status", filters.status);
@@ -112,7 +118,9 @@ class IssuesService {
     return apiClient(`/admin/issues?${params.toString()}`);
   }
 
-  async getIssueById(id: number | string): Promise<ApiResponse<{ report: Issue }>> {
+  async getIssueById(
+    id: number | string,
+  ): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/admin/issues/${id}`);
   }
 
@@ -120,49 +128,64 @@ class IssuesService {
     return apiClient("/admin/issues/stats");
   }
 
-  async updateStatus(id: number | string, status: string, comment?: string): Promise<ApiResponse<{ report: Issue }>> {
+  async updateStatus(
+    id: number | string,
+    status: string,
+    comment?: string,
+  ): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/admin/issues/${id}/status`, {
       method: "PUT",
       body: JSON.stringify({ status, comment }),
     });
   }
 
-  async submitAssessment(id: number | string, data: AssessmentData): Promise<ApiResponse<{ assessment: any; report: Issue }>> {
+  async submitAssessment(
+    id: number | string,
+    data: AssessmentData,
+  ): Promise<ApiResponse<{ assessment: any; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/assessment`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async assignTaskForce(id: number | string, taskForceId: number): Promise<ApiResponse<{ report: Issue }>> {
+  async assignTaskForce(
+    id: number | string,
+    taskForceId: number,
+  ): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/admin/issues/${id}/assign-task-force`, {
       method: "PUT",
       body: JSON.stringify({ task_force_id: taskForceId }),
     });
   }
 
-  async allocateResources(id: number | string, data: ResourceAllocationData): Promise<ApiResponse<{ report: Issue }>> {
+  async allocateResources(
+    id: number | string,
+    data: ResourceAllocationData,
+  ): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/admin/issues/${id}/allocate-resources`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
-  async getAwaitingAction(): Promise<ApiResponse<{
-    reports: Issue[];
-    counts: {
-      awaiting_assignment: number;
-      awaiting_assessment_review: number;
-      awaiting_resolution_review: number;
-    };
-  }>> {
+  async getAwaitingAction(): Promise<
+    ApiResponse<{
+      reports: Issue[];
+      counts: {
+        awaiting_assignment: number;
+        awaiting_assessment_review: number;
+        awaiting_resolution_review: number;
+      };
+    }>
+  > {
     return apiClient("/admin/issues/awaiting-action");
   }
 
   async reviewAssessment(
     id: number | string,
-    action: 'approve' | 'reject' | 'revision',
-    notes: string
+    action: "approve" | "reject" | "revision",
+    notes: string,
   ): Promise<ApiResponse<{ resolution: any; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/review-assessment`, {
       method: "PUT",
@@ -172,8 +195,8 @@ class IssuesService {
 
   async reviewResolution(
     id: number | string,
-    action: 'approve' | 'reject',
-    notes: string
+    action: "approve" | "reject",
+    notes: string,
   ): Promise<ApiResponse<{ resolution: any; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/review-resolution`, {
       method: "PUT",
@@ -181,14 +204,19 @@ class IssuesService {
     });
   }
 
-  async addComment(id: number | string, comment: string): Promise<ApiResponse<IssueComment>> {
+  async addComment(
+    id: number | string,
+    comment: string,
+  ): Promise<ApiResponse<IssueComment>> {
     return apiClient(`/admin/issues/${id}/comments`, {
       method: "POST",
       body: JSON.stringify({ comment }),
     });
   }
 
-  async submitOfficerIssue(data: FormData): Promise<ApiResponse<{ report: Issue }>> {
+  async submitOfficerIssue(
+    data: FormData,
+  ): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient("/officer/issues", {
       method: "POST",
       body: data,

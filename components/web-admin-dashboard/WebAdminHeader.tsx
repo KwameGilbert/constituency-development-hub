@@ -15,12 +15,14 @@ export default function WebAdminHeader({ title }: WebAdminHeaderProps) {
         <SidebarTrigger className="-ml-1" />
         <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
       </div>
-      
+
       <div className="flex items-center gap-3">
         <span className="text-sm font-medium text-slate-700">Admin</span>
         <Avatar className="h-8 w-8 bg-violet-600">
-            <AvatarImage src="/placeholder-user.jpg" />
-            <AvatarFallback className="bg-violet-600 text-white">A</AvatarFallback>
+          <AvatarImage src="/placeholder-user.jpg" />
+          <AvatarFallback className="bg-violet-600 text-white">
+            A
+          </AvatarFallback>
         </Avatar>
       </div>
     </header>

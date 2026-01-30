@@ -2,7 +2,14 @@
 
 import AppHeader from "@/components/app-header";
 import { AppSidebar } from "@/components/appsidebar";
-import { Home, FileText, BarChart3, Users, Clock, AlertCircle } from "lucide-react";
+import {
+  Home,
+  FileText,
+  BarChart3,
+  Users,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 const taskForceNavItems = [
@@ -40,7 +47,7 @@ const taskForceNavItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <ProtectedRoute allowedRoles={['task_force']}>
+    <ProtectedRoute allowedRoles={["task_force"]}>
       <div className="flex h-screen overflow-hidden">
         <div className="w-64 flex-shrink-0">
           <AppSidebar navItems={taskForceNavItems} />
@@ -49,9 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex-shrink-0">
             <AppHeader />
           </div>
-          <main className="flex-1 overflow-y-auto p-0">
-            {children}
-          </main>
+          <main className="flex-1 overflow-y-auto p-0">{children}</main>
         </div>
       </div>
     </ProtectedRoute>

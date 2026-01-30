@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { authService, UserRole, ROLES, User } from "@/lib/services/auth-service";
+import {
+  authService,
+  UserRole,
+  ROLES,
+  User,
+} from "@/lib/services/auth-service";
 
 interface UseAuthOptions {
   requiredRole?: UserRole | UserRole[];
@@ -30,10 +35,14 @@ export function useAuth(options: UseAuthOptions = {}) {
 
       // Check role if required
       if (requiredRole) {
-        const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+        const allowedRoles = Array.isArray(requiredRole)
+          ? requiredRole
+          : [requiredRole];
         if (!allowedRoles.includes(currentUser.role)) {
           // User doesn't have the required role - redirect to their correct dashboard
-          const correctDashboard = authService.getDashboardForRole(currentUser.role);
+          const correctDashboard = authService.getDashboardForRole(
+            currentUser.role,
+          );
           router.push(correctDashboard);
           return;
         }

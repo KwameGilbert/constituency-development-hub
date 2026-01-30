@@ -60,7 +60,7 @@ export function PortalCard({
         <h3
           className={cn(
             "text-xl font-bold",
-            theme.iconColor.replace("text-", "text-opacity-90 text-")
+            theme.iconColor.replace("text-", "text-opacity-90 text-"),
           )}
         >
           {title}

@@ -27,10 +27,21 @@ import {
 } from "@/lib/services/issues-service";
 import Link from "next/link";
 
-export function AllIssues() {
+interface AllIssuesProps {
+  /**
+   * If true, the component renders in read-only mode for admins.
+   */
+  readOnly?: boolean;
+}
+
+export function AllIssues({ readOnly = false }: AllIssuesProps) {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
+
+  const basePath = readOnly
+    ? "/admin-dashboard/issues"
+    : "/officer-dashboard/issues";
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
@@ -276,7 +287,7 @@ export function AllIssues() {
                       <Badge
                         variant="outline"
                         className={`border-0 ${getPriorityColor(
-                          issue.priority
+                          issue.priority,
                         )}`}
                       >
                         {issue.priority}
@@ -299,7 +310,7 @@ export function AllIssues() {
                         className="h-auto p-0 text-indigo-600 hover:text-indigo-700"
                         asChild
                       >
-                        <Link href={`/officer-dashboard/issues/${issue.id}`}>
+                        <Link href={`${basePath}/${issue.id}`}>
                           <Eye className="h-4 w-4 mr-1" />
                           View
                         </Link>

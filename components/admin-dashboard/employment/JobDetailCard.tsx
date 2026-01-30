@@ -4,7 +4,15 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Calendar, MapPin, Briefcase, DollarSign, Users, Clock } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Calendar,
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Users,
+} from "lucide-react";
 import { JobPosting, JobApplicant } from "@/lib/services/employment-service";
 import Link from "next/link";
 import {
@@ -56,14 +64,17 @@ const getJobTypeColor = (type: string) => {
 };
 
 const formatJobType = (type: string) => {
-  return type.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return type
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
   });
 };
 
@@ -73,10 +84,10 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
   const [loadingApplicants, setLoadingApplicants] = useState(false);
 
   useEffect(() => {
-    // Load applicants if there are any
     if (job.applicants_count && job.applicants_count > 0) {
       loadApplicants();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [job.id]);
 
   const loadApplicants = async () => {
@@ -88,6 +99,7 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
       }
     } catch (error) {
       console.error("Failed to load applicants:", error);
+      toast.error("Applicants feature coming soon");
     } finally {
       setLoadingApplicants(false);
     }
@@ -131,11 +143,15 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   </Badge>
                 )}
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{job.title}</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                {job.title}
+              </h2>
               {job.company && (
                 <p className="text-lg text-slate-600 mb-2">{job.company}</p>
               )}
-              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{job.description}</p>
+              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                {job.description}
+              </p>
             </div>
             <div className="flex gap-2">
               <Link href={`/admin-dashboard/employment/${job.id}/edit`}>
@@ -155,7 +171,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Job Posting</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{job.title}"? This action cannot be undone and will also remove all applicant data.
+                      Are you sure you want to delete &quot;{job.title}&quot;?
+                      This action cannot be undone and will also remove all
+                      applicant data.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -199,7 +217,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Application Deadline</p>
-                  <p className={`font-medium ${deadlinePassed ? 'text-red-600' : 'text-slate-900'}`}>
+                  <p
+                    className={`font-medium ${deadlinePassed ? "text-red-600" : "text-slate-900"}`}
+                  >
                     {formatDate(job.application_deadline)}
                   </p>
                   {deadlinePassed && (
@@ -215,7 +235,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Salary Range</p>
-                    <p className="font-medium text-slate-900">{job.salary_range}</p>
+                    <p className="font-medium text-slate-900">
+                      {job.salary_range}
+                    </p>
                   </div>
                 </div>
               )}
@@ -228,7 +250,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <div>
                     <p className="text-xs text-slate-500">Experience Level</p>
                     <p className="font-medium text-slate-900">
-                      {job.experience_level.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                      {job.experience_level
+                        .replace("_", " ")
+                        .replace(/\b\w/g, (l) => l.toUpperCase())}
                     </p>
                   </div>
                 </div>
@@ -240,8 +264,12 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
               <>
                 <Separator />
                 <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">Key Responsibilities</h4>
-                  <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{job.responsibilities}</p>
+                  <h4 className="font-semibold text-slate-900 mb-2">
+                    Key Responsibilities
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                    {job.responsibilities}
+                  </p>
                 </div>
               </>
             )}
@@ -251,8 +279,12 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
               <>
                 <Separator />
                 <div>
-                  <h4 className="font-semibold text-slate-900 mb-2">Requirements & Qualifications</h4>
-                  <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">{job.requirements}</p>
+                  <h4 className="font-semibold text-slate-900 mb-2">
+                    Requirements & Qualifications
+                  </h4>
+                  <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                    {job.requirements}
+                  </p>
                 </div>
               </>
             )}
@@ -267,14 +299,16 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
           <CardContent>
             <div className="text-center p-6 bg-slate-50 rounded-lg">
               <Users className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-              <p className="text-3xl font-bold text-slate-900">{job.applicants_count || 0}</p>
+              <p className="text-3xl font-bold text-slate-900">
+                {job.applicants_count || 0}
+              </p>
               <p className="text-sm text-slate-500">Total Applications</p>
             </div>
 
             {job.applicants_count && job.applicants_count > 0 && (
               <div className="mt-4">
-                <Button 
-                  className="w-full" 
+                <Button
+                  className="w-full"
                   variant="outline"
                   onClick={loadApplicants}
                   disabled={loadingApplicants}
@@ -296,12 +330,21 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
           <CardContent>
             <div className="space-y-3">
               {applicants.map((applicant) => (
-                <div key={applicant.id} className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50">
+                <div
+                  key={applicant.id}
+                  className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50"
+                >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium text-slate-900">{applicant.name}</p>
-                      <p className="text-sm text-slate-500">{applicant.email}</p>
-                      <p className="text-sm text-slate-500">{applicant.phone}</p>
+                      <p className="font-medium text-slate-900">
+                        {applicant.name}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {applicant.email}
+                      </p>
+                      <p className="text-sm text-slate-500">
+                        {applicant.phone}
+                      </p>
                     </div>
                     <div className="text-right">
                       <Badge variant="outline">{applicant.status}</Badge>

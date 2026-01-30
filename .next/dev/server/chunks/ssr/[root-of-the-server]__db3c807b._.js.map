@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 28, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/AnthonyAfriyie/Desktop/projects/constituency-development-hub/app/%28public%29/page.tsx"],"sourcesContent":["import { Metadata } from \"next\";\r\nimport HomeClient from \"./components/HomeClient\";\r\n\r\nexport const metadata: Metadata = {\r\n  title: \"Home | Kofi Benteh Afful\",\r\n  description: \"Welcome to the official portal of Kofi Benteh Afful, MP for Sefwi Wiawso. Explore initiatives, projects, and latest updates.\",\r\n};\r\n\r\nexport default function PortalPage() {\r\n  return <HomeClient />;\r\n}\r\n"],"names":[],"mappings":";;;;;;;AACA;;;AAEO,MAAM,WAAqB;IAChC,OAAO;IACP,aAAa;AACf;AAEe,SAAS;IACtB,qBAAO,6VAAC,yJAAU;;;;;AACpB"}}]
-}

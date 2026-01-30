@@ -103,7 +103,10 @@ export function AgentSettings() {
 
     setChangingPassword(true);
     try {
-      const response = await agentService.changePassword(currentPassword, newPassword);
+      const response = await agentService.changePassword(
+        currentPassword,
+        newPassword,
+      );
 
       if (response.success) {
         toast.success("Password changed successfully");
@@ -166,7 +169,9 @@ export function AgentSettings() {
       <div className="flex items-center gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="relative">
           <Avatar className="h-24 w-24">
-            <AvatarImage src={profile?.profile_image || "/placeholder-user.jpg"} />
+            <AvatarImage
+              src={profile?.profile_image || "/placeholder-user.jpg"}
+            />
             <AvatarFallback className="text-2xl bg-slate-100 text-slate-500">
               {profile ? getInitials(profile.user.name) : "AG"}
             </AvatarFallback>
@@ -176,7 +181,9 @@ export function AgentSettings() {
           </button>
         </div>
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-slate-900">{profile?.user.name}</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {profile?.user.name}
+          </h2>
           <p className="text-slate-500">Field Agent • {profile?.agent_code}</p>
           <div className="flex items-center gap-3 pt-1">
             <div className="flex items-center gap-1 text-sm text-slate-500">
@@ -192,7 +199,9 @@ export function AgentSettings() {
               }`}
             >
               <CheckCircle2 className="h-3 w-3" />
-              {profile?.user.status === "active" ? "Active" : profile?.user.status}
+              {profile?.user.status === "active"
+                ? "Active"
+                : profile?.user.status}
             </Badge>
           </div>
         </div>

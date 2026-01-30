@@ -14,7 +14,8 @@ const geistMono = {
   variable: "--font-geist-mono",
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://kofibentehafful.com";
+const baseUrl =
+  process.env.NEXT_PUBLIC_APP_URL || "https://kofibentehafful.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -76,28 +77,30 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <JsonLd data={{
-          "@context": "https://schema.org",
-          "@type": "Person",
-          "name": "Kofi Benteh Afful",
-          "url": baseUrl,
-          "image": `${baseUrl}/og-image.jpg`,
-          "jobTitle": "Member of Parliament",
-          "worksFor": {
-            "@type": "Organization",
-            "name": "Parliament of Ghana"
-          },
-          "address": {
-            "@type": "PostalAddress",
-            "addressLocality": "Sefwi Wiawso",
-            "addressRegion": "Western North Region",
-            "addressCountry": "GH"
-          },
-          "sameAs": [
-             "https://twitter.com/kofibentehafful",
-             "https://facebook.com/kofibentehafful"
-          ]
-        }} />
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Kofi Benteh Afful",
+            url: baseUrl,
+            image: `${baseUrl}/og-image.jpg`,
+            jobTitle: "Member of Parliament",
+            worksFor: {
+              "@type": "Organization",
+              name: "Parliament of Ghana",
+            },
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Sefwi Wiawso",
+              addressRegion: "Western North Region",
+              addressCountry: "GH",
+            },
+            sameAs: [
+              "https://twitter.com/kofibentehafful",
+              "https://facebook.com/kofibentehafful",
+            ],
+          }}
+        />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

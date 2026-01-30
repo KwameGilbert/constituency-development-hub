@@ -8,58 +8,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import axios from "axios";
 import { useParams } from "next/navigation";
-
-interface JobPosting {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  company?: string;
-  location: string;
-  job_type: "full_time" | "part_time" | "contract" | "internship";
-  salary_range?: string;
-  requirements?: string;
-  responsibilities?: string;
-  application_deadline: string;
-  status: "draft" | "published" | "closed";
-  category?: string;
-  experience_level?: string;
-  applicants_count?: number;
-  created_at?: string;
-  updated_at?: string;
-  published_at?: string;
-}
-
-interface JobsData {
-  jobs: JobPosting[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-  };
-  statistics: {
-    total_jobs: number;
-    published_jobs: number;
-    draft_jobs: number;
-    closed_jobs: number;
-    total_applicants: number;
-    by_category: Array<{
-      category: string;
-      count: number;
-    }>;
-    by_job_type: Array<{
-      job_type: string;
-      count: number;
-    }>;
-    by_experience_level: Array<{
-      experience_level: string;
-      count: number;
-    }>;
-  };
-}
+import {
+  employmentService,
+  JobPosting,
+} from "@/lib/services/employment-service";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -73,17 +26,16 @@ export default function JobDetailPage() {
     const fetchJob = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<JobsData>('/data/admin-employment-jobs.json');
-        const foundJob = response.data.jobs.find(j => j.id === parseInt(id));
-        if (foundJob) {
-          setJob(foundJob);
+        const response = await employmentService.getJobById(id);
+        if (response.success && response.data.job) {
+          setJob(response.data.job);
           setError(null);
         } else {
-          setError('Job not found');
+          setError("Job not found");
         }
       } catch (err) {
-        console.error('Failed to load job data:', err);
-        setError('Failed to load job data');
+        console.error("Failed to load job data:", err);
+        setError("Failed to load job data");
       } finally {
         setLoading(false);
       }
@@ -101,7 +53,11 @@ export default function JobDetailPage() {
         <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-4">
             <Link href="/admin-dashboard/employment">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -166,19 +122,31 @@ export default function JobDetailPage() {
         <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-4">
             <Link href="/admin-dashboard/employment">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-slate-900">Job Not Found</h1>
-              <p className="text-slate-500">The requested job could not be found</p>
+              <h1 className="text-2xl font-bold text-slate-900">
+                Job Not Found
+              </h1>
+              <p className="text-slate-500">
+                The requested job could not be found
+              </p>
             </div>
           </div>
 
           <Card className="p-12 text-center">
-            <p className="text-red-600 text-lg font-medium">{error || 'Job not found'}</p>
-            <p className="text-slate-500 mt-2">Please check the job ID and try again</p>
+            <p className="text-red-600 text-lg font-medium">
+              {error || "Job not found"}
+            </p>
+            <p className="text-slate-500 mt-2">
+              Please check the job ID and try again
+            </p>
             <div className="mt-6">
               <Link href="/admin-dashboard/employment">
                 <Button>Back to Jobs</Button>
@@ -196,7 +164,11 @@ export default function JobDetailPage() {
       <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/admin-dashboard/employment">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>

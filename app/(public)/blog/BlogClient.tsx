@@ -4,12 +4,29 @@ import { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { blogService, BlogPost } from "@/lib/services/blog-service";
-import { Loader2, Search, X, Calendar, Tag, ArrowRight, BookOpen } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  X,
+  Calendar,
+  Tag,
+  ArrowRight,
+  BookOpen,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 
-const categories = ["All", "News", "Education", "Infrastructure", "Community", "Health", "Youth"];
+const categories = [
+  "All",
+  "News",
+  "Education",
+  "Infrastructure",
+  "Community",
+  "Health",
+  "Youth",
+];
 
 export default function BlogClient() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -24,7 +41,10 @@ export default function BlogClient() {
     async function fetchPosts() {
       try {
         setLoading(true);
-        const response = await blogService.getAllPosts(currentPage, postsPerPage);
+        const response = await blogService.getAllPosts(
+          currentPage,
+          postsPerPage,
+        );
         if (response.success && response.data.posts) {
           setPosts(response.data.posts);
           if (response.data.pagination) {
@@ -52,18 +72,19 @@ export default function BlogClient() {
 
     // Filter by category
     if (activeCategory !== "All") {
-      filtered = filtered.filter(post => 
-        post.category?.toLowerCase() === activeCategory.toLowerCase()
+      filtered = filtered.filter(
+        (post) => post.category?.toLowerCase() === activeCategory.toLowerCase(),
       );
     }
 
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(post =>
-        post.title?.toLowerCase().includes(query) ||
-        post.excerpt?.toLowerCase().includes(query) ||
-        post.category?.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (post) =>
+          post.title?.toLowerCase().includes(query) ||
+          post.excerpt?.toLowerCase().includes(query) ||
+          post.category?.toLowerCase().includes(query),
       );
     }
 
@@ -89,8 +110,8 @@ export default function BlogClient() {
               News & Articles
             </h1>
             <p className="text-lg text-white/80 max-w-2xl">
-              Stay informed about the latest developments, projects, and community initiatives 
-              in Sefwi Wiawso Constituency.
+              Stay informed about the latest developments, projects, and
+              community initiatives in Sefwi Wiawso Constituency.
             </p>
           </motion.div>
         </div>
@@ -155,12 +176,16 @@ export default function BlogClient() {
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-20">
             <BookOpen className="h-16 w-16 mx-auto text-slate-300 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-700">No articles found</h3>
+            <h3 className="text-xl font-semibold text-slate-700">
+              No articles found
+            </h3>
             <p className="text-slate-500 mt-2">
-              {searchQuery ? `No results for "${searchQuery}"` : "Try selecting a different category"}
+              {searchQuery
+                ? `No results for "${searchQuery}"`
+                : "Try selecting a different category"}
             </p>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="mt-4"
               onClick={() => {
                 setSearchQuery("");
@@ -187,7 +212,7 @@ export default function BlogClient() {
                     {post.image ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
-                        src={post.image}
+                        src={getImageUrl(post.image)}
                         alt={post.title || "Article"}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -231,7 +256,7 @@ export default function BlogClient() {
                   </p>
 
                   {/* Read More */}
-                  <Link 
+                  <Link
                     href={`/blog/${post.slug}`}
                     className="inline-flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
                   >
@@ -249,29 +274,31 @@ export default function BlogClient() {
           <div className="mt-12 flex items-center justify-center gap-2">
             <Button
               variant="outline"
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
             >
               Previous
             </Button>
             <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`h-10 w-10 rounded-full text-sm font-medium transition-all ${
-                    currentPage === page
-                      ? "bg-amber-500 text-white"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`h-10 w-10 rounded-full text-sm font-medium transition-all ${
+                      currentPage === page
+                        ? "bg-amber-500 text-white"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
             </div>
             <Button
               variant="outline"
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
             >
               Next
@@ -285,7 +312,8 @@ export default function BlogClient() {
         <div className="mx-auto max-w-4xl px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
           <p className="text-white/80 mb-8">
-            Subscribe to our newsletter to receive the latest news and updates directly in your inbox.
+            Subscribe to our newsletter to receive the latest news and updates
+            directly in your inbox.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
             <Input

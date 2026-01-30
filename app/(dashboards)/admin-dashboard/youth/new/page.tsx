@@ -87,7 +87,7 @@ export default function AddYouthPage() {
 
   const handleInputChange = (
     field: keyof CreateYouthRecordRequest,
-    value: string | number | boolean | undefined
+    value: string | number | boolean | undefined,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -178,7 +178,10 @@ export default function AddYouthPage() {
         ]}
       />
 
-      <form onSubmit={handleSubmit} className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <form
+        onSubmit={handleSubmit}
+        className="flex-1 p-6 space-y-6 overflow-y-auto"
+      >
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Page Title Card */}
           <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
@@ -404,7 +407,7 @@ export default function AddYouthPage() {
                       onChange={(e) =>
                         handleInputChange(
                           "certificate_qualification",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                     />
@@ -420,7 +423,7 @@ export default function AddYouthPage() {
                       onChange={(e) =>
                         handleInputChange(
                           "diploma_qualification",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                     />
@@ -435,7 +438,10 @@ export default function AddYouthPage() {
                       className="bg-white"
                       value={formData.degree_qualification}
                       onChange={(e) =>
-                        handleInputChange("degree_qualification", e.target.value)
+                        handleInputChange(
+                          "degree_qualification",
+                          e.target.value,
+                        )
                       }
                     />
                   </div>
@@ -451,7 +457,7 @@ export default function AddYouthPage() {
                       onChange={(e) =>
                         handleInputChange(
                           "postgraduate_qualification",
-                          e.target.value
+                          e.target.value,
                         )
                       }
                     />
@@ -470,7 +476,7 @@ export default function AddYouthPage() {
                     onChange={(e) =>
                       handleInputChange(
                         "professional_qualification",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   />
@@ -606,7 +612,7 @@ export default function AddYouthPage() {
                     onChange={(e) =>
                       handleInputChange(
                         "salary_expectation",
-                        e.target.value ? Number(e.target.value) : undefined
+                        e.target.value ? Number(e.target.value) : undefined,
                       )
                     }
                   />
@@ -681,7 +687,9 @@ export default function AddYouthPage() {
               <CardTitle className="text-base font-bold text-gray-900">
                 Administrative Information
               </CardTitle>
-              <CardDescription>Status and administrative notes.</CardDescription>
+              <CardDescription>
+                Status and administrative notes.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">

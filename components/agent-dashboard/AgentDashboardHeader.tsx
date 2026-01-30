@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Plus } from "lucide-react";
 import React from "react";
 
 export default function AgentDashboardHeader() {
@@ -13,10 +11,6 @@ export default function AgentDashboardHeader() {
           <p className="text-sm text-slate-500">Welcome back, Agent.Rock</p>
         </div>
       </div>
-      <Button className="bg-slate-900 text-white hover:bg-slate-800">
-        <Plus className="mr-2 h-4 w-4" />
-        New Issue
-      </Button>
     </div>
   );
 }

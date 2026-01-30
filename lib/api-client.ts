@@ -1,5 +1,3 @@
-
-
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface FetchOptions extends RequestInit {
@@ -9,7 +7,7 @@ interface FetchOptions extends RequestInit {
 
 export async function apiClient<T>(
   endpoint: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<T> {
   const { requiresAuth = true, isFormData = false, ...fetchOptions } = options;
 
@@ -21,9 +19,9 @@ export async function apiClient<T>(
 
   // Only set Content-Type for requests with a body (POST, PUT, PATCH)
   // Skip setting Content-Type for FormData (browser sets it with boundary)
-  const method = (fetchOptions.method || 'GET').toUpperCase();
-  const hasBody = ['POST', 'PUT', 'PATCH'].includes(method);
-  
+  const method = (fetchOptions.method || "GET").toUpperCase();
+  const hasBody = ["POST", "PUT", "PATCH"].includes(method);
+
   if (hasBody && !isFormData && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
@@ -31,27 +29,45 @@ export async function apiClient<T>(
   if (requiresAuth) {
     // Try to get token from multiple sources
     let token: string | null = null;
-    
-    // 1. Try environment variable first
-    const envToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
-    if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
-      token = envToken;
+
+    // 1. Try localStorage (for client-side) - Prioritize this!
+    if (typeof window !== "undefined") {
+      const localToken = localStorage.getItem("authToken");
+      if (localToken) {
+        token = localToken;
+      }
     }
-    
-    // 2. Fallback to localStorage (for client-side)
-    if (!token && typeof window !== 'undefined') {
-      token = localStorage.getItem('authToken');
+
+    // 2. Fallback to environment variable (for development/testing)
+    if (!token) {
+      const envToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
+      if (envToken && envToken !== "YOUR_JWT_TOKEN_HERE") {
+        token = envToken;
+      }
     }
-    
+
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...fetchOptions,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${BASE_URL}${endpoint}`, {
+      ...fetchOptions,
+      headers,
+    });
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      console.error(
+        `[API Network Error] ${method} ${BASE_URL}${endpoint}`,
+        error,
+      );
+    }
+    throw new Error(
+      `Network error: Failed to connect to API at ${BASE_URL}${endpoint}`,
+    );
+  }
 
   // Try to parse JSON response
   let data;
@@ -63,11 +79,28 @@ export async function apiClient<T>(
   }
 
   if (!response.ok) {
-    // Only log detailed errors in development for debugging
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('[API]', response.status, endpoint, data?.message || data?.error || '');
+    // Handle 401 Unauthorized globally
+    if (response.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+      // Optional: Redirect to login if not already there
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login?expired=true";
+      }
     }
-    const errorMessage = data?.message || data?.error || `HTTP ${response.status}: An error occurred`;
+
+    // Only log detailed errors in development for debugging
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        "[API]",
+        response.status,
+        endpoint,
+        data?.message || data?.error || "",
+      );
+    }
+    const errorMessage =
+      data?.message ||
+      data?.error ||
+      `HTTP ${response.status}: An error occurred`;
     throw new Error(errorMessage);
   }
 

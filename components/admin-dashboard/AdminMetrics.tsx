@@ -9,9 +9,12 @@ import {
   Wallet,
   Briefcase,
   ShieldCheck,
-  UserCog
+  UserCog,
 } from "lucide-react";
-import { dashboardService, DashboardStats } from "@/lib/services/dashboard-service";
+import {
+  dashboardService,
+  DashboardStats,
+} from "@/lib/services/dashboard-service";
 
 interface MetricData {
   summaryMetrics: Array<{
@@ -122,77 +125,77 @@ export function AdminMetrics() {
           const transformedData: MetricData = {
             summaryMetrics: [
               {
-                id: 'total-issues',
-                label: 'Total Issues',
+                id: "total-issues",
+                label: "Total Issues",
                 value: response.data.overview.total_issues,
-                subtitle: 'Reported issues',
-                icon: 'ClipboardList',
-                color: 'blue'
+                subtitle: "Reported issues",
+                icon: "ClipboardList",
+                color: "blue",
               },
               {
-                id: 'active-users',
-                label: 'Active Users',
+                id: "active-users",
+                label: "Active Users",
                 value: response.data.overview.active_users,
-                subtitle: 'Currently active',
-                icon: 'Users',
-                color: 'emerald'
+                subtitle: "Currently active",
+                icon: "Users",
+                color: "emerald",
               },
               {
-                id: 'total-projects',
-                label: 'Total Projects',
+                id: "total-projects",
+                label: "Total Projects",
                 value: response.data.overview.total_projects,
-                subtitle: 'All projects',
-                icon: 'FolderKanban',
-                color: 'purple'
+                subtitle: "All projects",
+                icon: "FolderKanban",
+                color: "purple",
               },
               {
-                id: 'total-budget',
-                label: 'Total Budget',
+                id: "total-budget",
+                label: "Total Budget",
                 value: `₵${response.data.overview.total_budget.toLocaleString()}`,
-                subtitle: 'Allocated budget',
-                icon: 'Wallet',
-                color: 'amber'
-              }
+                subtitle: "Allocated budget",
+                icon: "Wallet",
+                color: "amber",
+              },
             ],
             entityMetrics: [
               {
-                id: 'admins',
-                label: 'Admins',
+                id: "admins",
+                label: "Admins",
                 value: response.data.users_by_role.admin,
-                icon: 'ShieldCheck',
-                color: 'indigo'
+                icon: "ShieldCheck",
+                color: "indigo",
               },
               {
-                id: 'web-admins',
-                label: 'Web Admins',
+                id: "web-admins",
+                label: "Web Admins",
                 value: response.data.users_by_role.web_admin,
-                icon: 'UserCog',
-                color: 'red'
+                icon: "UserCog",
+                color: "red",
               },
               {
-                id: 'officers',
-                label: 'Officers',
+                id: "officers",
+                label: "Officers",
                 value: response.data.users_by_role.officer,
-                icon: 'Briefcase',
-                color: 'green'
+                icon: "Briefcase",
+                color: "green",
               },
               {
-                id: 'agents',
-                label: 'Agents',
+                id: "agents",
+                label: "Agents",
                 value: response.data.users_by_role.agent,
-                icon: 'Users',
-                color: 'blue'
-              }
-            ]
+                icon: "Users",
+                color: "blue",
+              },
+            ],
           };
 
           setMetrics(transformedData);
         } else {
-          setError(response.message || 'Failed to load dashboard statistics');
+          setError(response.message || "Failed to load dashboard statistics");
         }
       } catch (err) {
-        setError('Failed to load metrics data');
-        console.error('Error fetching metrics:', err);
+        setError("Failed to load metrics data");
+        console.error("Error fetching metrics:", err);
       } finally {
         setLoading(false);
       }
@@ -239,7 +242,7 @@ export function AdminMetrics() {
     return (
       <div className="space-y-6">
         <Card className="p-4 text-center text-red-600">
-          {error || 'No data available'}
+          {error || "No data available"}
         </Card>
       </div>
     );
@@ -254,13 +257,20 @@ export function AdminMetrics() {
           const colors = colorMap[metric.color as keyof typeof colorMap];
 
           return (
-            <Card key={metric.id} className={`p-4 flex-row items-center space-x-4 border-l-4 ${colors.border} shadow-sm hover:shadow-md transition-shadow`}>
+            <Card
+              key={metric.id}
+              className={`p-4 flex-row items-center space-x-4 border-l-4 ${colors.border} shadow-sm hover:shadow-md transition-shadow`}
+            >
               <div className={`${colors.bg} p-3 rounded-xl`}>
                 <IconComponent className={`${colors.text} w-6 h-6`} />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">{metric.label}</p>
-                <h3 className="text-2xl font-bold text-gray-800">{metric.value}</h3>
+                <p className="text-sm font-medium text-gray-500">
+                  {metric.label}
+                </p>
+                <h3 className="text-2xl font-bold text-gray-800">
+                  {metric.value}
+                </h3>
                 <p className="text-xs text-gray-400">{metric.subtitle}</p>
               </div>
             </Card>
@@ -275,10 +285,17 @@ export function AdminMetrics() {
           const colors = colorMap[metric.color as keyof typeof colorMap];
 
           return (
-            <Card key={metric.id} className={`p-4 flex-row items-center justify-between ${colors.cardBg} border ${colors.cardBorder} shadow-sm`}>
+            <Card
+              key={metric.id}
+              className={`p-4 flex-row items-center justify-between ${colors.cardBg} border ${colors.cardBorder} shadow-sm`}
+            >
               <div>
-                <p className={`text-sm font-medium ${colors.label}`}>{metric.label}</p>
-                <h3 className={`text-2xl font-bold ${colors.value} mt-1`}>{metric.value}</h3>
+                <p className={`text-sm font-medium ${colors.label}`}>
+                  {metric.label}
+                </p>
+                <h3 className={`text-2xl font-bold ${colors.value} mt-1`}>
+                  {metric.value}
+                </h3>
               </div>
               <div className="bg-white p-2 rounded-lg shadow-sm">
                 <IconComponent className={`${colors.text} w-5 h-5`} />

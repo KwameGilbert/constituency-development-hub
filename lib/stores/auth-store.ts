@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
   id: string;
@@ -25,43 +25,43 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       token: null,
       login: (user: User, token: string) => {
-        set({ 
-          user, 
-          token, 
-          isAuthenticated: true 
+        set({
+          user,
+          token,
+          isAuthenticated: true,
         });
       },
       logout: () => {
-        set({ 
-          user: null, 
-          token: null, 
-          isAuthenticated: false 
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
         });
         // Clear localStorage/sessionStorage
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('auth_token');
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token");
           sessionStorage.clear();
         }
       },
       updateUser: (userData: Partial<User>) => {
         const currentUser = get().user;
         if (currentUser) {
-          set({ 
-            user: { 
-              ...currentUser, 
-              ...userData 
-            } 
+          set({
+            user: {
+              ...currentUser,
+              ...userData,
+            },
           });
         }
       },
     }),
     {
-      name: 'auth-storage',
-      partialize: (state) => ({ 
-        user: state.user, 
-        token: state.token, 
-        isAuthenticated: state.isAuthenticated 
+      name: "auth-storage",
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );

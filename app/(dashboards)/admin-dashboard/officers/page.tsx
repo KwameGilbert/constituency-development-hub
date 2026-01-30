@@ -72,15 +72,16 @@ export default function OfficersPage() {
         toast.error(response.message || "Failed to delete officer");
       }
     } catch (error) {
-        // Safe error handling similar to previous fix
-        const errorMessage = error instanceof Error ? error.message : "An error occurred";
-        toast.error(errorMessage);
+      // Safe error handling similar to previous fix
+      const errorMessage =
+        error instanceof Error ? error.message : "An error occurred";
+      toast.error(errorMessage);
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const filteredOfficers = officers.filter(officer => {
+  const filteredOfficers = officers.filter((officer) => {
     const searchLower = searchQuery.toLowerCase();
     return (
       (officer.user?.name || "").toLowerCase().includes(searchLower) ||
@@ -89,17 +90,23 @@ export default function OfficersPage() {
     );
   });
 
-  const activeOfficers = filteredOfficers.filter(o => o.user?.status === 'active');
-  const inactiveOfficers = filteredOfficers.filter(o => o.user?.status !== 'active');
+  const activeOfficers = filteredOfficers.filter(
+    (o) => o.user?.status === "active",
+  );
+  const inactiveOfficers = filteredOfficers.filter(
+    (o) => o.user?.status !== "active",
+  );
 
   const formatDate = (dateString: string) => {
-      try {
-          return new Date(dateString).toLocaleDateString('en-US', {
-              month: 'short', day: 'numeric', year: 'numeric'
-          });
-      } catch {
-          return dateString;
-      }
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch {
+      return dateString;
+    }
   };
 
   return (
@@ -149,7 +156,9 @@ export default function OfficersPage() {
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
               <div className="space-y-1">
                 <h3 className="font-semibold text-gray-700">Officers</h3>
-                <p className="text-sm text-gray-500">Total: {filteredOfficers.length} officers</p>
+                <p className="text-sm text-gray-500">
+                  Total: {filteredOfficers.length} officers
+                </p>
               </div>
               <div className="flex flex-1 w-full md:w-auto gap-3 items-center justify-end">
                 <div className="relative w-full md:w-96">
@@ -204,102 +213,135 @@ export default function OfficersPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {loading ? (
-                       <tr>
-                           <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                               <div className="flex items-center justify-center gap-2">
-                                   <Loader2 className="w-5 h-5 animate-spin" /> 
-                                   Loading officers...
-                               </div>
-                           </td>
-                       </tr>
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-6 py-12 text-center text-gray-500"
+                      >
+                        <div className="flex items-center justify-center gap-2">
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Loading officers...
+                        </div>
+                      </td>
+                    </tr>
                   ) : filteredOfficers.length === 0 ? (
-                        <tr>
-                           <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                               No officers found
-                           </td>
-                       </tr>
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="px-6 py-12 text-center text-gray-500"
+                      >
+                        No officers found
+                      </td>
+                    </tr>
                   ) : (
-                      filteredOfficers.map((officer) => (
-                        <tr key={officer.id} className="hover:bg-gray-50/50 transition-colors group">
-                            <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold overflow-hidden">
-                                {officer.profile_image ? (
-                                    <img src={officer.profile_image} alt={officer.user?.name} className="w-full h-full object-cover" />
-                                ) : (
-                                    (officer.user?.name || "O").charAt(0)
-                                )}
-                                </div>
-                                <div>
-                                    <div className="font-medium text-gray-900">
-                                        {officer.user?.name}
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        {officer.title || "Officer"}
-                                    </div>
-                                </div>
+                    filteredOfficers.map((officer) => (
+                      <tr
+                        key={officer.id}
+                        className="hover:bg-gray-50/50 transition-colors group"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold overflow-hidden">
+                              {officer.profile_image ? (
+                                <img
+                                  src={officer.profile_image}
+                                  alt={officer.user?.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                (officer.user?.name || "O").charAt(0)
+                              )}
                             </div>
-                            </td>
-                            <td className="px-6 py-4 text-gray-600">
-                                <div className="flex flex-col">
-                                    <span>{officer.user?.email}</span>
-                                    <span className="text-xs text-gray-400">{officer.user?.phone || "-"}</span>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 text-gray-600">
-                                <div className="flex flex-col">
-                                    <span className="max-w-[200px] truncate" title={officer.assigned_locations?.join(", ") || ""}>
-                                        {officer.assigned_locations?.length ? officer.assigned_locations[0] + (officer.assigned_locations.length > 1 ? ` +${officer.assigned_locations.length-1}` : "") : "Unassigned"}
-                                    </span>
-                                    <span className="text-xs text-gray-400">{officer.department || "General"}</span>
-                                </div>
-                            </td>
-                            <td className="px-6 py-4">
-                            <Badge className={`border-none px-3 py-1 font-normal ${
-                                officer.user?.status === 'active' 
-                                    ? "bg-green-100 text-green-700 hover:bg-green-200" 
-                                    : "bg-red-100 text-red-700 hover:bg-red-200"
-                            }`}>
-                                {officer.user?.status || "Unknown"}
-                            </Badge>
-                            </td>
-                            <td className="px-6 py-4 text-gray-600">
-                                {formatDate(officer.created_at)}
-                            </td>
-                            <td className="px-6 py-4">
-                            <div className="flex items-center justify-end gap-2">
-                                <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                                asChild
-                                >
-                                <Link href={`/admin-dashboard/officers/${officer.id}`}>
-                                    <Eye className="w-4 h-4" />
-                                </Link>
-                                </Button>
-                                <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                asChild
-                                >
-                                <Link href={`/admin-dashboard/officers/${officer.id}/edit`}>
-                                    <Edit className="w-4 h-4" />
-                                </Link>
-                                </Button>
-                                <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                onClick={() => setOfficerToDelete(officer)}
-                                >
-                                <UserX className="w-4 h-4" />
-                                </Button>
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {officer.user?.name}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {officer.title || "Officer"}
+                              </div>
                             </div>
-                            </td>
-                        </tr>
-                      ))
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          <div className="flex flex-col">
+                            <span>{officer.user?.email}</span>
+                            <span className="text-xs text-gray-400">
+                              {officer.user?.phone || "-"}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          <div className="flex flex-col">
+                            <span
+                              className="max-w-[200px] truncate"
+                              title={
+                                officer.assigned_locations?.join(", ") || ""
+                              }
+                            >
+                              {officer.assigned_locations?.length
+                                ? officer.assigned_locations[0] +
+                                  (officer.assigned_locations.length > 1
+                                    ? ` +${officer.assigned_locations.length - 1}`
+                                    : "")
+                                : "Unassigned"}
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              {officer.department || "General"}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge
+                            className={`border-none px-3 py-1 font-normal ${
+                              officer.user?.status === "active"
+                                ? "bg-green-100 text-green-700 hover:bg-green-200"
+                                : "bg-red-100 text-red-700 hover:bg-red-200"
+                            }`}
+                          >
+                            {officer.user?.status || "Unknown"}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          {formatDate(officer.created_at)}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                              asChild
+                            >
+                              <Link
+                                href={`/admin-dashboard/officers/${officer.id}`}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                              asChild
+                            >
+                              <Link
+                                href={`/admin-dashboard/officers/${officer.id}/edit`}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => setOfficerToDelete(officer)}
+                            >
+                              <UserX className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
                 </tbody>
               </table>
@@ -308,29 +350,36 @@ export default function OfficersPage() {
         </div>
       </div>
 
-      <AlertDialog open={!!officerToDelete} onOpenChange={(open) => !open && setOfficerToDelete(null)}>
+      <AlertDialog
+        open={!!officerToDelete}
+        onOpenChange={(open) => !open && setOfficerToDelete(null)}
+      >
         <AlertDialogContent>
-            <AlertDialogHeader>
-                <AlertDialogTitle>Delete Officer Account</AlertDialogTitle>
-                <AlertDialogDescription>
-                    Are you sure you want to delete <strong>{officerToDelete?.user?.name}</strong>? 
-                    This action prevents them from accessing the system. 
-                    If they have assigned agents, you cannot delete them.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-                <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-                <AlertDialogAction 
-                    onClick={handleDelete}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    disabled={isDeleting}
-                >
-                    {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete Officer"}
-                </AlertDialogAction>
-            </AlertDialogFooter>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Officer Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <strong>{officerToDelete?.user?.name}</strong>? This action
+              prevents them from accessing the system. If they have assigned
+              agents, you cannot delete them.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Delete Officer"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
         </AlertDialogContent>
-     </AlertDialog>
-
+      </AlertDialog>
     </div>
   );
 }

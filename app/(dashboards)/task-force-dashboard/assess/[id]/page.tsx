@@ -1,19 +1,29 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter, useParams } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import {
   ArrowLeft,
   MapPin,
@@ -31,17 +41,22 @@ import {
   Upload,
   X,
   FileImage,
-  Loader2
-} from 'lucide-react';
+  Loader2,
+} from "lucide-react";
 import {
   getStatusColor,
   getPriorityColor,
   formatDate,
   getMetadata,
-  getCurrentUser
-} from '@/lib/data';
-import { useAssessmentStore } from '@/lib/stores/assessment-store';
-import { issuesService, Issue as ApiIssue, TimelineEvent } from '@/lib/services/issues-service';
+  getCurrentUser,
+} from "@/lib/data";
+import { useAssessmentStore } from "@/lib/stores/assessment-store";
+import {
+  issuesService,
+  Issue as ApiIssue,
+  TimelineEvent,
+} from "@/lib/services/issues-service";
+import { taskForceService } from "@/lib/services/task-force-service";
 
 // --- Adapter Logic (Client Side View Model) ---
 
@@ -64,7 +79,13 @@ interface UiIssue extends ApiIssue {
     economicImpact: string;
     socialImpact: string;
   };
-  attachments: { id: number; name: string; type: string; size: string; uploadDate: string }[];
+  attachments: {
+    id: number;
+    name: string;
+    type: string;
+    size: string;
+    uploadDate: string;
+  }[];
   timeline: TimelineEvent[];
   sector?: string;
   submissionDate: string;
@@ -73,35 +94,40 @@ interface UiIssue extends ApiIssue {
 const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
   return {
     ...apiIssue,
-    community: apiIssue.location || 'Unknown Community',
-    submittedBy: apiIssue.reporter_name || 'Anonymous',
+    community: apiIssue.location || "Unknown Community",
+    submittedBy: apiIssue.reporter_name || "Anonymous",
     submissionDate: apiIssue.created_at,
-    sector: 'General',
+    sector: "General",
     submitter: {
-      name: apiIssue.reporter_name || 'Anonymous',
-      role: 'Community Member',
-      phone: apiIssue.reporter_phone || 'N/A',
-      email: 'N/A'
+      name: apiIssue.reporter_name || "Anonymous",
+      role: "Community Member",
+      phone: apiIssue.reporter_phone || "N/A",
+      email: "N/A",
     },
     impactAssessment: {
-        affectedPopulation: 0,
-        householdsAffected: 0,
-        estimatedCost: apiIssue.allocated_budget || 0,
-        urgencyLevel: apiIssue.priority,
-        environmentalImpact: 'Not Assessed',
-        economicImpact: 'Not Assessed',
-        socialImpact: 'Not Assessed'
+      affectedPopulation: 0,
+      householdsAffected: 0,
+      estimatedCost: apiIssue.allocated_budget || 0,
+      urgencyLevel: apiIssue.priority,
+      environmentalImpact: "Not Assessed",
+      economicImpact: "Not Assessed",
+      socialImpact: "Not Assessed",
     },
     attachments: (apiIssue.images || []).map((img, i) => ({
-        id: i,
-        name: `Image ${i + 1}`,
-        type: 'image',
-        size: 'N/A',
-        uploadDate: apiIssue.created_at
+      id: i,
+      name: `Image ${i + 1}`,
+      type: "image",
+      size: "N/A",
+      uploadDate: apiIssue.created_at,
     })),
     timeline: [
-        { id: '1', date: apiIssue.created_at, event: 'Issue Submitted', type: 'submitted' }
-    ]
+      {
+        id: "1",
+        date: apiIssue.created_at,
+        event: "Issue Submitted",
+        type: "submitted",
+      },
+    ],
   };
 };
 
@@ -135,28 +161,29 @@ export default function AssessIssue() {
     resetAssessment,
   } = useAssessmentStore();
 
-  const fileErrors = errors.files ? [errors.files] : [];
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize and Fetch Issue
   useEffect(() => {
     if (issueId) {
       setCurrentIssue(issueId);
-      
+
       const fetchIssue = async () => {
         setLoading(true);
         try {
-            const response = await issuesService.getIssueById(issueId);
-            if (response.success && response.data.report) {
-                setIssue(adaptIssueToUi(response.data.report));
-            }
+          const response = await taskForceService.getIssue(issueId);
+          if (response.success && response.data.issue) {
+            setIssue(
+              adaptIssueToUi(response.data.issue as unknown as ApiIssue),
+            );
+          }
         } catch (error) {
-            console.error("Failed to fetch issue for assessment:", error);
+          console.error("Failed to fetch issue for assessment:", error);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
       };
-      
+
       fetchIssue();
     }
     return () => {
@@ -165,48 +192,53 @@ export default function AssessIssue() {
     };
   }, [issueId, setCurrentIssue, resetAssessment]);
 
-
   // Validation functions (Kept from original)
   const validateField = (name: string, value: string): string => {
     switch (name) {
-      case 'decision':
-        return !value ? 'Assessment decision is required' : '';
-      case 'comments':
-        if (!value.trim()) return 'Comments are required';
-        if (value.trim().length < 20) return 'Comments must be at least 20 characters long';
-        if (value.trim().length > 1000) return 'Comments must not exceed 1000 characters';
-        return '';
-      case 'recommendations':
-        if (assessment.decision === 'approve' && !value.trim()) {
-          return 'Recommendations are required for approved issues';
+      case "decision":
+        return !value ? "Assessment decision is required" : "";
+      case "comments":
+        if (!value.trim()) return "Comments are required";
+        if (value.trim().length < 20)
+          return "Comments must be at least 20 characters long";
+        if (value.trim().length > 1000)
+          return "Comments must not exceed 1000 characters";
+        return "";
+      case "recommendations":
+        if (assessment.decision === "approve" && !value.trim()) {
+          return "Recommendations are required for approved issues";
         }
-        if (value && value.length > 500) return 'Recommendations must not exceed 500 characters';
-        return '';
-      case 'estimatedBudget':
-        if (assessment.decision === 'approve' && !value) {
-          return 'Budget estimate is required for approved issues';
+        if (value && value.length > 500)
+          return "Recommendations must not exceed 500 characters";
+        return "";
+      case "estimatedBudget":
+        if (assessment.decision === "approve" && !value) {
+          return "Budget estimate is required for approved issues";
         }
         if (value && (isNaN(Number(value)) || Number(value) < 0)) {
-          return 'Budget must be a valid positive number';
+          return "Budget must be a valid positive number";
         }
         if (value && Number(value) > 10000000) {
-          return 'Budget seems unreasonably high, please verify';
+          return "Budget seems unreasonably high, please verify";
         }
-        return '';
-      case 'timeline':
-        if (assessment.decision === 'approve' && !value) {
-          return 'Timeline is required for approved issues';
+        return "";
+      case "timeline":
+        if (assessment.decision === "approve" && !value) {
+          return "Timeline is required for approved issues";
         }
-        return '';
+        return "";
       default:
-        return '';
+        return "";
     }
   };
 
   const validateForm = (): boolean => {
     let isValid = true;
-    Object.keys(assessment).forEach(key => {
-      const error = validateField(key, assessment[key as keyof typeof assessment]);
+    Object.keys(assessment).forEach((key) => {
+      const error = validateField(
+        key,
+        assessment[key as keyof typeof assessment],
+      );
       if (error) {
         setError(key, error);
         isValid = false;
@@ -223,7 +255,10 @@ export default function AssessIssue() {
 
   const handleFieldBlur = (name: string) => {
     setTouched(name);
-    const error = validateField(name, assessment[name as keyof typeof assessment]);
+    const error = validateField(
+      name,
+      assessment[name as keyof typeof assessment],
+    );
     if (error) {
       setError(name, error);
     } else {
@@ -237,32 +272,38 @@ export default function AssessIssue() {
 
     Array.from(selectedFiles).forEach((file) => {
       if (file.size > 10 * 1024 * 1024) {
-        setError('files', `File ${file.name} is too large. Maximum size is 10MB.`);
+        setError(
+          "files",
+          `File ${file.name} is too large. Maximum size is 10MB.`,
+        );
         return;
       }
       const allowedTypes = [
-        'image/jpeg', 'image/png', 'image/gif', 
-        'application/pdf', 'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'text/plain'
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain",
       ];
       if (!allowedTypes.includes(file.type)) {
-        setError('files', `File ${file.name} is not a supported file type.`);
+        setError("files", `File ${file.name} is not a supported file type.`);
         return;
       }
       addFile(file);
-      clearError('files');
+      clearError("files");
     });
 
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
   const handleSubmitAssessment = async () => {
     if (!issueId) return;
 
-    Object.keys(assessment).forEach(key => {
+    Object.keys(assessment).forEach((key) => {
       setTouched(key);
     });
 
@@ -272,21 +313,45 @@ export default function AssessIssue() {
 
     setSubmitting(true);
     try {
-      // NOTE: We are excluding 'files' from the API call as the endpoint expects JSON.
-      // File upload logic should be added if the API supports multipart/form-data or a separate upload endpoint.
-      await issuesService.submitAssessment(issueId, {
-        decision: assessment.decision as 'approve' | 'reject' | 'request_more_info',
-        comments: assessment.comments,
-        recommendations: assessment.recommendations,
-        estimatedBudget: assessment.estimatedBudget ? parseFloat(assessment.estimatedBudget) : undefined,
-        timeline: assessment.timeline || undefined
+      const formData = new FormData();
+      formData.append("assessment_summary", assessment.comments); // specific field name expected by backend
+      formData.append("decision", assessment.decision as string); // though backend uses this to derive status/logic potentially
+
+      // Map frontend fields to backend expected fields
+      if (assessment.recommendations)
+        formData.append("recommendations", assessment.recommendations);
+      if (assessment.estimatedBudget)
+        formData.append(
+          "estimated_cost",
+          assessment.estimatedBudget.toString(),
+        );
+      if (assessment.timeline)
+        formData.append("estimated_duration", assessment.timeline);
+
+      // Additional fields that might be needed/supported
+      formData.append(
+        "issue_confirmed",
+        assessment.decision !== "reject" ? "1" : "0",
+      );
+
+      // Handle file uploads
+      files.forEach((file) => {
+        if (file.file) {
+          if (file.type.startsWith("image/")) {
+            formData.append("images[]", file.file);
+          } else {
+            formData.append("documents[]", file.file);
+          }
+        }
       });
-      
-      alert('Assessment submitted successfully!');
-      router.push('/task-force-dashboard/issues');
+
+      await taskForceService.submitAssessment(issueId, formData);
+
+      alert("Assessment submitted successfully!");
+      router.push("/task-force-dashboard/issues");
     } catch (error) {
       console.error("Error submitting assessment:", error);
-      alert('Error submitting assessment. Please try again.');
+      alert("Error submitting assessment. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -294,10 +359,14 @@ export default function AssessIssue() {
 
   const getDecisionColor = (decision: string) => {
     switch (decision) {
-      case 'approve': return 'bg-green-100 text-green-800 border-green-200';
-      case 'reject': return 'bg-red-100 text-red-800 border-red-200';
-      case 'request_more_info': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "approve":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "reject":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "request_more_info":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -306,16 +375,17 @@ export default function AssessIssue() {
     if (assessment.decision) progress += 40;
     if (assessment.comments) progress += 30;
     if (assessment.recommendations) progress += 20;
-    if (assessment.estimatedBudget && assessment.decision === 'approve') progress += 10;
+    if (assessment.estimatedBudget && assessment.decision === "approve")
+      progress += 10;
     return Math.min(progress, 100);
   };
 
   // Loading State
   if (loading) {
     return (
-        <div className="flex h-screen items-center justify-center">
-            <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
-        </div>
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+      </div>
     );
   }
 
@@ -325,8 +395,13 @@ export default function AssessIssue() {
       <div className="p-6 max-w-7xl mx-auto">
         <div className="text-center py-12">
           <AlertTriangle className="h-12 w-12 mx-auto text-red-500 mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Issue Not Found</h2>
-          <p className="text-gray-600 mb-4">The issue you're looking for doesn't exist or has been removed.</p>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Issue Not Found
+          </h2>
+          <p className="text-gray-600 mb-4">
+            The issue you&apos;re looking for doesn&apos;t exist or has been
+            removed.
+          </p>
           <Link href="/task-force-dashboard/issues">
             <Button>Back to Issues</Button>
           </Link>
@@ -347,13 +422,16 @@ export default function AssessIssue() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Assess Issue #{issue.id}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Assess Issue #{issue.id}
+            </h1>
             <p className="text-gray-600">Review and make assessment decision</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className={getStatusColor(issue.status)}>
-            {metadata.statuses.find(s => s.value === issue.status)?.label || issue.status}
+            {metadata.statuses.find((s) => s.value === issue.status)?.label ||
+              issue.status}
           </Badge>
           <Badge className={getPriorityColor(issue.priority)}>
             {issue.priority} Priority
@@ -365,7 +443,9 @@ export default function AssessIssue() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Assessment Progress</CardTitle>
-          <CardDescription>Complete all sections for comprehensive assessment</CardDescription>
+          <CardDescription>
+            Complete all sections for comprehensive assessment
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -387,7 +467,9 @@ export default function AssessIssue() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">{issue.title}</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  {issue.title}
+                </h3>
                 <p className="text-sm text-gray-600">{issue.description}</p>
               </div>
 
@@ -402,41 +484,58 @@ export default function AssessIssue() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm">{formatDate(issue.submissionDate)}</span>
+                  <span className="text-sm">
+                    {formatDate(issue.submissionDate)}
+                  </span>
                 </div>
               </div>
 
               <div className="pt-4 border-t">
-                <h4 className="font-medium text-gray-900 mb-2">Impact Assessment</h4>
+                <h4 className="font-medium text-gray-900 mb-2">
+                  Impact Assessment
+                </h4>
                 <div className="space-y-2 text-sm">
-                   {/* Fallback zeros if missing */}
+                  {/* Fallback zeros if missing */}
                   <div className="flex justify-between">
                     <span className="text-gray-600">Affected Population:</span>
-                    <span className="font-medium">{issue.impactAssessment.affectedPopulation}</span>
+                    <span className="font-medium">
+                      {issue.impactAssessment.affectedPopulation}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Households:</span>
-                    <span className="font-medium">{issue.impactAssessment.householdsAffected}</span>
+                    <span className="font-medium">
+                      {issue.impactAssessment.householdsAffected}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Estimated Cost:</span>
-                    <span className="font-medium">₵{issue.impactAssessment.estimatedCost.toLocaleString()}</span>
+                    <span className="font-medium">
+                      ₵{issue.impactAssessment.estimatedCost.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {issue.attachments.length > 0 && (
                 <div className="pt-4 border-t">
-                  <h4 className="font-medium text-gray-900 mb-2">Attachments</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">
+                    Attachments
+                  </h4>
                   <div className="space-y-2">
                     {issue.attachments.map((attachment) => (
-                      <div key={attachment.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                      <div
+                        key={attachment.id}
+                        className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                      >
                         <div className="flex items-center gap-2">
                           <FileText className="h-4 w-4 text-gray-400" />
                           <span className="text-sm">{attachment.name}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">{attachment.size}</span>
+                          <span className="text-xs text-gray-500">
+                            {attachment.size}
+                          </span>
                           <Button size="sm" variant="outline">
                             <Download className="h-3 w-3" />
                           </Button>
@@ -472,11 +571,19 @@ export default function AssessIssue() {
                     <Label htmlFor="decision" className="text-sm font-medium">
                       Assessment Decision *
                     </Label>
-                    <Select 
-                      value={assessment.decision} 
-                      onValueChange={(value) => handleFieldChange('decision', value)}
+                    <Select
+                      value={assessment.decision}
+                      onValueChange={(value) =>
+                        handleFieldChange("decision", value)
+                      }
                     >
-                      <SelectTrigger className={errors.decision && touched.decision ? 'border-red-500' : ''}>
+                      <SelectTrigger
+                        className={
+                          errors.decision && touched.decision
+                            ? "border-red-500"
+                            : ""
+                        }
+                      >
                         <SelectValue placeholder="Select your decision" />
                       </SelectTrigger>
                       <SelectContent>
@@ -501,13 +608,16 @@ export default function AssessIssue() {
                       </SelectContent>
                     </Select>
                     {errors.decision && touched.decision && (
-                      <p className="text-sm text-red-600 mt-1">{errors.decision}</p>
+                      <p className="text-sm text-red-600 mt-1">
+                        {errors.decision}
+                      </p>
                     )}
                     {assessment.decision && !errors.decision && (
                       <Badge className={getDecisionColor(assessment.decision)}>
-                        {assessment.decision === 'approve' && 'Approved'}
-                        {assessment.decision === 'reject' && 'Rejected'}
-                        {assessment.decision === 'request_more_info' && 'More Info Required'}
+                        {assessment.decision === "approve" && "Approved"}
+                        {assessment.decision === "reject" && "Rejected"}
+                        {assessment.decision === "request_more_info" &&
+                          "More Info Required"}
                       </Badge>
                     )}
                   </div>
@@ -521,29 +631,36 @@ export default function AssessIssue() {
                       id="comments"
                       placeholder="Provide detailed comments about your assessment decision..."
                       value={assessment.comments}
-                      onChange={(e) => handleFieldChange('comments', e.target.value)}
-                      onBlur={() => handleFieldBlur('comments')}
-                      className={`min-h-[120px] ${errors.comments && touched.comments ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        handleFieldChange("comments", e.target.value)
+                      }
+                      onBlur={() => handleFieldBlur("comments")}
+                      className={`min-h-[120px] ${errors.comments && touched.comments ? "border-red-500" : ""}`}
                     />
                     {/* ... error display ... */}
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="recommendations" className="text-sm font-medium">
-                      Recommendations {assessment.decision === 'approve' && '*'}
+                    <Label
+                      htmlFor="recommendations"
+                      className="text-sm font-medium"
+                    >
+                      Recommendations {assessment.decision === "approve" && "*"}
                     </Label>
                     <Textarea
                       id="recommendations"
                       placeholder="Provide recommendations for implementation or next steps..."
                       value={assessment.recommendations}
-                      onChange={(e) => handleFieldChange('recommendations', e.target.value)}
-                      onBlur={() => handleFieldBlur('recommendations')}
-                      className={`min-h-20 ${errors.recommendations && touched.recommendations ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        handleFieldChange("recommendations", e.target.value)
+                      }
+                      onBlur={() => handleFieldBlur("recommendations")}
+                      className={`min-h-20 ${errors.recommendations && touched.recommendations ? "border-red-500" : ""}`}
                     />
-                     {/* ... error display ... */}
+                    {/* ... error display ... */}
                   </div>
 
-                  {assessment.decision === 'approve' && (
+                  {assessment.decision === "approve" && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="budget" className="text-sm font-medium">
@@ -556,27 +673,46 @@ export default function AssessIssue() {
                             type="number"
                             placeholder="0.00"
                             value={assessment.estimatedBudget}
-                            onChange={(e) => handleFieldChange('estimatedBudget', e.target.value)}
-                            onBlur={() => handleFieldBlur('estimatedBudget')}
-                            className={`pl-10 ${errors.estimatedBudget && touched.estimatedBudget ? 'border-red-500' : ''}`}
+                            onChange={(e) =>
+                              handleFieldChange(
+                                "estimatedBudget",
+                                e.target.value,
+                              )
+                            }
+                            onBlur={() => handleFieldBlur("estimatedBudget")}
+                            className={`pl-10 ${errors.estimatedBudget && touched.estimatedBudget ? "border-red-500" : ""}`}
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="timeline" className="text-sm font-medium">
+                        <Label
+                          htmlFor="timeline"
+                          className="text-sm font-medium"
+                        >
                           Implementation Timeline *
                         </Label>
-                        <Select 
-                          value={assessment.timeline} 
-                          onValueChange={(value) => handleFieldChange('timeline', value)}
+                        <Select
+                          value={assessment.timeline}
+                          onValueChange={(value) =>
+                            handleFieldChange("timeline", value)
+                          }
                         >
-                          <SelectTrigger className={errors.timeline && touched.timeline ? 'border-red-500' : ''}>
+                          <SelectTrigger
+                            className={
+                              errors.timeline && touched.timeline
+                                ? "border-red-500"
+                                : ""
+                            }
+                          >
                             <SelectValue placeholder="Select timeline" />
                           </SelectTrigger>
                           <SelectContent>
                             {metadata.timelines.map((timeline) => (
-                              <SelectItem key={timeline.value} value={timeline.value}>
+                              <SelectItem
+                                key={timeline.value}
+                                value={timeline.value}
+                              >
                                 <div className="flex items-center gap-2">
                                   <Clock className="h-4 w-4 text-gray-400" />
                                   {timeline.label}
@@ -591,7 +727,9 @@ export default function AssessIssue() {
 
                   {/* File Upload Section - Visual Only for now */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-medium">Supporting Documents</Label>
+                    <Label className="text-sm font-medium">
+                      Supporting Documents
+                    </Label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                       <input
                         type="file"
@@ -612,12 +750,17 @@ export default function AssessIssue() {
                         Max 10MB per file. Supported: JPG, PNG, PDF, DOC, DOCX
                       </p>
                     </div>
-                    
+
                     {files.length > 0 && (
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium">Uploaded Files ({files.length})</Label>
+                        <Label className="text-sm font-medium">
+                          Uploaded Files ({files.length})
+                        </Label>
                         {files.map((file) => (
-                          <div key={file.id} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <div
+                            key={file.id}
+                            className="flex items-center justify-between bg-gray-50 p-2 rounded"
+                          >
                             <div className="flex items-center gap-2">
                               <FileImage className="h-4 w-4 text-gray-500" />
                               <span className="text-sm">{file.name}</span>
@@ -651,7 +794,7 @@ export default function AssessIssue() {
                         <Save className="h-4 w-4 mr-2" />
                         Save Draft
                       </Button>
-                      <Button 
+                      <Button
                         onClick={handleSubmitAssessment}
                         disabled={isSubmitting}
                         className="bg-purple-600 hover:bg-purple-700"
@@ -675,13 +818,20 @@ export default function AssessIssue() {
                 <TabsContent value="history" className="space-y-4">
                   <div className="space-y-4">
                     {issue.timeline.map((event) => (
-                      <div key={event.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div
+                        key={event.id}
+                        className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg"
+                      >
                         <div className="p-2 rounded-full bg-white">
-                            <Clock className="h-4 w-4 text-gray-600" />
+                          <Clock className="h-4 w-4 text-gray-600" />
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-gray-900">{event.event}</p>
-                          <p className="text-sm text-gray-600">{formatDate(event.date)}</p>
+                          <p className="font-medium text-gray-900">
+                            {event.event}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {formatDate(event.date)}
+                          </p>
                         </div>
                       </div>
                     ))}

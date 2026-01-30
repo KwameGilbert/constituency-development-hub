@@ -48,7 +48,7 @@ export const blogService = {
   getCategories: async () => {
     return apiClient<{ success: boolean; data: { categories: string[] } }>(
       "/blog/categories",
-      { requiresAuth: false }
+      { requiresAuth: false },
     );
   },
 
@@ -63,7 +63,7 @@ export const blogService = {
       limit: limit.toString(),
     });
     if (status) query.append("status", status);
-    
+
     return apiClient<BlogResponse>(`/admin/blog?${query.toString()}`);
   },
 
@@ -75,8 +75,8 @@ export const blogService = {
     if (file) {
       // Send as multipart/form-data with file
       const formData = new FormData();
-      formData.append('image', file);
-      
+      formData.append("image", file);
+
       // Append other fields
       Object.entries(data).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -106,8 +106,8 @@ export const blogService = {
     if (file) {
       // Send as multipart/form-data with file
       const formData = new FormData();
-      formData.append('image', file);
-      
+      formData.append("image", file);
+
       // Append other fields
       Object.entries(data).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {

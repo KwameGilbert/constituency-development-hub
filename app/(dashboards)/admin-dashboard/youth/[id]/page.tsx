@@ -2,12 +2,7 @@
 
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -84,11 +79,11 @@ export default function YouthDetailsPage({
       setUpdatingStatus(true);
       const response = await youthRecordsService.updateYouthRecordStatus(
         Number(id),
-        { status: newStatus }
+        { status: newStatus },
       );
       if (response.success) {
         toast.success(
-          `Record ${newStatus === "approved" ? "approved" : "rejected"} successfully`
+          `Record ${newStatus === "approved" ? "approved" : "rejected"} successfully`,
         );
         setRecord(response.data.record);
       } else {
@@ -254,7 +249,9 @@ export default function YouthDetailsPage({
                       </span>
                     )}
                     {record.age && (
-                      <span className="text-gray-500">{record.age} years old</span>
+                      <span className="text-gray-500">
+                        {record.age} years old
+                      </span>
                     )}
                   </div>
                 </div>
@@ -524,7 +521,8 @@ export default function YouthDetailsPage({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {record.work_experiences && record.work_experiences.length > 0 ? (
+                  {record.work_experiences &&
+                  record.work_experiences.length > 0 ? (
                     record.work_experiences.map((exp, index) => (
                       <div
                         key={index}

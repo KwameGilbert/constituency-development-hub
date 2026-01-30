@@ -8,8 +8,15 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon, Clock, Loader2, Upload, X, ImageIcon, Link as LinkIcon } from "lucide-react";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  Loader2,
+  Upload,
+  X,
+  ImageIcon,
+} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -18,10 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { toast } from "sonner";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/utils";
 
 const eventSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -45,15 +52,17 @@ interface EventFormProps {
 export function EventForm({ event, isEditing = false }: EventFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>(event?.image || "");
-  const [imagePreview, setImagePreview] = useState<string>(event?.image || "");
-  const [imageInputType, setImageInputType] = useState<"upload" | "url">("upload");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(
+    event?.image ? getImageUrl(event.image) : "",
+  );
+  const [removeExistingImage, setRemoveExistingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema) as any, // eslint-disable-line @typescript-eslint/no-explicit-any
     defaultValues: {
-      title: event?.title || "",
+      title: event?.name || event?.title || "",
       description: event?.description || "",
       location: event?.location || "",
       event_date: event?.event_date || "",
@@ -81,27 +90,23 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
       return;
     }
 
-    // Convert to data URL for preview and submission
-    // Note: In production, you'd upload to a server
+    // Store the file for upload
+    setImageFile(file);
+    setRemoveExistingImage(false);
+
+    // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string;
       setImagePreview(dataUrl);
-      // For now, we'll just use the URL that's manually entered
-      // since there's no upload endpoint
-      toast.info("Image selected. Please enter the image URL after uploading to your server.");
     };
     reader.readAsDataURL(file);
   }
 
-  function handleUrlChange(url: string) {
-    setImageUrl(url);
-    setImagePreview(url);
-  }
-
   function removeImage() {
-    setImageUrl("");
+    setImageFile(null);
     setImagePreview("");
+    setRemoveExistingImage(true);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -111,11 +116,10 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
     setIsLoading(true);
     try {
       // Build payload matching API expectations
-      const payload = {
+      const payload: Record<string, unknown> = {
         name: data.title,
         title: data.title,
         description: data.description || undefined,
-        image: imageUrl || undefined,
         location: data.location,
         event_date: data.event_date,
         start_time: data.start_time || undefined,
@@ -125,17 +129,37 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         status: data.status,
       };
 
-      console.log("Submitting event:", payload);
+      // If removing existing image without new upload
+      if (removeExistingImage && !imageFile) {
+        payload.image = "";
+      }
+
+      console.log(
+        "Submitting event:",
+        payload,
+        imageFile ? "with image file" : "no image file",
+      );
 
       let response;
       if (isEditing && event?.id) {
-        response = await eventsService.updateEvent(event.id, payload);
+        response = await eventsService.updateEvent(
+          event.id,
+          payload,
+          imageFile || undefined,
+        );
       } else {
-        response = await eventsService.createEvent(payload);
+        response = await eventsService.createEvent(
+          payload,
+          imageFile || undefined,
+        );
       }
 
       if (response.success) {
-        toast.success(isEditing ? "Event updated successfully!" : "Event created successfully!");
+        toast.success(
+          isEditing
+            ? "Event updated successfully!"
+            : "Event created successfully!",
+        );
         router.push("/web-admin-dashboard/events");
         router.refresh();
       } else {
@@ -143,7 +167,8 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
       }
     } catch (error: unknown) {
       console.error("Error saving event:", error);
-      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -151,35 +176,42 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 space-y-8">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 space-y-8"
+    >
       <div className="space-y-6">
         {/* Title */}
         <div className="space-y-2">
           <Label htmlFor="title">Event Title *</Label>
-          <Input 
-            id="title" 
-            placeholder="Community Town Hall Meeting" 
+          <Input
+            id="title"
+            placeholder="Community Town Hall Meeting"
             className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
             {...form.register("title")}
             disabled={isLoading}
           />
           {form.formState.errors.title && (
-            <p className="text-red-500 text-sm">{form.formState.errors.title.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.title.message}
+            </p>
           )}
         </div>
 
         {/* Location */}
         <div className="space-y-2">
           <Label htmlFor="location">Location *</Label>
-          <Input 
-            id="location" 
-            placeholder="Community Center, Main Street" 
+          <Input
+            id="location"
+            placeholder="Community Center, Main Street"
             className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
             {...form.register("location")}
             disabled={isLoading}
           />
           {form.formState.errors.location && (
-            <p className="text-red-500 text-sm">{form.formState.errors.location.message}</p>
+            <p className="text-red-500 text-sm">
+              {form.formState.errors.location.message}
+            </p>
           )}
         </div>
 
@@ -188,27 +220,29 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           <div className="space-y-2">
             <Label htmlFor="event_date">Event Date *</Label>
             <div className="relative">
-              <Input 
-                id="event_date" 
+              <Input
+                id="event_date"
                 type="date"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10" 
+                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
                 {...form.register("event_date")}
                 disabled={isLoading}
               />
               <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
             </div>
             {form.formState.errors.event_date && (
-              <p className="text-red-500 text-sm">{form.formState.errors.event_date.message}</p>
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.event_date.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="start_time">Start Time</Label>
             <div className="relative">
-              <Input 
-                id="start_time" 
+              <Input
+                id="start_time"
                 type="time"
                 placeholder="08:00"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10" 
+                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
                 {...form.register("start_time")}
                 disabled={isLoading}
               />
@@ -218,11 +252,11 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           <div className="space-y-2">
             <Label htmlFor="end_time">End Time</Label>
             <div className="relative">
-              <Input 
-                id="end_time" 
+              <Input
+                id="end_time"
                 type="time"
                 placeholder="16:00"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10" 
+                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
                 {...form.register("end_time")}
                 disabled={isLoading}
               />
@@ -231,113 +265,79 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           </div>
         </div>
 
-        {/* Image Input */}
+        {/* Image Upload - File Only */}
         <div className="space-y-2">
           <Label>Event Image</Label>
-          <Tabs value={imageInputType} onValueChange={(v) => setImageInputType(v as "upload" | "url")} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="url" className="flex items-center gap-2">
-                <LinkIcon className="h-4 w-4" />
-                Image URL
-              </TabsTrigger>
-              <TabsTrigger value="upload" className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Upload
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="url" className="space-y-2">
-              <Input 
-                type="url"
-                placeholder="https://example.com/event-image.jpg" 
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-                value={imageUrl}
-                onChange={(e) => handleUrlChange(e.target.value)}
-                disabled={isLoading}
-              />
-              <p className="text-xs text-slate-500">Enter the URL of your event image</p>
-            </TabsContent>
-            
-            <TabsContent value="upload" className="space-y-2">
-              <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 hover:border-violet-300 transition-colors">
-                {imagePreview && imageInputType === "upload" ? (
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={imagePreview} 
-                      alt="Event preview" 
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                      disabled={isLoading}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div 
-                    className="flex flex-col items-center justify-center cursor-pointer py-6"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <div className="p-3 bg-violet-50 rounded-full mb-3">
-                      <ImageIcon className="h-6 w-6 text-violet-600" />
-                    </div>
-                    <p className="text-sm font-medium text-slate-700">Click to select image</p>
-                    <p className="text-xs text-slate-500 mt-1">PNG, JPG up to 5MB</p>
+          <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 hover:border-violet-300 transition-colors">
+            {imagePreview ? (
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imagePreview}
+                  alt="Event preview"
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                  disabled={isLoading}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                {imageFile && (
+                  <div className="absolute bottom-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    New image selected
                   </div>
                 )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                  disabled={isLoading}
-                />
               </div>
-              <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
-                ⚠️ Note: After selecting an image, upload it to your server and paste the URL above.
-              </p>
-            </TabsContent>
-          </Tabs>
-          
-          {/* Image Preview for URL input */}
-          {imagePreview && imageInputType === "url" && (
-            <div className="relative mt-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={imagePreview} 
-                alt="Event preview" 
-                className="w-full h-48 object-cover rounded-lg border border-slate-200"
-                onError={() => {
-                  setImagePreview("");
-                  toast.error("Failed to load image from URL");
-                }}
-              />
-              <button
-                type="button"
-                onClick={removeImage}
-                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                disabled={isLoading}
+            ) : (
+              <div
+                className="flex flex-col items-center justify-center cursor-pointer py-6"
+                onClick={() => fileInputRef.current?.click()}
               >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+                <div className="p-3 bg-violet-50 rounded-full mb-3">
+                  <ImageIcon className="h-6 w-6 text-violet-600" />
+                </div>
+                <p className="text-sm font-medium text-slate-700">
+                  Click to select image
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  PNG, JPG up to 5MB
+                </p>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+              disabled={isLoading}
+            />
+          </div>
+          {imagePreview && !imageFile && (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2 text-sm text-violet-600 hover:text-violet-700"
+              disabled={isLoading}
+            >
+              <Upload className="h-4 w-4" />
+              Change image
+            </button>
           )}
         </div>
 
         {/* Description */}
         <div className="space-y-2">
           <Label htmlFor="description">Event Description</Label>
-          <Textarea 
-            id="description"
-            placeholder="Describe the event details, what attendees can expect, and any important information..."
-            className="min-h-[150px] border-slate-200 focus:border-violet-500 focus:ring-violet-500"
-            {...form.register("description")}
+          <RichTextEditor
+            value={form.watch("description") || ""}
+            onChange={(content) => form.setValue("description", content)}
             disabled={isLoading}
+            placeholder="Describe the event details, what attendees can expect, and any important information..."
+            height={200}
           />
         </div>
 
@@ -345,23 +345,29 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
             <div>
-              <Label htmlFor="registration_required" className="cursor-pointer">Registration Required</Label>
-              <p className="text-sm text-slate-500">Enable if attendees need to register</p>
+              <Label htmlFor="registration_required" className="cursor-pointer">
+                Registration Required
+              </Label>
+              <p className="text-sm text-slate-500">
+                Enable if attendees need to register
+              </p>
             </div>
-            <Switch 
+            <Switch
               id="registration_required"
               checked={form.watch("registration_required")}
-              onCheckedChange={(checked) => form.setValue("registration_required", checked)}
+              onCheckedChange={(checked) =>
+                form.setValue("registration_required", checked)
+              }
               disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="max_attendees">Max Attendees</Label>
-            <Input 
-              id="max_attendees" 
+            <Input
+              id="max_attendees"
               type="number"
               min="0"
-              placeholder="Leave empty for unlimited" 
+              placeholder="Leave empty for unlimited"
               className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
               onChange={(e) => {
                 const val = e.target.value;
@@ -376,9 +382,11 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         {/* Status */}
         <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
-          <Select 
-            value={form.watch("status")} 
-            onValueChange={(value: "upcoming" | "past" | "cancelled") => form.setValue("status", value)}
+          <Select
+            value={form.watch("status")}
+            onValueChange={(value: "upcoming" | "past" | "cancelled") =>
+              form.setValue("status", value)
+            }
             disabled={isLoading}
           >
             <SelectTrigger className="border-slate-200 focus:border-violet-500 focus:ring-violet-500">
@@ -396,18 +404,29 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
       {/* Form Actions */}
       <div className="flex justify-end gap-4 pt-4 border-t border-slate-100">
         <Link href="/web-admin-dashboard/events">
-          <Button type="button" variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50" disabled={isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            className="border-slate-200 text-slate-600 hover:bg-slate-50"
+            disabled={isLoading}
+          >
             Cancel
           </Button>
         </Link>
-        <Button type="submit" className="bg-violet-600 hover:bg-violet-700 text-white" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="bg-violet-600 hover:bg-violet-700 text-white"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {isEditing ? "Updating..." : "Creating..."}
             </>
+          ) : isEditing ? (
+            "Update Event"
           ) : (
-            isEditing ? "Update Event" : "Create Event"
+            "Create Event"
           )}
         </Button>
       </div>

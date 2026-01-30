@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function TaskForceDashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
     // Redirect to the dashboard page
-    router.replace('/task-force-dashboard/dashboard');
+    router.replace("/task-force-dashboard/dashboard");
   }, [router]);
 
   return (

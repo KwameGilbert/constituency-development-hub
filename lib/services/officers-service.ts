@@ -41,13 +41,13 @@ export interface CreateOfficerRequest {
   bio?: string;
   office_location?: string;
   office_phone?: string;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
 }
 
 export interface UpdateOfficerRequest {
   name?: string;
   phone?: string;
-  status?: 'active' | 'inactive';
+  status?: "active" | "inactive";
   title?: string;
   department?: string;
   assigned_sectors?: string[];
@@ -81,47 +81,54 @@ export interface OfficerResponse {
 
 export const officersService = {
   // Get all officers
-  getOfficers: async (params?: { department?: string }): Promise<OfficersListResponse> => {
+  getOfficers: async (params?: {
+    department?: string;
+  }): Promise<OfficersListResponse> => {
     const queryParams = new URLSearchParams();
-    if (params?.department) queryParams.append('department', params.department);
-    
-    return apiClient<OfficersListResponse>(`/admin/officers?${queryParams.toString()}`, {
-      method: 'GET',
-      requiresAuth: true,
-    });
+    if (params?.department) queryParams.append("department", params.department);
+
+    return apiClient<OfficersListResponse>(
+      `/admin/officers?${queryParams.toString()}`,
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 
   // Get single officer
   getOfficer: async (id: number | string): Promise<OfficerResponse> => {
     return apiClient<OfficerResponse>(`/admin/officers/${id}`, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Create new officer
-  createOfficer: async (data: CreateOfficerRequest): Promise<OfficerResponse> => {
+  createOfficer: async (
+    data: CreateOfficerRequest,
+  ): Promise<OfficerResponse> => {
     const formData = new FormData();
-    
+
     // Append standard fields
     Object.entries(data).forEach(([key, value]) => {
-      if (key === 'assigned_sectors' || key === 'assigned_locations') {
+      if (key === "assigned_sectors" || key === "assigned_locations") {
         if (Array.isArray(value)) {
-          value.forEach(item => formData.append(`${key}[]`, item));
+          value.forEach((item) => formData.append(`${key}[]`, item));
         }
-      } else if (key === 'profile_image') {
+      } else if (key === "profile_image") {
         if (value instanceof File) {
           formData.append(key, value);
         }
-      } else if (typeof value === 'boolean') {
-        formData.append(key, value ? '1' : '0');
+      } else if (typeof value === "boolean") {
+        formData.append(key, value ? "1" : "0");
       } else if (value !== undefined && value !== null) {
         formData.append(key, value as string);
       }
     });
 
-    return apiClient<OfficerResponse>('/admin/officers', {
-      method: 'POST',
+    return apiClient<OfficerResponse>("/admin/officers", {
+      method: "POST",
       body: formData,
       requiresAuth: true,
       isFormData: true,
@@ -129,37 +136,40 @@ export const officersService = {
   },
 
   // Update officer
-  updateOfficer: async (id: number | string, data: UpdateOfficerRequest): Promise<OfficerResponse> => {
+  updateOfficer: async (
+    id: number | string,
+    data: UpdateOfficerRequest,
+  ): Promise<OfficerResponse> => {
     const formData = new FormData();
-    
+
     // Append fields
     Object.entries(data).forEach(([key, value]) => {
-      if (key === 'assigned_sectors' || key === 'assigned_locations') {
+      if (key === "assigned_sectors" || key === "assigned_locations") {
         if (Array.isArray(value)) {
-          value.forEach(item => formData.append(`${key}[]`, item));
+          value.forEach((item) => formData.append(`${key}[]`, item));
         }
-      } else if (key === 'profile_image') {
+      } else if (key === "profile_image") {
         if (value instanceof File) {
           formData.append(key, value);
         }
-      } else if (typeof value === 'boolean') {
-        formData.append(key, value ? '1' : '0');
+      } else if (typeof value === "boolean") {
+        formData.append(key, value ? "1" : "0");
       } else if (value !== undefined && value !== null) {
         formData.append(key, value as string);
       }
     });
 
-    // Required for PUT requests with FormData in some backends, 
+    // Required for PUT requests with FormData in some backends,
     // but typically Slim/PHP handles POST with _method=PUT better for file uploads.
     // However, apiClient usually handles JSON. For FormData, we might need a POST with _method spoofing if the backend expects it.
     // The backend route is defined as PUT /{id}. PHP (native) doesn't parse multipart/form-data for PUT requests easily.
     // Let's assume we use POST with X-HTTP-Method-Override or similar if standard PUT fails with files.
     // But apiClient does standard fetch.
     // A safe bet for PHP backends with file uploads is POST with `_method` = 'PUT'.
-    formData.append('_method', 'PUT');
+    formData.append("_method", "PUT");
 
     return apiClient<OfficerResponse>(`/admin/officers/${id}`, {
-      method: 'POST', // Use POST to allow file upload processing in PHP
+      method: "POST", // Use POST to allow file upload processing in PHP
       body: formData,
       requiresAuth: true,
       isFormData: true,
@@ -167,10 +177,15 @@ export const officersService = {
   },
 
   // Delete officer
-  deleteOfficer: async (id: number | string): Promise<{ success: boolean; message: string }> => {
-    return apiClient<{ success: boolean; message: string }>(`/admin/officers/${id}`, {
-      method: 'DELETE',
-      requiresAuth: true,
-    });
+  deleteOfficer: async (
+    id: number | string,
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/officers/${id}`,
+      {
+        method: "DELETE",
+        requiresAuth: true,
+      },
+    );
   },
 };

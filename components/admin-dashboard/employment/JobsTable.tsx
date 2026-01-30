@@ -61,14 +61,17 @@ const getJobTypeColor = (type: string) => {
 };
 
 const formatJobType = (type: string) => {
-  return type.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return type
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   });
 };
 
@@ -102,7 +105,9 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
     return (
       <Card className="p-12 text-center">
         <p className="text-slate-500 text-lg">No job postings found</p>
-        <p className="text-slate-400 text-sm mt-2">Create your first job posting to get started</p>
+        <p className="text-slate-400 text-sm mt-2">
+          Create your first job posting to get started
+        </p>
       </Card>
     );
   }
@@ -139,18 +144,27 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
               {jobs.map((job) => {
-                const deadlinePassed = isDeadlinePassed(job.application_deadline);
-                
+                const deadlinePassed = isDeadlinePassed(
+                  job.application_deadline,
+                );
+
                 return (
-                  <tr key={job.id} className="hover:bg-slate-50 transition-colors">
+                  <tr
+                    key={job.id}
+                    className="hover:bg-slate-50 transition-colors"
+                  >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-slate-900">{job.title}</p>
+                        <p className="font-medium text-slate-900">
+                          {job.title}
+                        </p>
                         <p className="text-sm text-slate-500">{job.location}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-700">{job.company || "Not specified"}</span>
+                      <span className="text-sm text-slate-700">
+                        {job.company || "Not specified"}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <Badge className={getJobTypeColor(job.job_type)}>
@@ -164,7 +178,13 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm">
-                        <p className={deadlinePassed ? "text-red-600 font-medium" : "text-slate-700"}>
+                        <p
+                          className={
+                            deadlinePassed
+                              ? "text-red-600 font-medium"
+                              : "text-slate-700"
+                          }
+                        >
                           {formatDate(job.application_deadline)}
                         </p>
                         {deadlinePassed && (
@@ -181,12 +201,22 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <Link href={`/admin-dashboard/employment/${job.id}`}>
-                          <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-slate-600 hover:text-slate-900"
+                          >
                             <Eye className="w-4 h-4" />
                           </Button>
                         </Link>
-                        <Link href={`/admin-dashboard/employment/${job.id}/edit`}>
-                          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900">
+                        <Link
+                          href={`/admin-dashboard/employment/${job.id}/edit`}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-900"
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
                         </Link>
@@ -203,9 +233,13 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Job Posting</AlertDialogTitle>
+                              <AlertDialogTitle>
+                                Delete Job Posting
+                              </AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete "{job.title}"? This action cannot be undone and will also remove all applicant data.
+                                Are you sure you want to delete "{job.title}"?
+                                This action cannot be undone and will also
+                                remove all applicant data.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -232,8 +266,9 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
       {pagination && pagination.total_pages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            Showing {((pagination.page - 1) * pagination.limit) + 1} to{" "}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} jobs
+            Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+            {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
+            {pagination.total} jobs
           </p>
           <div className="flex gap-2">
             <p className="text-sm text-slate-500">

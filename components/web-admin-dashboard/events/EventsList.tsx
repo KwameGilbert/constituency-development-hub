@@ -1,12 +1,25 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { Calendar, Plus, MapPin, Clock, Eye, Edit, Trash2, Loader2, Search, X } from "lucide-react";
+import {
+  Calendar,
+  Plus,
+  MapPin,
+  Clock,
+  Eye,
+  Edit,
+  Trash2,
+  Loader2,
+  Search,
+  X,
+  ImageIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,13 +52,15 @@ export function EventsList({ initialEvents }: EventsListProps) {
   // Filter events based on search query
   const filteredEvents = useMemo(() => {
     if (!searchQuery.trim()) return events;
-    
+
     const query = searchQuery.toLowerCase();
-    return events.filter(event => 
-      event.title?.toLowerCase().includes(query) ||
-      event.location?.toLowerCase().includes(query) ||
-      event.description?.toLowerCase().includes(query) ||
-      event.status?.toLowerCase().includes(query)
+    return events.filter(
+      (event) =>
+        event.name?.toLowerCase().includes(query) ||
+        event.title?.toLowerCase().includes(query) ||
+        event.location?.toLowerCase().includes(query) ||
+        event.description?.toLowerCase().includes(query) ||
+        event.status?.toLowerCase().includes(query),
     );
   }, [events, searchQuery]);
 
@@ -69,7 +84,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
       setDeletingId(id);
       const response = await eventsService.deleteEvent(id);
       if (response.success) {
-        setEvents(events.filter(e => e.id !== id));
+        setEvents(events.filter((e) => e.id !== id));
         toast.success("Event deleted successfully");
       }
     } catch (error) {
@@ -101,9 +116,12 @@ export function EventsList({ initialEvents }: EventsListProps) {
           <Calendar className="h-8 w-8 text-violet-600" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-slate-900">No Events Yet</h3>
+          <h3 className="text-xl font-semibold text-slate-900">
+            No Events Yet
+          </h3>
           <p className="text-slate-500 max-w-sm mx-auto">
-            Get started by creating your first event. It will appear here once created.
+            Get started by creating your first event. It will appear here once
+            created.
           </p>
         </div>
         <Link href="/web-admin-dashboard/events/new">
@@ -140,7 +158,9 @@ export function EventsList({ initialEvents }: EventsListProps) {
         </div>
         {searchQuery && (
           <p className="text-sm text-slate-500 mt-2">
-            Found {filteredEvents.length} {filteredEvents.length === 1 ? 'event' : 'events'} matching &quot;{searchQuery}&quot;
+            Found {filteredEvents.length}{" "}
+            {filteredEvents.length === 1 ? "event" : "events"} matching &quot;
+            {searchQuery}&quot;
           </p>
         )}
       </div>
@@ -151,6 +171,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
               <tr>
+                <th className="px-6 py-4 font-medium">Image</th>
                 <th className="px-6 py-4 font-medium">Event Name</th>
                 <th className="px-6 py-4 font-medium">Date & Time</th>
                 <th className="px-6 py-4 font-medium">Location</th>
@@ -161,22 +182,44 @@ export function EventsList({ initialEvents }: EventsListProps) {
             <tbody className="divide-y divide-slate-100">
               {filteredEvents.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
-                    {searchQuery ? `No events matching "${searchQuery}"` : 'No events found'}
+                  <td
+                    colSpan={5}
+                    className="px-6 py-8 text-center text-slate-500"
+                  >
+                    {searchQuery
+                      ? `No events matching "${searchQuery}"`
+                      : "No events found"}
                   </td>
                 </tr>
               ) : (
                 filteredEvents.map((event) => {
                   const status = event.status || getEventStatus(event);
                   return (
-                    <tr key={event.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr
+                      key={event.id}
+                      className="hover:bg-slate-50/50 transition-colors"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                          {event.image ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={getImageUrl(event.image)}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <ImageIcon className="h-5 w-5 text-slate-300" />
+                          )}
+                        </div>
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <div className="h-10 w-10 rounded-lg bg-violet-50 flex-shrink-0 flex items-center justify-center border border-violet-100 text-violet-600 font-bold text-sm">
                             {format(new Date(event.event_date), "dd")}
                           </div>
                           <span className="font-medium text-slate-900 line-clamp-1">
-                            {event.title}
+                            {event.name || event.title}
                           </span>
                         </div>
                       </td>
@@ -189,7 +232,8 @@ export function EventsList({ initialEvents }: EventsListProps) {
                           {event.start_time && (
                             <span className="text-slate-500 flex items-center gap-1 mt-1">
                               <Clock className="h-3 w-3 text-slate-400" />
-                              {event.start_time}{event.end_time ? ` - ${event.end_time}` : ''}
+                              {event.start_time}
+                              {event.end_time ? ` - ${event.end_time}` : ""}
                             </span>
                           )}
                         </div>
@@ -197,35 +241,51 @@ export function EventsList({ initialEvents }: EventsListProps) {
                       <td className="px-6 py-4 text-slate-500">
                         <div className="flex items-center gap-1">
                           <MapPin className="h-3 w-3 text-slate-400" />
-                          <span className="truncate max-w-[150px]">{event.location}</span>
+                          <span className="truncate max-w-[150px]">
+                            {event.location}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
-                          status === 'upcoming' 
-                            ? 'bg-violet-50 text-violet-700 border border-violet-100' 
-                            : 'bg-slate-100 text-slate-600 border border-slate-200'
-                        }`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                            status === "upcoming"
+                              ? "bg-violet-50 text-violet-700 border border-violet-100"
+                              : "bg-slate-100 text-slate-600 border border-slate-200"
+                          }`}
+                        >
                           {status}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Link href={`/web-admin-dashboard/events/${event.id}`}>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-violet-600">
+                          <Link
+                            href={`/web-admin-dashboard/events/${event.id}`}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-400 hover:text-violet-600"
+                            >
                               <Eye className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <Link href={`/web-admin-dashboard/events/${event.id}/edit`}>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-blue-600">
+                          <Link
+                            href={`/web-admin-dashboard/events/${event.id}/edit`}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-400 hover:text-blue-600"
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                           </Link>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
+                              <Button
+                                variant="ghost"
+                                size="icon"
                                 className="h-8 w-8 text-slate-400 hover:text-red-600"
                                 disabled={deletingId === event.id}
                               >
@@ -238,9 +298,13 @@ export function EventsList({ initialEvents }: EventsListProps) {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Event</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Delete Event
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Are you sure you want to delete &quot;{event.title}&quot;? This action cannot be undone.
+                                  Are you sure you want to delete &quot;
+                                  {event.name || event.title}&quot;? This action
+                                  cannot be undone.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

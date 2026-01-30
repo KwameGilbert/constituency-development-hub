@@ -106,7 +106,11 @@ export const profileService = {
     const formData = new FormData();
     formData.append("avatar", file);
 
-    return apiClient<{ success: boolean; message: string; data: { avatar: string } }>("/profile/avatar", {
+    return apiClient<{
+      success: boolean;
+      message: string;
+      data: { avatar: string };
+    }>("/profile/avatar", {
       method: "POST",
       body: formData,
       isFormData: true,
@@ -119,11 +123,14 @@ export const profileService = {
    * PUT /profile/password
    */
   changePassword: async (data: ChangePasswordPayload) => {
-    return apiClient<{ success: boolean; message: string }>("/profile/password", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      requiresAuth: true,
-    });
+    return apiClient<{ success: boolean; message: string }>(
+      "/profile/password",
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+        requiresAuth: true,
+      },
+    );
   },
 
   /**
@@ -131,8 +138,11 @@ export const profileService = {
    * GET /profile/activity
    */
   getActivity: async (page = 1, limit = 5) => {
-    return apiClient<ActivityResponse>(`/profile/activity?page=${page}&limit=${limit}`, {
-      requiresAuth: true,
-    });
+    return apiClient<ActivityResponse>(
+      `/profile/activity?page=${page}&limit=${limit}`,
+      {
+        requiresAuth: true,
+      },
+    );
   },
 };

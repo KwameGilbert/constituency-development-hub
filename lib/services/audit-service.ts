@@ -54,9 +54,12 @@ export const auditService = {
       }
     }
 
-    return apiClient<AuditLogsResponse>(`/admin/audit-logs?${queryParams.toString()}`, {
-      method: "GET",
-      requiresAuth: true,
-    });
+    return apiClient<AuditLogsResponse>(
+      `/admin/audit-logs?${queryParams.toString()}`,
+      {
+        method: "GET",
+        requiresAuth: true,
+      },
+    );
   },
 };

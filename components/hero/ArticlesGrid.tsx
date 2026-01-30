@@ -2,67 +2,48 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { Loader2 } from "lucide-react";
-
-// Fallback posts if API fails
-const fallbackPosts: BlogPost[] = [
-  {
-    id: 1,
-    title: "Expanding Access to Digital Skills",
-    excerpt: "120 youth completed the accelerated coding bootcamp with new starter kits.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=900&q=80",
-    slug: "expanding-access-digital-skills",
-    category: "news",
-  },
-  {
-    id: 2,
-    title: "Farm-to-Market Roads Resurfaced",
-    excerpt: "15km of feeder roads reopened to ease transport of cocoa and food crops.",
-    image: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=900&q=80",
-    slug: "farm-to-market-roads",
-    category: "infrastructure",
-  },
-  {
-    id: 3,
-    title: "Women in Enterprise Showcase",
-    excerpt: "Highlighting micro-grant winners building resilient family businesses.",
-    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=900&q=80",
-    slug: "women-enterprise-showcase",
-    category: "community",
-  },
-];
+import { getImageUrl } from "@/lib/utils";
 
 function ArticlesGrid() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPosts() {
+    const fetchPosts = async () => {
       try {
+        setLoading(true);
         // Try featured posts first, fall back to regular posts
         let response = await blogService.getFeaturedPosts(3);
-        
-        if (response.success && response.data.posts && response.data.posts.length > 0) {
+
+        if (
+          response.success &&
+          response.data.posts &&
+          response.data.posts.length > 0
+        ) {
           setPosts(response.data.posts.slice(0, 3));
         } else {
           // Fall back to regular posts
           response = await blogService.getAllPosts(1, 3);
-          if (response.success && response.data.posts && response.data.posts.length > 0) {
+          if (
+            response.success &&
+            response.data.posts &&
+            response.data.posts.length > 0
+          ) {
             setPosts(response.data.posts);
           } else {
-            setPosts(fallbackPosts);
+            setPosts([]);
           }
         }
       } catch {
-        // API error - use fallback data silently
-        setPosts(fallbackPosts);
+        // API error - show empty state
+        setPosts([]);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchPosts();
   }, []);
@@ -110,10 +91,9 @@ function ArticlesGrid() {
             >
               <div className="h-48 overflow-hidden relative bg-slate-100">
                 {post.image ? (
-                  <Image
-                    width={400}
-                    height={192}
-                    src={post.image}
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={getImageUrl(post.image)}
                     alt={post.title || "Blog post"}
                     className="h-full w-full object-cover"
                   />
@@ -134,9 +114,11 @@ function ArticlesGrid() {
                 <h3 className="text-xl font-semibold text-slate-900 line-clamp-2">
                   {post.title}
                 </h3>
-                <p className="text-sm text-slate-500 line-clamp-2">{post.excerpt}</p>
-                <Link 
-                  href={`/blog/${post.slug}`} 
+                <p className="text-sm text-slate-500 line-clamp-2">
+                  {post.excerpt}
+                </p>
+                <Link
+                  href={`/blog/${post.slug}`}
                   className="text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
                 >
                   Read story →
@@ -145,10 +127,10 @@ function ArticlesGrid() {
             </motion.article>
           ))}
         </div>
-        
+
         {/* View All Link */}
         <div className="mt-10 text-center">
-          <Link 
+          <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-base font-semibold text-slate-700 hover:text-red-600 transition-colors"
           >

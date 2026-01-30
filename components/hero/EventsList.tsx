@@ -40,7 +40,11 @@ function EventsList() {
     async function fetchEvents() {
       try {
         const response = await eventsService.getUpcomingEvents(5);
-        if (response.success && response.data.events && response.data.events.length > 0) {
+        if (
+          response.success &&
+          response.data.events &&
+          response.data.events.length > 0
+        ) {
           setEvents(response.data.events);
         } else {
           // Use fallback if no upcoming events
@@ -104,12 +108,14 @@ function EventsList() {
           </h2>
           <div className="mt-2 h-1 w-20 bg-red-500" />
         </div>
-        
+
         {events.length === 0 ? (
           <div className="text-center py-12 text-slate-500">
             <Calendar className="h-12 w-12 mx-auto mb-4 text-slate-300" />
             <p>No upcoming events scheduled at the moment.</p>
-            <p className="text-sm mt-2">Check back soon for new announcements!</p>
+            <p className="text-sm mt-2">
+              Check back soon for new announcements!
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -117,7 +123,7 @@ function EventsList() {
               const eventDate = new Date(event.event_date);
               const day = format(eventDate, "dd");
               const monthYear = format(eventDate, "MMM yyyy");
-              
+
               return (
                 <motion.div
                   key={event.id}
@@ -152,7 +158,7 @@ function EventsList() {
                       )}
                     </div>
                   </div>
-                  <Link 
+                  <Link
                     href={`/events`}
                     className="hidden sm:flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
                   >
@@ -164,10 +170,10 @@ function EventsList() {
             })}
           </div>
         )}
-        
+
         {/* View All Link */}
         <div className="mt-10 text-center">
-          <Link 
+          <Link
             href="/events"
             className="inline-flex items-center gap-2 text-base font-semibold text-slate-700 hover:text-red-600 transition-colors"
           >

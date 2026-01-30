@@ -58,7 +58,7 @@ export function BlogPostsTable({
         post.title?.toLowerCase().includes(query) ||
         post.category?.toLowerCase().includes(query) ||
         post.excerpt?.toLowerCase().includes(query) ||
-        post.tags?.some((tag) => tag?.toLowerCase().includes(query))
+        post.tags?.some((tag) => tag?.toLowerCase().includes(query)),
     );
   }, [posts, searchQuery]);
 
@@ -188,7 +188,7 @@ export function BlogPostsTable({
                           "inline-flex items-center justify-center h-6 px-2 rounded-full text-xs font-medium capitalize",
                           post.status === "published"
                             ? "bg-green-100 text-green-700"
-                            : "bg-slate-100 text-slate-600"
+                            : "bg-slate-100 text-slate-600",
                         )}
                       >
                         {post.status || "draft"}

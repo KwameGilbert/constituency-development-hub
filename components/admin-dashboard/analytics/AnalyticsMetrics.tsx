@@ -12,12 +12,17 @@ import {
   UserPlus,
   List,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
 } from "lucide-react";
-import { dashboardService, AnalyticsMetricsData } from "@/lib/services/dashboard-service";
+import {
+  dashboardService,
+  AnalyticsMetricsData,
+} from "@/lib/services/dashboard-service";
 
 export function AnalyticsMetrics() {
-  const [metricsData, setMetricsData] = useState<AnalyticsMetricsData | null>(null);
+  const [metricsData, setMetricsData] = useState<AnalyticsMetricsData | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,15 +30,15 @@ export function AnalyticsMetrics() {
     const fetchMetrics = async () => {
       try {
         const response = await dashboardService.getAnalyticsMetrics();
-        
+
         if (response.success && response.data) {
           setMetricsData(response.data);
         } else {
-          setError(response.message || 'Failed to load metrics data');
+          setError(response.message || "Failed to load metrics data");
         }
       } catch (err) {
-        setError('Failed to load metrics data');
-        console.error('Error fetching metrics:', err);
+        setError("Failed to load metrics data");
+        console.error("Error fetching metrics:", err);
       } finally {
         setLoading(false);
       }
@@ -43,9 +48,9 @@ export function AnalyticsMetrics() {
   }, []);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-GH', {
-      style: 'currency',
-      currency: 'GHS',
+    return new Intl.NumberFormat("en-GH", {
+      style: "currency",
+      currency: "GHS",
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -53,7 +58,7 @@ export function AnalyticsMetrics() {
   const TrendIndicator = ({ change }: { change: number }) => {
     const isPositive = change >= 0;
     const Icon = isPositive ? TrendingUp : TrendingDown;
-    const color = isPositive ? 'text-green-600' : 'text-red-600';
+    const color = isPositive ? "text-green-600" : "text-red-600";
 
     return (
       <div className={`flex items-center gap-1 text-xs ${color}`}>
@@ -68,8 +73,11 @@ export function AnalyticsMetrics() {
       <div className="space-y-6">
         {/* Row 1: Main Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <Card key={i} className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
+          {[1, 2, 3, 4].map((i) => (
+            <Card
+              key={i}
+              className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white"
+            >
               <div className="animate-pulse">
                 <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
               </div>
@@ -83,8 +91,11 @@ export function AnalyticsMetrics() {
 
         {/* Row 2: Secondary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
-            <Card key={i} className="p-4 flex items-center justify-between shadow-sm animate-pulse">
+          {[1, 2, 3, 4].map((i) => (
+            <Card
+              key={i}
+              className="p-4 flex items-center justify-between shadow-sm animate-pulse"
+            >
               <div>
                 <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
                 <div className="h-6 bg-gray-200 rounded w-12"></div>
@@ -102,7 +113,7 @@ export function AnalyticsMetrics() {
       <div className="space-y-6">
         <Card className="col-span-full p-6">
           <div className="text-center text-red-600">
-            {error || 'No metrics data available'}
+            {error || "No metrics data available"}
           </div>
         </Card>
       </div>
@@ -116,12 +127,16 @@ export function AnalyticsMetrics() {
         {/* Total Issues */}
         <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
           <div className="p-3 rounded-lg bg-red-100 text-red-600">
-             <AlertCircle className="w-6 h-6" />
+            <AlertCircle className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">Total Issues</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">
+              Total Issues
+            </p>
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">{metricsData.metrics.totalIssues}</h3>
+              <h3 className="text-2xl font-bold text-gray-800">
+                {metricsData.metrics.totalIssues}
+              </h3>
               <TrendIndicator change={metricsData.trends.issuesChange} />
             </div>
           </div>
@@ -130,12 +145,16 @@ export function AnalyticsMetrics() {
         {/* Active Staff */}
         <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
           <div className="p-3 rounded-lg bg-blue-100 text-blue-600">
-             <Users className="w-6 h-6" />
+            <Users className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">Active Staff</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">
+              Active Staff
+            </p>
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">{metricsData.metrics.activeStaff}</h3>
+              <h3 className="text-2xl font-bold text-gray-800">
+                {metricsData.metrics.activeStaff}
+              </h3>
               <TrendIndicator change={metricsData.trends.staffChange} />
             </div>
           </div>
@@ -144,12 +163,16 @@ export function AnalyticsMetrics() {
         {/* Total Projects */}
         <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
           <div className="p-3 rounded-lg bg-green-100 text-green-600">
-             <FolderKanban className="w-6 h-6" />
+            <FolderKanban className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">Total Projects</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">
+              Total Projects
+            </p>
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">{metricsData.metrics.totalProjects}</h3>
+              <h3 className="text-2xl font-bold text-gray-800">
+                {metricsData.metrics.totalProjects}
+              </h3>
               <TrendIndicator change={metricsData.trends.projectsChange} />
             </div>
           </div>
@@ -158,12 +181,16 @@ export function AnalyticsMetrics() {
         {/* Active Budget */}
         <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
           <div className="p-3 rounded-lg bg-purple-100 text-purple-600">
-             <DollarSign className="w-6 h-6" />
+            <DollarSign className="w-6 h-6" />
           </div>
           <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">Active Budget</p>
+            <p className="text-xs font-medium text-gray-500 uppercase">
+              Active Budget
+            </p>
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">{formatCurrency(metricsData.metrics.activeBudget)}</h3>
+              <h3 className="text-2xl font-bold text-gray-800">
+                {formatCurrency(metricsData.metrics.activeBudget)}
+              </h3>
               <TrendIndicator change={metricsData.trends.budgetChange} />
             </div>
           </div>
@@ -175,9 +202,13 @@ export function AnalyticsMetrics() {
         {/* New Issues This Week */}
         <Card className="p-4 flex items-center justify-between border-l-4 border-l-yellow-400 bg-yellow-50 shadow-sm">
           <div>
-            <p className="text-xs font-semibold text-yellow-800">New Issues This Week</p>
+            <p className="text-xs font-semibold text-yellow-800">
+              New Issues This Week
+            </p>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-yellow-900">{metricsData.metrics.newIssuesThisWeek}</h3>
+              <h3 className="text-2xl font-bold text-yellow-900">
+                {metricsData.metrics.newIssuesThisWeek}
+              </h3>
               <TrendIndicator change={metricsData.trends.newIssuesChange} />
             </div>
           </div>
@@ -189,9 +220,13 @@ export function AnalyticsMetrics() {
         {/* Resolved This Week */}
         <Card className="p-4 flex items-center justify-between border-l-4 border-l-green-400 bg-green-50 shadow-sm">
           <div>
-            <p className="text-xs font-semibold text-green-800">Resolved This Week</p>
+            <p className="text-xs font-semibold text-green-800">
+              Resolved This Week
+            </p>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-green-900">{metricsData.metrics.resolvedThisWeek}</h3>
+              <h3 className="text-2xl font-bold text-green-900">
+                {metricsData.metrics.resolvedThisWeek}
+              </h3>
               <TrendIndicator change={metricsData.trends.resolvedChange} />
             </div>
           </div>
@@ -203,9 +238,13 @@ export function AnalyticsMetrics() {
         {/* Active Users (7 days) */}
         <Card className="p-4 flex items-center justify-between border-l-4 border-l-blue-400 bg-blue-50 shadow-sm">
           <div>
-            <p className="text-xs font-semibold text-blue-800">Active Users (7 days)</p>
+            <p className="text-xs font-semibold text-blue-800">
+              Active Users (7 days)
+            </p>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-blue-900">{metricsData.metrics.activeUsers7Days}</h3>
+              <h3 className="text-2xl font-bold text-blue-900">
+                {metricsData.metrics.activeUsers7Days}
+              </h3>
               <TrendIndicator change={metricsData.trends.activeUsersChange} />
             </div>
           </div>
@@ -217,10 +256,16 @@ export function AnalyticsMetrics() {
         {/* Ongoing Projects */}
         <Card className="p-4 flex items-center justify-between border-l-4 border-l-purple-400 bg-purple-50 shadow-sm">
           <div>
-            <p className="text-xs font-semibold text-purple-800">Ongoing Projects</p>
+            <p className="text-xs font-semibold text-purple-800">
+              Ongoing Projects
+            </p>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-purple-900">{metricsData.metrics.ongoingProjects}</h3>
-              <TrendIndicator change={metricsData.trends.ongoingProjectsChange} />
+              <h3 className="text-2xl font-bold text-purple-900">
+                {metricsData.metrics.ongoingProjects}
+              </h3>
+              <TrendIndicator
+                change={metricsData.trends.ongoingProjectsChange}
+              />
             </div>
           </div>
           <div className="p-2 bg-purple-200 text-purple-700 rounded-lg">

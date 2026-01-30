@@ -2,6 +2,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import { blogService } from "@/lib/services/blog-service";
 import BlogPostClient from "./BlogPostClient";
 import JsonLd from "@/components/seo/JsonLd";
+import { getImageUrl } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -10,38 +11,53 @@ interface PageProps {
 
 export async function generateMetadata(
   { params }: PageProps,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const { slug } = await params;
-  
+
   // Default metadata
   const defaultTitle = "Blog Post | Kofi Benteh Afful";
-  const defaultDesc = "Read the latest news and updates from Hon. Kofi Benteh Afful.";
+  const defaultDesc =
+    "Read the latest news and updates from Hon. Kofi Benteh Afful.";
 
   try {
     const response = await blogService.getPostBySlug(slug);
-    
+
     if (response.success && response.data.post) {
       const post = response.data.post;
       const previousImages = (await parent).openGraph?.images || [];
-      
+
       return {
         title: post.title,
         description: post.excerpt || defaultDesc,
         openGraph: {
           title: post.title,
           description: post.excerpt || defaultDesc,
-          images: post.image ? [post.image, ...previousImages] : previousImages,
+          images: post.image
+            ? [getImageUrl(post.image), ...previousImages]
+            : previousImages,
           type: "article",
+          siteName: "Hon. Kofi Benteh Afful - Office of the MP",
+          url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://kofibentehafful.com"}/blog/${slug}`,
           publishedTime: post.published_at,
-          authors: post.author ? [post.author] : undefined,
-          tags: post.tags,
+          modifiedTime: post.published_at,
+          authors: post.author ? [post.author] : ["Hon. Kofi Benteh Afful"],
+          tags: Array.isArray(post.tags)
+            ? post.tags
+            : typeof post.tags === "string"
+              ? JSON.parse(post.tags)
+              : [],
+          locale: "en_GH",
         },
         twitter: {
           card: "summary_large_image",
           title: post.title,
           description: post.excerpt || defaultDesc,
-          images: post.image ? [post.image] : undefined,
+          images: post.image ? [getImageUrl(post.image)] : undefined,
+          site: "@KofiBentehAfful",
+          creator: post.author
+            ? `@${post.author.replace(/\s+/g, "")}`
+            : "@KofiBentehAfful",
         },
       };
     }
@@ -68,18 +84,20 @@ export default async function BlogPostPage({ params }: PageProps) {
     console.error("Failed to fetch blog post for rendering:", error);
   }
 
-  const jsonLd = initialPost ? {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": initialPost.title,
-    "image": initialPost.image ? [initialPost.image] : [],
-    "datePublished": initialPost.published_at,
-    "dateModified": initialPost.published_at,
-    "author": {
-      "@type": "Person",
-      "name": initialPost.author || "Kofi Benteh Afful"
-    }
-  } : null;
+  const jsonLd = initialPost
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: initialPost.title,
+        image: initialPost.image ? [getImageUrl(initialPost.image)] : [],
+        datePublished: initialPost.published_at,
+        dateModified: initialPost.published_at,
+        author: {
+          "@type": "Person",
+          name: initialPost.author || "Kofi Benteh Afful",
+        },
+      }
+    : null;
 
   return (
     <>

@@ -7,13 +7,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
-const MOCK_ANNOUNCEMENTS = [
-  { id: 1, slug: "community-town-hall-meeting", title: "Community Town Hall Meeting", content: "Join us for our quarterly town hall meeting...", category: "events", priority: "high" as const, status: "published" as const, publish_date: "2025-01-10", expiry_date: "2025-01-25", created_at: "2025-01-05" },
-  { id: 2, slug: "road-closure-notice", title: "Road Closure Notice", content: "Main Street will be temporarily closed...", category: "infrastructure", priority: "urgent" as const, status: "published" as const, publish_date: "2025-01-20", created_at: "2025-01-18" },
-  { id: 3, slug: "health-screening-program", title: "Health Screening Program", content: "Free health screening for all constituents...", category: "health", priority: "medium" as const, status: "draft" as const, created_at: "2025-01-12" },
-];
-
-export default async function EditAnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditAnnouncementPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let announcement = null;
 
@@ -25,8 +23,8 @@ export default async function EditAnnouncementPage({ params }: { params: Promise
       return notFound();
     }
   } catch (e: unknown) {
-    announcement = MOCK_ANNOUNCEMENTS.find(a => a.id === parseInt(id));
-    if (!announcement) return notFound();
+    console.error("Failed to fetch announcement:", e);
+    return notFound();
   }
 
   if (!announcement) return notFound();
@@ -42,7 +40,9 @@ export default async function EditAnnouncementPage({ params }: { params: Promise
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Edit Announcement</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              Edit Announcement
+            </h1>
             <p className="text-slate-500">{announcement.title}</p>
           </div>
         </div>

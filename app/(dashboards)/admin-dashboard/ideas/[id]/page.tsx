@@ -8,52 +8,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import axios from "axios";
 import { useParams } from "next/navigation";
-
-interface Idea {
-  id: number;
-  title: string;
-  slug: string;
-  description: string;
-  category: string;
-  submitter_name: string;
-  submitter_email: string;
-  submitter_contact?: string;
-  status: "pending" | "under_review" | "approved" | "implemented" | "rejected";
-  votes: number;
-  admin_notes?: string;
-  created_at: string;
-  reviewed_at?: string;
-  implemented_at?: string;
-  estimated_cost?: string;
-  priority?: string;
-  location?: string;
-  target_beneficiaries?: string;
-  implementation_timeline?: string;
-  participants?: string;
-}
-
-interface IdeasData {
-  ideas: Idea[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    total_pages: number;
-  };
-  statistics: {
-    total_ideas: number;
-    approved_ideas: number;
-    pending_ideas: number;
-    under_review_ideas: number;
-    implemented_ideas: number;
-    total_votes: number;
-    by_category: Record<string, number>;
-    by_status: Record<string, number>;
-    by_priority: Record<string, number>;
-  };
-}
+import { ideasService, Idea } from "@/lib/services/ideas-service";
 
 export default function IdeaDetailPage() {
   const params = useParams();
@@ -67,17 +23,16 @@ export default function IdeaDetailPage() {
     const fetchIdea = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<IdeasData>('/data/admin-ideas.json');
-        const foundIdea = response.data.ideas.find(i => i.id === parseInt(id));
-        if (foundIdea) {
-          setIdea(foundIdea);
+        const response = await ideasService.getIdeaById(id);
+        if (response.success && response.data.idea) {
+          setIdea(response.data.idea);
           setError(null);
         } else {
-          setError('Idea not found');
+          setError("Idea not found");
         }
       } catch (err) {
-        console.error('Failed to load idea data:', err);
-        setError('Failed to load idea data');
+        console.error("Failed to load idea data:", err);
+        setError("Failed to load idea data");
       } finally {
         setLoading(false);
       }
@@ -95,7 +50,11 @@ export default function IdeaDetailPage() {
         <div className="flex-1 p-8 space-y-6 max-w-5xl mx-auto w-full">
           <div className="flex items-center gap-4">
             <Link href="/admin-dashboard/ideas">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -150,7 +109,9 @@ export default function IdeaDetailPage() {
         <AdminHeader title="Idea Not Found" />
         <div className="flex-1 p-8 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-red-600 text-lg mb-4">{error || 'Idea not found'}</p>
+            <p className="text-red-600 text-lg mb-4">
+              {error || "Idea not found"}
+            </p>
             <Link href="/admin-dashboard/ideas">
               <Button>Back to Ideas</Button>
             </Link>
@@ -166,7 +127,11 @@ export default function IdeaDetailPage() {
       <div className="flex-1 p-8 space-y-6 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/admin-dashboard/ideas">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>

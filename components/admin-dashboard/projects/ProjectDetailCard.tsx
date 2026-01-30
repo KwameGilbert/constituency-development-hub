@@ -4,7 +4,17 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, Star, Calendar, MapPin, Briefcase, Phone, User, DollarSign } from "lucide-react";
+import {
+  Edit,
+  Trash2,
+  Star,
+  Calendar,
+  MapPin,
+  Briefcase,
+  Phone,
+  User,
+  DollarSign,
+} from "lucide-react";
 import { Project } from "@/lib/services/projects-service";
 import Link from "next/link";
 import {
@@ -46,10 +56,10 @@ const formatCurrency = (amount: number) => {
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
   });
 };
 
@@ -73,9 +83,10 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
   };
 
   const progressPercent = project.progress_percent || 0;
-  const budgetUtilization = project.spent && project.budget 
-    ? (project.spent / project.budget) * 100 
-    : 0;
+  const budgetUtilization =
+    project.spent && project.budget
+      ? (project.spent / project.budget) * 100
+      : 0;
 
   return (
     <div className="space-y-6">
@@ -89,14 +100,21 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   {project.status.replace("_", " ").toUpperCase()}
                 </Badge>
                 {project.is_featured && (
-                  <Badge variant="outline" className="border-yellow-500 text-yellow-700">
+                  <Badge
+                    variant="outline"
+                    className="border-yellow-500 text-yellow-700"
+                  >
                     <Star className="w-3 h-3 mr-1 fill-yellow-500" />
                     Featured
                   </Badge>
                 )}
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{project.title}</h2>
-              <p className="text-slate-700 leading-relaxed">{project.description}</p>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                {project.title}
+              </h2>
+              <p className="text-slate-700 leading-relaxed">
+                {project.description}
+              </p>
             </div>
             <div className="flex gap-2">
               <Link href={`/admin-dashboard/projects/${project.id}/edit`}>
@@ -116,7 +134,8 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Project</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{project.title}"? This action cannot be undone.
+                      Are you sure you want to delete "{project.title}"? This
+                      action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -145,8 +164,12 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
             {/* Progress */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-slate-700">Project Progress</span>
-                <span className="text-sm font-bold text-slate-900">{progressPercent}%</span>
+                <span className="text-sm font-medium text-slate-700">
+                  Project Progress
+                </span>
+                <span className="text-sm font-bold text-slate-900">
+                  {progressPercent}%
+                </span>
               </div>
               <div className="w-full bg-slate-200 rounded-full h-4">
                 <div
@@ -160,12 +183,16 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                 <p className="text-sm text-blue-600 mb-1">Total Budget</p>
-                <p className="text-2xl font-bold text-blue-900">{formatCurrency(project.budget)}</p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {formatCurrency(project.budget)}
+                </p>
               </div>
               <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
                 <p className="text-sm text-purple-600 mb-1">Amount Spent</p>
                 <p className="text-2xl font-bold text-purple-900">
-                  {project.spent ? formatCurrency(project.spent) : formatCurrency(0)}
+                  {project.spent
+                    ? formatCurrency(project.spent)
+                    : formatCurrency(0)}
                 </p>
               </div>
               <div className="p-4 bg-green-50 rounded-lg border border-green-100">
@@ -180,15 +207,21 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
             {project.spent && (
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-slate-700">Budget Utilization</span>
-                  <span className="text-sm font-bold text-slate-900">{budgetUtilization.toFixed(1)}%</span>
+                  <span className="text-sm font-medium text-slate-700">
+                    Budget Utilization
+                  </span>
+                  <span className="text-sm font-bold text-slate-900">
+                    {budgetUtilization.toFixed(1)}%
+                  </span>
                 </div>
                 <div className="w-full bg-slate-200 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${
-                      budgetUtilization > 90 ? 'bg-red-500' : 
-                      budgetUtilization > 75 ? 'bg-yellow-500' : 
-                      'bg-green-500'
+                      budgetUtilization > 90
+                        ? "bg-red-500"
+                        : budgetUtilization > 75
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
                     }`}
                     style={{ width: `${Math.min(budgetUtilization, 100)}%` }}
                   />
@@ -210,7 +243,9 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
               </div>
               <div>
                 <p className="text-xs text-slate-500">Sector</p>
-                <p className="font-medium text-slate-900">{project.sector.name}</p>
+                <p className="font-medium text-slate-900">
+                  {project.sector.name}
+                </p>
               </div>
             </div>
 
@@ -243,7 +278,9 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
       </div>
 
       {/* Contractor Information */}
-      {(project.contractor || project.contact_person || project.contact_phone) && (
+      {(project.contractor ||
+        project.contact_person ||
+        project.contact_phone) && (
         <Card>
           <CardHeader>
             <CardTitle>Contractor Information</CardTitle>
@@ -257,7 +294,9 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Contractor</p>
-                    <p className="font-medium text-slate-900">{project.contractor}</p>
+                    <p className="font-medium text-slate-900">
+                      {project.contractor}
+                    </p>
                   </div>
                 </div>
               )}
@@ -269,7 +308,9 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Contact Person</p>
-                    <p className="font-medium text-slate-900">{project.contact_person}</p>
+                    <p className="font-medium text-slate-900">
+                      {project.contact_person}
+                    </p>
                   </div>
                 </div>
               )}
@@ -281,7 +322,9 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Phone</p>
-                    <p className="font-medium text-slate-900">{project.contact_phone}</p>
+                    <p className="font-medium text-slate-900">
+                      {project.contact_phone}
+                    </p>
                   </div>
                 </div>
               )}

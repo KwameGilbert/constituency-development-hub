@@ -1,4 +1,5 @@
 "use client";
+import { Menu } from "lucide-react";
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -9,7 +10,9 @@ import Image from "next/image";
 
 const navLinks = [
   { label: "Home", href: "/" },
+  { label: "Announcements", href: "/announcements" },
   { label: "Youth", href: "/youth" },
+  { label: "Ideas", href: "/ideas" },
   { label: "Media Center", href: "/gallery" },
   { label: "Blog", href: "/blog" },
   { label: "About Us", href: "/about" },
@@ -64,7 +67,7 @@ function SiteHeader() {
           className="md:hidden rounded-lg border border-white/30 p-2"
           onClick={() => setOpen((prev) => !prev)}
         >
-          <i className="fa-solid fa-bars"></i>
+          <Menu className="h-6 w-6" />
         </button>
       </div>
 

@@ -13,6 +13,7 @@ export interface Idea {
   submitter_contact?: string;
   status: "pending" | "under_review" | "approved" | "rejected" | "implemented";
   votes?: number;
+  downvotes?: number;
   admin_notes?: string;
   created_at: string;
   updated_at?: string;
@@ -48,6 +49,18 @@ export interface UpdateIdeaStatusData {
 
 // --- Service Class ---
 
+export interface IdeaSubmissionData {
+  title: string;
+  description: string;
+  category: string;
+  submitter_name: string;
+  submitter_email: string;
+  submitter_contact?: string;
+  location?: string;
+}
+
+// --- Service Class ---
+
 class IdeasService {
   // Public Routes (No Authentication) - for community submissions
   async getPublicIdeas(filters: IdeaFilters = {}): Promise<IdeaResponse> {
@@ -57,13 +70,32 @@ class IdeasService {
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
 
-    return apiClient<IdeaResponse>(`/ideas?${params.toString()}`, {
+    return apiClient<IdeaResponse>(`/ideas/public?${params.toString()}`, {
       requiresAuth: false,
     });
   }
 
   async getIdeaBySlug(slug: string): Promise<IdeaResponse> {
     return apiClient<IdeaResponse>(`/ideas/${slug}`, {
+      requiresAuth: false,
+    });
+  }
+
+  async submitIdea(data: IdeaSubmissionData): Promise<IdeaResponse> {
+    return apiClient<IdeaResponse>("/ideas", {
+      method: "POST",
+      body: JSON.stringify(data),
+      requiresAuth: false,
+    });
+  }
+
+  async voteIdea(
+    id: number | string,
+    voteType: "up" | "down" = "up",
+  ): Promise<IdeaResponse> {
+    return apiClient<IdeaResponse>(`/ideas/${id}/vote`, {
+      method: "POST",
+      body: JSON.stringify({ type: voteType }),
       requiresAuth: false,
     });
   }
@@ -76,25 +108,27 @@ class IdeasService {
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
 
-    return apiClient<IdeaResponse>(`/admin/ideas?${params.toString()}`);
+    return apiClient<IdeaResponse>(`/ideas?${params.toString()}`);
   }
 
   async getIdeaById(id: number | string): Promise<IdeaResponse> {
-    return apiClient<IdeaResponse>(`/admin/ideas/${id}`);
+    return apiClient<IdeaResponse>(`/ideas/${id}`);
   }
 
   async updateIdeaStatus(
     id: number | string,
-    data: UpdateIdeaStatusData
+    data: UpdateIdeaStatusData,
   ): Promise<IdeaResponse> {
-    return apiClient<IdeaResponse>(`/admin/ideas/${id}/status`, {
-      method: "PUT",
+    return apiClient<IdeaResponse>(`/ideas/${id}/status`, {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async deleteIdea(id: number | string): Promise<{ success: boolean; message: string }> {
-    return apiClient<{ success: boolean; message: string }>(`/admin/ideas/${id}`, {
+  async deleteIdea(
+    id: number | string,
+  ): Promise<{ success: boolean; message: string }> {
+    return apiClient<{ success: boolean; message: string }>(`/ideas/${id}`, {
       method: "DELETE",
     });
   }

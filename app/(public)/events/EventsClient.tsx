@@ -2,14 +2,21 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, DownloadCloud, MapPin, Loader2, Clock, Users } from "lucide-react";
-import Image from "next/image";
+import {
+  CalendarDays,
+  DownloadCloud,
+  MapPin,
+  Loader2,
+  Clock,
+  Users,
+} from "lucide-react";
 
 import EventFilters from "@/components/events/EventFilters";
 import EventsHero, { type EventStat } from "@/components/events/EventsHero";
 import { Button } from "@/components/ui/button";
 import { eventsService, Event } from "@/lib/services/events-service";
 import { format } from "date-fns";
+import { getImageUrl } from "@/lib/utils";
 
 const heroStats: EventStat[] = [
   {
@@ -40,7 +47,7 @@ const eventFilters = [
   "Parliament",
   "Infrastructure",
   "Education",
-  "Politics"
+  "Politics",
 ];
 
 const timelineUpdates = [
@@ -92,13 +99,11 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       {/* Image */}
       <figure className="relative h-48 w-full overflow-hidden rounded-2xl border border-white/60 bg-slate-100">
         {event.image ? (
-          <Image
-            src={event.image}
-            alt={event.title || "Event"}
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            className="object-cover"
-            priority={index < 2}
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={getImageUrl(event.image)}
+            alt={event.name || event.title || "Event"}
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-slate-400">
@@ -120,16 +125,19 @@ function EventCard({ event, index }: { event: Event; index: number }) {
 
       {/* Title & Description */}
       <h3 className="mt-4 text-2xl font-semibold text-slate-900 line-clamp-2">
-        {event.title}
+        {event.name || event.title}
       </h3>
-      <p className="mt-2 text-sm text-slate-600 line-clamp-3">{event.description}</p>
+      <p className="mt-2 text-sm text-slate-600 line-clamp-3">
+        {event.description}
+      </p>
 
       {/* Details */}
       <div className="mt-4 grid gap-2 text-sm text-slate-500">
         {event.start_time && (
           <p className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-emerald-500" />
-            {event.start_time}{event.end_time ? ` - ${event.end_time}` : ""}
+            {event.start_time}
+            {event.end_time ? ` - ${event.end_time}` : ""}
           </p>
         )}
         {event.location && (
@@ -150,7 +158,9 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       {event.registration_required && (
         <div className="mt-5 rounded-2xl border border-amber-100 bg-amber-50/60 p-4 text-sm text-amber-700">
           <p className="font-semibold text-amber-800">Registration Required</p>
-          <p className="text-amber-700">Sign up in advance to attend this event.</p>
+          <p className="text-amber-700">
+            Sign up in advance to attend this event.
+          </p>
         </div>
       )}
     </motion.article>
@@ -161,43 +171,47 @@ function EventCard({ event, index }: { event: Event; index: number }) {
 const fallbackEventsData: Event[] = [
   {
     id: 1,
-    title: "Youth Skills Acceleration Clinic",
-    description: "Hands-on mentorship with artisans and digital mentors focused on employability for senior high school graduates.",
+    name: "Youth Skills Acceleration Clinic",
+    description:
+      "Hands-on mentorship with artisans and digital mentors focused on employability for senior high school graduates.",
     event_date: "2025-02-12",
     start_time: "09:00",
     location: "Sefwi Wiawso Innovation Hub",
     status: "upcoming",
-    image: ""
+    image: "",
   },
   {
     id: 2,
-    title: "Parliamentary Briefing on Cocoa Roads",
-    description: "Presented updates to local media and chiefs on the phased rehabilitation of feeder roads across the cocoa belt.",
+    name: "Parliamentary Briefing on Cocoa Roads",
+    description:
+      "Presented updates to local media and chiefs on the phased rehabilitation of feeder roads across the cocoa belt.",
     event_date: "2025-02-21",
     start_time: "14:30",
     location: "Sefwi Boako Palace Forecourt",
     status: "upcoming",
-    image: ""
+    image: "",
   },
   {
     id: 3,
-    title: "Constituency Health Outreach",
-    description: "Mobile screening with nurses, NHIS officers, and volunteers delivering basic care and insurance renewals.",
+    name: "Constituency Health Outreach",
+    description:
+      "Mobile screening with nurses, NHIS officers, and volunteers delivering basic care and insurance renewals.",
     event_date: "2025-03-01",
     start_time: "08:00",
     location: "Asafo Community Park",
     status: "upcoming",
-    image: ""
+    image: "",
   },
   {
     id: 4,
-    title: "Education Stakeholder Roundtable",
-    description: "Dialogue with head teachers, PTA leaders, and tertiary alumni on resourcing STEM labs in deprived schools.",
+    name: "Education Stakeholder Roundtable",
+    description:
+      "Dialogue with head teachers, PTA leaders, and tertiary alumni on resourcing STEM labs in deprived schools.",
     event_date: "2025-03-09",
     start_time: "16:00",
     location: "Sefwi Wiawso Municipal Assembly Hall",
     status: "upcoming",
-    image: ""
+    image: "",
   },
 ];
 
@@ -211,7 +225,11 @@ export default function EventsClient() {
     async function fetchEvents() {
       try {
         const response = await eventsService.getAllEvents(1, 20);
-        if (response.success && response.data.events && response.data.events.length > 0) {
+        if (
+          response.success &&
+          response.data.events &&
+          response.data.events.length > 0
+        ) {
           setEvents(response.data.events);
         } else {
           // Use fallback if no events from API
@@ -232,15 +250,16 @@ export default function EventsClient() {
 
   const heroVariants = useMemo(
     () => ({ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }),
-    []
+    [],
   );
 
   const filteredEvents = useMemo(() => {
     if (activeFilter === "All") return events;
     // Filter by matching the status or a category field if available
-    return events.filter((event) => 
-      event.status?.toLowerCase() === activeFilter.toLowerCase() ||
-      event.title?.toLowerCase().includes(activeFilter.toLowerCase())
+    return events.filter(
+      (event) =>
+        event.name?.toLowerCase().includes(activeFilter.toLowerCase()) ||
+        event.title?.toLowerCase().includes(activeFilter.toLowerCase()),
     );
   }, [activeFilter, events]);
 
@@ -285,7 +304,11 @@ export default function EventsClient() {
             <span>{filteredEvents.length} records shown</span>
             <span className="text-slate-300">•</span>
             <span>
-              {loading ? "Loading events..." : usingFallback ? "Showing sample events" : "Data synced from live API"}
+              {loading
+                ? "Loading events..."
+                : usingFallback
+                  ? "Showing sample events"
+                  : "Data synced from live API"}
             </span>
           </div>
         </motion.section>
@@ -297,8 +320,12 @@ export default function EventsClient() {
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-20">
             <CalendarDays className="h-16 w-16 mx-auto text-slate-300 mb-4" />
-            <h3 className="text-xl font-semibold text-slate-700">No events found</h3>
-            <p className="text-slate-500 mt-2">Try selecting a different filter or check back later.</p>
+            <h3 className="text-xl font-semibold text-slate-700">
+              No events found
+            </h3>
+            <p className="text-slate-500 mt-2">
+              Try selecting a different filter or check back later.
+            </p>
           </div>
         ) : (
           <section className="grid gap-6 md:grid-cols-2">
@@ -348,8 +375,8 @@ export default function EventsClient() {
               Subscribe for event notifications
             </h3>
             <p className="mt-3 text-base text-white/80">
-              Get notified about upcoming events, community gatherings, and policy forums
-              happening in the constituency.
+              Get notified about upcoming events, community gatherings, and
+              policy forums happening in the constituency.
             </p>
             <Button
               variant="outline"

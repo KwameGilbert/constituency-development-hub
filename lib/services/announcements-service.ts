@@ -65,16 +65,21 @@ export interface UpdateAnnouncementData {
 
 class AnnouncementsService {
   // Public Routes
-  async getPublicAnnouncements(filters: AnnouncementFilters = {}): Promise<AnnouncementResponse> {
+  async getPublicAnnouncements(
+    filters: AnnouncementFilters = {},
+  ): Promise<AnnouncementResponse> {
     const params = new URLSearchParams();
     if (filters.priority) params.append("priority", filters.priority);
     if (filters.category) params.append("category", filters.category);
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
 
-    return apiClient<AnnouncementResponse>(`/announcements/public?${params.toString()}`, {
-      requiresAuth: false,
-    });
+    return apiClient<AnnouncementResponse>(
+      `/announcements/public?${params.toString()}`,
+      {
+        requiresAuth: false,
+      },
+    );
   }
 
   async getAnnouncementBySlug(slug: string): Promise<AnnouncementResponse> {
@@ -84,7 +89,9 @@ class AnnouncementsService {
   }
 
   // Admin Routes
-  async getAdminAnnouncements(filters: AnnouncementFilters = {}): Promise<AnnouncementResponse> {
+  async getAdminAnnouncements(
+    filters: AnnouncementFilters = {},
+  ): Promise<AnnouncementResponse> {
     const params = new URLSearchParams();
     if (filters.status) params.append("status", filters.status);
     if (filters.priority) params.append("priority", filters.priority);
@@ -92,14 +99,20 @@ class AnnouncementsService {
     if (filters.page) params.append("page", filters.page.toString());
     if (filters.limit) params.append("limit", filters.limit.toString());
 
-    return apiClient<AnnouncementResponse>(`/admin/announcements?${params.toString()}`);
+    return apiClient<AnnouncementResponse>(
+      `/admin/announcements?${params.toString()}`,
+    );
   }
 
-  async getAnnouncementById(id: number | string): Promise<AnnouncementResponse> {
+  async getAnnouncementById(
+    id: number | string,
+  ): Promise<AnnouncementResponse> {
     return apiClient<AnnouncementResponse>(`/admin/announcements/${id}`);
   }
 
-  async createAnnouncement(data: CreateAnnouncementData): Promise<AnnouncementResponse> {
+  async createAnnouncement(
+    data: CreateAnnouncementData,
+  ): Promise<AnnouncementResponse> {
     return apiClient<AnnouncementResponse>("/admin/announcements", {
       method: "POST",
       body: JSON.stringify(data),
@@ -108,7 +121,7 @@ class AnnouncementsService {
 
   async updateAnnouncement(
     id: number | string,
-    data: UpdateAnnouncementData
+    data: UpdateAnnouncementData,
   ): Promise<AnnouncementResponse> {
     return apiClient<AnnouncementResponse>(`/admin/announcements/${id}`, {
       method: "PUT",
@@ -116,16 +129,26 @@ class AnnouncementsService {
     });
   }
 
-  async deleteAnnouncement(id: number | string): Promise<{ success: boolean; message: string }> {
-    return apiClient<{ success: boolean; message: string }>(`/admin/announcements/${id}`, {
-      method: "DELETE",
-    });
+  async deleteAnnouncement(
+    id: number | string,
+  ): Promise<{ success: boolean; message: string }> {
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/announcements/${id}`,
+      {
+        method: "DELETE",
+      },
+    );
   }
 
-  async publishAnnouncement(id: number | string): Promise<AnnouncementResponse> {
-    return apiClient<AnnouncementResponse>(`/admin/announcements/${id}/publish`, {
-      method: "POST",
-    });
+  async publishAnnouncement(
+    id: number | string,
+  ): Promise<AnnouncementResponse> {
+    return apiClient<AnnouncementResponse>(
+      `/admin/announcements/${id}/publish`,
+      {
+        method: "POST",
+      },
+    );
   }
 }
 

@@ -2,7 +2,16 @@ import { apiClient } from "../api-client";
 
 export interface Notification {
   id: number;
-  type: 'info' | 'success' | 'warning' | 'error' | 'issue' | 'project' | 'announcement' | 'assignment' | 'system';
+  type:
+    | "info"
+    | "success"
+    | "warning"
+    | "error"
+    | "issue"
+    | "project"
+    | "announcement"
+    | "assignment"
+    | "system";
   title: string;
   message: string;
   action_url: string | null;
@@ -56,15 +65,60 @@ export interface MarkAllReadResponse {
 
 // Notification type icons and colors for UI
 export const NOTIFICATION_TYPES = {
-  info: { icon: 'info', color: 'blue', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
-  success: { icon: 'check_circle', color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-600' },
-  warning: { icon: 'warning', color: 'yellow', bgColor: 'bg-yellow-100', textColor: 'text-yellow-600' },
-  error: { icon: 'error', color: 'red', bgColor: 'bg-red-100', textColor: 'text-red-600' },
-  issue: { icon: 'report_problem', color: 'orange', bgColor: 'bg-orange-100', textColor: 'text-orange-600' },
-  project: { icon: 'folder', color: 'purple', bgColor: 'bg-purple-100', textColor: 'text-purple-600' },
-  announcement: { icon: 'campaign', color: 'indigo', bgColor: 'bg-indigo-100', textColor: 'text-indigo-600' },
-  assignment: { icon: 'assignment', color: 'teal', bgColor: 'bg-teal-100', textColor: 'text-teal-600' },
-  system: { icon: 'settings', color: 'gray', bgColor: 'bg-gray-100', textColor: 'text-gray-600' },
+  info: {
+    icon: "info",
+    color: "blue",
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-600",
+  },
+  success: {
+    icon: "check_circle",
+    color: "green",
+    bgColor: "bg-green-100",
+    textColor: "text-green-600",
+  },
+  warning: {
+    icon: "warning",
+    color: "yellow",
+    bgColor: "bg-yellow-100",
+    textColor: "text-yellow-600",
+  },
+  error: {
+    icon: "error",
+    color: "red",
+    bgColor: "bg-red-100",
+    textColor: "text-red-600",
+  },
+  issue: {
+    icon: "report_problem",
+    color: "orange",
+    bgColor: "bg-orange-100",
+    textColor: "text-orange-600",
+  },
+  project: {
+    icon: "folder",
+    color: "purple",
+    bgColor: "bg-purple-100",
+    textColor: "text-purple-600",
+  },
+  announcement: {
+    icon: "campaign",
+    color: "indigo",
+    bgColor: "bg-indigo-100",
+    textColor: "text-indigo-600",
+  },
+  assignment: {
+    icon: "assignment",
+    color: "teal",
+    bgColor: "bg-teal-100",
+    textColor: "text-teal-600",
+  },
+  system: {
+    icon: "settings",
+    color: "gray",
+    bgColor: "bg-gray-100",
+    textColor: "text-gray-600",
+  },
 };
 
 export const notificationsService = {
@@ -76,16 +130,17 @@ export const notificationsService = {
     type?: string;
   }): Promise<NotificationsListResponse> => {
     const queryParams = new URLSearchParams();
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.is_read !== undefined) queryParams.append('is_read', params.is_read.toString());
-    if (params?.type) queryParams.append('type', params.type);
+    if (params?.page) queryParams.append("page", params.page.toString());
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.is_read !== undefined)
+      queryParams.append("is_read", params.is_read.toString());
+    if (params?.type) queryParams.append("type", params.type);
 
     const queryString = queryParams.toString();
-    const url = `/notifications${queryString ? `?${queryString}` : ''}`;
+    const url = `/notifications${queryString ? `?${queryString}` : ""}`;
 
     return apiClient<NotificationsListResponse>(url, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
@@ -93,15 +148,15 @@ export const notificationsService = {
   // Get single notification
   getNotificationById: async (id: number): Promise<NotificationResponse> => {
     return apiClient<NotificationResponse>(`/notifications/${id}`, {
-      method: 'GET',
+      method: "GET",
       requiresAuth: true,
     });
   },
 
   // Get unread count
   getUnreadCount: async (): Promise<UnreadCountResponse> => {
-    return apiClient<UnreadCountResponse>('/notifications/unread-count', {
-      method: 'GET',
+    return apiClient<UnreadCountResponse>("/notifications/unread-count", {
+      method: "GET",
       requiresAuth: true,
     });
   },
@@ -109,23 +164,25 @@ export const notificationsService = {
   // Mark notification as read
   markAsRead: async (id: number): Promise<NotificationResponse> => {
     return apiClient<NotificationResponse>(`/notifications/${id}/read`, {
-      method: 'PUT',
+      method: "PUT",
       requiresAuth: true,
     });
   },
 
   // Mark all notifications as read
   markAllAsRead: async (): Promise<MarkAllReadResponse> => {
-    return apiClient<MarkAllReadResponse>('/notifications/read-all', {
-      method: 'PUT',
+    return apiClient<MarkAllReadResponse>("/notifications/read-all", {
+      method: "PUT",
       requiresAuth: true,
     });
   },
 
   // Delete notification
-  deleteNotification: async (id: number): Promise<{ success: boolean; message: string }> => {
+  deleteNotification: async (
+    id: number,
+  ): Promise<{ success: boolean; message: string }> => {
     return apiClient(`/notifications/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       requiresAuth: true,
     });
   },

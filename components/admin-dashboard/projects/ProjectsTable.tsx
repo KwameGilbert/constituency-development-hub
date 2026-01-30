@@ -52,10 +52,10 @@ const formatCurrency = (amount: number) => {
 };
 
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric'
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
   });
 };
 
@@ -85,7 +85,9 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
     return (
       <Card className="p-12 text-center">
         <p className="text-slate-500 text-lg">No projects found</p>
-        <p className="text-slate-400 text-sm mt-2">Create your first project to get started</p>
+        <p className="text-slate-400 text-sm mt-2">
+          Create your first project to get started
+        </p>
       </Card>
     );
   }
@@ -122,15 +124,24 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
               {projects.map((project) => (
-                <tr key={project.id} className="hover:bg-slate-50 transition-colors">
+                <tr
+                  key={project.id}
+                  className="hover:bg-slate-50 transition-colors"
+                >
                   <td className="px-6 py-4">
                     <div>
-                      <p className="font-medium text-slate-900">{project.title}</p>
-                      <p className="text-sm text-slate-500 truncate max-w-xs">{project.location}</p>
+                      <p className="font-medium text-slate-900">
+                        {project.title}
+                      </p>
+                      <p className="text-sm text-slate-500 truncate max-w-xs">
+                        {project.location}
+                      </p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-slate-700">{project.sector.name}</span>
+                    <span className="text-sm text-slate-700">
+                      {project.sector.name}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <Badge className={getStatusColor(project.status)}>
@@ -146,7 +157,9 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                             style={{ width: `${project.progress_percent}%` }}
                           />
                         </div>
-                        <span className="text-sm text-slate-600">{project.progress_percent}%</span>
+                        <span className="text-sm text-slate-600">
+                          {project.progress_percent}%
+                        </span>
                       </div>
                     ) : (
                       <span className="text-sm text-slate-400">N/A</span>
@@ -154,27 +167,45 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                   </td>
                   <td className="px-6 py-4">
                     <div>
-                      <p className="text-sm font-medium text-slate-900">{formatCurrency(project.budget)}</p>
+                      <p className="text-sm font-medium text-slate-900">
+                        {formatCurrency(project.budget)}
+                      </p>
                       {project.spent !== undefined && (
-                        <p className="text-xs text-slate-500">Spent: {formatCurrency(project.spent)}</p>
+                        <p className="text-xs text-slate-500">
+                          Spent: {formatCurrency(project.spent)}
+                        </p>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm">
-                      <p className="text-slate-700">{formatDate(project.start_date)}</p>
-                      <p className="text-slate-500">to {formatDate(project.end_date)}</p>
+                      <p className="text-slate-700">
+                        {formatDate(project.start_date)}
+                      </p>
+                      <p className="text-slate-500">
+                        to {formatDate(project.end_date)}
+                      </p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/admin-dashboard/projects/${project.id}`}>
-                        <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-slate-600 hover:text-slate-900"
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
                       </Link>
-                      <Link href={`/admin-dashboard/projects/${project.id}/edit`}>
-                        <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900">
+                      <Link
+                        href={`/admin-dashboard/projects/${project.id}/edit`}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-900"
+                        >
                           <Edit className="w-4 h-4" />
                         </Button>
                       </Link>
@@ -193,7 +224,8 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Project</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete "{project.title}"? This action cannot be undone.
+                              Are you sure you want to delete "{project.title}"?
+                              This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -219,8 +251,9 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
       {pagination && pagination.total_pages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-600">
-            Showing {((pagination.page - 1) * pagination.limit) + 1} to{" "}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} projects
+            Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
+            {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
+            {pagination.total} projects
           </p>
           <div className="flex gap-2">
             {/* Pagination buttons would go here */}

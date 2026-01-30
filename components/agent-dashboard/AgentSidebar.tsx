@@ -40,11 +40,11 @@ import { useMemo } from "react";
 export function AgentSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  
+
   const { userName, userEmail } = useMemo(() => {
     const user = authService.getCurrentUser();
     return {
-      userName: user?.name || user?.email?.split('@')[0] || "Agent",
+      userName: user?.name || user?.email?.split("@")[0] || "Agent",
       userEmail: user?.email || "agent@example.com",
     };
   }, []);
@@ -52,7 +52,7 @@ export function AgentSidebar() {
   const handleLogout = () => {
     authService.logout();
     toast.success("Logged out successfully");
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
@@ -125,15 +125,15 @@ export function AgentSidebar() {
           <div className="flex items-center gap-3">
             <Avatar>
               <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>{userName.slice(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarFallback>
+                {userName.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-900">
                 {userName}
               </span>
-              <span className="text-xs text-slate-500">
-                {userEmail}
-              </span>
+              <span className="text-xs text-slate-500">{userEmail}</span>
             </div>
           </div>
           <AlertDialog>
@@ -146,7 +146,8 @@ export function AgentSidebar() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to log out? You will need to sign in again to access your dashboard.
+                  Are you sure you want to log out? You will need to sign in
+                  again to access your dashboard.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

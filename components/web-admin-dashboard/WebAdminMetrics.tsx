@@ -31,7 +31,15 @@ interface MetricCardProps {
   loading?: boolean;
 }
 
-function MetricCard({ title, count, label, icon: Icon, href, color, loading }: MetricCardProps) {
+function MetricCard({
+  title,
+  count,
+  label,
+  icon: Icon,
+  href,
+  color,
+  loading,
+}: MetricCardProps) {
   const colorStyles = {
     blue: {
       bg: "bg-blue-50",
@@ -72,14 +80,15 @@ function MetricCard({ title, count, label, icon: Icon, href, color, loading }: M
           <Icon className={cn("w-5 h-5", styles.text)} />
         </div>
       </div>
-      <Link href={href} className={cn("text-sm font-medium hover:underline", styles.text)}>
+      <Link
+        href={href}
+        className={cn("text-sm font-medium hover:underline", styles.text)}
+      >
         {label}
       </Link>
     </div>
   );
 }
-
-
 
 export function WebAdminMetrics() {
   const [stats, setStats] = useState<WebAdminStats>(defaultStats);

@@ -1,13 +1,25 @@
-'use client';
+"use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Search,
   Eye,
@@ -20,23 +32,26 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  Loader2
-} from 'lucide-react';
+  Loader2,
+} from "lucide-react";
 import {
   getStatusColor,
   getPriorityColor,
   formatDate,
-  getMetadata
-} from '@/lib/data';
-import { issuesService, Issue as ApiIssue } from '@/lib/services/issues-service';
+  getMetadata,
+} from "@/lib/data";
+import {
+  issuesService,
+  Issue as ApiIssue,
+} from "@/lib/services/issues-service";
 
 const getPriorityIcon = (priority: string) => {
   switch (priority) {
-    case 'high':
+    case "high":
       return <AlertTriangle className="h-4 w-4" />;
-    case 'medium':
+    case "medium":
       return <Clock className="h-4 w-4" />;
-    case 'low':
+    case "low":
       return <CheckCircle className="h-4 w-4" />;
     default:
       return <Clock className="h-4 w-4" />;
@@ -45,11 +60,11 @@ const getPriorityIcon = (priority: string) => {
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case 'approved':
+    case "approved":
       return <CheckCircle className="h-4 w-4" />;
-    case 'rejected':
+    case "rejected":
       return <XCircle className="h-4 w-4" />;
-    case 'under_assessment':
+    case "under_assessment":
       return <Clock className="h-4 w-4" />;
     default:
       return <AlertTriangle className="h-4 w-4" />;
@@ -62,11 +77,11 @@ export default function IssuesPage() {
   const [allIssues, setAllIssues] = useState<ApiIssue[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [activeTab, setActiveTab] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [activeTab, setActiveTab] = useState("all");
 
   // Fetch data
   useEffect(() => {
@@ -94,53 +109,87 @@ export default function IssuesPage() {
     let filtered = allIssues;
 
     // Filter by tab
-    if (activeTab === 'pending') {
-      filtered = filtered.filter(issue => issue.status === 'assigned_to_task_force'); // Mapped to API status
-    } else if (activeTab === 'under-assessment') {
-      filtered = filtered.filter(issue => issue.status === 'assessment_in_progress'); // Mapped to API status
-    } else if (activeTab === 'completed') {
-      filtered = filtered.filter(issue => issue.status === 'resolved' || issue.status === 'closed');
+    if (activeTab === "pending") {
+      filtered = filtered.filter((issue) =>
+        ["assigned_to_task_force", "submitted", "pending_assessment"].includes(
+          issue.status,
+        ),
+      );
+    } else if (activeTab === "under-assessment") {
+      filtered = filtered.filter((issue) =>
+        ["assessment_in_progress", "under_review"].includes(issue.status),
+      );
+    } else if (activeTab === "assessments-added") {
+      filtered = filtered.filter(
+        (issue) => issue.status === "assessment_submitted",
+      );
+    } else if (activeTab === "completed") {
+      filtered = filtered.filter(
+        (issue) => issue.status === "resolved" || issue.status === "closed",
+      );
     }
 
     // Search filter
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(issue => 
-        issue.title.toLowerCase().includes(searchLower) ||
-        issue.description.toLowerCase().includes(searchLower) ||
-        issue.location?.toLowerCase().includes(searchLower) ||
-        issue.reporter_name?.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (issue) =>
+          issue.title.toLowerCase().includes(searchLower) ||
+          issue.description.toLowerCase().includes(searchLower) ||
+          issue.location?.toLowerCase().includes(searchLower) ||
+          issue.reporter_name?.toLowerCase().includes(searchLower),
       );
     }
 
     // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(issue => issue.status === statusFilter);
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((issue) => issue.status === statusFilter);
     }
 
     // Priority filter
-    if (priorityFilter !== 'all') {
-      filtered = filtered.filter(issue => issue.priority === priorityFilter);
+    if (priorityFilter !== "all") {
+      filtered = filtered.filter((issue) => issue.priority === priorityFilter);
     }
 
     // Category filter
-    if (categoryFilter !== 'all') {
-      filtered = filtered.filter(issue => issue.category === categoryFilter);
+    if (categoryFilter !== "all") {
+      filtered = filtered.filter((issue) => issue.category === categoryFilter);
     }
 
     return filtered;
-  }, [searchTerm, statusFilter, priorityFilter, categoryFilter, activeTab, allIssues]);
+  }, [
+    searchTerm,
+    statusFilter,
+    priorityFilter,
+    categoryFilter,
+    activeTab,
+    allIssues,
+  ]);
 
   const getTabCount = (tab: string) => {
     switch (tab) {
-      case 'all':
+      case "all":
         return allIssues.length;
-      case 'pending':
-        return allIssues.filter(issue => issue.status === 'assigned_to_task_force').length;
-      case 'under-assessment':
-        return allIssues.filter(issue => issue.status === 'assessment_in_progress').length;
-      case 'completed':
-        return allIssues.filter(issue => issue.status === 'resolved' || issue.status === 'closed').length;
+      case "pending":
+        return allIssues.filter((issue) =>
+          [
+            "assigned_to_task_force",
+            "submitted",
+            "pending_assessment",
+          ].includes(issue.status),
+        ).length;
+      case "under-assessment":
+        return allIssues.filter((issue) =>
+          ["assessment_in_progress", "under_review"].includes(issue.status),
+        ).length;
+      case "assessments-added":
+        return allIssues.filter(
+          (issue) => issue.status === "assessment_submitted",
+        ).length;
+      case "completed":
+        return allIssues.filter(
+          (issue) => issue.status === "resolved" || issue.status === "closed",
+        ).length;
       default:
         return 0;
     }
@@ -176,7 +225,7 @@ export default function IssuesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              {metadata.statuses.map(status => (
+              {metadata.statuses.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
                   {status.label}
                 </SelectItem>
@@ -189,9 +238,9 @@ export default function IssuesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Priority</SelectItem>
-              {metadata.priorities.map(priority => (
+              {metadata.priorities.map((priority) => (
                 <SelectItem key={priority.level} value={priority.level}>
-                  {priority.name}
+                  {priority.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -202,7 +251,7 @@ export default function IssuesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              {metadata.categories.map(category => (
+              {metadata.categories.map((category) => (
                 <SelectItem key={category.name} value={category.name}>
                   {category.name}
                 </SelectItem>
@@ -213,30 +262,40 @@ export default function IssuesPage() {
       </div>
 
       {/* Issues Display */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all" className="relative">
             All Issues
             <Badge variant="secondary" className="ml-2">
-              {getTabCount('all')}
+              {getTabCount("all")}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="pending" className="relative">
             Pending
             <Badge variant="secondary" className="ml-2">
-              {getTabCount('pending')}
+              {getTabCount("pending")}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="under-assessment" className="relative">
             Under Assessment
             <Badge variant="secondary" className="ml-2">
-              {getTabCount('under-assessment')}
+              {getTabCount("under-assessment")}
+            </Badge>
+          </TabsTrigger>
+          <TabsTrigger value="assessments-added" className="relative">
+            Assessments Added
+            <Badge variant="secondary" className="ml-2">
+              {getTabCount("assessments-added")}
             </Badge>
           </TabsTrigger>
           <TabsTrigger value="completed" className="relative">
             Completed
             <Badge variant="secondary" className="ml-2">
-              {getTabCount('completed')}
+              {getTabCount("completed")}
             </Badge>
           </TabsTrigger>
         </TabsList>
@@ -244,22 +303,30 @@ export default function IssuesPage() {
         <TabsContent value={activeTab} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
-                <div className="col-span-full flex justify-center py-20">
-                    <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
-                </div>
+              <div className="col-span-full flex justify-center py-20">
+                <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+              </div>
             ) : filteredIssues.length === 0 ? (
               <div className="col-span-full text-center py-12">
                 <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Issues Found</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No Issues Found
+                </h3>
                 <p className="text-gray-600">
-                  {searchTerm || statusFilter !== 'all' || priorityFilter !== 'all' || categoryFilter !== 'all'
-                    ? 'Try adjusting your search or filters'
-                    : 'No issues have been submitted yet'}
+                  {searchTerm ||
+                  statusFilter !== "all" ||
+                  priorityFilter !== "all" ||
+                  categoryFilter !== "all"
+                    ? "Try adjusting your search or filters"
+                    : "No issues have been submitted yet"}
                 </p>
               </div>
             ) : (
               filteredIssues.map((issue) => (
-                <Card key={issue.id} className="hover:shadow-lg transition-shadow">
+                <Card
+                  key={issue.id}
+                  className="hover:shadow-lg transition-shadow"
+                >
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -267,10 +334,15 @@ export default function IssuesPage() {
                           {issue.title}
                         </CardTitle>
                         <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className={getStatusColor(issue.status)}>
+                          <Badge
+                            variant="outline"
+                            className={getStatusColor(issue.status)}
+                          >
                             <div className="flex items-center gap-1">
                               {getStatusIcon(issue.status)}
-                              {metadata.statuses.find(s => s.value === issue.status)?.label || issue.status}
+                              {metadata.statuses.find(
+                                (s) => s.value === issue.status,
+                              )?.label || issue.status}
                             </div>
                           </Badge>
                           <Badge className={getPriorityColor(issue.priority)}>
@@ -287,7 +359,7 @@ export default function IssuesPage() {
                     <CardDescription className="mb-4 line-clamp-3">
                       {issue.description}
                     </CardDescription>
-                    
+
                     <div className="space-y-2 text-sm text-gray-600 mb-4">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-gray-400" />
@@ -295,7 +367,7 @@ export default function IssuesPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-gray-400" />
-                        <span>{issue.reporter_name || 'Anonymous'}</span>
+                        <span>{issue.reporter_name || "Anonymous"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
@@ -322,8 +394,16 @@ export default function IssuesPage() {
                             View
                           </Button>
                         </Link>
-                        {issue.status === 'assigned_to_task_force' && (
-                          <Link href={`/task-force-dashboard/assess/${issue.id}`}>
+                        {[
+                          "submitted",
+                          "pending_assessment",
+                          "assigned_to_task_force",
+                          "assessment_in_progress",
+                          "under_review",
+                        ].includes(issue.status) && (
+                          <Link
+                            href={`/task-force-dashboard/assess/${issue.id}`}
+                          >
                             <Button variant="outline" size="sm">
                               Assess
                             </Button>

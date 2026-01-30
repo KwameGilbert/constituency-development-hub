@@ -66,12 +66,28 @@ export function AdminHeader({
 
   // Default dropdown items if none provided
   const defaultDropdownItems: DropdownItemConfig[] = [
-    { label: "Refresh Data", icon: RefreshCw, onClick: () => console.log("Refresh") },
+    {
+      label: "Refresh Data",
+      icon: RefreshCw,
+      onClick: () => console.log("Refresh"),
+    },
     { label: "Settings", href: "/admin-dashboard/settings", icon: Settings },
-    { label: "Profile Settings", href: "/admin-dashboard/profile", icon: UserCircle },
+    {
+      label: "Profile Settings",
+      href: "/admin-dashboard/profile",
+      icon: UserCircle,
+    },
     { label: "Audit Logs", href: "/admin-dashboard/audit", icon: ShieldAlert },
-    { label: "System Settings", href: "/admin-dashboard/system-settings", icon: Settings2 },
-    { label: "Logout", icon: LogOut, className: "text-red-600 focus:text-red-600 focus:bg-red-50" },
+    {
+      label: "System Settings",
+      href: "/admin-dashboard/system-settings",
+      icon: Settings2,
+    },
+    {
+      label: "Logout",
+      icon: LogOut,
+      className: "text-red-600 focus:text-red-600 focus:bg-red-50",
+    },
   ];
 
   const itemsToRender = dropdownItems || defaultDropdownItems;
@@ -82,7 +98,7 @@ export function AdminHeader({
         <div className="flex items-center">
           {/* Mobile Sidebar Trigger - using SidebarTrigger from Shadcn which handles toggle */}
           <div className="lg:hidden mr-3">
-             <SidebarTrigger className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" />
+            <SidebarTrigger className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" />
           </div>
 
           <div className="flex items-center space-x-4">
@@ -109,31 +125,34 @@ export function AdminHeader({
 
         {/* Action Buttons and Admin Info */}
         <div className="flex items-center space-x-2 sm:space-x-4">
-          
           {/* Action Buttons - Primary Desktop */}
           {primaryButton && (
             <div className="hidden xl:flex items-center space-x-3">
               {primaryButton.href ? (
                 <Link
-                    href={primaryButton.href}
-                    className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center space-x-2 font-medium ${
+                  href={primaryButton.href}
+                  className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center space-x-2 font-medium ${
                     primaryButton.className ||
                     "bg-red-900 text-white hover:bg-red-800 shadow-sm"
-                    }`}
+                  }`}
                 >
-                    {primaryButton.icon && <primaryButton.icon className="w-3 h-3" />}
-                    <span>{primaryButton.label}</span>
+                  {primaryButton.icon && (
+                    <primaryButton.icon className="w-3 h-3" />
+                  )}
+                  <span>{primaryButton.label}</span>
                 </Link>
               ) : (
                 <button
-                    onClick={primaryButton.onClick}
-                    className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center space-x-2 font-medium ${
+                  onClick={primaryButton.onClick}
+                  className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center space-x-2 font-medium ${
                     primaryButton.className ||
                     "bg-red-900 text-white hover:bg-red-800 shadow-sm"
-                    }`}
+                  }`}
                 >
-                    {primaryButton.icon && <primaryButton.icon className="w-3 h-3" />}
-                    <span>{primaryButton.label}</span>
+                  {primaryButton.icon && (
+                    <primaryButton.icon className="w-3 h-3" />
+                  )}
+                  <span>{primaryButton.label}</span>
                 </button>
               )}
             </div>
@@ -164,83 +183,98 @@ export function AdminHeader({
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              
+
               {/* Mobile Actions in Dropdown */}
               {actionButtons.length > 0 && (
-                 <DropdownMenuGroup className="xl:hidden">
-                    {actionButtons.map((btn, idx) => (
-                        <DropdownMenuItem key={idx} asChild={!!btn.href}>
-                            {btn.href ? (
-                                <Link href={btn.href} className="cursor-pointer flex items-center w-full">
-                                    {btn.icon ? <btn.icon className="mr-2 h-4 w-4" /> : null}
-                                    <span>{btn.label}</span>
-                                </Link>
-                            ) : (
-                                <button 
-                                    className="cursor-pointer flex items-center w-full outline-none select-none" 
-                                    onClick={btn.onClick}
-                                >
-                                    {btn.icon ? <btn.icon className="mr-2 h-4 w-4" /> : null}
-                                    <span>{btn.label}</span>
-                                </button>
-                            )}
-                        </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                 </DropdownMenuGroup>
+                <DropdownMenuGroup className="xl:hidden">
+                  {actionButtons.map((btn, idx) => (
+                    <DropdownMenuItem key={idx} asChild={!!btn.href}>
+                      {btn.href ? (
+                        <Link
+                          href={btn.href}
+                          className="cursor-pointer flex items-center w-full"
+                        >
+                          {btn.icon ? (
+                            <btn.icon className="mr-2 h-4 w-4" />
+                          ) : null}
+                          <span>{btn.label}</span>
+                        </Link>
+                      ) : (
+                        <button
+                          className="cursor-pointer flex items-center w-full outline-none select-none"
+                          onClick={btn.onClick}
+                        >
+                          {btn.icon ? (
+                            <btn.icon className="mr-2 h-4 w-4" />
+                          ) : null}
+                          <span>{btn.label}</span>
+                        </button>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                </DropdownMenuGroup>
               )}
 
               <DropdownMenuGroup>
-                {itemsToRender.filter(item => item.label !== "Logout").map((item, idx) => {
+                {itemsToRender
+                  .filter((item) => item.label !== "Logout")
+                  .map((item, idx) => {
                     const content = (
-                         <>
-                            {item.icon ? <item.icon className="mr-2 h-4 w-4" /> : null}
-                            <span>{item.label}</span>
-                         </>
+                      <>
+                        {item.icon ? (
+                          <item.icon className="mr-2 h-4 w-4" />
+                        ) : null}
+                        <span>{item.label}</span>
+                      </>
                     );
 
                     return (
-                        <DropdownMenuItem 
-                            key={idx} 
-                            asChild={!!item.href}
-                            className={`cursor-pointer ${item.className || ''}`}
-                            onClick={item.onClick}
-                        >
-                            {item.href ? (
-                                <Link href={item.href}>{content}</Link>
-                            ) : (
-                                <span>{content}</span>
-                            )}
-                        </DropdownMenuItem>
-                    )
-                })}
-              </DropdownMenuGroup>
-              
-              <DropdownMenuSeparator />
-              
-              {(() => {
-                  const logoutItem: DropdownItemConfig = itemsToRender.find(item => item.label === "Logout") || { 
-                      label: "Logout", 
-                      icon: LogOut, 
-                      className: "text-red-600 focus:text-red-600 focus:bg-red-50",
-                      onClick: undefined
-                  };
-                   const content = (
-                         <>
-                            {logoutItem.icon ? <logoutItem.icon className="mr-2 h-4 w-4" /> : null}
-                            <span>{logoutItem.label}</span>
-                         </>
+                      <DropdownMenuItem
+                        key={idx}
+                        asChild={!!item.href}
+                        className={`cursor-pointer ${item.className || ""}`}
+                        onClick={item.onClick}
+                      >
+                        {item.href ? (
+                          <Link href={item.href}>{content}</Link>
+                        ) : (
+                          <span>{content}</span>
+                        )}
+                      </DropdownMenuItem>
                     );
-                  return (
-                    <DropdownMenuItem 
-                        className={`cursor-pointer ${logoutItem.className || ''}`}
-                        onClick={logoutItem.onClick}
-                    >
-                         {/* Logout usually href="../login/logout.php" in php but here likely specific logic or link */}
-                         {/* Defaulting to span content for now as nextjs auth varies */}
-                         <span>{content}</span>
-                    </DropdownMenuItem>
-                  )
+                  })}
+              </DropdownMenuGroup>
+
+              <DropdownMenuSeparator />
+
+              {(() => {
+                const logoutItem: DropdownItemConfig = itemsToRender.find(
+                  (item) => item.label === "Logout",
+                ) || {
+                  label: "Logout",
+                  icon: LogOut,
+                  className: "text-red-600 focus:text-red-600 focus:bg-red-50",
+                  onClick: undefined,
+                };
+                const content = (
+                  <>
+                    {logoutItem.icon ? (
+                      <logoutItem.icon className="mr-2 h-4 w-4" />
+                    ) : null}
+                    <span>{logoutItem.label}</span>
+                  </>
+                );
+                return (
+                  <DropdownMenuItem
+                    className={`cursor-pointer ${logoutItem.className || ""}`}
+                    onClick={logoutItem.onClick}
+                  >
+                    {/* Logout usually href="../login/logout.php" in php but here likely specific logic or link */}
+                    {/* Defaulting to span content for now as nextjs auth varies */}
+                    <span>{content}</span>
+                  </DropdownMenuItem>
+                );
               })()}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -249,4 +283,3 @@ export function AdminHeader({
     </header>
   );
 }
-

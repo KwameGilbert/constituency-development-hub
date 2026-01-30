@@ -59,8 +59,12 @@ export default function EditEventPage({ params }: EditEventPageProps) {
           <div className="bg-red-50 p-4 rounded-full mb-4">
             <AlertCircle className="h-8 w-8 text-red-500" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">Event Not Found</h2>
-          <p className="text-slate-500 mb-4">{error || "The event you're trying to edit doesn't exist."}</p>
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
+            Event Not Found
+          </h2>
+          <p className="text-slate-500 mb-4">
+            {error || "The event you're trying to edit doesn't exist."}
+          </p>
           <Link href="/web-admin-dashboard/events">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -78,16 +82,22 @@ export default function EditEventPage({ params }: EditEventPageProps) {
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/web-admin-dashboard/events">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Edit Event</h1>
-            <p className="text-slate-500">Update the details for &quot;{event.title}&quot;</p>
+            <p className="text-slate-500">
+              Update the details for &quot;{event.name || event.title}&quot;
+            </p>
           </div>
         </div>
-        
+
         <EventForm event={event} isEditing={true} />
       </div>
     </div>

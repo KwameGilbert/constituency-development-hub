@@ -7,7 +7,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 
-export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   let project = null;
   let error = null;
@@ -30,7 +34,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <AdminHeader title="Project Not Found" />
         <div className="flex-1 p-8 flex items-center justify-center">
           <div className="text-center">
-            <p className="text-red-600 text-lg mb-4">{error || "Project not found"}</p>
+            <p className="text-red-600 text-lg mb-4">
+              {error || "Project not found"}
+            </p>
             <Link href="/admin-dashboard/projects">
               <Button>Back to Projects</Button>
             </Link>
@@ -46,16 +52,22 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/admin-dashboard/projects">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-slate-900">{project.title}</h1>
+            <h1 className="text-2xl font-bold text-slate-900">
+              {project.title}
+            </h1>
             <p className="text-slate-500">{project.location}</p>
           </div>
         </div>
-        
+
         <ProjectDetailCard project={project} />
       </div>
     </div>

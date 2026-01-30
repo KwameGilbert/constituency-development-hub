@@ -13,7 +13,8 @@ function QuickActionButton({ label, href, color }: QuickActionProps) {
   const colorStyles = {
     blue: "bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100",
     green: "bg-green-50 text-green-700 hover:bg-green-100 border-green-100",
-    purple: "bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100",
+    purple:
+      "bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100",
   };
 
   return (
@@ -21,7 +22,7 @@ function QuickActionButton({ label, href, color }: QuickActionProps) {
       <button
         className={cn(
           "w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl border transition-colors font-medium",
-          colorStyles[color]
+          colorStyles[color],
         )}
       >
         <PlusCircle className="w-5 h-5" />

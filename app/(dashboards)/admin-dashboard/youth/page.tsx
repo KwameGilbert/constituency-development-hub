@@ -309,7 +309,10 @@ export default function YouthPage() {
             </div>
             <div className="flex-1"></div>
             <div className="flex gap-2">
-              <Button className="bg-red-600 hover:bg-red-700 text-white" asChild>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white"
+                asChild
+              >
                 <Link href="/admin-dashboard/youth/new">
                   <Plus className="w-4 h-4 mr-2" />
                   Add New Youth Record
@@ -467,7 +470,7 @@ export default function YouthPage() {
                       <TableCell className="text-sm text-gray-600">
                         {record.education_level
                           ? EDUCATION_LEVELS.find(
-                              (e) => e.value === record.education_level
+                              (e) => e.value === record.education_level,
                             )?.label || record.education_level
                           : "-"}
                       </TableCell>
@@ -475,7 +478,7 @@ export default function YouthPage() {
                         <Badge
                           variant="outline"
                           className={getEmploymentBadgeClass(
-                            record.employment_status
+                            record.employment_status,
                           )}
                         >
                           {formatEmploymentStatus(record.employment_status)}
@@ -529,7 +532,9 @@ export default function YouthPage() {
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Record</AlertDialogTitle>
+                                <AlertDialogTitle>
+                                  Delete Record
+                                </AlertDialogTitle>
                                 <AlertDialogDescription>
                                   Are you sure you want to delete the record for{" "}
                                   <strong>{record.full_name}</strong>? This
@@ -562,7 +567,7 @@ export default function YouthPage() {
                   Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
                   {Math.min(
                     pagination.page * pagination.limit,
-                    pagination.total
+                    pagination.total,
                   )}{" "}
                   of {pagination.total} records
                 </div>
@@ -584,7 +589,7 @@ export default function YouthPage() {
                     size="sm"
                     onClick={() =>
                       setCurrentPage((p) =>
-                        Math.min(pagination.total_pages, p + 1)
+                        Math.min(pagination.total_pages, p + 1),
                       )
                     }
                     disabled={pagination.page >= pagination.total_pages}

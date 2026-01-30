@@ -4,12 +4,12 @@ import React, { useState } from "react";
 import { Issue } from "@/lib/services/issues-service";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Users, 
-  DollarSign, 
-  CheckCircle, 
+import {
+  Users,
+  DollarSign,
+  CheckCircle,
   MessageSquare,
-  Settings
+  Settings,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { IssueActionModals } from "./IssueActionModals";
@@ -24,7 +24,9 @@ export function IssueActions({ issue }: IssueActionsProps) {
   // Determine which actions are available based on status
   const canAssignTaskForce = issue.status === "forwarded_to_admin";
   const canReviewAssessment = issue.status === "assessment_submitted";
-  const canAllocateResources = issue.status === "assigned_to_task_force" || issue.status === "assessment_submitted";
+  const canAllocateResources =
+    issue.status === "assigned_to_task_force" ||
+    issue.status === "assessment_submitted";
   const canReviewResolution = issue.status === "resolution_submitted";
 
   return (
@@ -42,7 +44,9 @@ export function IssueActions({ issue }: IssueActionsProps) {
             <Button
               variant={canAssignTaskForce ? "default" : "secondary"}
               disabled={!canAssignTaskForce}
-              className={canAssignTaskForce ? "bg-indigo-600 hover:bg-indigo-700" : ""}
+              className={
+                canAssignTaskForce ? "bg-indigo-600 hover:bg-indigo-700" : ""
+              }
               onClick={() => setActiveAction("assign")}
             >
               <Users className="h-4 w-4 mr-2" />
@@ -53,7 +57,9 @@ export function IssueActions({ issue }: IssueActionsProps) {
             <Button
               variant={canAllocateResources ? "default" : "secondary"}
               disabled={!canAllocateResources}
-              className={canAllocateResources ? "bg-green-600 hover:bg-green-700" : ""}
+              className={
+                canAllocateResources ? "bg-green-600 hover:bg-green-700" : ""
+              }
               onClick={() => setActiveAction("allocate")}
             >
               <DollarSign className="h-4 w-4 mr-2" />
@@ -64,7 +70,9 @@ export function IssueActions({ issue }: IssueActionsProps) {
             <Button
               variant={canReviewAssessment ? "default" : "secondary"}
               disabled={!canReviewAssessment}
-              className={canReviewAssessment ? "bg-blue-600 hover:bg-blue-700" : ""}
+              className={
+                canReviewAssessment ? "bg-blue-600 hover:bg-blue-700" : ""
+              }
               onClick={() => setActiveAction("review-assessment")}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
@@ -75,7 +83,9 @@ export function IssueActions({ issue }: IssueActionsProps) {
             <Button
               variant={canReviewResolution ? "default" : "secondary"}
               disabled={!canReviewResolution}
-              className={canReviewResolution ? "bg-purple-600 hover:bg-purple-700" : ""}
+              className={
+                canReviewResolution ? "bg-purple-600 hover:bg-purple-700" : ""
+              }
               onClick={() => setActiveAction("review-resolution")}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
@@ -83,10 +93,7 @@ export function IssueActions({ issue }: IssueActionsProps) {
             </Button>
 
             {/* Update Status */}
-            <Button
-              variant="outline"
-              onClick={() => setActiveAction("status")}
-            >
+            <Button variant="outline" onClick={() => setActiveAction("status")}>
               <Settings className="h-4 w-4 mr-2" />
               Update Status
             </Button>
@@ -111,17 +118,25 @@ export function IssueActions({ issue }: IssueActionsProps) {
             </p>
             <div className="text-sm text-gray-500">
               {canAssignTaskForce && (
-                <p className="text-green-600">✓ Ready to assign to task force</p>
+                <p className="text-green-600">
+                  ✓ Ready to assign to task force
+                </p>
               )}
               {canReviewAssessment && (
-                <p className="text-blue-600">✓ Assessment awaiting admin review</p>
+                <p className="text-blue-600">
+                  ✓ Assessment awaiting admin review
+                </p>
               )}
               {canReviewResolution && (
-                <p className="text-purple-600">✓ Resolution awaiting admin review</p>
+                <p className="text-purple-600">
+                  ✓ Resolution awaiting admin review
+                </p>
               )}
-              {!canAssignTaskForce && !canReviewAssessment && !canReviewResolution && (
-                <p className="text-gray-400">No immediate actions required</p>
-              )}
+              {!canAssignTaskForce &&
+                !canReviewAssessment &&
+                !canReviewResolution && (
+                  <p className="text-gray-400">No immediate actions required</p>
+                )}
             </div>
           </div>
         </CardContent>

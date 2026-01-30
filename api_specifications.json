@@ -40,11 +40,19 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "query_parameters": {
-            "page": {"type": "number", "required": false, "default": 1},
-            "limit": {"type": "number", "required": false, "default": 20},
-            "role": {"type": "string", "required": false, "enum": ["admin", "officer", "agent", "task_force", "web_admin"]},
-            "status": {"type": "string", "required": false, "enum": ["active", "inactive", "suspended"]},
-            "search": {"type": "string", "required": false}
+            "page": { "type": "number", "required": false, "default": 1 },
+            "limit": { "type": "number", "required": false, "default": 20 },
+            "role": {
+              "type": "string",
+              "required": false,
+              "enum": ["admin", "officer", "agent", "task_force", "web_admin"]
+            },
+            "status": {
+              "type": "string",
+              "required": false,
+              "enum": ["active", "inactive", "suspended"]
+            },
+            "search": { "type": "string", "required": false }
           },
           "response_example": {
             "success": true,
@@ -82,7 +90,7 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "path_parameters": {
-            "id": {"type": "number", "required": true}
+            "id": { "type": "number", "required": true }
           },
           "response_example": {
             "success": true,
@@ -101,7 +109,11 @@
                 "created_at": "2025-01-01T10:00:00Z",
                 "updated_at": "2026-01-03T12:00:00Z",
                 "last_login": "2026-01-04T15:30:00Z",
-                "permissions": ["view_issues", "update_issues", "create_reports"],
+                "permissions": [
+                  "view_issues",
+                  "update_issues",
+                  "create_reports"
+                ],
                 "statistics": {
                   "total_issues": 15,
                   "resolved_issues": 10,
@@ -119,13 +131,37 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "request_body": {
-            "name": {"type": "string", "required": true, "min_length": 3, "max_length": 100},
-            "email": {"type": "string", "required": true, "format": "email", "unique": true},
-            "phone": {"type": "string", "required": true, "format": "phone"},
-            "password": {"type": "string", "required": true, "min_length": 8, "pattern": "Must include uppercase, lowercase, and number"},
-            "role": {"type": "string", "required": true, "enum": ["admin", "officer", "agent", "task_force", "web_admin"]},
-            "location": {"type": "string", "required": false},
-            "status": {"type": "string", "required": false, "default": "active", "enum": ["active", "inactive"]}
+            "name": {
+              "type": "string",
+              "required": true,
+              "min_length": 3,
+              "max_length": 100
+            },
+            "email": {
+              "type": "string",
+              "required": true,
+              "format": "email",
+              "unique": true
+            },
+            "phone": { "type": "string", "required": true, "format": "phone" },
+            "password": {
+              "type": "string",
+              "required": true,
+              "min_length": 8,
+              "pattern": "Must include uppercase, lowercase, and number"
+            },
+            "role": {
+              "type": "string",
+              "required": true,
+              "enum": ["admin", "officer", "agent", "task_force", "web_admin"]
+            },
+            "location": { "type": "string", "required": false },
+            "status": {
+              "type": "string",
+              "required": false,
+              "default": "active",
+              "enum": ["active", "inactive"]
+            }
           },
           "request_example": {
             "name": "Jane Smith",
@@ -160,13 +196,13 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "path_parameters": {
-            "id": {"type": "number", "required": true}
+            "id": { "type": "number", "required": true }
           },
           "request_body": {
-            "name": {"type": "string", "required": false},
-            "phone": {"type": "string", "required": false},
-            "location": {"type": "string", "required": false},
-            "bio": {"type": "string", "required": false}
+            "name": { "type": "string", "required": false },
+            "phone": { "type": "string", "required": false },
+            "location": { "type": "string", "required": false },
+            "bio": { "type": "string", "required": false }
           },
           "request_example": {
             "name": "Jane Smith Updated",
@@ -193,7 +229,7 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "path_parameters": {
-            "id": {"type": "number", "required": true}
+            "id": { "type": "number", "required": true }
           },
           "response_example": {
             "success": true,
@@ -207,10 +243,14 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "path_parameters": {
-            "id": {"type": "number", "required": true}
+            "id": { "type": "number", "required": true }
           },
           "request_body": {
-            "role": {"type": "string", "required": true, "enum": ["admin", "officer", "agent", "task_force", "web_admin"]}
+            "role": {
+              "type": "string",
+              "required": true,
+              "enum": ["admin", "officer", "agent", "task_force", "web_admin"]
+            }
           },
           "request_example": {
             "role": "officer"
@@ -234,11 +274,15 @@
           "auth_required": true,
           "roles": ["admin", "web_admin"],
           "path_parameters": {
-            "id": {"type": "number", "required": true}
+            "id": { "type": "number", "required": true }
           },
           "request_body": {
-            "status": {"type": "string", "required": true, "enum": ["active", "inactive", "suspended"]},
-            "reason": {"type": "string", "required": false}
+            "status": {
+              "type": "string",
+              "required": true,
+              "enum": ["active", "inactive", "suspended"]
+            },
+            "reason": { "type": "string", "required": false }
           },
           "request_example": {
             "status": "inactive",
@@ -454,10 +498,10 @@
           "auth_required": true,
           "roles": ["all"],
           "request_body": {
-            "name": {"type": "string", "required": false},
-            "phone": {"type": "string", "required": false},
-            "bio": {"type": "string", "required": false},
-            "preferences": {"type": "object", "required": false}
+            "name": { "type": "string", "required": false },
+            "phone": { "type": "string", "required": false },
+            "bio": { "type": "string", "required": false },
+            "preferences": { "type": "object", "required": false }
           },
           "request_example": {
             "name": "John Doe Jr.",
@@ -477,7 +521,12 @@
           "roles": ["all"],
           "content_type": "multipart/form-data",
           "request_body": {
-            "avatar": {"type": "file", "required": true, "accept": ["image/jpeg", "image/png", "image/webp"], "max_size_mb": 5}
+            "avatar": {
+              "type": "file",
+              "required": true,
+              "accept": ["image/jpeg", "image/png", "image/webp"],
+              "max_size_mb": 5
+            }
           }
         },
         {
@@ -487,9 +536,13 @@
           "auth_required": true,
           "roles": ["all"],
           "request_body": {
-            "current_password": {"type": "string", "required": true},
-            "new_password": {"type": "string", "required": true, "min_length": 8},
-            "new_password_confirmation": {"type": "string", "required": true}
+            "current_password": { "type": "string", "required": true },
+            "new_password": {
+              "type": "string",
+              "required": true,
+              "min_length": 8
+            },
+            "new_password_confirmation": { "type": "string", "required": true }
           }
         },
         {
@@ -499,8 +552,8 @@
           "auth_required": true,
           "roles": ["all"],
           "query_parameters": {
-            "page": {"type": "number", "required": false, "default": 1},
-            "limit": {"type": "number", "required": false, "default": 20}
+            "page": { "type": "number", "required": false, "default": 1 },
+            "limit": { "type": "number", "required": false, "default": 20 }
           }
         }
       ]
@@ -652,7 +705,11 @@
       "phase": 1,
       "name": "Critical Foundation",
       "duration_weeks": "1-2",
-      "categories": ["User Management API", "Dashboard Statistics API", "Profile/Account API"],
+      "categories": [
+        "User Management API",
+        "Dashboard Statistics API",
+        "Profile/Account API"
+      ],
       "endpoint_count": 17,
       "impact": "Enables basic admin functions and accurate dashboard displays"
     },
@@ -660,7 +717,11 @@
       "phase": 2,
       "name": "Operational Features",
       "duration_weeks": "3-4",
-      "categories": ["Agents Management API", "Officers Management API", "Task Force Management API"],
+      "categories": [
+        "Agents Management API",
+        "Officers Management API",
+        "Task Force Management API"
+      ],
       "endpoint_count": 19,
       "impact": "Enables full workflow management and team coordination"
     },
@@ -668,7 +729,12 @@
       "phase": 3,
       "name": "Enhanced Features",
       "duration_weeks": "5-6",
-      "categories": ["Locations Management API", "Youth Programs API", "System Settings API", "Notifications API"],
+      "categories": [
+        "Locations Management API",
+        "Youth Programs API",
+        "System Settings API",
+        "Notifications API"
+      ],
       "endpoint_count": 22,
       "impact": "Completes administrative features and user experience"
     },

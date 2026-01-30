@@ -1,24 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState, useEffect } from "react";
 import {
-  User,
-  Edit2,
-  Save,
-  Activity,
-  Clock,
-  Loader2
-} from 'lucide-react';
-import { profileService, UserProfile } from '@/lib/services/profile-service';
-import { taskForceService } from '@/lib/services/task-force-service';
-import { toast } from 'sonner';
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, Edit2, Save, Activity, Clock, Loader2 } from "lucide-react";
+import { profileService, UserProfile } from "@/lib/services/profile-service";
+import { taskForceService } from "@/lib/services/task-force-service";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -26,9 +25,9 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    bio: '',
+    name: "",
+    phone: "",
+    bio: "",
   });
 
   // Fetch profile data on mount
@@ -44,27 +43,27 @@ export default function ProfilePage() {
         // Map TeamMember to UserProfile shape
         const member = response.data.member;
         const userProfile: UserProfile = {
-            id: member.id,
-            name: member.name,
-            email: member.email || '',
-            phone: member.phone || '',
-            role: 'task_force', 
-            bio: '',
-            avatar: undefined,
-            location: undefined,
-            status: member.status as 'active' | 'inactive' | 'suspended',
-            created_at: new Date().toISOString()
+          id: member.id,
+          name: member.name,
+          email: member.email || "",
+          phone: member.phone || "",
+          role: "task_force",
+          bio: "",
+          avatar: undefined,
+          location: undefined,
+          status: member.status as "active" | "inactive" | "suspended",
+          created_at: new Date().toISOString(),
         };
         setCurrentUser(userProfile);
         setFormData({
           name: member.name,
-          phone: member.phone || '',
-          bio: '',
+          phone: member.phone || "",
+          bio: "",
         });
       }
     } catch (error) {
-      console.error('Failed to fetch profile:', error);
-      toast.error('Failed to load profile');
+      console.error("Failed to fetch profile:", error);
+      toast.error("Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -75,13 +74,13 @@ export default function ProfilePage() {
       setSaving(true);
       const response = await profileService.updateProfile(formData);
       if (response.success) {
-        toast.success('Profile updated successfully');
+        toast.success("Profile updated successfully");
         setCurrentUser(response.data.user);
         setIsEditing(false);
       }
     } catch (error) {
-      console.error('Failed to update profile:', error);
-      toast.error('Failed to update profile');
+      console.error("Failed to update profile:", error);
+      toast.error("Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -102,8 +101,12 @@ export default function ProfilePage() {
     return (
       <div className="p-6 max-w-4xl mx-auto">
         <div className="text-center py-12">
-          <p className="text-gray-600">Failed to load profile. Please try again.</p>
-          <Button onClick={fetchProfile} className="mt-4">Retry</Button>
+          <p className="text-gray-600">
+            Failed to load profile. Please try again.
+          </p>
+          <Button onClick={fetchProfile} className="mt-4">
+            Retry
+          </Button>
         </div>
       </div>
     );
@@ -115,15 +118,23 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-600 mt-1">Manage your account information and preferences</p>
+          <p className="text-gray-600 mt-1">
+            Manage your account information and preferences
+          </p>
         </div>
         <Button
-          onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+          onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
           disabled={saving}
           className="flex items-center gap-2"
         >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEditing ? <Save className="h-4 w-4" /> : <Edit2 className="h-4 w-4" />)}
-          {saving ? 'Saving...' : (isEditing ? 'Save Changes' : 'Edit Profile')}
+          {saving ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : isEditing ? (
+            <Save className="h-4 w-4" />
+          ) : (
+            <Edit2 className="h-4 w-4" />
+          )}
+          {saving ? "Saving..." : isEditing ? "Save Changes" : "Edit Profile"}
         </Button>
       </div>
 
@@ -150,7 +161,9 @@ export default function ProfilePage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-semibold">{currentUser.name}</h3>
+                    <h3 className="text-xl font-semibold">
+                      {currentUser.name}
+                    </h3>
                     <Badge variant="secondary">{currentUser.role}</Badge>
                   </div>
                   <p className="text-gray-600">{currentUser.email}</p>
@@ -165,7 +178,9 @@ export default function ProfilePage() {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, name: e.target.value }))
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -175,7 +190,12 @@ export default function ProfilePage() {
                     id="phone"
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        phone: e.target.value,
+                      }))
+                    }
                     disabled={!isEditing}
                   />
                 </div>
@@ -193,7 +213,9 @@ export default function ProfilePage() {
                   <Input
                     id="bio"
                     value={formData.bio}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value}))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, bio: e.target.value }))
+                    }
                     disabled={!isEditing}
                     placeholder="Tell us about yourself..."
                   />
@@ -222,11 +244,17 @@ export default function ProfilePage() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm text-gray-600">Location</p>
-                  <p className="font-medium">{currentUser.location || 'Not specified'}</p>
+                  <p className="font-medium">
+                    {currentUser.location || "Not specified"}
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <p className="text-sm text-gray-600">Last Login</p>
-                  <p className="font-medium">{currentUser.last_login ? new Date(currentUser.last_login).toLocaleString() : 'Never'}</p>
+                  <p className="font-medium">
+                    {currentUser.last_login
+                      ? new Date(currentUser.last_login).toLocaleString()
+                      : "Never"}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -237,7 +265,9 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle>Activity History</CardTitle>
-              <CardDescription>Your recent activities and actions</CardDescription>
+              <CardDescription>
+                Your recent activities and actions
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8 text-gray-500">
@@ -259,23 +289,33 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h4 className="font-medium">Email Notifications</h4>
-                  <p className="text-sm text-gray-600">Receive notifications about new assignments</p>
+                  <p className="text-sm text-gray-600">
+                    Receive notifications about new assignments
+                  </p>
                 </div>
-                <Button variant="outline" size="sm">Configure</Button>
+                <Button variant="outline" size="sm">
+                  Configure
+                </Button>
               </div>
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h4 className="font-medium">Password</h4>
                   <p className="text-sm text-gray-600">Update your password</p>
                 </div>
-                <Button variant="outline" size="sm">Change</Button>
+                <Button variant="outline" size="sm">
+                  Change
+                </Button>
               </div>
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h4 className="font-medium">Two-Factor Authentication</h4>
-                  <p className="text-sm text-gray-600">Add an extra layer of security</p>
+                  <p className="text-sm text-gray-600">
+                    Add an extra layer of security
+                  </p>
                 </div>
-                <Button variant="outline" size="sm">Enable</Button>
+                <Button variant="outline" size="sm">
+                  Enable
+                </Button>
               </div>
             </CardContent>
           </Card>

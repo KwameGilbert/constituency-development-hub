@@ -193,7 +193,7 @@ export const youthRecordsService = {
 
   // Create youth record
   createYouthRecord: async (
-    data: CreateYouthRecordRequest
+    data: CreateYouthRecordRequest,
   ): Promise<YouthRecordResponse> => {
     return apiClient<YouthRecordResponse>("/admin/youth-records", {
       method: "POST",
@@ -205,7 +205,7 @@ export const youthRecordsService = {
   // Update youth record
   updateYouthRecord: async (
     id: number,
-    data: UpdateYouthRecordRequest
+    data: UpdateYouthRecordRequest,
   ): Promise<YouthRecordResponse> => {
     return apiClient<YouthRecordResponse>(`/admin/youth-records/${id}`, {
       method: "PUT",
@@ -217,7 +217,7 @@ export const youthRecordsService = {
   // Update youth record status (approve/reject)
   updateYouthRecordStatus: async (
     id: number,
-    data: { status: "pending" | "approved" | "rejected"; admin_notes?: string }
+    data: { status: "pending" | "approved" | "rejected"; admin_notes?: string },
   ): Promise<YouthRecordResponse> => {
     return apiClient<YouthRecordResponse>(`/admin/youth-records/${id}/status`, {
       method: "PUT",
@@ -228,7 +228,7 @@ export const youthRecordsService = {
 
   // Delete youth record
   deleteYouthRecord: async (
-    id: number
+    id: number,
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient(`/admin/youth-records/${id}`, {
       method: "DELETE",

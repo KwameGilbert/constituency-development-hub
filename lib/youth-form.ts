@@ -56,7 +56,7 @@ export const youthFormSchema = z.object({
     .or(z.literal(""))
     .refine(
       (value) => value === "" || !Number.isNaN(Number(value)),
-      "Enter a valid number"
+      "Enter a valid number",
     ),
 });
 
