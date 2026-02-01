@@ -27,7 +27,7 @@ function WorkHistoryFields({
         preferences
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="employment_status">Employment status</Label>
           <select
             id="employment_status"
@@ -51,7 +51,7 @@ function WorkHistoryFields({
             message={errors.employment_status?.message as string | undefined}
           />
         </div>
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="availability_status">Availability</Label>
           <select
             id="availability_status"
@@ -74,7 +74,7 @@ function WorkHistoryFields({
         </div>
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="current_employment">
           {employmentStatus === "unemployed"
             ? "Most recent role"
@@ -92,7 +92,7 @@ function WorkHistoryFields({
 
       <div className="grid gap-3">
         {experienceFields.map((field, index) => (
-          <div key={field as string}>
+          <div key={field as string} className="space-y-2">
             <Label htmlFor={field as string}>{`Experience ${index + 1}`}</Label>
             <Textarea
               id={field as string}
@@ -107,7 +107,7 @@ function WorkHistoryFields({
         ))}
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="employment_notes">Additional notes</Label>
         <Textarea
           id="employment_notes"

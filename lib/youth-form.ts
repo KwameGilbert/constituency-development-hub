@@ -98,14 +98,57 @@ export const youthDefaultValues: YouthFormInputValues = {
   salary_expectation: "",
 };
 
-export const formatYouthPayload = (values: YouthFormValues) => ({
-  ...values,
-  jhs_completed: values.jhs_completed ? 1 : 0,
-  salary_expectation:
-    values.salary_expectation && values.salary_expectation !== ""
-      ? parseFloat(values.salary_expectation)
-      : null,
-  work_experience_5: "",
-  work_experience_6: "",
-  status: "pending",
-});
+export const formatYouthPayload = (values: YouthFormValues) => {
+  // Map values to match backend API expectations
+  return {
+    full_name: values.name,
+    date_of_birth: values.date_of_birth,
+    national_id: values.national_id,
+    
+    // Gender is not collected in the form, so we omit it or send null if needed.
+    // The backend handles missing gender as null, which is valid.
+    
+    phone: values.phone_number,
+    email: "", // Frontend doesn't have email field
+    hometown: values.home_town,
+    community: values.residential_community,
+    
+    // Education
+    jhs_completed: values.jhs_completed ? 1 : 0,
+    shs_qualification: values.shs_qualification,
+    certificate_qualification: values.certificate_qualification,
+    diploma_qualification: values.diploma_qualification,
+    degree_qualification: values.first_degree, // Mapped from first_degree
+    postgraduate_qualification: values.postgraduate_qualification,
+    professional_qualification: values.professional_qualification,
+    
+    // Employment - Fix value mismatch
+    employment_status: values.employment_status === "self-employed" ? "self_employed" : values.employment_status,
+    
+    // Availability - Fix value mismatch
+    availability_status: values.availability_status === "not-available" ? "unavailable" : "available", 
+    // 'remote-only' maps to 'available'
+    
+    current_employment: values.current_employment,
+    preferred_location: values.preferred_work_location, // Map to preferred_location
+    salary_expectation:
+      values.salary_expectation && values.salary_expectation !== ""
+        ? parseFloat(values.salary_expectation)
+        : null,
+    employment_notes: values.employment_notes,
+    
+    // Skills
+    skills: values.skills,
+    interests: values.interests,
+    
+    // Extra fields expected by backend
+    work_experiences: [
+      values.work_experience_1,
+      values.work_experience_2,
+      values.work_experience_3,
+      values.work_experience_4
+    ].filter(Boolean), 
+    
+    status: "pending",
+  };
+};

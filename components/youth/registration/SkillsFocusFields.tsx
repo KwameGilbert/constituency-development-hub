@@ -18,7 +18,7 @@ function SkillsFocusFields({ register, errors }: SkillsFocusFieldsProps) {
       <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
         <Sparkles className="h-5 w-5 text-purple-500" /> Skills & focus
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="skills">Key skills</Label>
         <Textarea
           id="skills"
@@ -30,7 +30,7 @@ function SkillsFocusFields({ register, errors }: SkillsFocusFieldsProps) {
           message={errors.skills?.message as string | undefined}
         />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="interests">Areas you want to grow</Label>
         <Textarea
           id="interests"
@@ -42,7 +42,7 @@ function SkillsFocusFields({ register, errors }: SkillsFocusFieldsProps) {
           message={errors.interests?.message as string | undefined}
         />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="preferred_work_location">Preferred work location</Label>
         <Input
           id="preferred_work_location"

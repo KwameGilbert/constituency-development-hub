@@ -68,7 +68,7 @@ function PersonalProfileFields({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {personalFields.map(({ id, name, label, placeholder, type }) => (
-          <div key={id}>
+          <div key={id} className="space-y-2">
             <Label htmlFor={id}>{label}</Label>
             <Input
               id={id}

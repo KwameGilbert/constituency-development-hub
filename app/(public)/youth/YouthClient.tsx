@@ -39,6 +39,7 @@ const getImportMetaEnv = (): ViteEnv => {
 const importMetaEnv = getImportMetaEnv();
 
 const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   importMetaEnv.VITE_PUBLIC_API_BASE_URL ||
   "";
@@ -187,7 +188,7 @@ export default function YouthClient() {
 
   const onSubmit: SubmitHandler<YouthFormValues> = async (values) => {
     setServerStatus({ type: null, message: "" });
-    const endpoint = `${API_BASE_URL}/api/youth/create_youth_record.php`;
+    const endpoint = `${API_BASE_URL}/youth/register`;
 
     try {
       const response = await fetch(endpoint, {

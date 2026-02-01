@@ -66,7 +66,7 @@ function EducationReadinessFields({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {educationFields.map(({ id, name, label, placeholder }) => (
-          <div key={id}>
+          <div key={id} className="space-y-2">
             <Label htmlFor={id}>{label}</Label>
             <Input id={id} placeholder={placeholder} {...register(name)} />
             <FieldErrorText
@@ -92,7 +92,7 @@ function EducationReadinessFields({
             min={0}
             step="50"
             placeholder="Optional"
-            className="mt-1"
+            className="mt-2"
             {...register("salary_expectation")}
           />
         </label>
