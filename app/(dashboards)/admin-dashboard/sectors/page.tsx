@@ -48,10 +48,14 @@ import { toast } from "sonner";
 import { sectorsService, Sector } from "@/lib/services/sectors-service";
 import { Textarea } from "@/components/ui/textarea";
 
+import { SubSectorsManager } from "@/components/admin-dashboard/sectors/SubSectorsManager";
+import { ListTree } from "lucide-react";
+
 export default function SectorsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSubSectorsOpen, setIsSubSectorsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Form State
@@ -172,6 +176,7 @@ export default function SectorsPage() {
         description: formData.description,
         color: formData.color,
         icon: formData.icon,
+        status: "active",
       });
 
       if (response.success) {
@@ -219,6 +224,11 @@ export default function SectorsPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleManageSubSectors = (sector: Sector) => {
+    setSelectedSector(sector);
+    setIsSubSectorsOpen(true);
   };
 
   return (
@@ -383,6 +393,15 @@ export default function SectorsPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-xs bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                              onClick={() => handleManageSubSectors(sector)}
+                            >
+                              <ListTree className="w-3.5 h-3.5 mr-1.5" />
+                              Subsectors
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -641,6 +660,13 @@ export default function SectorsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Sub-Sectors Manager Dialog */}
+      <SubSectorsManager
+        sector={selectedSector}
+        isOpen={isSubSectorsOpen}
+        onClose={() => setIsSubSectorsOpen(false)}
+      />
     </div>
   );
 }

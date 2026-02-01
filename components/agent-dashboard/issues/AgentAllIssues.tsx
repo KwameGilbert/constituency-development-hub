@@ -5,7 +5,6 @@ import {
   ChevronUp,
   ChevronDown,
   RotateCcw,
-  Loader2,
   AlertCircle,
   FileX,
 } from "lucide-react";
@@ -308,48 +307,50 @@ export function AgentAllIssues() {
             )}
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-20">ID</TableHead>
-                <TableHead>TITLE & DESCRIPTION</TableHead>
-                <TableHead>CATEGORY</TableHead>
-                <TableHead>STATUS</TableHead>
-                <TableHead>DATE SUBMITTED</TableHead>
-                <TableHead className="text-right">ACTIONS</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredIssues.map((issue) => (
-                <TableRow key={issue.id}>
-                  <TableCell className="font-medium">
-                    {issue.case_id || `#${issue.id}`}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="font-semibold">{issue.title}</span>
-                      <span className="text-muted-foreground text-sm line-clamp-1">
-                        {issue.description}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{issue.category}</TableCell>
-                  <TableCell>{getStatusBadge(issue.status)}</TableCell>
-                  <TableCell>{formatDate(issue.created_at)}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Link href={`/agents-dashboard/issues/${issue.id}`}>
-                      <Button
-                        variant="link"
-                        className="h-auto p-0 text-slate-600 hover:text-slate-900"
-                      >
-                        View
-                      </Button>
-                    </Link>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table className="min-w-[800px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-20">ID</TableHead>
+                  <TableHead>TITLE & DESCRIPTION</TableHead>
+                  <TableHead>CATEGORY</TableHead>
+                  <TableHead>STATUS</TableHead>
+                  <TableHead>DATE SUBMITTED</TableHead>
+                  <TableHead className="text-right">ACTIONS</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredIssues.map((issue) => (
+                  <TableRow key={issue.id}>
+                    <TableCell className="font-medium">
+                      {issue.case_id || `#${issue.id}`}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="font-semibold">{issue.title}</span>
+                        <span className="text-muted-foreground text-sm line-clamp-1">
+                          {issue.description}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{issue.category}</TableCell>
+                    <TableCell>{getStatusBadge(issue.status)}</TableCell>
+                    <TableCell>{formatDate(issue.created_at)}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Link href={`/agents-dashboard/issues/${issue.id}`}>
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 text-slate-600 hover:text-slate-900"
+                        >
+                          View
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
     </div>

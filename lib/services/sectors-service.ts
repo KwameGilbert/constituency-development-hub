@@ -112,4 +112,115 @@ export const sectorsService = {
       },
     );
   },
+
+  // ---------------------------------------------------------------------------
+  // Sub-Sectors
+  // ---------------------------------------------------------------------------
+
+  // Get sub-sectors for a sector
+  getSubSectors: async (
+    sectorId: number,
+  ): Promise<{
+    success: boolean;
+    data: { sub_sectors: SubSector[]; sector_name?: string };
+  }> => {
+    return apiClient<{
+      success: boolean;
+      data: { sub_sectors: SubSector[]; sector_name?: string };
+    }>(`/admin/sectors/${sectorId}/sub-sectors`, {
+      method: "GET",
+      requiresAuth: true,
+    });
+  },
+
+  // Create sub-sector
+  createSubSector: async (
+    sectorId: number,
+    data: CreateSubSectorRequest,
+  ): Promise<{ success: boolean; message: string; data: { sub_sector: SubSector } }> => {
+    return apiClient<{
+      success: boolean;
+      message: string;
+      data: { sub_sector: SubSector };
+    }>(`/admin/sectors/${sectorId}/sub-sectors`, {
+      method: "POST",
+      body: JSON.stringify(data),
+      requiresAuth: true,
+    });
+  },
+
+  // Update sub-sector
+  updateSubSector: async (
+    id: number,
+    data: UpdateSubSectorRequest,
+  ): Promise<{ success: boolean; message: string; data: { sub_sector: SubSector } }> => {
+    return apiClient<{
+      success: boolean;
+      message: string;
+      data: { sub_sector: SubSector };
+    }>(`/admin/sub-sectors/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+      requiresAuth: true,
+    });
+  },
+
+  // Delete sub-sector
+  deleteSubSector: async (
+    id: number,
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient<{ success: boolean; message: string }>(
+      `/admin/sub-sectors/${id}`,
+      {
+        method: "DELETE",
+        requiresAuth: true,
+      },
+    );
+  },
+
+  // Reorder sub-sectors
+  reorderSubSectors: async (
+    orderedIds: number[],
+  ): Promise<{ success: boolean; message: string }> => {
+    return apiClient<{ success: boolean; message: string }>(
+      "/admin/sub-sectors/reorder",
+      {
+        method: "PUT",
+        body: JSON.stringify({ order: orderedIds }),
+        requiresAuth: true,
+      },
+    );
+  },
 };
+
+export interface SubSector {
+  id: number;
+  sector_id: number;
+  sector_name?: string;
+  name: string;
+  code: string | null;
+  description: string | null;
+  icon: string | null;
+  display_order: number;
+  status: "active" | "inactive";
+  issues_count?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreateSubSectorRequest {
+  name: string;
+  code?: string;
+  description?: string;
+  icon?: string;
+  status?: "active" | "inactive";
+}
+
+export interface UpdateSubSectorRequest {
+  name?: string;
+  code?: string;
+  description?: string;
+  icon?: string;
+  status?: "active" | "inactive";
+  display_order?: number;
+}

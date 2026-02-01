@@ -250,76 +250,78 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
           </div>
         ) : (
           <>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[120px]">CASE ID</TableHead>
-                  <TableHead>TITLE & DESCRIPTION</TableHead>
-                  <TableHead>CATEGORY</TableHead>
-                  <TableHead>PRIORITY</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead>DATE SUBMITTED</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {issues.map((issue) => (
-                  <TableRow key={issue.id}>
-                    <TableCell className="font-medium text-sm text-gray-600">
-                      {issue.case_id || `#${issue.id}`}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col max-w-md">
-                        <span className="font-semibold text-gray-900">
-                          {issue.title}
-                        </span>
-                        <span className="text-muted-foreground text-sm truncate">
-                          {issue.description}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="capitalize text-sm">
-                        {issue.category}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={`border-0 ${getPriorityColor(
-                          issue.priority,
-                        )}`}
-                      >
-                        {issue.priority}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={`border-0 ${getStatusColor(issue.status)}`}
-                      >
-                        {issue.status.replace(/_/g, " ")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-gray-600">
-                      {new Date(issue.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Button
-                        variant="link"
-                        className="h-auto p-0 text-indigo-600 hover:text-indigo-700"
-                        asChild
-                      >
-                        <Link href={`${basePath}/${issue.id}`}>
-                          <Eye className="h-4 w-4 mr-1" />
-                          View
-                        </Link>
-                      </Button>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table className="min-w-[1000px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[120px]">CASE ID</TableHead>
+                    <TableHead>TITLE & DESCRIPTION</TableHead>
+                    <TableHead>CATEGORY</TableHead>
+                    <TableHead>PRIORITY</TableHead>
+                    <TableHead>STATUS</TableHead>
+                    <TableHead>DATE SUBMITTED</TableHead>
+                    <TableHead className="text-right">ACTIONS</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {issues.map((issue) => (
+                    <TableRow key={issue.id}>
+                      <TableCell className="font-medium text-sm text-gray-600">
+                        {issue.case_id || `#${issue.id}`}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col max-w-md">
+                          <span className="font-semibold text-gray-900">
+                            {issue.title}
+                          </span>
+                          <span className="text-muted-foreground text-sm truncate">
+                            {issue.description}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="capitalize text-sm">
+                          {issue.category}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={`border-0 ${getPriorityColor(
+                            issue.priority,
+                          )}`}
+                        >
+                          {issue.priority}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={`border-0 ${getStatusColor(issue.status)}`}
+                        >
+                          {issue.status.replace(/_/g, " ")}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-gray-600">
+                        {new Date(issue.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        <Button
+                          variant="link"
+                          className="h-auto p-0 text-indigo-600 hover:text-indigo-700"
+                          asChild
+                        >
+                          <Link href={`${basePath}/${issue.id}`}>
+                            <Eye className="h-4 w-4 mr-1" />
+                            View
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
             {/* Pagination */}
             {totalPages > 1 && (

@@ -162,51 +162,53 @@ export function AdminRecentIssues() {
 
           {/* Issues List */}
           {issues.length > 0 ? (
-            <div className="divide-y divide-gray-100">
-              {issues.map((issue) => (
-                <div
-                  key={issue.id}
-                  className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex flex-col">
-                    <span
-                      className="text-sm font-medium text-gray-900 truncate"
-                      title={issue.title}
-                    >
-                      {issue.title}
-                    </span>
-                    <span
-                      className="text-xs text-gray-500 truncate"
-                      title={issue.description}
-                    >
-                      {issue.description}
-                    </span>
+            <div className="overflow-x-auto">
+              <div className="divide-y divide-gray-100 min-w-[600px]">
+                {issues.map((issue) => (
+                  <div
+                    key={issue.id}
+                    className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex flex-col">
+                      <span
+                        className="text-sm font-medium text-gray-900 truncate"
+                        title={issue.title}
+                      >
+                        {issue.title}
+                      </span>
+                      <span
+                        className="text-xs text-gray-500 truncate"
+                        title={issue.description}
+                      >
+                        {issue.description}
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray-900">{issue.agent}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Badge
+                        className={`text-xs ${getStatusColor(issue.status)}`}
+                      >
+                        {issue.status}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Badge
+                        className={`text-xs justify-center ${getSeverityColor(issue.severity)}`}
+                      >
+                        {issue.severity}
+                      </Badge>
+                      <span className="text-xs text-gray-500 text-right">
+                        {new Date(issue.date).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                        })}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center">
-                    <span className="text-sm text-gray-900">{issue.agent}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Badge
-                      className={`text-xs ${getStatusColor(issue.status)}`}
-                    >
-                      {issue.status}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Badge
-                      className={`text-xs justify-center ${getSeverityColor(issue.severity)}`}
-                    >
-                      {issue.severity}
-                    </Badge>
-                    <span className="text-xs text-gray-500 text-right">
-                      {new Date(issue.date).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                      })}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ) : (
             /* Empty State */
