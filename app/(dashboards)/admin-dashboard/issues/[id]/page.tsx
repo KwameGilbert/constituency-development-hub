@@ -1,6 +1,6 @@
 import React from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
-import { issuesService, Issue } from "@/lib/services/issues-service";
+import { issuesService, Issue, ResourceItem } from "@/lib/services/issues-service";
 import {
   ArrowLeft,
   MapPin,
@@ -32,28 +32,32 @@ export default async function IssueDetailPage({
       issue = response.data.report;
       
       // Map backend fields to frontend expectations if necessary
-      if ((issue as any).resolution_report && !issue.resolution) {
-        issue.resolution = (issue as any).resolution_report;
+      if (issue.resolution_report && !issue.resolution) {
+        issue.resolution = issue.resolution_report;
         
         // Ensure images are arrays (handle potential JSON strings from backend)
-        if (typeof (issue.resolution as any).before_images === 'string') {
-          try {
-            issue.resolution.before_images = JSON.parse((issue.resolution as any).before_images);
-          } catch (e) {
-            issue.resolution.before_images = [];
+        if (issue.resolution) {
+          const rawResolution = issue.resolution as unknown as { before_images?: unknown; after_images?: unknown };
+
+          if (typeof rawResolution.before_images === 'string') {
+            try {
+              issue.resolution.before_images = JSON.parse(rawResolution.before_images);
+            } catch (e) {
+              issue.resolution.before_images = [];
+            }
           }
-        }
-        
-        if (typeof (issue.resolution as any).after_images === 'string') {
-          try {
-            issue.resolution.after_images = JSON.parse((issue.resolution as any).after_images);
-          } catch (e) {
-            issue.resolution.after_images = [];
+          
+          if (typeof rawResolution.after_images === 'string') {
+            try {
+              issue.resolution.after_images = JSON.parse(rawResolution.after_images);
+            } catch (e) {
+              issue.resolution.after_images = [];
+            }
           }
         }
       }
-      if ((issue as any).assessment_report && !issue.assessment_report) {
-        issue.assessment_report = (issue as any).assessment_report;
+      if (issue.assessment_report && !issue.assessment) {
+        issue.assessment = issue.assessment_report;
       }
     } else {
       issue = null;
@@ -245,7 +249,7 @@ export default async function IssueDetailPage({
             {/* Assessment Details (if assessment exists) */}
             {(() => {
               // Normalized access to handle potential API inconsistencies (assessment_report vs assessment)
-              const assessment = issue.assessment_report || (issue as any).assessment;
+              const assessment = issue.assessment_report || issue.assessment;
               
               return assessment ? (
               <Card>
@@ -308,7 +312,7 @@ export default async function IssueDetailPage({
                     <div className="pt-4 border-t">
                       <h3 className="text-sm font-semibold text-gray-700 mb-2">Required Resources</h3>
                       <div className="border rounded-md divide-y">
-                         {assessment.required_resources.map((res: any, idx: number) => (
+                         {assessment.required_resources.map((res: ResourceItem, idx: number) => (
                                <div key={idx} className="flex justify-between p-2 text-sm">
                                  <span>{res.item} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
                                  <span className="font-medium">Qty: {res.quantity}</span>

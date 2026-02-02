@@ -34,7 +34,9 @@ export interface Issue {
   allocated_budget?: number;
   allocated_resources?: ResourceItem[];
   assessment_report?: AssessmentReport;
+  assessment?: AssessmentReport;
   resolution?: ResolutionReport;
+  resolution_report?: ResolutionReport;
   // Optional extra fields for UI adaptation (if returned)
   timeline?: TimelineEvent[];
 }

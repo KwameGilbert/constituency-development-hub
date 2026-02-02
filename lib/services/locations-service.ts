@@ -3,7 +3,7 @@ import { apiClient } from "../api-client";
 export interface Location {
   id: number;
   name: string;
-  type: "community" | "suburb";
+  type: "community" | "suburb" | "smaller_community" | "cottage";
   parent_id: number | null;
   parent_name: string | null;
   population: number | null;
