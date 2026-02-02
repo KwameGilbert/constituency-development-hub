@@ -3,7 +3,7 @@ import { apiClient } from "../api-client";
 export interface Location {
   id: number;
   name: string;
-  type: "community" | "suburb" | "cottage" | "smaller_community";
+  type: "community" | "suburb";
   parent_id: number | null;
   parent_name: string | null;
   population: number | null;
@@ -107,8 +107,6 @@ export interface LocationDashboardStatsResponse {
     counts: {
       community: number;
       suburb: number;
-      cottage: number;
-      smaller_community: number;
     };
     total: number;
     recent_locations: Array<{

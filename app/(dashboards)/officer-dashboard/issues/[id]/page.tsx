@@ -200,9 +200,10 @@ export default function OfficerIssueDetailPage() {
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Description
               </h3>
-              <p className="text-gray-600 whitespace-pre-wrap">
-                {issue.description}
-              </p>
+              <div
+                className="text-gray-600 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: issue.description }}
+              />
             </div>
 
             {/* Metadata Grid */}

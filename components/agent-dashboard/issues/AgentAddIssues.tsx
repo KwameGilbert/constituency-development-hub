@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Plus, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Loader2, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,51 +15,53 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { agentService, IssueSubmission } from "@/lib/services/agent-service";
 import { locationsService } from "@/lib/services/locations-service";
-import { sectorsService } from "@/lib/services/sectors-service";
+import { sectorsService, Sector, SubSector } from "@/lib/services/sectors-service";
+import { categoriesService, Category } from "@/lib/services/categories-service";
 
 interface Location {
   id: number;
   name: string;
 }
 
-interface Sector {
-  id: number;
-  name: string;
-  subsectors?: { id: number; name: string }[];
-}
-
-const CATEGORIES = [
-  "Infrastructure",
-  "Health",
-  "Education",
-  "Economic Empowerment",
-  "Water & Sanitation",
-  "Security",
-  "Environment",
-  "Social Services",
-  "Other",
-];
-
 export function AgentAddIssues() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("issue-details");
   const [submitting, setSubmitting] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [smallerCommunities, setSmallerCommunities] = useState<Location[]>([]);
+
   const [suburbs, setSuburbs] = useState<Location[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [sectors, setSectors] = useState<Sector[]>([]);
+  const [filteredSectors, setFilteredSectors] = useState<Sector[]>([]);
+  const [subSectors, setSubSectors] = useState<SubSector[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [loadingSubLocations, setLoadingSubLocations] = useState(false);
+  const [loadingSectors, setLoadingSectors] = useState(false);
+  const [loadingSubSectors, setLoadingSubSectors] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<IssueSubmission>({
     title: "",
     description: "",
     category: "",
+    category_id: undefined,
     type: "", // Legacy field for backward compatibility
     issue_type: "community_based", // NEW: Community-based or individual-based
     priority: "medium",
@@ -66,7 +69,9 @@ export function AgentAddIssues() {
     smaller_community: "",
     suburb: "",
     cottage: "",
+    sector_id: undefined,
     sector: "",
+    sub_sector_id: undefined,
     subsector: "",
     people_affected: undefined,
     additional_notes: "",
@@ -77,17 +82,18 @@ export function AgentAddIssues() {
     reporter_address: "",
   });
 
-  // Fetch locations and sectors
+  // Fetch locations, sectors, and categories
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoadingData(true);
-        const [locRes, secRes] = await Promise.all([
+        const [locRes, secRes, catRes] = await Promise.all([
           locationsService.getLocations({
             type: "community",
             status: "active",
           }),
           sectorsService.getSectors(),
+          categoriesService.getCategories(),
         ]);
 
         if (locRes.success && locRes.data?.locations) {
@@ -95,6 +101,9 @@ export function AgentAddIssues() {
         }
         if (secRes.success && secRes.data?.sectors) {
           setSectors(secRes.data.sectors);
+        }
+        if (catRes.success && catRes.data?.categories) {
+          setCategories(catRes.data.categories);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -106,11 +115,50 @@ export function AgentAddIssues() {
     fetchData();
   }, []);
 
+  // Filter sectors when category changes
+  useEffect(() => {
+    if (formData.category_id) {
+      setLoadingSectors(true);
+      const filtered = sectors.filter(
+        (s) => s.category_id === formData.category_id
+      );
+      setFilteredSectors(filtered);
+      setLoadingSectors(false);
+    } else {
+      setFilteredSectors([]);
+    }
+    // Reset sector and subsector when category changes
+    setSubSectors([]);
+  }, [formData.category_id, sectors]);
+
+  // Load subsectors when sector changes
+  useEffect(() => {
+    const fetchSubSectors = async () => {
+      if (!formData.sector_id) {
+        setSubSectors([]);
+        return;
+      }
+
+      setLoadingSubSectors(true);
+      try {
+        const response = await sectorsService.getSubSectors(formData.sector_id);
+        if (response.success && response.data?.sub_sectors) {
+          setSubSectors(response.data.sub_sectors);
+        }
+      } catch (error) {
+        console.error("Error fetching subsectors:", error);
+      } finally {
+        setLoadingSubSectors(false);
+      }
+    };
+
+    fetchSubSectors();
+  }, [formData.sector_id]);
+
   // Fetch smaller communities and suburbs when location changes
   useEffect(() => {
     const fetchSubLocations = async () => {
       // Reset sub-locations when main location changes
-      setSmallerCommunities([]);
       setSuburbs([]);
 
       if (!formData.location) return;
@@ -122,22 +170,12 @@ export function AgentAddIssues() {
 
       setLoadingSubLocations(true);
       try {
-        const [smallerRes, suburbRes] = await Promise.all([
-          locationsService.getLocations({
-            parent_id: selectedLocation.id,
-            type: "smaller_community",
-            status: "active",
-          }),
-          locationsService.getLocations({
-            parent_id: selectedLocation.id,
-            type: "suburb",
-            status: "active",
-          }),
-        ]);
+        const suburbRes = await locationsService.getLocations({
+          parent_id: selectedLocation.id,
+          type: "suburb",
+          status: "active",
+        });
 
-        if (smallerRes.success && smallerRes.data?.locations) {
-          setSmallerCommunities(smallerRes.data.locations);
-        }
         if (suburbRes.success && suburbRes.data?.locations) {
           setSuburbs(suburbRes.data.locations);
         }
@@ -208,9 +246,6 @@ export function AgentAddIssues() {
     }
   };
 
-  // Get subsectors for selected sector
-  const selectedSector = sectors.find((s) => s.name === formData.sector);
-  const subsectors = selectedSector?.subsectors || [];
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
@@ -290,16 +325,27 @@ export function AgentAddIssues() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Category" required>
               <Select
-                value={formData.category}
-                onValueChange={(v) => updateField("category", v)}
+                value={formData.category_id?.toString() || ""}
+                onValueChange={(v) => {
+                  const categoryId = parseInt(v);
+                  const selectedCat = categories.find((c) => c.id === categoryId);
+                  updateField("category_id", categoryId);
+                  updateField("category", selectedCat?.name || "");
+                  // Reset sector and subsector when category changes
+                  updateField("sector_id", undefined);
+                  updateField("sector", "");
+                  updateField("sub_sector_id", undefined);
+                  updateField("subsector", "");
+                }}
+                disabled={loadingData}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Category" />
+                  <SelectValue placeholder={loadingData ? "Loading..." : "Select Category"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
+                      {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -326,42 +372,78 @@ export function AgentAddIssues() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Sector">
               <Select
-                value={formData.sector || ""}
+                value={formData.sector_id?.toString() || ""}
                 onValueChange={(v) => {
-                  updateField("sector", v);
-                  updateField("subsector", ""); // Reset subsector when sector changes
+                  if (v === "placeholder" || v === "loading" || v === "empty") return;
+                  const sectorId = parseInt(v);
+                  const selectedSec = filteredSectors.find((s) => s.id === sectorId);
+                  updateField("sector_id", sectorId);
+                  updateField("sector", selectedSec?.name || "");
+                  // Reset subsector when sector changes
+                  updateField("sub_sector_id", undefined);
+                  updateField("subsector", "");
                 }}
-                disabled={loadingData}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue
-                    placeholder={loadingData ? "Loading..." : "Select Sector"}
-                  />
+                  <SelectValue placeholder="Select Sector" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sectors.map((sec) => (
-                    <SelectItem key={sec.id} value={sec.name}>
-                      {sec.name}
+                  {!formData.category_id ? (
+                    <SelectItem value="placeholder" disabled>
+                      Select a category first
                     </SelectItem>
-                  ))}
+                  ) : loadingSectors ? (
+                    <SelectItem value="loading" disabled>
+                      Loading sectors...
+                    </SelectItem>
+                  ) : filteredSectors.length === 0 ? (
+                    <SelectItem value="empty" disabled>
+                      No sectors found for this category
+                    </SelectItem>
+                  ) : (
+                    filteredSectors.map((sec) => (
+                      <SelectItem key={sec.id} value={sec.id.toString()}>
+                        {sec.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </FormItem>
             <FormItem label="Subsector">
               <Select
-                value={formData.subsector || ""}
-                onValueChange={(v) => updateField("subsector", v)}
-                disabled={!formData.sector || subsectors.length === 0}
+                value={formData.sub_sector_id?.toString() || ""}
+                onValueChange={(v) => {
+                  if (v === "placeholder" || v === "loading" || v === "empty") return;
+                  const subSectorId = parseInt(v);
+                  const selectedSubSec = subSectors.find((s) => s.id === subSectorId);
+                  updateField("sub_sector_id", subSectorId);
+                  updateField("subsector", selectedSubSec?.name || "");
+                }}
               >
                 <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Subsector (Optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  {subsectors.map((sub) => (
-                    <SelectItem key={sub.id} value={sub.name}>
-                      {sub.name}
+                  {!formData.sector_id ? (
+                    <SelectItem value="placeholder" disabled>
+                      Select a sector first
                     </SelectItem>
-                  ))}
+                  ) : loadingSubSectors ? (
+                    <SelectItem value="loading" disabled>
+                      Loading subsectors...
+                    </SelectItem>
+                  ) : subSectors.length === 0 ? (
+                    <SelectItem value="empty" disabled>
+                      No subsectors available
+                    </SelectItem>
+                  ) : (
+                    subSectors.map((sub) => (
+                      <SelectItem key={sub.id} value={sub.id.toString()}>
+                        {sub.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </FormItem>
@@ -485,82 +567,41 @@ export function AgentAddIssues() {
         <TabsContent value="location" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Main Community" required>
-              <Select
+              <SearchableSelect
                 value={formData.location}
-                onValueChange={(v) => updateField("location", v)}
+                onChange={(v) => updateField("location", v)}
+                options={locations.map((loc) => ({
+                  label: loc.name,
+                  value: loc.name,
+                }))}
+                placeholder={loadingData ? "Loading..." : "Select Main Community"}
+                searchPlaceholder="Search communities..."
+                loading={loadingData}
                 disabled={loadingData}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue
-                    placeholder={
-                      loadingData ? "Loading..." : "Select Main Community"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {locations.map((loc) => (
-                    <SelectItem key={loc.id} value={loc.name}>
-                      {loc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              />
             </FormItem>
-            <FormItem label="Smaller Community">
-              <Select
-                value={formData.smaller_community || ""}
-                onValueChange={(v) => updateField("smaller_community", v)}
+            <FormItem label="Suburb">
+              <SearchableSelect
+                value={formData.suburb || ""}
+                onChange={(v) => updateField("suburb", v)}
+                options={suburbs.map((loc) => ({
+                  label: loc.name,
+                  value: loc.name,
+                }))}
+                placeholder={
+                  !formData.location
+                    ? "Select Main Community first"
+                    : "Select Suburb (Optional)"
+                }
+                searchPlaceholder="Search suburbs..."
                 disabled={!formData.location || loadingSubLocations}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue
-                    placeholder={
-                      loadingSubLocations
-                        ? "Loading..."
-                        : !formData.location
-                          ? "Select Main Community first"
-                          : "Select Smaller Community (Optional)"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {smallerCommunities.map((loc) => (
-                    <SelectItem key={loc.id} value={loc.name}>
-                      {loc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                loading={loadingSubLocations}
+                emptyMessage="No suburb found."
+              />
             </FormItem>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Suburb">
-              <Select
-                value={formData.suburb || ""}
-                onValueChange={(v) => updateField("suburb", v)}
-                disabled={!formData.location || loadingSubLocations}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue
-                    placeholder={
-                      loadingSubLocations
-                        ? "Loading..."
-                        : !formData.location
-                          ? "Select Main Community first"
-                          : "Select Suburb (Optional)"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {suburbs.map((loc) => (
-                    <SelectItem key={loc.id} value={loc.name}>
-                      {loc.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
             <FormItem label="Specific Location Details">
               <Input
                 placeholder="e.g., 'Near the old market'"
@@ -621,5 +662,83 @@ function FormItem({
       </label>
       {children}
     </div>
+  );
+}
+
+function SearchableSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Select...",
+  searchPlaceholder = "Search...",
+  emptyMessage = "No item found.",
+  disabled = false,
+  loading = false,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: { label: string; value: string }[];
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+  disabled?: boolean;
+  loading?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn(
+            "w-full justify-between font-normal",
+            !value && "text-muted-foreground",
+            "border-slate-200 bg-transparent hover:bg-slate-50",
+            disabled && "opacity-50 cursor-not-allowed"
+          )}
+          disabled={disabled}
+        >
+          {loading ? (
+            "Loading..."
+          ) : value ? (
+            options.find((option) => option.value === value)?.label || value
+          ) : (
+            placeholder
+          )}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+        <Command>
+          <CommandInput placeholder={searchPlaceholder} />
+          <CommandList>
+            <CommandEmpty>{emptyMessage}</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.label}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === option.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

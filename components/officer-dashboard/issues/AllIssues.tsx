@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { ChevronUp, RotateCcw, Search, Eye, Loader2 } from "lucide-react";
+import { ChevronUp, RotateCcw, Search, Eye, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   issuesService,
   Issue,
@@ -250,32 +251,33 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <Table className="min-w-[1000px]">
+            {/* Desktop View: Table */}
+            <div className="hidden lg:block overflow-x-auto">
+              <Table className="w-full table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[120px]">CASE ID</TableHead>
-                    <TableHead>TITLE & DESCRIPTION</TableHead>
-                    <TableHead>CATEGORY</TableHead>
-                    <TableHead>PRIORITY</TableHead>
-                    <TableHead>STATUS</TableHead>
-                    <TableHead>DATE SUBMITTED</TableHead>
-                    <TableHead className="text-right">ACTIONS</TableHead>
+                    <TableHead className="w-[140px]">CASE ID</TableHead>
+                    <TableHead className="min-w-[250px]">TITLE & DESCRIPTION</TableHead>
+                    <TableHead className="w-[140px]">CATEGORY</TableHead>
+                    <TableHead className="w-[100px]">PRIORITY</TableHead>
+                    <TableHead className="w-[160px]">STATUS</TableHead>
+                    <TableHead className="w-[100px]">DATE</TableHead>
+                    <TableHead className="text-right w-[80px]">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {issues.map((issue) => (
                     <TableRow key={issue.id}>
-                      <TableCell className="font-medium text-sm text-gray-600">
+                      <TableCell className="font-medium text-sm text-gray-600 truncate max-w-[140px]" title={issue.case_id || `#${issue.id}`}>
                         {issue.case_id || `#${issue.id}`}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col max-w-md">
-                          <span className="font-semibold text-gray-900">
+                        <div className="flex flex-col max-w-[300px]">
+                          <span className="font-semibold text-gray-900 truncate" title={issue.title}>
                             {issue.title}
                           </span>
-                          <span className="text-muted-foreground text-sm truncate">
-                            {issue.description}
+                          <span className="text-muted-foreground text-sm truncate" title={issue.description?.replace(/<[^>]*>/g, "")}>
+                            {issue.description?.replace(/<[^>]*>/g, "")}
                           </span>
                         </div>
                       </TableCell>
@@ -288,19 +290,21 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                         <Badge
                           variant="outline"
                           className={`border-0 ${getPriorityColor(
-                            issue.priority,
+                            issue.priority
                           )}`}
                         >
                           {issue.priority}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={`border-0 ${getStatusColor(issue.status)}`}
-                        >
-                          {issue.status.replace(/_/g, " ")}
-                        </Badge>
+                        <div className="flex">
+                           <Badge
+                            variant="outline"
+                            className={`border-0 whitespace-nowrap ${getStatusColor(issue.status)}`}
+                          >
+                            {issue.status.replace(/_/g, " ")}
+                          </Badge>
+                        </div>
                       </TableCell>
                       <TableCell className="text-sm text-gray-600">
                         {new Date(issue.created_at).toLocaleDateString()}
@@ -321,6 +325,67 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+
+            {/* Mobile View: Cards */}
+            <div className="lg:hidden space-y-4">
+              {issues.map((issue) => (
+                <Card key={issue.id} className="border border-slate-200">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-xs text-slate-500">
+                          {issue.case_id || `#${issue.id}`}
+                        </p>
+                        <h4 className="font-semibold text-base text-slate-900 line-clamp-1">
+                          {issue.title}
+                        </h4>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={`border-0 whitespace-nowrap ${getPriorityColor(
+                          issue.priority
+                        )}`}
+                      >
+                        {issue.priority}
+                      </Badge>
+                    </div>
+
+                    <p className="text-sm text-slate-600 line-clamp-2">
+                      {issue.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <span className="px-2 py-1 bg-slate-100 rounded-md text-slate-600 font-medium">
+                        {issue.category}
+                      </span>
+                      <span className="px-2 py-1 bg-slate-100 rounded-md text-slate-600">
+                        {new Date(issue.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-2">
+                      <Badge
+                        variant="outline"
+                        className={`border-0 ${getStatusColor(issue.status)}`}
+                      >
+                        {issue.status.replace(/_/g, " ")}
+                      </Badge>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                        asChild
+                      >
+                        <Link href={`${basePath}/${issue.id}`}>
+                          View Details <ArrowRight className="ml-1 h-3 w-3" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
             {/* Pagination */}

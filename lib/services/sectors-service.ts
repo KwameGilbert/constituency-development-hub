@@ -2,6 +2,8 @@ import { apiClient } from "../api-client";
 
 export interface Sector {
   id: number;
+  category_id: number | null;
+  category_name: string | null;
   name: string;
   slug: string;
   description: string | null;
@@ -15,6 +17,7 @@ export interface Sector {
 }
 
 export interface CreateSectorRequest {
+  category_id?: number;
   name: string;
   description?: string;
   icon?: string;
@@ -24,6 +27,7 @@ export interface CreateSectorRequest {
 }
 
 export interface UpdateSectorRequest {
+  category_id?: number | null;
   name?: string;
   description?: string;
   slug?: string;
@@ -127,9 +131,8 @@ export const sectorsService = {
     return apiClient<{
       success: boolean;
       data: { sub_sectors: SubSector[]; sector_name?: string };
-    }>(`/admin/sectors/${sectorId}/sub-sectors`, {
+    }>(`/sectors/${sectorId}/sub-sectors`, {
       method: "GET",
-      requiresAuth: true,
     });
   },
 

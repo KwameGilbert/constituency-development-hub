@@ -9,12 +9,11 @@ import {
   LogOut,
   Search,
   Plus,
-  Tag,
+  FolderTree,
   Edit,
   Trash2,
-  ArrowLeft,
   Loader2,
-  FolderTree,
+  Layers,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,238 +44,203 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { sectorsService, Sector } from "@/lib/services/sectors-service";
-import { categoriesService, Category } from "@/lib/services/categories-service";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  categoriesService,
+  Category,
+} from "@/lib/services/categories-service";
+import Link from "next/link";
 
-import { SubSectorsManager } from "@/components/admin-dashboard/sectors/SubSectorsManager";
-import { ListTree } from "lucide-react";
-
-export default function SectorsPage() {
+export default function CategoriesPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isSubSectorsOpen, setIsSubSectorsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Form State
   const [formData, setFormData] = useState({
-    category_id: "",
     name: "",
     description: "",
-    color: "#1e1b4b", // default color
     icon: "",
+    color: "#6366f1",
   });
 
   // API State
-  const [sectors, setSectors] = useState<Sector[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Edit State
-  const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
-
-  // Fetch sectors from API
-  const fetchSectors = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await sectorsService.getSectors();
-
-      if (response.success && response.data?.sectors) {
-        setSectors(response.data.sectors);
-      }
-    } catch (error) {
-      console.error("Failed to fetch sectors:", error);
-      toast.error("Failed to load sectors");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Edit/Delete State
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
 
   // Fetch categories from API
   const fetchCategories = useCallback(async () => {
     try {
-      const response = await categoriesService.getCategories();
+      setLoading(true);
+      const response = await categoriesService.getAdminCategories();
+
       if (response.success && response.data?.categories) {
         setCategories(response.data.categories);
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
+      toast.error("Failed to load categories");
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    fetchSectors();
     fetchCategories();
-  }, [fetchSectors, fetchCategories]);
+  }, [fetchCategories]);
 
-  // Filter sectors based on search query
-  const filteredSectors = sectors.filter((s) =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  // Filter categories based on search query
+  const filteredCategories = categories.filter((c) =>
+    c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle form change
-  const handleFormChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  // Reset form
+  // Reset form data
   const resetForm = () => {
     setFormData({
-      category_id: "",
       name: "",
       description: "",
-      color: "#1e1b4b",
       icon: "",
+      color: "#6366f1",
     });
   };
 
-  // Handle adding a new sector
-  const handleAddSector = async () => {
+  // Handle adding a new category
+  const handleAddCategory = async () => {
     if (!formData.name.trim()) {
-      toast.error("Sector name is required");
+      toast.error("Category name is required");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await sectorsService.createSector({
-        category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
+      const response = await categoriesService.createCategory({
         name: formData.name.trim(),
-        description: formData.description,
-        color: formData.color,
-        icon: formData.icon,
-        status: "active",
+        description: formData.description.trim() || undefined,
+        icon: formData.icon.trim() || undefined,
+        color: formData.color || undefined,
       });
 
       if (response.success) {
-        toast.success("Sector added successfully");
+        toast.success("Category added successfully");
         setIsAddModalOpen(false);
         resetForm();
-        fetchSectors();
+        fetchCategories();
       } else {
-        toast.error(response.message || "Failed to add sector");
+        toast.error(response.message || "Failed to add category");
       }
     } catch (error) {
-      console.error("Failed to add sector:", error);
-      toast.error("Failed to add sector");
+      console.error("Failed to add category:", error);
+      toast.error("Failed to add category");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Handle edit click
-  const handleEditClick = (sector: Sector) => {
-    setSelectedSector(sector);
+  const handleEditClick = (category: Category) => {
+    setSelectedCategory(category);
     setFormData({
-      category_id: sector.category_id?.toString() || "",
-      name: sector.name,
-      description: sector.description || "",
-      color: sector.color || "#1e1b4b",
-      icon: sector.icon || "",
+      name: category.name,
+      description: category.description || "",
+      icon: category.icon || "",
+      color: category.color || "#6366f1",
     });
     setIsEditModalOpen(true);
   };
 
   // Handle saving changes
   const handleSaveChanges = async () => {
-    if (!selectedSector) return;
+    if (!selectedCategory) return;
 
     if (!formData.name.trim()) {
-      toast.error("Sector name is required");
+      toast.error("Category name is required");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await sectorsService.updateSector(selectedSector.id, {
-        category_id: formData.category_id ? parseInt(formData.category_id) : null,
-        name: formData.name.trim(),
-        description: formData.description,
-        color: formData.color,
-        icon: formData.icon,
-        status: "active",
-      });
+      const response = await categoriesService.updateCategory(
+        selectedCategory.id,
+        {
+          name: formData.name.trim(),
+          description: formData.description.trim() || null,
+          icon: formData.icon.trim() || null,
+          color: formData.color || null,
+        }
+      );
 
       if (response.success) {
-        toast.success("Sector updated successfully");
+        toast.success("Category updated successfully");
         setIsEditModalOpen(false);
-        setSelectedSector(null);
+        setSelectedCategory(null);
         resetForm();
-        fetchSectors();
+        fetchCategories();
       } else {
-        toast.error(response.message || "Failed to update sector");
+        toast.error(response.message || "Failed to update category");
       }
     } catch (error) {
-      console.error("Failed to update sector:", error);
-      toast.error("Failed to update sector");
+      console.error("Failed to update category:", error);
+      toast.error("Failed to update category");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Handle delete click
-  const handleDeleteClick = (sector: Sector) => {
-    setSelectedSector(sector);
+  const handleDeleteClick = (category: Category) => {
+    setSelectedCategory(category);
     setIsDeleteDialogOpen(true);
   };
 
   // Handle delete confirmation
   const handleConfirmDelete = async () => {
-    if (!selectedSector) return;
+    if (!selectedCategory) return;
 
     setIsSubmitting(true);
     try {
-      const response = await sectorsService.deleteSector(selectedSector.id);
+      const response = await categoriesService.deleteCategory(
+        selectedCategory.id
+      );
 
       if (response.success) {
-        toast.success("Sector deleted successfully");
+        toast.success("Category deleted successfully");
         setIsDeleteDialogOpen(false);
-        setSelectedSector(null);
-        fetchSectors();
+        setSelectedCategory(null);
+        fetchCategories();
       } else {
-        toast.error(response.message || "Failed to delete sector");
+        toast.error(response.message || "Failed to delete category");
       }
     } catch (error) {
-      console.error("Failed to delete sector:", error);
-      toast.error("Failed to delete sector. It may have associated projects.");
+      console.error("Failed to delete category:", error);
+      toast.error(
+        "Failed to delete category. It may have associated sectors."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleManageSubSectors = (sector: Sector) => {
-    setSelectedSector(sector);
-    setIsSubSectorsOpen(true);
-  };
-
   return (
     <div className="flex flex-col h-full bg-slate-50">
       <AdminHeader
-        title="Sectors"
-        description="Manage project sectors and categories"
+        title="Categories"
+        description="Manage top-level categories for sectors"
         roleAbbr="MP"
         userName="Admin.Rock"
         userRoleLabel="MP"
         dropdownItems={[
           {
-            label: "Categories",
-            href: "/admin-dashboard/categories",
-            icon: FolderTree,
-          },
-          {
-            label: "Back to Dashboard",
-            href: "/admin-dashboard",
-            icon: ArrowLeft,
+            label: "Sectors",
+            href: "/admin-dashboard/sectors",
+            icon: Layers,
           },
           {
             label: "Profile Settings",
@@ -301,18 +265,9 @@ export default function SectorsPage() {
         ]}
         actionButtons={[
           {
-            label: "Categories",
-            icon: FolderTree,
-            href: "/admin-dashboard/categories",
-            className: "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50",
-          },
-          {
-            label: "Add Sector",
+            label: "Add Category",
             icon: Plus,
-            onClick: () => {
-              resetForm();
-              setIsAddModalOpen(true);
-            },
+            onClick: () => setIsAddModalOpen(true),
             className: "bg-indigo-600 hover:bg-indigo-700 text-white",
           },
         ]}
@@ -324,12 +279,12 @@ export default function SectorsPage() {
           <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
             <div className="space-y-1">
               <h2 className="text-lg font-semibold text-gray-900">
-                Sectors & Categories
+                Categories
               </h2>
               <p className="text-sm text-gray-500">
                 {loading
                   ? "Loading..."
-                  : `Showing ${filteredSectors.length} sectors`}
+                  : `Showing ${filteredCategories.length} categories`}
               </p>
             </div>
 
@@ -337,21 +292,18 @@ export default function SectorsPage() {
               <div className="relative w-full sm:max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Search sectors..."
+                  placeholder="Search categories..."
                   className="pl-10 w-full bg-gray-50 border-gray-200 focus:bg-white transition-all"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <Button
-                onClick={() => {
-                  resetForm();
-                  setIsAddModalOpen(true);
-                }}
+                onClick={() => setIsAddModalOpen(true)}
                 className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Sector
+                Add New Category
               </Button>
             </div>
 
@@ -360,14 +312,14 @@ export default function SectorsPage() {
               <Table>
                 <TableHeader className="bg-gray-50/50">
                   <TableRow className="hover:bg-transparent border-gray-100">
-                    <TableHead className="w-[30%] font-medium text-gray-500 text-xs uppercase tracking-wider">
+                    <TableHead className="w-[35%] font-medium text-gray-500 text-xs uppercase tracking-wider">
                       Name
                     </TableHead>
-                    <TableHead className="w-[40%] font-medium text-gray-500 text-xs uppercase tracking-wider">
+                    <TableHead className="w-[35%] font-medium text-gray-500 text-xs uppercase tracking-wider">
                       Description
                     </TableHead>
                     <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Projects
+                      Sectors
                     </TableHead>
                     <TableHead className="text-right font-medium text-gray-500 text-xs uppercase tracking-wider">
                       Actions
@@ -381,24 +333,24 @@ export default function SectorsPage() {
                         <div className="flex flex-col items-center justify-center gap-2">
                           <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
                           <span className="text-gray-500">
-                            Loading sectors...
+                            Loading categories...
                           </span>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : filteredSectors.length === 0 ? (
+                  ) : filteredCategories.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={4}
                         className="text-center py-10 text-gray-500"
                       >
-                        No sectors found
+                        No categories found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredSectors.map((sector) => (
+                    filteredCategories.map((category) => (
                       <TableRow
-                        key={sector.id}
+                        key={category.id}
                         className="hover:bg-gray-50/50 border-gray-100 transition-colors"
                       >
                         <TableCell className="font-medium text-gray-900">
@@ -406,70 +358,48 @@ export default function SectorsPage() {
                             <div
                               className="w-8 h-8 rounded-lg flex items-center justify-center text-white"
                               style={{
-                                backgroundColor: sector.color || "#6366f1",
+                                backgroundColor: category.color || "#6366f1",
                               }}
                             >
-                              <Tag className="w-4 h-4" />
+                              <FolderTree className="w-4 h-4" />
                             </div>
-                            <div>
-                              <div className="font-medium">{sector.name}</div>
-                              <div className="text-xs text-gray-400">
-                                /{sector.slug}
-                              </div>
-                            </div>
+                            {category.name}
                           </div>
                         </TableCell>
-                        <TableCell className="text-gray-500 text-sm max-w-[300px] truncate">
-                          {sector.description || "-"}
+                        <TableCell className="text-gray-500 text-sm">
+                          {category.description || (
+                            <span className="text-gray-400 italic">
+                              No description
+                            </span>
+                          )}
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50"
-                          >
-                            {sector.projects_count || 0} projects
-                          </Badge>
+                          <Link href="/admin-dashboard/sectors">
+                            <Badge
+                              variant="secondary"
+                              className="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 cursor-pointer"
+                            >
+                              {category.sectors_count || 0} sectors
+                            </Badge>
+                          </Link>
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 text-xs bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                              onClick={() => handleManageSubSectors(sector)}
-                            >
-                              <ListTree className="w-3.5 h-3.5 mr-1.5" />
-                              Subsectors
-                            </Button>
-                            <Button
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                              onClick={() => handleEditClick(sector)}
+                              onClick={() => handleEditClick(category)}
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className={`h-8 w-8 ${
-                                (sector.projects_count || 0) > 0
-                                  ? "text-gray-300 cursor-not-allowed"
-                                  : "text-red-400 hover:text-red-500 hover:bg-red-50"
-                              }`}
-                              onClick={() => {
-                                if ((sector.projects_count || 0) > 0) {
-                                  toast.error(
-                                    "Cannot delete sector with existing projects",
-                                  );
-                                  return;
-                                }
-                                handleDeleteClick(sector);
-                              }}
-                              title={
-                                (sector.projects_count || 0) > 0
-                                  ? "Cannot delete sector with existing projects"
-                                  : "Delete Sector"
+                              className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
+                              onClick={() => handleDeleteClick(category)}
+                              disabled={
+                                (category.sectors_count || 0) > 0
                               }
                             >
                               <Trash2 className="w-4 h-4" />
@@ -486,41 +416,22 @@ export default function SectorsPage() {
         </div>
       </div>
 
-      {/* Add Sector Modal */}
+      {/* Add Category Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Add New Sector</DialogTitle>
+            <DialogTitle>Add New Category</DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={formData.category_id}
-                onValueChange={(value) => handleFormChange("category_id", value)}
-                disabled={isSubmitting}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id.toString()}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="name">
-                Sector Name <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="name">Category Name *</Label>
               <Input
                 id="name"
-                placeholder="e.g. Education"
+                placeholder="Enter category name"
                 value={formData.name}
-                onChange={(e) => handleFormChange("name", e.target.value)}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 disabled={isSubmitting}
               />
             </div>
@@ -528,57 +439,68 @@ export default function SectorsPage() {
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                placeholder="Brief description of the sector..."
+                placeholder="Enter category description"
                 value={formData.description}
                 onChange={(e) =>
-                  handleFormChange("description", e.target.value)
+                  setFormData({ ...formData, description: e.target.value })
                 }
                 disabled={isSubmitting}
+                rows={3}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="color">Color Code</Label>
+                <Label htmlFor="icon">Icon (Lucide name)</Label>
+                <Input
+                  id="icon"
+                  placeholder="e.g., folder-tree"
+                  value={formData.icon}
+                  onChange={(e) =>
+                    setFormData({ ...formData, icon: e.target.value })
+                  }
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="color">Color</Label>
                 <div className="flex gap-2">
                   <Input
                     id="color"
                     type="color"
-                    className="w-12 h-10 p-1 cursor-pointer"
+                    className="w-12 h-10 p-1"
                     value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
+                    onChange={(e) =>
+                      setFormData({ ...formData, color: e.target.value })
+                    }
                     disabled={isSubmitting}
                   />
                   <Input
                     value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
+                    onChange={(e) =>
+                      setFormData({ ...formData, color: e.target.value })
+                    }
                     disabled={isSubmitting}
-                    placeholder="#000000"
+                    className="flex-1"
+                    placeholder="#6366f1"
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="icon">Icon Class (Optional)</Label>
-                <Input
-                  id="icon"
-                  placeholder="e.g. lucide-book"
-                  value={formData.icon}
-                  onChange={(e) => handleFormChange("icon", e.target.value)}
-                  disabled={isSubmitting}
-                />
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setIsAddModalOpen(false)}
+              onClick={() => {
+                setIsAddModalOpen(false);
+                resetForm();
+              }}
               disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              onClick={handleAddSector}
+              onClick={handleAddCategory}
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -587,48 +509,29 @@ export default function SectorsPage() {
                   Adding...
                 </>
               ) : (
-                "Add Sector"
+                "Add Category"
               )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Edit Sector Modal */}
+      {/* Edit Category Modal */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit Sector</DialogTitle>
+            <DialogTitle>Edit Category</DialogTitle>
           </DialogHeader>
           <div className="py-4 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-category">Category</Label>
-              <Select
-                value={formData.category_id}
-                onValueChange={(value) => handleFormChange("category_id", value)}
-                disabled={isSubmitting}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id.toString()}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">
-                Sector Name <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="edit-name">Category Name *</Label>
               <Input
                 id="edit-name"
-                placeholder="e.g. Education"
+                placeholder="Enter category name"
                 value={formData.name}
-                onChange={(e) => handleFormChange("name", e.target.value)}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 disabled={isSubmitting}
               />
             </div>
@@ -636,50 +539,61 @@ export default function SectorsPage() {
               <Label htmlFor="edit-description">Description</Label>
               <Textarea
                 id="edit-description"
-                placeholder="Brief description of the sector..."
+                placeholder="Enter category description"
                 value={formData.description}
                 onChange={(e) =>
-                  handleFormChange("description", e.target.value)
+                  setFormData({ ...formData, description: e.target.value })
                 }
                 disabled={isSubmitting}
+                rows={3}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-color">Color Code</Label>
+                <Label htmlFor="edit-icon">Icon (Lucide name)</Label>
+                <Input
+                  id="edit-icon"
+                  placeholder="e.g., folder-tree"
+                  value={formData.icon}
+                  onChange={(e) =>
+                    setFormData({ ...formData, icon: e.target.value })
+                  }
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-color">Color</Label>
                 <div className="flex gap-2">
                   <Input
                     id="edit-color"
                     type="color"
-                    className="w-12 h-10 p-1 cursor-pointer"
+                    className="w-12 h-10 p-1"
                     value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
+                    onChange={(e) =>
+                      setFormData({ ...formData, color: e.target.value })
+                    }
                     disabled={isSubmitting}
                   />
                   <Input
                     value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
+                    onChange={(e) =>
+                      setFormData({ ...formData, color: e.target.value })
+                    }
                     disabled={isSubmitting}
-                    placeholder="#000000"
+                    className="flex-1"
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-icon">Icon Class (Optional)</Label>
-                <Input
-                  id="edit-icon"
-                  placeholder="e.g. lucide-book"
-                  value={formData.icon}
-                  onChange={(e) => handleFormChange("icon", e.target.value)}
-                  disabled={isSubmitting}
-                />
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button
               variant="outline"
-              onClick={() => setIsEditModalOpen(false)}
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setSelectedCategory(null);
+                resetForm();
+              }}
               disabled={isSubmitting}
             >
               Cancel
@@ -709,11 +623,11 @@ export default function SectorsPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Sector</AlertDialogTitle>
+            <AlertDialogTitle>Delete Category</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{selectedSector?.name}
-              &quot;? This action cannot be undone. Sectors with associated
-              projects cannot be deleted.
+              Are you sure you want to delete &quot;{selectedCategory?.name}
+              &quot;? This action cannot be undone. Categories with associated
+              sectors cannot be deleted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -737,13 +651,6 @@ export default function SectorsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Sub-Sectors Manager Dialog */}
-      <SubSectorsManager
-        sector={selectedSector}
-        isOpen={isSubSectorsOpen}
-        onClose={() => setIsSubSectorsOpen(false)}
-      />
     </div>
   );
 }

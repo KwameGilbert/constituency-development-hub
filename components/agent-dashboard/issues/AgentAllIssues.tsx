@@ -307,50 +307,97 @@ export function AgentAllIssues() {
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table className="min-w-[800px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-20">ID</TableHead>
-                  <TableHead>TITLE & DESCRIPTION</TableHead>
-                  <TableHead>CATEGORY</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead>DATE SUBMITTED</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredIssues.map((issue) => (
-                  <TableRow key={issue.id}>
-                    <TableCell className="font-medium">
-                      {issue.case_id || `#${issue.id}`}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-semibold">{issue.title}</span>
-                        <span className="text-muted-foreground text-sm line-clamp-1">
-                          {issue.description}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{issue.category}</TableCell>
-                    <TableCell>{getStatusBadge(issue.status)}</TableCell>
-                    <TableCell>{formatDate(issue.created_at)}</TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Link href={`/agents-dashboard/issues/${issue.id}`}>
-                        <Button
-                          variant="link"
-                          className="h-auto p-0 text-slate-600 hover:text-slate-900"
-                        >
-                          View
-                        </Button>
-                      </Link>
-                    </TableCell>
+          <>
+            {/* Mobile Card View */}
+            <div className="block md:hidden space-y-4">
+              {filteredIssues.map((issue) => (
+                <div
+                  key={issue.id}
+                  className="border rounded-lg p-4 bg-white space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {issue.case_id || `#${issue.id}`}
+                      </p>
+                      <h4 className="font-semibold text-sm truncate">
+                        {issue.title}
+                      </h4>
+                    </div>
+                    {getStatusBadge(issue.status)}
+                  </div>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {issue.description}
+                  </p>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs text-muted-foreground">
+                        Category
+                      </span>
+                      <span className="font-medium">{issue.category}</span>
+                    </div>
+                    <div className="flex flex-col gap-1 text-right">
+                      <span className="text-xs text-muted-foreground">
+                        Submitted
+                      </span>
+                      <span>{formatDate(issue.created_at)}</span>
+                    </div>
+                  </div>
+                  <Link href={`/agents-dashboard/issues/${issue.id}`}>
+                    <Button variant="outline" size="sm" className="w-full">
+                      View Details
+                    </Button>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table className="min-w-[700px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-32">ID</TableHead>
+                    <TableHead className="min-w-[200px]">TITLE & DESCRIPTION</TableHead>
+                    <TableHead className="w-28">CATEGORY</TableHead>
+                    <TableHead className="w-28">STATUS</TableHead>
+                    <TableHead className="w-28">DATE</TableHead>
+                    <TableHead className="text-right w-20">ACTIONS</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredIssues.map((issue) => (
+                    <TableRow key={issue.id}>
+                      <TableCell className="font-medium text-xs">
+                        {issue.case_id || `#${issue.id}`}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col max-w-[300px]">
+                          <span className="font-semibold truncate">{issue.title}</span>
+                          <span className="text-muted-foreground text-sm line-clamp-1">
+                            {issue.description}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm">{issue.category}</TableCell>
+                      <TableCell>{getStatusBadge(issue.status)}</TableCell>
+                      <TableCell className="text-sm">{formatDate(issue.created_at)}</TableCell>
+                      <TableCell className="text-right">
+                        <Link href={`/agents-dashboard/issues/${issue.id}`}>
+                          <Button
+                            variant="link"
+                            className="h-auto p-0 text-slate-600 hover:text-slate-900"
+                          >
+                            View
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </div>
     </div>

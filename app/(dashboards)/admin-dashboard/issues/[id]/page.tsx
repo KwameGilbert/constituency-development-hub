@@ -108,9 +108,10 @@ export default async function IssueDetailPage({
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Description
               </h3>
-              <p className="text-gray-600 whitespace-pre-wrap">
-                {issue.description}
-              </p>
+              <div
+                className="text-gray-600 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: issue.description }}
+              />
             </div>
 
             {/* Metadata Grid */}
@@ -201,6 +202,81 @@ export default async function IssueDetailPage({
             )}
           </CardContent>
         </Card>
+
+        {/* Assessment Details (if assessment exists) */}
+        {issue.assessment && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-blue-600" />
+                Task Force Assessment
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+               {/* Status Badge */}
+               <div className="flex justify-end">
+                  <Badge variant={issue.assessment.status === 'approved' ? 'default' : issue.assessment.status === 'rejected' ? 'destructive' : 'secondary'}>
+                    Status: {issue.assessment.status ? issue.assessment.status.toUpperCase() : 'SUBMITTED'}
+                  </Badge>
+               </div>
+            
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                   <h3 className="text-sm font-semibold text-gray-700 mb-2">Assessment Summary</h3>
+                   <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{issue.assessment.assessment_summary}</p>
+                </div>
+                <div>
+                   <h3 className="text-sm font-semibold text-gray-700 mb-2">Findings</h3>
+                   <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{issue.assessment.findings || "No specific findings recorded."}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                 <div>
+                    <span className="text-xs text-gray-500 font-medium uppercase">Severity</span>
+                    <p className="font-semibold capitalize text-gray-900">{issue.assessment.severity}</p>
+                 </div>
+                 <div>
+                    <span className="text-xs text-gray-500 font-medium uppercase">Issue Confirmed</span>
+                    <p className={`font-semibold ${issue.assessment.issue_confirmed ? 'text-green-600' : 'text-red-600'}`}>
+                      {issue.assessment.issue_confirmed ? "YES" : "NO"}
+                    </p>
+                 </div>
+                 <div>
+                    <span className="text-xs text-gray-500 font-medium uppercase">Est. Cost</span>
+                    <p className="font-semibold text-gray-900">{issue.assessment.estimated_cost || "N/A"}</p>
+                 </div>
+                 <div>
+                    <span className="text-xs text-gray-500 font-medium uppercase">Est. Duration</span>
+                    <p className="font-semibold text-gray-900">{issue.assessment.estimated_duration || "N/A"}</p>
+                 </div>
+              </div>
+
+              {issue.assessment.recommendations && (
+                <div className="pt-4 border-t">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Recommendations</h3>
+                  <div className="p-3 bg-blue-50 border border-blue-100 rounded-md text-sm text-blue-800 whitespace-pre-wrap">
+                    {issue.assessment.recommendations}
+                  </div>
+                </div>
+              )}
+
+              {issue.assessment.required_resources && issue.assessment.required_resources.length > 0 && (
+                <div className="pt-4 border-t">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Required Resources</h3>
+                  <div className="border rounded-md divide-y">
+                     {issue.assessment.required_resources.map((res: any, idx: number) => (
+                           <div key={idx} className="flex justify-between p-2 text-sm">
+                             <span>{res.item || res.name} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
+                             <span className="font-medium">Qty: {res.quantity}</span>
+                           </div>
+                        ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Resource Allocation (if allocated) */}
         {issue.allocated_budget && issue.allocated_resources && (

@@ -149,8 +149,8 @@ export function AdminRecentIssues() {
       </CardHeader>
       <CardContent className="p-0">
         <div className="bg-white">
-          {/* Table Header */}
-          <div className="grid grid-cols-4 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
+          {/* Table Header (Desktop Only) */}
+          <div className="hidden md:grid grid-cols-4 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
             <div>Issue</div>
             <div>Agent</div>
             <div>Status</div>
@@ -162,44 +162,76 @@ export function AdminRecentIssues() {
 
           {/* Issues List */}
           {issues.length > 0 ? (
-            <div className="overflow-x-auto">
-              <div className="divide-y divide-gray-100 min-w-[600px]">
+            <div className="overflow-hidden">
+              <div className="divide-y divide-gray-100">
                 {issues.map((issue) => (
                   <div
                     key={issue.id}
-                    className="grid grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+                    className="flex flex-col md:grid md:grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
                   >
+                    {/* Issue Title & Desc */}
                     <div className="flex flex-col">
+                      <div className="flex justify-between items-start md:block">
+                        <span
+                          className="text-sm font-medium text-gray-900 truncate block max-w-[200px] md:max-w-none"
+                          title={issue.title}
+                        >
+                          {issue.title}
+                        </span>
+                        {/* Mobile Status Badge */}
+                        <div className="md:hidden">
+                           <Badge className={`text-xs ${getStatusColor(issue.status)}`}>
+                            {issue.status}
+                          </Badge>
+                        </div>
+                      </div>
                       <span
-                        className="text-sm font-medium text-gray-900 truncate"
-                        title={issue.title}
-                      >
-                        {issue.title}
-                      </span>
-                      <span
-                        className="text-xs text-gray-500 truncate"
+                        className="text-xs text-gray-500 truncate mt-1"
                         title={issue.description}
                       >
                         {issue.description}
                       </span>
                     </div>
-                    <div className="flex items-center">
+
+                    {/* Desktop: Agent */}
+                    <div className="hidden md:flex items-center">
                       <span className="text-sm text-gray-900">{issue.agent}</span>
                     </div>
-                    <div className="flex items-center">
+
+                    {/* Desktop: Status */}
+                    <div className="hidden md:flex items-center">
                       <Badge
                         className={`text-xs ${getStatusColor(issue.status)}`}
                       >
                         {issue.status}
                       </Badge>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+
+                    {/* Desktop: Severity & Date */}
+                    <div className="hidden md:grid grid-cols-2 gap-2">
                       <Badge
-                        className={`text-xs justify-center ${getSeverityColor(issue.severity)}`}
+                        className={`text-xs justify-center ${getSeverityColor(
+                          issue.severity
+                        )}`}
                       >
                         {issue.severity}
                       </Badge>
-                      <span className="text-xs text-gray-500 text-right">
+                      <span className="text-sm text-gray-500 text-right">
+                        {new Date(issue.date).toLocaleDateString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                        })}
+                      </span>
+                    </div>
+
+                    {/* Mobile Details Row */}
+                    <div className="flex md:hidden items-center justify-between mt-2 text-xs text-gray-500">
+                      <div className="flex items-center gap-2">
+                         <span className="font-medium text-gray-700">{issue.agent}</span>
+                         <span>•</span>
+                         <span className={`${getSeverityColor(issue.severity).replace("bg-", "text-").replace("text-", "bg-transparent ")} font-medium`}>{issue.severity}</span>
+                      </div>
+                      <span>
                         {new Date(issue.date).toLocaleDateString("en-GB", {
                           day: "2-digit",
                           month: "short",

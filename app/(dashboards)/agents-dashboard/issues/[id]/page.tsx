@@ -226,9 +226,10 @@ export default function AgentIssueDetailPage({
 
                 <div>
                   <label className="text-sm text-slate-500">Description</label>
-                  <p className="mt-1 text-slate-700 whitespace-pre-wrap">
-                    {issue.description}
-                  </p>
+                  <div
+                    className="mt-1 text-slate-700 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: issue.description }}
+                  />
                 </div>
 
                 {issue.additional_notes && (

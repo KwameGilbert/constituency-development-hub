@@ -1,13 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { Building, Home, MapPin, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Building, MapPin, ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface LocationHierarchyProps {
   counts?: {
     community: number;
     suburb: number;
-    cottage: number;
-    smaller_community: number;
   };
 }
 
@@ -41,36 +39,6 @@ export function LocationHierarchy({ counts }: LocationHierarchyProps) {
       borderColor: "border-green-200",
       ringColor: "ring-green-100",
       linkText: "Manage Suburbs",
-      align: "right",
-    },
-    {
-      id: 3,
-      title: "Smaller Communities",
-      description: "Subdivisions within suburbs",
-      count: counts?.smaller_community || 0,
-      countLabel: "smaller communities",
-      href: "/admin-dashboard/locations/smaller-communities",
-      icon: Home,
-      color: "bg-blue-600",
-      textColor: "text-blue-600",
-      borderColor: "border-blue-200",
-      ringColor: "ring-blue-100",
-      linkText: "Manage Smaller Communities",
-      align: "left",
-    },
-    {
-      id: 4,
-      title: "Cottages",
-      description: "Individual housing units within smaller communities",
-      count: counts?.cottage || 0,
-      countLabel: "cottages",
-      href: "/admin-dashboard/locations/cottages",
-      icon: Home,
-      color: "bg-amber-500",
-      textColor: "text-amber-600",
-      borderColor: "border-amber-200",
-      ringColor: "ring-amber-100",
-      linkText: "Manage Cottages",
       align: "right",
     },
   ];

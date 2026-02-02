@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import {
   Building,
-  Home,
   MapPin,
   UserCircle,
   ShieldAlert,
@@ -75,25 +74,11 @@ export default function LocationsPage() {
       bgColor: "bg-indigo-100",
     },
     {
-      label: "Smaller Communities",
-      count: stats?.counts?.smaller_community || 0,
-      icon: Home,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100",
-    },
-    {
       label: "Suburbs",
       count: stats?.counts?.suburb || 0,
       icon: MapPin,
       color: "text-green-600",
       bgColor: "bg-green-100",
-    },
-    {
-      label: "Cottages",
-      count: stats?.counts?.cottage || 0,
-      icon: Home,
-      color: "text-amber-600",
-      bgColor: "bg-amber-100",
     },
   ];
 
@@ -108,28 +93,12 @@ export default function LocationsPage() {
       href: "/admin-dashboard/locations/communities",
     },
     {
-      title: "Smaller Communities",
-      description: "Manage smaller communities",
-      icon: Home,
-      color: "bg-blue-600",
-      bgColor: "bg-blue-50",
-      href: "/admin-dashboard/locations/smaller-communities",
-    },
-    {
       title: "Suburbs",
       description: "Manage suburb locations",
       icon: MapPin,
       color: "bg-green-600",
       bgColor: "bg-green-50",
       href: "/admin-dashboard/locations/suburbs",
-    },
-    {
-      title: "Cottages",
-      description: "Manage cottage locations",
-      icon: Home,
-      color: "bg-amber-600",
-      bgColor: "bg-amber-50",
-      href: "/admin-dashboard/locations/cottages",
     },
   ];
 
@@ -143,19 +112,9 @@ export default function LocationsPage() {
         userRoleLabel="MP"
         dropdownItems={[
           {
-            label: "Smaller Communities",
-            href: "/admin-dashboard/locations/smaller-communities",
-            icon: Home,
-          },
-          {
             label: "Suburbs",
             href: "/admin-dashboard/locations/suburbs",
             icon: MapPin,
-          },
-          {
-            label: "Cottages",
-            href: "/admin-dashboard/locations/cottages",
-            icon: Home,
           },
           {
             label: "Profile Settings",
