@@ -377,7 +377,7 @@ export function IssueActionModals({
         open={activeAction === "review-assessment"}
         onOpenChange={onClose}
       >
-        <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col p-0">
+        <DialogContent className="max-w-5xl max-h-[100vh] h-[100vh] flex flex-col p-0">
           <DialogHeader className="px-6 pt-6 pb-2">
             <DialogTitle>Review Task Force Assessment</DialogTitle>
             <DialogDescription>
@@ -385,30 +385,30 @@ export function IssueActionModals({
             </DialogDescription>
           </DialogHeader>
           
-          <ScrollArea className="flex-1 px-6">
+          <div className="flex-1 overflow-y-auto px-6">
             <div className="space-y-6 pb-6">
               {/* Assessment Details View */}
-              {issue.assessment ? (
+              {issue.assessment_report ? (
                 <div className="space-y-6">
                   {/* Key Stats */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-lg border">
                     <div>
                       <span className="text-xs text-slate-500 font-medium uppercase">Severity</span>
-                      <p className="font-semibold capitalize text-slate-900">{issue.assessment.severity}</p>
+                      <p className="font-semibold capitalize text-slate-900">{issue.assessment_report.severity}</p>
                     </div>
                     <div>
                       <span className="text-xs text-slate-500 font-medium uppercase">Confirmed</span>
-                       <Badge variant={issue.assessment.issue_confirmed ? "default" : "destructive"} className="mt-1">
-                        {issue.assessment.issue_confirmed ? "Yes" : "No"}
+                       <Badge variant={issue.assessment_report.issue_confirmed ? "default" : "destructive"} className="mt-1">
+                        {issue.assessment_report.issue_confirmed ? "Yes" : "No"}
                        </Badge>
                     </div>
                     <div>
                       <span className="text-xs text-slate-500 font-medium uppercase">Est. Cost</span>
-                      <p className="font-semibold text-slate-900">{issue.assessment.estimated_cost || "N/A"}</p>
+                      <p className="font-semibold text-slate-900">{issue.assessment_report.estimated_cost || "N/A"}</p>
                     </div>
                     <div>
                       <span className="text-xs text-slate-500 font-medium uppercase">Duration</span>
-                      <p className="font-semibold text-slate-900">{issue.assessment.estimated_duration || "N/A"}</p>
+                      <p className="font-semibold text-slate-900">{issue.assessment_report.estimated_duration || "N/A"}</p>
                     </div>
                   </div>
 
@@ -419,43 +419,43 @@ export function IssueActionModals({
                         <FileText className="h-4 w-4 text-blue-600" /> Assessment Summary
                       </h4>
                       <div className="p-3 bg-white border rounded-md text-sm text-slate-700 whitespace-pre-wrap">
-                        {issue.assessment.assessment_summary}
+                        {issue.assessment_report.assessment_summary}
                       </div>
                     </div>
 
-                    {issue.assessment.findings && (
+                    {issue.assessment_report.findings && (
                        <div>
                         <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
                           <MapPin className="h-4 w-4 text-orange-600" /> Findings & Observations
                         </h4>
                         <div className="p-3 bg-white border rounded-md text-sm text-slate-700 whitespace-pre-wrap">
-                          {issue.assessment.findings}
+                          {issue.assessment_report.findings}
                         </div>
                       </div>
                     )}
 
-                    {issue.assessment.recommendations && (
+                    {issue.assessment_report.recommendations && (
                        <div>
                         <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
                           <CheckCircle className="h-4 w-4 text-green-600" /> Recommendations
                         </h4>
                         <div className="p-3 bg-green-50 border border-green-100 rounded-md text-sm text-green-800 whitespace-pre-wrap">
-                          {issue.assessment.recommendations}
+                          {issue.assessment_report.recommendations}
                         </div>
                       </div>
                     )}
                   </div>
 
                   {/* Required Resources */}
-                  {issue.assessment.required_resources && issue.assessment.required_resources.length > 0 && (
+                  {issue.assessment_report.required_resources && issue.assessment_report.required_resources.length > 0 && (
                      <div>
                       <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
                         <DollarSign className="h-4 w-4 text-purple-600" /> Required Resources
                       </h4>
                       <div className="border rounded-md divide-y">
-                        {issue.assessment.required_resources.map((res: ResourceItem, idx: number) => (
+                        {issue.assessment_report.required_resources.map((res: ResourceItem, idx: number) => (
                            <div key={idx} className="flex justify-between p-2 text-sm">
-                             <span>{res.item || res.name} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
+                             <span>{res.item} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
                              <span className="font-medium">Qty: {res.quantity}</span>
                            </div>
                         ))}
@@ -518,7 +518,7 @@ export function IssueActionModals({
                 </div>
               </div>
             </div>
-          </ScrollArea>
+          </div>
 
           <DialogFooter className="px-6 py-4 border-t bg-gray-50">
             <Button variant="outline" onClick={onClose} disabled={loading}>

@@ -52,17 +52,23 @@ export function IssueActions({ issue }: IssueActionsProps) {
   // Determine which actions are available based on status
   const canAssignTaskForce = issue.status === "forwarded_to_admin";
   
-  // Review Assessment: Only available if submitted and NOT yet approved? 
-  // Actually, UI should probably allow re-review or just show it's done. 
-  // If we want to force flow: Review -> Approve -> Allocate, then we check assessment status too.
-  const isAssessmentApproved = issue.assessment?.status === "approved";
-  const canReviewAssessment = issue.status === "assessment_submitted" && !isAssessmentApproved;
+  // Review Assessment: Only available if submitted and NOT yet approved
+  const isAssessmentApproved = issue.assessment_report?.status === "approved";
+  const canReviewAssessment = 
+    (issue.status === "assessment_submitted" || issue.assessment_report?.status === "submitted") && 
+    !isAssessmentApproved;
   
-  // Allocate Resources: STRICT backend requirement: status MUST be "assessment_submitted"
-  // Logically, we only want to allocate if the assessment is APPROVED.
-  const canAllocateResources = issue.status === "assessment_submitted" && isAssessmentApproved;
+  // Allocate Resources: Available if assessment is APPROVED, regardless of exact issue status (unless already resolved/closed)
+  const canAllocateResources = 
+    isAssessmentApproved && 
+    issue.status !== "resolved" && 
+    issue.status !== "closed" &&
+    issue.status !== "resources_allocated"; // Optional: disable if already allocated? User might want to view/update?
   
-  const canReviewResolution = issue.status === "resolution_submitted";
+  // Review Resolution: Available if resolution exists and is submitted (or pending review)
+  const canReviewResolution = 
+    (issue.status === "resolution_submitted" || issue.resolution?.status === "submitted") &&
+    issue.resolution?.status !== "approved";
 
   return (
     <>

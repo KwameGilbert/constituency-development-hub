@@ -84,6 +84,7 @@ export interface TaskForceIssue {
   created_at: string;
   updated_at?: string;
   formatted_date?: string;
+  assessment_report?: any; // Using any for now to avoid circular deps or complex type import duplicates, but ideally should be AssessmentReport
 }
 
 export interface IssuesResponse {
@@ -252,17 +253,21 @@ export const taskForceService = {
    */
   async submitResolution(
     issueId: number,
-    data: {
-      resolution_summary: string;
-      work_description?: string;
-      start_date?: string;
-      completion_date?: string;
-      actual_cost?: number;
-    },
+    data:
+      | FormData
+      | {
+          resolution_summary: string;
+          work_description?: string;
+          start_date?: string;
+          completion_date?: string;
+          actual_cost?: number;
+        },
   ): Promise<{ success: boolean }> {
+    const isFormData = data instanceof FormData;
     return apiClient(`/task-force/issues/${issueId}/resolution`, {
       method: "POST",
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
+      isFormData: isFormData,
     });
   },
 

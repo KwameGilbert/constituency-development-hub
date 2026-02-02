@@ -33,7 +33,8 @@ export interface Issue {
   assigned_task_force_id?: number;
   allocated_budget?: number;
   allocated_resources?: ResourceItem[];
-  assessment?: AssessmentReport;
+  assessment_report?: AssessmentReport;
+  resolution?: ResolutionReport;
   // Optional extra fields for UI adaptation (if returned)
   timeline?: TimelineEvent[];
 }
@@ -52,6 +53,22 @@ export interface AssessmentReport {
   submitted_by?: number;
   created_at?: string;
   status: "submitted" | "approved" | "rejected" | "needs_revision";
+}
+
+export interface ResolutionReport {
+  id: number;
+  resolution_summary: string;
+  work_description?: string;
+  actual_cost?: number;
+  start_date?: string;
+  completion_date?: string;
+  before_images?: string[];
+  after_images?: string[];
+  challenges_faced?: string;
+  additional_notes?: string;
+  status: "submitted" | "approved" | "rejected";
+  submitted_by?: number;
+  created_at?: string;
 }
 
 export interface TimelineEvent {

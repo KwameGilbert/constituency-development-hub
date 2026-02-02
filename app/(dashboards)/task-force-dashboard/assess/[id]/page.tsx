@@ -52,7 +52,6 @@ import {
 } from "@/lib/data";
 import { useAssessmentStore } from "@/lib/stores/assessment-store";
 import {
-  issuesService,
   Issue as ApiIssue,
   TimelineEvent,
 } from "@/lib/services/issues-service";
@@ -232,8 +231,8 @@ export default function AssessIssue() {
     }
   };
 
-  const validateForm = (): boolean => {
-    let isValid = true;
+  const validateForm = (): Record<string, string> => {
+    const newErrors: Record<string, string> = {};
     Object.keys(assessment).forEach((key) => {
       const error = validateField(
         key,
@@ -241,12 +240,12 @@ export default function AssessIssue() {
       );
       if (error) {
         setError(key, error);
-        isValid = false;
+        newErrors[key] = error;
       } else {
         clearError(key);
       }
     });
-    return isValid;
+    return newErrors;
   };
 
   const handleFieldChange = (name: string, value: string) => {
@@ -307,7 +306,11 @@ export default function AssessIssue() {
       setTouched(key);
     });
 
-    if (!validateForm()) {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      console.log("Validation failed", validationErrors);
+      const errorMessages = Object.values(validationErrors).join("\n");
+      alert(`Please fix the following errors before submitting:\n${errorMessages}`);
       return;
     }
 
@@ -349,9 +352,9 @@ export default function AssessIssue() {
 
       alert("Assessment submitted successfully!");
       router.push("/task-force-dashboard/issues");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting assessment:", error);
-      alert("Error submitting assessment. Please try again.");
+      alert(`Error submitting assessment: ${error.message || "Please try again."}`);
     } finally {
       setSubmitting(false);
     }

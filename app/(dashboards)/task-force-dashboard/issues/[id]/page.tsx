@@ -31,6 +31,7 @@ import {
   Users,
   CheckCircle,
   Target,
+  Search,
   Loader2,
 } from "lucide-react";
 
@@ -38,7 +39,8 @@ import { Issue as ApiIssue } from "@/lib/services/issues-service";
 import { taskForceService } from "@/lib/services/task-force-service";
 
 // UI Type definition matching the previous mock structure
-interface UiIssue extends ApiIssue {
+interface UiIssue extends Omit<ApiIssue, "assessment_report"> {
+  assessment_report?: RawAssessmentData;
   community: string;
   submitter: {
     name: string;
@@ -62,12 +64,22 @@ interface UiIssue extends ApiIssue {
     environmentalImpact: string;
     economicImpact: string;
     socialImpact: string;
+    summary?: string;
+    findings?: string;
+    recommendations?: string;
+    requiredResources?: {
+      item: string;
+      quantity: number;
+      estimatedCost?: number;
+      justification?: string;
+    }[];
   };
   attachments: {
     name: string;
     type: string;
     size: string;
     uploadDate: string;
+    url?: string;
   }[];
   timeline: { id: string; date: string; event: string; type: string }[];
   relatedIssues: { id: number; title: string; status: string }[];
@@ -77,15 +89,83 @@ interface UiIssue extends ApiIssue {
   lastUpdated: string;
 }
 
+// Interface for the raw assessment data that might come from the API
+interface RawAssessmentData {
+  images?: string | string[];
+  documents?: string | string[];
+  created_at?: string;
+  estimated_cost?: string | number;
+  severity?: string;
+  assessment_summary?: string;
+  findings?: string;
+  recommendations?: string;
+  required_resources?: {
+    item: string;
+    quantity: number;
+    estimatedCost?: number;
+    justification?: string;
+  }[];
+}
+
 // Helper to adapt API response to UI shape
-const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
+const adaptIssueToUi = (
+  apiIssue: Omit<ApiIssue, "assessment_report"> & {
+    assessment_report?: RawAssessmentData;
+    assessment?: RawAssessmentData;
+  }
+): UiIssue => {
+  // Fallback to check both 'assessment_report' (new) and 'assessment' (legacy/potential backend mismatch)
+  const assessment = apiIssue.assessment_report || apiIssue.assessment;
+  
+  // Parse attachment strings if they are JSON strings (backend might return them as JSON strings or arrays)
+  let assessmentImages: string[] = [];
+  let assessmentDocs: string[] = [];
+  
+  if (assessment) {
+      // Handle potentially json-encoded or array fields
+      const parseFiles = (field: string | string[] | undefined | null) => {
+          if (Array.isArray(field)) return field;
+          if (typeof field === 'string') {
+              try { return JSON.parse(field); } catch { return []; }
+          }
+          return [];
+      }
+      assessmentImages = parseFiles(assessment.images);
+      assessmentDocs = parseFiles(assessment.documents);
+  }
+
+  const issueAttachments = (apiIssue.images || []).map((img, i) => ({
+      name: `Issue Image ${i + 1}`,
+      type: "image",
+      size: "N/A",
+      uploadDate: apiIssue.created_at,
+      url: img 
+    }));
+
+  const assessmentAttachments = [
+      ...assessmentImages.map((img: string, i: number) => ({
+          name: `Assessment Image ${i + 1}`,
+          type: "image",
+          size: "N/A",
+          uploadDate: assessment?.created_at || apiIssue.created_at,
+          url: img
+      })),
+      ...assessmentDocs.map((doc: string, i: number) => ({
+          name: `Assessment Doc ${i + 1}`,
+          type: "document",
+          size: "N/A",
+          uploadDate: assessment?.created_at || apiIssue.created_at,
+          url: doc
+      }))
+  ];
+
   return {
     ...apiIssue,
     community: apiIssue.location || "Unknown Community",
     submissionDate: apiIssue.created_at,
     lastUpdated: apiIssue.updated_at || apiIssue.created_at,
     sector: "General", // Default
-    detailedDescription: apiIssue.description, // Reusing description if detailed not available
+    detailedDescription: apiIssue.description, 
     submitter: {
       name: apiIssue.reporter_name || "Anonymous",
       role: "Community Member",
@@ -101,7 +181,19 @@ const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
       nearestLandmark: "N/A",
       accessRoute: "N/A",
     },
-    impactAssessment: {
+    impactAssessment: assessment ? {
+      affectedPopulation: 0, // Not currently in assessment report
+      householdsAffected: 0, // Not currently in assessment report
+      estimatedCost: Number(assessment.estimated_cost) || 0,
+      urgencyLevel: assessment.severity || apiIssue.priority,
+      environmentalImpact: "See Findings", // Not structurally in report
+      economicImpact: "See Findings",
+      socialImpact: "See Findings",
+      summary: assessment.assessment_summary,
+      findings: assessment.findings,
+      recommendations: assessment.recommendations,
+      requiredResources: assessment.required_resources
+    } : {
       affectedPopulation: 0,
       householdsAffected: 0,
       estimatedCost: apiIssue.allocated_budget || 0,
@@ -110,12 +202,7 @@ const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
       economicImpact: "Not Assessed",
       socialImpact: "Not Assessed",
     },
-    attachments: (apiIssue.images || []).map((img, i) => ({
-      name: `Image ${i + 1}`,
-      type: "image",
-      size: "N/A",
-      uploadDate: apiIssue.created_at,
-    })),
+    attachments: [...issueAttachments, ...assessmentAttachments],
     timeline:
       (apiIssue.timeline || []).length > 0
         ? apiIssue.timeline!
@@ -254,6 +341,30 @@ export default function IssueDetailPage() {
               </Button>
             </Link>
           )}
+
+          {[
+            "resources_allocated",
+            "resolution_in_progress",
+          ].includes(issue.status) && (
+            <Link href={`/task-force-dashboard/resolve/${issue.id}`}>
+              <Button className="bg-green-600 hover:bg-green-700">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Resolve Issue
+              </Button>
+            </Link>
+          )}
+
+          {[
+            "resources_allocated",
+            "resolution_in_progress",
+          ].includes(issue.status) && (
+            <Link href={`/task-force-dashboard/resolve/${issue.id}`}>
+              <Button className="bg-green-600 hover:bg-green-700">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Resolve Issue
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -261,8 +372,10 @@ export default function IssueDetailPage() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="assessment">Assessment</TabsTrigger>
+              <TabsTrigger value="allocation">Allocation</TabsTrigger>
               <TabsTrigger value="details">Details</TabsTrigger>
               <TabsTrigger value="attachments">Attachments</TabsTrigger>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
@@ -303,20 +416,51 @@ export default function IssueDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
 
-              {/* Impact Assessment */}
+            <TabsContent value="assessment" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle>Impact Assessment</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {issue.impactAssessment ? (
+                  {issue.impactAssessment && issue.impactAssessment.summary ? ( 
                     <>
+                      {/* Assessment Summary & Findings */}
+                      {(issue.impactAssessment.summary || issue.impactAssessment.findings) && (
+                          <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                             <div className="mb-4">
+                               <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                  <FileText className="h-4 w-4 text-purple-600"/> Assessment Summary
+                               </h4>
+                               <p className="text-sm text-gray-700 whitespace-pre-wrap">{issue.impactAssessment.summary || "No summary provided."}</p>
+                             </div>
+                             
+                             {issue.impactAssessment.findings && (
+                                 <div className="pt-4 border-t border-slate-200">
+                                   <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                      <Search className="h-4 w-4 text-blue-600"/> Findings
+                                   </h4>
+                                   <p className="text-sm text-gray-700 whitespace-pre-wrap">{issue.impactAssessment.findings}</p>
+                                 </div>
+                             )}
+
+                             {issue.impactAssessment.recommendations && (
+                                 <div className="pt-4 mt-4 border-t border-slate-200">
+                                   <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                      <CheckCircle className="h-4 w-4 text-green-600"/> Recommendations
+                                   </h4>
+                                   <p className="text-sm text-gray-700 whitespace-pre-wrap">{issue.impactAssessment.recommendations}</p>
+                                 </div>
+                             )}
+                          </div>
+                      )}
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="text-center p-3 bg-blue-50 rounded-lg">
                           <Users className="h-6 w-6 text-blue-600 mx-auto mb-2" />
                           <p className="text-2xl font-bold text-blue-600">
-                            {issue.impactAssessment.affectedPopulation}
+                            {issue.impactAssessment.affectedPopulation || "-"}
                           </p>
                           <p className="text-xs text-gray-600">
                             People Affected
@@ -325,7 +469,7 @@ export default function IssueDetailPage() {
                         <div className="text-center p-3 bg-green-50 rounded-lg">
                           <Target className="h-6 w-6 text-green-600 mx-auto mb-2" />
                           <p className="text-2xl font-bold text-green-600">
-                            {issue.impactAssessment.householdsAffected}
+                            {issue.impactAssessment.householdsAffected || "-"}
                           </p>
                           <p className="text-xs text-gray-600">Households</p>
                         </div>
@@ -374,9 +518,79 @@ export default function IssueDetailPage() {
                       </div>
                     </>
                   ) : (
-                    <p className="text-gray-500 italic">
-                      No impact assessment available yet.
-                    </p>
+                    <div className="flex flex-col items-center justify-center p-8 text-center text-gray-500">
+                      <FileText className="h-12 w-12 text-gray-300 mb-2" />
+                      <p className="text-lg font-medium">No assessment report available yet.</p>
+                      <p className="text-sm">Once the task force submits their assessment, the details will appear here.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="allocation" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                    Resource Allocation
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {issue.allocated_budget || (issue.allocated_resources && issue.allocated_resources.length > 0) ? (
+                    <>
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Allocated Budget</h3>
+                        <p className="text-2xl font-bold text-green-700">
+                          {issue.allocated_budget ? `GHS ${Number(issue.allocated_budget).toLocaleString()}` : "N/A"}
+                        </p>
+                      </div>
+
+                      {issue.allocated_resources && issue.allocated_resources.length > 0 && (
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-700 mb-3">Allocated Materials & Resources</h3>
+                          <div className="border rounded-md divide-y">
+                            {issue.allocated_resources.map((res, idx) => (
+                              <div key={idx} className="flex justify-between items-center p-3 bg-white">
+                                <div>
+                                  <p className="font-medium text-gray-900">{res.item}</p>
+                                  <p className="text-xs text-gray-500 capitalize">{res.type}</p>
+                                </div>
+                                <Badge variant="secondary">Qty: {res.quantity}</Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                       )}
+
+                       {/* New: Required Resources (Materials) */}
+                       {issue.impactAssessment?.requiredResources && issue.impactAssessment.requiredResources.length > 0 && (
+                          <div className="mb-6">
+                             <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                <DollarSign className="h-4 w-4 text-green-600"/> Required Materials (Requested)
+                             </h4>
+                             <div className="border rounded-md divide-y border-slate-200 bg-white">
+                                {issue.impactAssessment.requiredResources.map((res, idx) => (
+                                   <div key={idx} className="flex justify-between items-center p-3">
+                                      <div>
+                                         <p className="font-medium text-gray-900 text-sm">{res.item}</p>
+                                         <p className="text-xs text-gray-500">{res.justification || "No justification"}</p>
+                                      </div>
+                                      <div className="flex items-center gap-3">
+                                         {res.estimatedCost && <span className="text-xs text-gray-600">Est: {res.estimatedCost}</span>}
+                                         <Badge variant="secondary" className="text-xs">Qty: {res.quantity}</Badge>
+                                      </div>
+                                    </div>
+                                ))}
+                             </div>
+                          </div>
+                       )}
+                    </>
+                  ) : (
+                    <div className="p-8 text-center border rounded-lg bg-gray-50 border-dashed">
+                      <p className="text-gray-500 italic">No resources allocated yet.</p>
+                      <p className="text-xs text-gray-400 mt-1">Pending admin approval and allocation.</p>
+                    </div>
                   )}
                 </CardContent>
               </Card>

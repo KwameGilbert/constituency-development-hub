@@ -8,6 +8,7 @@ import {
   User,
   Phone,
   AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IssueActions } from "@/components/admin-dashboard/issues/IssueActions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function IssueDetailPage({
   params,
@@ -28,6 +30,31 @@ export default async function IssueDetailPage({
     const response = await issuesService.getIssueById(id);
     if (response && response.success && response.data.report) {
       issue = response.data.report;
+      
+      // Map backend fields to frontend expectations if necessary
+      if ((issue as any).resolution_report && !issue.resolution) {
+        issue.resolution = (issue as any).resolution_report;
+        
+        // Ensure images are arrays (handle potential JSON strings from backend)
+        if (typeof (issue.resolution as any).before_images === 'string') {
+          try {
+            issue.resolution.before_images = JSON.parse((issue.resolution as any).before_images);
+          } catch (e) {
+            issue.resolution.before_images = [];
+          }
+        }
+        
+        if (typeof (issue.resolution as any).after_images === 'string') {
+          try {
+            issue.resolution.after_images = JSON.parse((issue.resolution as any).after_images);
+          } catch (e) {
+            issue.resolution.after_images = [];
+          }
+        }
+      }
+      if ((issue as any).assessment_report && !issue.assessment_report) {
+        issue.assessment_report = (issue as any).assessment_report;
+      }
     } else {
       issue = null;
     }
@@ -94,234 +121,365 @@ export default async function IssueDetailPage({
           </div>
         </div>
 
-        {/* Issue Details Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-gray-600" />
-              Issue Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Description */}
-            <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                Description
-              </h3>
-              <div
-                className="text-gray-600 prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: issue.description }}
-              />
-            </div>
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="assessment">Assessment</TabsTrigger>
+            <TabsTrigger value="resolution">Resolution</TabsTrigger>
+            <TabsTrigger value="allocation">Allocation</TabsTrigger>
+          </TabsList>
 
-            {/* Metadata Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-              <div className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+          <TabsContent value="overview" className="space-y-6">
+            {/* Issue Details Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-gray-600" />
+                  Issue Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Description */}
                 <div>
-                  <p className="text-sm font-medium text-gray-700">Location</p>
-                  <p className="text-gray-600">{issue.location}</p>
-                  {issue.latitude && issue.longitude && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      {issue.latitude}, {issue.longitude}
-                    </p>
-                  )}
+                  <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                    Description
+                  </h3>
+                  <div
+                    className="text-gray-600 prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: issue.description }}
+                  />
                 </div>
-              </div>
 
-              <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">
-                    Date Submitted
-                  </p>
-                  <p className="text-gray-600">
-                    {new Date(issue.created_at).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <User className="h-5 w-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Reporter</p>
-                  <p className="text-gray-600">
-                    {issue.reporter_name || "Anonymous"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Contact</p>
-                  <p className="text-gray-600">
-                    {issue.reporter_phone || "N/A"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-gray-700">Category</p>
-                  <p className="text-gray-600 capitalize">{issue.category}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Images */}
-            {issue.images && issue.images.length > 0 && (
-              <div className="pt-4 border-t">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                  Images
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {issue.images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200"
-                    >
-                      <img
-                        src={image}
-                        alt={`Issue image ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "https://via.placeholder.com/400x300?text=Image+Not+Available";
-                        }}
-                      />
+                {/* Metadata Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Location</p>
+                      <p className="text-gray-600">{issue.location}</p>
+                      {issue.latitude && issue.longitude && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          {issue.latitude}, {issue.longitude}
+                        </p>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </div>
 
-        {/* Assessment Details (if assessment exists) */}
-        {issue.assessment && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-blue-600" />
-                Task Force Assessment
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-               {/* Status Badge */}
-               <div className="flex justify-end">
-                  <Badge variant={issue.assessment.status === 'approved' ? 'default' : issue.assessment.status === 'rejected' ? 'destructive' : 'secondary'}>
-                    Status: {issue.assessment.status ? issue.assessment.status.toUpperCase() : 'SUBMITTED'}
-                  </Badge>
-               </div>
-            
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                   <h3 className="text-sm font-semibold text-gray-700 mb-2">Assessment Summary</h3>
-                   <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{issue.assessment.assessment_summary}</p>
-                </div>
-                <div>
-                   <h3 className="text-sm font-semibold text-gray-700 mb-2">Findings</h3>
-                   <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{issue.assessment.findings || "No specific findings recorded."}</p>
-                </div>
-              </div>
+                  <div className="flex items-start gap-3">
+                    <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">
+                        Date Submitted
+                      </p>
+                      <p className="text-gray-600">
+                        {new Date(issue.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
-                 <div>
-                    <span className="text-xs text-gray-500 font-medium uppercase">Severity</span>
-                    <p className="font-semibold capitalize text-gray-900">{issue.assessment.severity}</p>
-                 </div>
-                 <div>
-                    <span className="text-xs text-gray-500 font-medium uppercase">Issue Confirmed</span>
-                    <p className={`font-semibold ${issue.assessment.issue_confirmed ? 'text-green-600' : 'text-red-600'}`}>
-                      {issue.assessment.issue_confirmed ? "YES" : "NO"}
-                    </p>
-                 </div>
-                 <div>
-                    <span className="text-xs text-gray-500 font-medium uppercase">Est. Cost</span>
-                    <p className="font-semibold text-gray-900">{issue.assessment.estimated_cost || "N/A"}</p>
-                 </div>
-                 <div>
-                    <span className="text-xs text-gray-500 font-medium uppercase">Est. Duration</span>
-                    <p className="font-semibold text-gray-900">{issue.assessment.estimated_duration || "N/A"}</p>
-                 </div>
-              </div>
+                  <div className="flex items-start gap-3">
+                    <User className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Reporter</p>
+                      <p className="text-gray-600">
+                        {issue.reporter_name || "Anonymous"}
+                      </p>
+                    </div>
+                  </div>
 
-              {issue.assessment.recommendations && (
-                <div className="pt-4 border-t">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Recommendations</h3>
-                  <div className="p-3 bg-blue-50 border border-blue-100 rounded-md text-sm text-blue-800 whitespace-pre-wrap">
-                    {issue.assessment.recommendations}
+                  <div className="flex items-start gap-3">
+                    <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Contact</p>
+                      <p className="text-gray-600">
+                        {issue.reporter_phone || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Category</p>
+                      <p className="text-gray-600 capitalize">{issue.category}</p>
+                    </div>
                   </div>
                 </div>
-              )}
 
-              {issue.assessment.required_resources && issue.assessment.required_resources.length > 0 && (
-                <div className="pt-4 border-t">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2">Required Resources</h3>
-                  <div className="border rounded-md divide-y">
-                     {issue.assessment.required_resources.map((res: any, idx: number) => (
-                           <div key={idx} className="flex justify-between p-2 text-sm">
-                             <span>{res.item || res.name} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
-                             <span className="font-medium">Qty: {res.quantity}</span>
-                           </div>
-                        ))}
+                {/* Images */}
+                {issue.images && issue.images.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                      Images
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {issue.images.map((image, index) => (
+                        <div
+                          key={index}
+                          className="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200"
+                        >
+                          <img
+                            src={image}
+                            alt={`Issue image ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src =
+                                "https://via.placeholder.com/400x300?text=Image+Not+Available";
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Resource Allocation (if allocated) */}
-        {issue.allocated_budget && issue.allocated_resources && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Resource Allocation</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">
-                  Allocated Budget
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  GHS {issue.allocated_budget.toLocaleString()}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t">
-                <p className="text-sm font-medium text-gray-700 mb-3">
-                  Resources
-                </p>
-                <div className="space-y-2">
-                  {issue.allocated_resources.map((resource, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {resource.item}
-                        </p>
-                        <p className="text-sm text-gray-500 capitalize">
-                          {resource.type}
-                        </p>
-                      </div>
-                      <Badge variant="secondary">
-                        Qty: {resource.quantity}
+          <TabsContent value="assessment" className="space-y-6">
+            {/* Assessment Details (if assessment exists) */}
+            {/* Assessment Details (if assessment exists) */}
+            {(() => {
+              // Normalized access to handle potential API inconsistencies (assessment_report vs assessment)
+              const assessment = issue.assessment_report || (issue as any).assessment;
+              
+              return assessment ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-blue-600" />
+                    Task Force Assessment
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                   {/* Status Badge */}
+                   <div className="flex justify-end">
+                      <Badge variant={assessment.status === 'approved' ? 'default' : assessment.status === 'rejected' ? 'destructive' : 'secondary'}>
+                        Status: {assessment.status ? assessment.status.toUpperCase() : 'SUBMITTED'}
                       </Badge>
+                   </div>
+                
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                       <h3 className="text-sm font-semibold text-gray-700 mb-2">Assessment Summary</h3>
+                       <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{assessment.assessment_summary}</p>
                     </div>
-                  ))}
+                    <div>
+                       <h3 className="text-sm font-semibold text-gray-700 mb-2">Findings</h3>
+                       <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{assessment.findings || "No specific findings recorded."}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                     <div>
+                        <span className="text-xs text-gray-500 font-medium uppercase">Severity</span>
+                        <p className="font-semibold capitalize text-gray-900">{assessment.severity}</p>
+                     </div>
+                     <div>
+                        <span className="text-xs text-gray-500 font-medium uppercase">Issue Confirmed</span>
+                        <p className={`font-semibold ${assessment.issue_confirmed ? 'text-green-600' : 'text-red-600'}`}>
+                          {assessment.issue_confirmed ? "YES" : "NO"}
+                        </p>
+                     </div>
+                     <div>
+                        <span className="text-xs text-gray-500 font-medium uppercase">Est. Cost</span>
+                        <p className="font-semibold text-gray-900">{assessment.estimated_cost || "N/A"}</p>
+                     </div>
+                     <div>
+                        <span className="text-xs text-gray-500 font-medium uppercase">Est. Duration</span>
+                        <p className="font-semibold text-gray-900">{assessment.estimated_duration || "N/A"}</p>
+                     </div>
+                  </div>
+
+                  {assessment.recommendations && (
+                    <div className="pt-4 border-t">
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Recommendations</h3>
+                      <div className="p-3 bg-blue-50 border border-blue-100 rounded-md text-sm text-blue-800 whitespace-pre-wrap">
+                        {assessment.recommendations}
+                      </div>
+                    </div>
+                  )}
+
+                  {assessment.required_resources && assessment.required_resources.length > 0 && (
+                    <div className="pt-4 border-t">
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Required Resources</h3>
+                      <div className="border rounded-md divide-y">
+                         {assessment.required_resources.map((res: any, idx: number) => (
+                               <div key={idx} className="flex justify-between p-2 text-sm">
+                                 <span>{res.item} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
+                                 <span className="font-medium">Qty: {res.quantity}</span>
+                               </div>
+                            ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+                <div className="p-8 text-center border rounded-lg bg-gray-50 border-dashed">
+                  <p className="text-gray-500 italic">No assessment report available yet.</p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            );
+            })()}
+          </TabsContent>
+
+          <TabsContent value="resolution" className="space-y-6">
+            {/* Resolution Report (if submitted) */}
+            {issue.resolution ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    Task Force Resolution Report
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                   <div className="flex justify-end">
+                      <Badge variant={issue.resolution.status === 'approved' ? 'default' : issue.resolution.status === 'rejected' ? 'destructive' : 'secondary'}>
+                        Status: {issue.resolution.status ? issue.resolution.status.toUpperCase() : 'SUBMITTED'}
+                      </Badge>
+                   </div>
+
+                   <div className="space-y-4">
+                      <div>
+                         <h3 className="text-sm font-semibold text-gray-700 mb-2">Resolution Summary</h3>
+                         <p className="text-sm text-gray-600 border p-3 rounded-md bg-slate-50">{issue.resolution.resolution_summary}</p>
+                      </div>
+                      <div>
+                         <h3 className="text-sm font-semibold text-gray-700 mb-2">Detailed Work Description</h3>
+                         <p className="text-sm text-gray-600 whitespace-pre-wrap border p-3 rounded-md bg-slate-50">{issue.resolution.work_description}</p>
+                      </div>
+                   </div>
+
+                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                      <div>
+                         <span className="text-xs text-gray-500 font-medium uppercase">Actual Cost</span>
+                         <p className="font-semibold text-gray-900">
+                             {issue.resolution.actual_cost ? `₵${issue.resolution.actual_cost.toLocaleString()}` : "N/A"}
+                         </p>
+                      </div>
+                      <div>
+                         <span className="text-xs text-gray-500 font-medium uppercase">Start Date</span>
+                         <p className="font-semibold text-gray-900">
+                           {issue.resolution.start_date 
+                             ? new Date(issue.resolution.start_date).toLocaleDateString() 
+                             : "N/A"}
+                         </p>
+                      </div>
+                      <div>
+                         <span className="text-xs text-gray-500 font-medium uppercase">Completion Date</span>
+                         <p className="font-semibold text-gray-900">
+                           {issue.resolution.completion_date 
+                             ? new Date(issue.resolution.completion_date).toLocaleDateString() 
+                             : "N/A"}
+                         </p>
+                      </div>
+                   </div>
+
+                   {/* Before/After Images */}
+                   {(issue.resolution.before_images?.length ?? 0) > 0 || (issue.resolution.after_images?.length ?? 0) > 0 ? (
+                     <div className="pt-4 border-t grid md:grid-cols-2 gap-6">
+                        {(issue.resolution.before_images?.length ?? 0) > 0 && (
+                            <div>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-2">Before Photos</h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {issue.resolution.before_images?.map((img, i) => (
+                                        <div key={i} className="aspect-square bg-gray-100 rounded border overflow-hidden">
+                                            <img src={img} alt="Before" className="w-full h-full object-cover" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        {(issue.resolution.after_images?.length ?? 0) > 0 && (
+                            <div>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-2">After Photos</h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {issue.resolution.after_images?.map((img, i) => (
+                                        <div key={i} className="aspect-square bg-gray-100 rounded border overflow-hidden">
+                                            <img src={img} alt="After" className="w-full h-full object-cover" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                     </div>
+                   ) : null}
+
+                   {issue.resolution.challenges_faced && (
+                      <div className="pt-4 border-t">
+                          <h3 className="text-sm font-semibold text-gray-700 mb-2">Challenges Faced</h3>
+                          <p className="text-sm text-gray-600 italic">{issue.resolution.challenges_faced}</p>
+                      </div>
+                   )}
+                </CardContent>
+              </Card>
+            ) : (
+                <div className="p-8 text-center border rounded-lg bg-gray-50 border-dashed">
+                  <p className="text-gray-500 italic">No resolution report available yet.</p>
+                </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="allocation" className="space-y-6">
+            {/* Resource Allocation (if allocated) */}
+            {issue.allocated_budget || issue.allocated_resources ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Resource Allocation</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 mb-1">
+                      Allocated Budget
+                    </p>
+                    <p className="text-2xl font-bold text-green-600">
+                      GHS {(issue.allocated_budget || 0).toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <p className="text-sm font-medium text-gray-700 mb-3">
+                      Resources
+                    </p>
+                    <div className="space-y-2">
+                      {issue.allocated_resources && issue.allocated_resources.length > 0 ? (
+                          issue.allocated_resources.map((resource, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                            >
+                              <div>
+                                <p className="font-medium text-gray-900">
+                                  {resource.item}
+                                </p>
+                                <p className="text-sm text-gray-500 capitalize">
+                                  {resource.type}
+                                </p>
+                              </div>
+                              <Badge variant="secondary">
+                                Qty: {resource.quantity}
+                              </Badge>
+                            </div>
+                          ))
+                      ) : (
+                          <p className="text-sm text-gray-500">No specific items allocated other than budget.</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+                <div className="p-8 text-center border rounded-lg bg-gray-50 border-dashed">
+                  <p className="text-gray-500 italic">No resources allocated yet.</p>
+                </div>
+            )}
+          </TabsContent>
+        </Tabs>
 
         {/* Admin Actions */}
         <IssueActions issue={issue} />
