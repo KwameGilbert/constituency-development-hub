@@ -89,7 +89,7 @@ function GalleryPreview() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group relative overflow-hidden rounded-2xl bg-white shadow-md hover:shadow-xl transition-all duration-300"
             >
-              <Link href={`/gallery/${item.slug}`}>
+              <Link href={`/gallery?slug=${item.slug}`}>
                 <div className="relative h-48 bg-slate-100">
                   {item.cover_image ? (
                     <Image
