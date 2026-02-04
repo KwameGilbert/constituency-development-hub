@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import {
   X,
   ChevronLeft,
@@ -33,6 +34,17 @@ export default function GalleryClient() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [selectedItem, setSelectedItem] = useState<Gallery | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const slug = searchParams.get("slug");
+    if (slug && galleries.length > 0) {
+      const gallery = galleries.find((g) => g.slug === slug);
+      if (gallery) {
+        setSelectedItem(gallery);
+      }
+    }
+  }, [galleries, searchParams]);
 
   useEffect(() => {
     fetchGalleries();
