@@ -26,11 +26,11 @@ function ContactPanel() {
                   <p key={phone}>📱 {phone}</p>
                 ))}
               </div>
-              <div>
+              {/* <div>
                 {contactDetails.email.map((email) => (
                   <p key={email}>✉️ {email}</p>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
 

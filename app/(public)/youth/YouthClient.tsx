@@ -277,7 +277,7 @@ export default function YouthClient() {
             </div>
           </div>
 
-          <div className="relative h-2 w-full rounded-full bg-slate-100">
+          <div className="relative h-2 w-full rounded-full bg-slate-100 my-5">
             <span
               className="absolute inset-y-0 left-0 rounded-full bg-emerald-400"
               style={{ width: `${stepProgress}%` }}

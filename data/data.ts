@@ -169,6 +169,6 @@ export const contactDetails = {
     "P.O Box 25",
     "Western North Region, Ghana",
   ],
-  phone: ["(+233) 242 560 140", "054 853 1963"],
-  email: ["info@swma.gov.gh", "clientservice@swma.gov.gh"],
+  phone: ["054 853 1963", "0247730625"],
+  // email: ["[EMAIL_ADDRESS]", "[EMAIL_ADDRESS]"],
 };

@@ -20,7 +20,9 @@ function ReportCTA() {
             speed constituents expect.
           </p>
           <a
-            href="/report"
+            href="https://wa.me/233247730625?text=Hello%2C%20I%20want%20to%20report%20an%20issue"
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-8 inline-flex items-center gap-3 rounded-full bg-red-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-red-500/30 transition hover:bg-red-500"
           >
             <i className="fa-solid fa-exclamation-circle"></i>

@@ -29,7 +29,7 @@ function GalleryPreview() {
           // Sort by date descending and take top 4
           const sorted = response.data.galleries
             .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
             )
             .slice(0, 4);
           setGalleries(sorted);

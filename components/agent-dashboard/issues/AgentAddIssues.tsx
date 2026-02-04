@@ -580,7 +580,7 @@ export function AgentAddIssues() {
                 disabled={loadingData}
               />
             </FormItem>
-            <FormItem label="Suburb">
+            <FormItem label="Smaller Community">
               <SearchableSelect
                 value={formData.suburb || ""}
                 onChange={(v) => updateField("suburb", v)}

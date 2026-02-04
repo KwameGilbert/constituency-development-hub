@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { Megaphone, Calendar, Tag, AlertCircle } from "lucide-react";
-import PageHero from "@/components/hero/PageHero";
+
 import {
   announcementsService,
   Announcement,
@@ -71,11 +71,28 @@ export default function AnnouncementsClient() {
 
   return (
     <div className="min-h-screen bg-gray-50/50">
-      <PageHero
-        title="Latest Announcements"
-        description="Stay informed about important updates, news, and events in our community."
-        backgroundImage="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80"
-      />
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+        {/* Background gradients without image */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/70" />
+        <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="text-sm uppercase tracking-[0.4em] text-amber-400 mb-4">
+              Community Updates
+            </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+              Latest Announcements
+            </h1>
+            <p className="text-lg text-white/80 max-w-2xl">
+              Stay informed about important updates, news, and events in our community.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
       <div className="py-12">
         <div className="container mx-auto px-4 max-w-5xl">

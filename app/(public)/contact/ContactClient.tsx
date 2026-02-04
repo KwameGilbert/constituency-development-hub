@@ -29,17 +29,17 @@ const contactHighlights = [
   },
   {
     title: "Phone Numbers",
-    items: ["Constituency Secretary: (+233) 548 531 963"],
+    items: ["Contact Information: (+233) 548 531 963"],
     icon: Phone,
   },
-  {
-    title: "Email Addresses",
-    items: [
-      "General Inquiries: info@swma.gov.gh",
-      "Constituency Issues: issues@swma.gov.gh",
-    ],
-    icon: Mail,
-  },
+  // {
+  //   title: "Email Addresses",
+  //   items: [
+  //     "General Inquiries: info@swma.gov.gh",
+  //     "Constituency Issues: issues@swma.gov.gh",
+  //   ],
+  //   icon: Mail,
+  // },
   {
     title: "Office Hours",
     items: [
@@ -51,10 +51,10 @@ const contactHighlights = [
 ];
 
 const socialLinks = [
-  { label: "Facebook", href: "#" },
-  { label: "Twitter", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "LinkedIn", href: "#" },
+  { label: "Facebook", href: "https://www.facebook.com/share/1EAdgQAa6S/?mibextid=wwXIfr" },
+  { label: "Twitter", href: "https://x.com/bentehkofi?s=21&t=_6-Z7x7LnaWkBxfsBO1rTQ" },
+  { label: "Instagram", href: "https://www.instagram.com/kofi_benteh_afful?igsh=MTA1ZnJ2djBxazk3cg%3D%3D&utm_source=qr" },
+  { label: "TikTok", href: "https://www.tiktok.com/@kofi_benteh_afful?_r=1&_t=ZS-93e3fn5CHXs" },
 ];
 
 const fadeIn = {

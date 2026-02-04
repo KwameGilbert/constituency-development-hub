@@ -16,9 +16,9 @@ function SiteFooter() {
             <p>
               Tel: <span className="text-white">054 853 1963</span>
             </p>
-            <p>
+            {/* <p>
               Email: <span className="text-white">info@swma.gov.gh</span>
-            </p>
+            </p> */}
           </div>
         </div>
         <div>
