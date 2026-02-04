@@ -591,12 +591,12 @@ export function AgentAddIssues() {
                 placeholder={
                   !formData.location
                     ? "Select Main Community first"
-                    : "Select Suburb (Optional)"
+                    : "Select Smaller Community (Optional)"
                 }
-                searchPlaceholder="Search suburbs..."
+                searchPlaceholder="Search smaller communities..."
                 disabled={!formData.location || loadingSubLocations}
                 loading={loadingSubLocations}
-                emptyMessage="No suburb found."
+                emptyMessage="No smaller community found."
               />
             </FormItem>
           </div>

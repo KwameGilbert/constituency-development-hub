@@ -1,10 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, Plus, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Plus,
+  Loader2,
+  Check,
+  ChevronsUpDown,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   Select,
   SelectContent,
@@ -12,200 +22,272 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { locationsService, Location } from "@/lib/services/locations-service";
 import { issuesService } from "@/lib/services/issues-service";
+import { IssueSubmission } from "@/lib/services/agent-service"; // Reusing type
+import { locationsService } from "@/lib/services/locations-service";
+import {
+  sectorsService,
+  Sector,
+  SubSector,
+} from "@/lib/services/sectors-service";
+import { categoriesService, Category } from "@/lib/services/categories-service";
+
+interface Location {
+  id: number;
+  name: string;
+}
 
 export function AddIssues() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("issue-details");
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [locations, setLocations] = useState<Location[]>([]);
 
-  // Dropdown Data
-  const [communities, setCommunities] = useState<Location[]>([]);
   const [suburbs, setSuburbs] = useState<Location[]>([]);
-  const [smallerCommunities, setSmallerCommunities] = useState<Location[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [sectors, setSectors] = useState<Sector[]>([]);
+  const [filteredSectors, setFilteredSectors] = useState<Sector[]>([]);
+  const [subSectors, setSubSectors] = useState<SubSector[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
+  const [loadingSubLocations, setLoadingSubLocations] = useState(false);
+  const [loadingSectors, setLoadingSectors] = useState(false);
+  const [loadingSubSectors, setLoadingSubSectors] = useState(false);
 
-  // Form State
-  const [formData, setFormData] = useState({
-    // Issue Details
+  // Form state
+  const [formData, setFormData] = useState<IssueSubmission>({
     title: "",
-    issue_type: "",
     description: "",
     category: "",
-    priority: "", // maps to severity
+    category_id: undefined,
+    type: "", // Legacy field for backward compatibility
+    issue_type: "community_based",
+    priority: "medium",
+    location: "",
+    smaller_community: "",
+    suburb: "",
+    cottage: "",
+    sector_id: undefined,
     sector: "",
+    sub_sector_id: undefined,
     subsector: "",
-    people_affected: "",
-    notes: "",
-
-    // Constituent Details
-    reporter_name: "", // Constituent Name
+    people_affected: undefined,
+    additional_notes: "",
+    reporter_name: "",
     reporter_phone: "",
     reporter_email: "",
-    constituent_gender: "",
-    constituent_address: "",
-
-    // Location
-    location_community: "",
-    location_smaller_community: "",
-    location_suburb: "",
-    location_details: "",
+    reporter_gender: "",
+    reporter_address: "",
   });
 
+  // Fetch locations, sectors, and categories
   useEffect(() => {
-    const loadLocations = async () => {
+    const fetchData = async () => {
       try {
-        const [coms, subs, smalls] = await Promise.all([
-          locationsService.getLocations({ type: "community", limit: 100 }),
-          locationsService.getLocations({ type: "suburb", limit: 100 }),
+        setLoadingData(true);
+        const [locRes, secRes, catRes] = await Promise.all([
           locationsService.getLocations({
-            type: "smaller_community",
-            limit: 100,
+            type: "community",
+            status: "active",
           }),
+          sectorsService.getSectors(),
+          categoriesService.getCategories(),
         ]);
 
-        if (coms.success) setCommunities(coms.data.locations);
-        if (subs.success) setSuburbs(subs.data.locations);
-        if (smalls.success) setSmallerCommunities(smalls.data.locations);
+        if (locRes.success && locRes.data?.locations) {
+          setLocations(locRes.data.locations);
+        }
+        if (secRes.success && secRes.data?.sectors) {
+          setSectors(secRes.data.sectors);
+        }
+        if (catRes.success && catRes.data?.categories) {
+          setCategories(catRes.data.categories);
+        }
       } catch (error) {
-        console.error("Failed to load locations", error);
-        toast.error("Failed to load location data");
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        setLoadingData(false);
       }
     };
 
-    loadLocations();
+    fetchData();
   }, []);
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  // Filter sectors when category changes
+  useEffect(() => {
+    if (formData.category_id) {
+      setLoadingSectors(true);
+      const filtered = sectors.filter(
+        (s) => s.category_id === formData.category_id
+      );
+      setFilteredSectors(filtered);
+      setLoadingSectors(false);
+    } else {
+      setFilteredSectors([]);
+    }
+    // Reset sector and subsector when category changes
+    setSubSectors([]);
+  }, [formData.category_id, sectors]);
+
+  // Load subsectors when sector changes
+  useEffect(() => {
+    const fetchSubSectors = async () => {
+      if (!formData.sector_id) {
+        setSubSectors([]);
+        return;
+      }
+
+      setLoadingSubSectors(true);
+      try {
+        const response = await sectorsService.getSubSectors(formData.sector_id);
+        if (response.success && response.data?.sub_sectors) {
+          setSubSectors(response.data.sub_sectors);
+        }
+      } catch (error) {
+        console.error("Error fetching subsectors:", error);
+      } finally {
+        setLoadingSubSectors(false);
+      }
+    };
+
+    fetchSubSectors();
+  }, [formData.sector_id]);
+
+  // Fetch smaller communities and suburbs when location changes
+  useEffect(() => {
+    const fetchSubLocations = async () => {
+      // Reset sub-locations when main location changes
+      setSuburbs([]);
+
+      if (!formData.location) return;
+
+      const selectedLocation = locations.find(
+        (l) => l.name === formData.location
+      );
+      if (!selectedLocation) return;
+
+      setLoadingSubLocations(true);
+      try {
+        const suburbRes = await locationsService.getLocations({
+          parent_id: selectedLocation.id,
+          type: "suburb",
+          status: "active",
+        });
+
+        if (suburbRes.success && suburbRes.data?.locations) {
+          setSuburbs(suburbRes.data.locations);
+        }
+      } catch (error) {
+        console.error("Error fetching sub-locations:", error);
+        toast.error("Failed to load sub-locations");
+      } finally {
+        setLoadingSubLocations(false);
+      }
+    };
+
+    fetchSubLocations();
+  }, [formData.location, locations]);
 
   const handleNext = (nextTab: string) => {
-    // Basic validation before switching?
-    if (activeTab === "issue-details") {
-      if (
-        !formData.title ||
-        !formData.issue_type ||
-        !formData.description ||
-        !formData.category ||
-        !formData.priority ||
-        !formData.sector
-      ) {
-        toast.error("Please fill in all required fields");
-        return;
-      }
-    }
-    if (activeTab === "constituent-details") {
-      if (!formData.reporter_name || !formData.reporter_phone) {
-        toast.error("Please fill in constituent name and phone");
-        return;
-      }
-    }
     setActiveTab(nextTab);
   };
 
-  const handleSubmit = async () => {
-    if (!formData.location_community && !formData.location_suburb) {
-      toast.error("Please select at least a main community or suburb");
-      return;
+  const updateField = (
+    field: keyof IssueSubmission,
+    value: string | number | undefined
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const validateForm = (): boolean => {
+    const required = [
+      "title",
+      "description",
+      "category",
+      "priority",
+      "location",
+    ];
+    for (const field of required) {
+      if (!formData[field as keyof IssueSubmission]) {
+        toast.error(`Please fill in the ${field.replace("_", " ")} field`);
+        return false;
+      }
     }
+
+    if (!formData.reporter_name || !formData.reporter_phone) {
+      toast.error("Please provide constituent name and phone number");
+      setActiveTab("constituent-details");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
 
     setSubmitting(true);
     try {
-      // Resolve names from IDs (assuming select values are IDs or Names - let's assume Names for simplicity or lookup)
-      // Ideally we store IDs but backend takes string location.
-      // Wait, select values usually are IDs. I should find Name by ID.
-      const getLocName = (id: string, list: Location[]) =>
-        list.find((l) => l.id.toString() === id)?.name || id;
-
-      const comName = getLocName(formData.location_community, communities);
-      const subName = getLocName(formData.location_suburb, suburbs);
-      const smallName = getLocName(
-        formData.location_smaller_community,
-        smallerCommunities,
-      );
-
-      const locationParts = [];
-      if (smallName) locationParts.push(smallName);
-      if (subName) locationParts.push(subName);
-      if (comName) locationParts.push(comName);
-
-      // Final string: "Details, Smaller Comm, Suburb, Community"
-      const hierarchy = locationParts.join(", ");
-      const fullLocation = formData.location_details
-        ? `${formData.location_details}, ${hierarchy}`
-        : hierarchy;
-
+      // Create FormData for officer submission
       const submitData = new FormData();
-      submitData.append("title", formData.title);
-      submitData.append("issue_type", formData.issue_type);
-      submitData.append("description", formData.description);
-      submitData.append("category", formData.category);
-
-      // Map severity to priority
-      const priorityMap: Record<string, string> = {
-        low: "low",
-        medium: "medium",
-        high: "high",
-        critical: "urgent",
-      };
-      submitData.append("priority", priorityMap[formData.priority] || "medium");
-
-      submitData.append("sector", formData.sector);
-      submitData.append("subsector", formData.subsector);
-      submitData.append("people_affected", formData.people_affected);
-      submitData.append("notes", formData.notes);
-
-      submitData.append("reporter_name", formData.reporter_name);
-      submitData.append("reporter_phone", formData.reporter_phone);
-      submitData.append("reporter_email", formData.reporter_email);
-      submitData.append("constituent_gender", formData.constituent_gender);
-      submitData.append("constituent_address", formData.constituent_address);
-
-      submitData.append("location", fullLocation);
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          submitData.append(key, value.toString());
+        }
+      });
 
       const response = await issuesService.submitOfficerIssue(submitData);
 
       if (response.success) {
-        toast.success("Issue submitted successfully");
-        // Reset or redirect
+        toast.success("Issue submitted successfully!");
         router.push("/officer-dashboard/issues");
       } else {
         toast.error(response.message || "Failed to submit issue");
       }
     } catch (error) {
-      console.error("Submit error", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "An error occurred";
-      toast.error(errorMessage);
+      console.error("Submit error:", error);
+      toast.error("An error occurred while submitting the issue");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-8 flex justify-center">
-        <Loader2 className="animate-spin h-8 w-8 text-indigo-600" />
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border">
+    <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8">
-          <TabsTrigger value="issue-details">Issue Details</TabsTrigger>
-          <TabsTrigger value="constituent-details">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8 bg-slate-100">
+          <TabsTrigger
+            value="issue-details"
+            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+          >
+            Issue Details
+          </TabsTrigger>
+          <TabsTrigger
+            value="constituent-details"
+            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+          >
             Constituent Details
           </TabsTrigger>
-          <TabsTrigger value="location">Location</TabsTrigger>
+          <TabsTrigger
+            value="location"
+            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+          >
+            Location
+          </TabsTrigger>
         </TabsList>
 
         {/* Tab 1: Issue Details */}
@@ -213,67 +295,92 @@ export function AddIssues() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Issue Title" required>
               <Input
-                placeholder="Brief title of the issue"
+                placeholder="Enter a clear and concise title"
                 value={formData.title}
-                onChange={(e) => handleChange("title", e.target.value)}
+                onChange={(e) => updateField("title", e.target.value)}
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
               />
             </FormItem>
-            <FormItem label="Issue Type" required>
+            <FormItem label="Impact Type" required>
               <Select
-                value={formData.issue_type}
-                onValueChange={(v) => handleChange("issue_type", v)}
+                value={formData.issue_type || "community_based"}
+                onValueChange={(v) => {
+                  updateField("issue_type", v);
+                  // Reset people_affected if switching to individual
+                  if (v === "individual_based") {
+                    updateField("people_affected", 1);
+                  }
+                }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Type" />
+                <SelectTrigger className="border-slate-200">
+                  <SelectValue placeholder="Select Impact Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Infrastructure">Infrastructure</SelectItem>
-                  <SelectItem value="Service Delivery">
-                    Service Delivery
+                  <SelectItem value="community_based">
+                    Community-Based Issue
                   </SelectItem>
-                  <SelectItem value="Social Welfare">Social Welfare</SelectItem>
-                  <SelectItem value="Security">Security</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="individual_based">
+                    Individual Issue
+                  </SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-slate-500 mt-1">
+                {formData.issue_type === "community_based"
+                  ? "Affects multiple people in the community"
+                  : "Affects a single person or household"}
+              </p>
             </FormItem>
           </div>
 
           <FormItem label="Description" required>
-            <Textarea
-              className="min-h-[100px]"
+            <RichTextEditor
               value={formData.description}
-              onChange={(e) => handleChange("description", e.target.value)}
+              onChange={(value) => updateField("description", value)}
+              placeholder="Describe the issue in detail..."
+              height={200}
             />
           </FormItem>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Category" required>
               <Select
-                value={formData.category}
-                onValueChange={(v) => handleChange("category", v)}
+                value={formData.category_id?.toString() || ""}
+                onValueChange={(v) => {
+                  const categoryId = parseInt(v);
+                  const selectedCat = categories.find(
+                    (c) => c.id === categoryId
+                  );
+                  updateField("category_id", categoryId);
+                  updateField("category", selectedCat?.name || "");
+                  // Reset sector and subsector when category changes
+                  updateField("sector_id", undefined);
+                  updateField("sector", "");
+                  updateField("sub_sector_id", undefined);
+                  updateField("subsector", "");
+                }}
+                disabled={loadingData}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
+                <SelectTrigger className="border-slate-200">
+                  <SelectValue
+                    placeholder={loadingData ? "Loading..." : "Select Category"}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Water">Water</SelectItem>
-                  <SelectItem value="Electricity">Electricity</SelectItem>
-                  <SelectItem value="Roads">Roads</SelectItem>
-                  <SelectItem value="Sanitation">Sanitation</SelectItem>
-                  <SelectItem value="Health">Health</SelectItem>
-                  <SelectItem value="Education">Education</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </FormItem>
-            <FormItem label="Severity" required>
+            <FormItem label="Priority" required>
               <Select
                 value={formData.priority}
-                onValueChange={(v) => handleChange("priority", v)}
+                onValueChange={(v) => updateField("priority", v)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Severity" />
+                <SelectTrigger className="border-slate-200">
+                  <SelectValue placeholder="Select Priority" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">Low</SelectItem>
@@ -286,54 +393,117 @@ export function AddIssues() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Sector" required>
+            <FormItem label="Sector">
               <Select
-                value={formData.sector}
-                onValueChange={(v) => handleChange("sector", v)}
+                value={formData.sector_id?.toString() || ""}
+                onValueChange={(v) => {
+                  if (v === "placeholder" || v === "loading" || v === "empty")
+                    return;
+                  const sectorId = parseInt(v);
+                  const selectedSec = filteredSectors.find(
+                    (s) => s.id === sectorId
+                  );
+                  updateField("sector_id", sectorId);
+                  updateField("sector", selectedSec?.name || "");
+                  // Reset subsector when sector changes
+                  updateField("sub_sector_id", undefined);
+                  updateField("subsector", "");
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Sector" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Public">Public</SelectItem>
-                  <SelectItem value="Private">Private</SelectItem>
-                  <SelectItem value="NGO">NGO</SelectItem>
+                  {!formData.category_id ? (
+                    <SelectItem value="placeholder" disabled>
+                      Select a category first
+                    </SelectItem>
+                  ) : loadingSectors ? (
+                    <SelectItem value="loading" disabled>
+                      Loading sectors...
+                    </SelectItem>
+                  ) : filteredSectors.length === 0 ? (
+                    <SelectItem value="empty" disabled>
+                      No sectors found for this category
+                    </SelectItem>
+                  ) : (
+                    filteredSectors.map((sec) => (
+                      <SelectItem key={sec.id} value={sec.id.toString()}>
+                        {sec.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </FormItem>
             <FormItem label="Subsector">
               <Select
-                value={formData.subsector}
-                onValueChange={(v) => handleChange("subsector", v)}
+                value={formData.sub_sector_id?.toString() || ""}
+                onValueChange={(v) => {
+                  if (v === "placeholder" || v === "loading" || v === "empty")
+                    return;
+                  const subSectorId = parseInt(v);
+                  const selectedSubSec = subSectors.find(
+                    (s) => s.id === subSectorId
+                  );
+                  updateField("sub_sector_id", subSectorId);
+                  updateField("subsector", selectedSubSec?.name || "");
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Subsector (Optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Primary Education">
-                    Primary Education
-                  </SelectItem>
-                  <SelectItem value="Healthcare">Healthcare</SelectItem>
-                  <SelectItem value="Road Maintenance">
-                    Road Maintenance
-                  </SelectItem>
+                  {!formData.sector_id ? (
+                    <SelectItem value="placeholder" disabled>
+                      Select a sector first
+                    </SelectItem>
+                  ) : loadingSubSectors ? (
+                    <SelectItem value="loading" disabled>
+                      Loading subsectors...
+                    </SelectItem>
+                  ) : subSectors.length === 0 ? (
+                    <SelectItem value="empty" disabled>
+                      No subsectors available
+                    </SelectItem>
+                  ) : (
+                    subSectors.map((sub) => (
+                      <SelectItem key={sub.id} value={sub.id.toString()}>
+                        {sub.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </FormItem>
           </div>
 
-          <FormItem label="People Affected (Approx.)">
-            <Input
-              placeholder="e.g., 100"
-              value={formData.people_affected}
-              onChange={(e) => handleChange("people_affected", e.target.value)}
-            />
-          </FormItem>
+          {/* Show People Affected only for community-based issues */}
+          {formData.issue_type === "community_based" && (
+            <FormItem label="People Affected (Approx.)" required>
+              <Input
+                type="number"
+                placeholder="e.g., 100"
+                value={formData.people_affected || ""}
+                onChange={(e) =>
+                  updateField(
+                    "people_affected",
+                    e.target.value ? parseInt(e.target.value) : undefined
+                  )
+                }
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                Approximate number of people affected by this issue
+              </p>
+            </FormItem>
+          )}
 
           <FormItem label="Additional Notes">
             <Textarea
-              value={formData.notes}
-              onChange={(e) => handleChange("notes", e.target.value)}
+              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+              value={formData.additional_notes || ""}
+              onChange={(e) => updateField("additional_notes", e.target.value)}
             />
           </FormItem>
 
@@ -341,7 +511,7 @@ export function AddIssues() {
             <p className="text-sm text-red-500">* Required fields</p>
             <Button
               onClick={() => handleNext("constituent-details")}
-              className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90"
+              className="bg-slate-900 hover:bg-slate-800 text-white"
             >
               Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -353,14 +523,17 @@ export function AddIssues() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Constituent Name" required>
               <Input
-                value={formData.reporter_name}
-                onChange={(e) => handleChange("reporter_name", e.target.value)}
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                value={formData.reporter_name || ""}
+                onChange={(e) => updateField("reporter_name", e.target.value)}
               />
             </FormItem>
             <FormItem label="Phone Number" required>
               <Input
-                value={formData.reporter_phone}
-                onChange={(e) => handleChange("reporter_phone", e.target.value)}
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                placeholder="+233 ..."
+                value={formData.reporter_phone || ""}
+                onChange={(e) => updateField("reporter_phone", e.target.value)}
               />
             </FormItem>
           </div>
@@ -368,22 +541,24 @@ export function AddIssues() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Email Address">
               <Input
-                value={formData.reporter_email}
-                onChange={(e) => handleChange("reporter_email", e.target.value)}
+                type="email"
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                value={formData.reporter_email || ""}
+                onChange={(e) => updateField("reporter_email", e.target.value)}
               />
             </FormItem>
             <FormItem label="Gender">
               <Select
-                value={formData.constituent_gender}
-                onValueChange={(v) => handleChange("constituent_gender", v)}
+                value={formData.reporter_gender || ""}
+                onValueChange={(v) => updateField("reporter_gender", v)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Gender" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
@@ -391,10 +566,9 @@ export function AddIssues() {
 
           <FormItem label="Home Address">
             <Input
-              value={formData.constituent_address}
-              onChange={(e) =>
-                handleChange("constituent_address", e.target.value)
-              }
+              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+              value={formData.reporter_address || ""}
+              onChange={(e) => updateField("reporter_address", e.target.value)}
             />
           </FormItem>
 
@@ -404,12 +578,13 @@ export function AddIssues() {
               <Button
                 variant="secondary"
                 onClick={() => handleNext("issue-details")}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
                 onClick={() => handleNext("location")}
-                className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90"
+                className="bg-slate-900 hover:bg-slate-800 text-white"
               >
                 Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -421,68 +596,49 @@ export function AddIssues() {
         <TabsContent value="location" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Main Community" required>
-              <Select
-                value={formData.location_community}
-                onValueChange={(v) => handleChange("location_community", v)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Main Community" />
-                </SelectTrigger>
-                <SelectContent>
-                  {communities.map((c) => (
-                    <SelectItem key={c.id} value={c.id.toString()}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={formData.location}
+                onChange={(v) => updateField("location", v)}
+                options={locations.map((loc) => ({
+                  label: loc.name,
+                  value: loc.name,
+                }))}
+                placeholder={
+                  loadingData ? "Loading..." : "Select Main Community"
+                }
+                searchPlaceholder="Search communities..."
+                loading={loadingData}
+                disabled={loadingData}
+              />
             </FormItem>
             <FormItem label="Smaller Community">
-              <Select
-                value={formData.location_smaller_community}
-                onValueChange={(v) =>
-                  handleChange("location_smaller_community", v)
+              <SearchableSelect
+                value={formData.suburb || ""}
+                onChange={(v) => updateField("suburb", v)}
+                options={suburbs.map((loc) => ({
+                  label: loc.name,
+                  value: loc.name,
+                }))}
+                placeholder={
+                  !formData.location
+                    ? "Select Main Community first"
+                    : "Select Smaller Community (Optional)"
                 }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Smaller Community (Optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {smallerCommunities.map((c) => (
-                    <SelectItem key={c.id} value={c.id.toString()}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                searchPlaceholder="Search smaller communities..."
+                disabled={!formData.location || loadingSubLocations}
+                loading={loadingSubLocations}
+                emptyMessage="No smaller community found."
+              />
             </FormItem>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Suburb">
-              <Select
-                value={formData.location_suburb}
-                onValueChange={(v) => handleChange("location_suburb", v)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Suburb (Optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suburbs.map((c) => (
-                    <SelectItem key={c.id} value={c.id.toString()}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
             <FormItem label="Specific Location Details">
               <Input
-                placeholder="e.g., 'In front of Building 5'"
-                value={formData.location_details}
-                onChange={(e) =>
-                  handleChange("location_details", e.target.value)
-                }
+                placeholder="e.g., 'Near the old market'"
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                value={formData.cottage || ""}
+                onChange={(e) => updateField("cottage", e.target.value)}
               />
             </FormItem>
           </div>
@@ -493,21 +649,25 @@ export function AddIssues() {
               <Button
                 variant="secondary"
                 onClick={() => handleNext("constituent-details")}
-                disabled={submitting}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90"
+                className="bg-slate-900 hover:bg-slate-800 text-white"
                 onClick={handleSubmit}
                 disabled={submitting}
               >
                 {submitting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Submitting...
+                  </>
                 ) : (
-                  <Plus className="mr-2 h-4 w-4" />
+                  <>
+                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
+                  </>
                 )}
-                Submit Issue
               </Button>
             </div>
           </div>
@@ -528,10 +688,89 @@ function FormItem({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
     </div>
+  );
+}
+
+function SearchableSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Select...",
+  searchPlaceholder = "Search...",
+  emptyMessage = "No item found.",
+  disabled = false,
+  loading = false,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: { label: string; value: string }[];
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
+  disabled?: boolean;
+  loading?: boolean;
+}) {
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn(
+            "w-full justify-between font-normal",
+            !value && "text-muted-foreground",
+            "border-slate-200 bg-transparent hover:bg-slate-50",
+            disabled && "opacity-50 cursor-not-allowed"
+          )}
+          disabled={disabled}
+        >
+          {loading
+            ? "Loading..."
+            : value
+              ? options.find((option) => option.value === value)?.label || value
+              : placeholder}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        align="start"
+      >
+        <Command>
+          <CommandInput placeholder={searchPlaceholder} />
+          <CommandList>
+            <CommandEmpty>{emptyMessage}</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.label}
+                  onSelect={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === option.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
