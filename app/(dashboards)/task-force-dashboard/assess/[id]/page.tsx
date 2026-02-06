@@ -76,7 +76,6 @@ interface UiIssue extends ApiIssue {
     urgencyLevel: string;
     environmentalImpact: string;
     economicImpact: string;
-    economicImpact: string;
     socialImpact: string;
   };
   review_notes?: string; // Added field
@@ -355,9 +354,11 @@ export default function AssessIssue() {
 
       alert("Assessment submitted successfully!");
       router.push("/task-force-dashboard/issues");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting assessment:", error);
-      alert(`Error submitting assessment: ${error.message || "Please try again."}`);
+      const errorMessage =
+        error instanceof Error ? error.message : "Please try again.";
+      alert(`Error submitting assessment: ${errorMessage}`);
     } finally {
       setSubmitting(false);
     }

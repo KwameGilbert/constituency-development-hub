@@ -195,6 +195,10 @@ const adaptIssueToUi = (
       recommendations: assessment.recommendations,
       requiredResources: assessment.required_resources
     } : {
+      affectedPopulation: 0,
+      householdsAffected: 0,
+      estimatedCost: 0,
+      urgencyLevel: "N/A",
       environmentalImpact: "Not Assessed",
       economicImpact: "Not Assessed",
       socialImpact: "Not Assessed",
