@@ -55,6 +55,7 @@ export interface AssessmentReport {
   submitted_by?: number;
   created_at?: string;
   status: "submitted" | "approved" | "rejected" | "needs_revision";
+  review_notes?: string;
 }
 
 export interface ResolutionReport {

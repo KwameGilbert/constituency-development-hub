@@ -10,28 +10,25 @@ import {
   Briefcase,
   ShieldCheck,
   UserCog,
+  Banknote,
 } from "lucide-react";
 import {
   dashboardService,
   DashboardStats,
 } from "@/lib/services/dashboard-service";
 
+interface MetricItem {
+  id: string;
+  label: string;
+  value: number | string;
+  subtitle: string;
+  icon: string;
+  color: string;
+}
+
 interface MetricData {
-  summaryMetrics: Array<{
-    id: string;
-    label: string;
-    value: number | string;
-    subtitle: string;
-    icon: string;
-    color: string;
-  }>;
-  entityMetrics: Array<{
-    id: string;
-    label: string;
-    value: number;
-    icon: string;
-    color: string;
-  }>;
+  row1Metrics: MetricItem[];
+  row2Metrics: MetricItem[];
 }
 
 const iconMap = {
@@ -42,6 +39,7 @@ const iconMap = {
   Briefcase,
   ShieldCheck,
   UserCog,
+  Banknote,
 };
 
 const colorMap = {
@@ -123,7 +121,7 @@ export function AdminMetrics() {
         if (response.success && response.data) {
           // Transform API response to component format
           const transformedData: MetricData = {
-            summaryMetrics: [
+            row1Metrics: [
               {
                 id: "total-issues",
                 label: "Total Issues",
@@ -148,43 +146,31 @@ export function AdminMetrics() {
                 icon: "FolderKanban",
                 color: "purple",
               },
+            ],
+            row2Metrics: [
               {
-                id: "total-budget",
-                label: "Total Budget",
-                value: `₵${response.data.overview.total_budget.toLocaleString()}`,
-                subtitle: "Allocated budget",
+                id: "grand-total-budget",
+                label: "Grand Total Budget",
+                value: `₵${(response.data.overview.grand_total_budget || 0).toLocaleString()}`,
+                subtitle: "Total Projects + Issues",
                 icon: "Wallet",
+                color: "emerald",
+              },
+              {
+                id: "project-budget",
+                label: "Total Project Budget",
+                value: `₵${response.data.overview.total_budget.toLocaleString()}`,
+                subtitle: "Allocated project funds",
+                icon: "FolderKanban",
                 color: "amber",
               },
-            ],
-            entityMetrics: [
               {
-                id: "admins",
-                label: "Admins",
-                value: response.data.users_by_role.admin,
-                icon: "ShieldCheck",
+                id: "issues-budget",
+                label: "Total Issues Budget",
+                value: `₵${(response.data.overview.total_issues_budget || 0).toLocaleString()}`,
+                subtitle: "Allocated for issue resolution",
+                icon: "Banknote",
                 color: "indigo",
-              },
-              {
-                id: "web-admins",
-                label: "Web Admins",
-                value: response.data.users_by_role.web_admin,
-                icon: "UserCog",
-                color: "red",
-              },
-              {
-                id: "officers",
-                label: "Officers",
-                value: response.data.users_by_role.officer,
-                icon: "Briefcase",
-                color: "green",
-              },
-              {
-                id: "agents",
-                label: "Agents",
-                value: response.data.users_by_role.agent,
-                icon: "Users",
-                color: "blue",
               },
             ],
           };
@@ -207,8 +193,8 @@ export function AdminMetrics() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
             <Card key={i} className="p-4 animate-pulse">
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
@@ -221,15 +207,16 @@ export function AdminMetrics() {
             </Card>
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
             <Card key={i} className="p-4 animate-pulse">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
                 <div className="space-y-2">
-                  <div className="w-20 h-4 bg-gray-200 rounded"></div>
-                  <div className="w-12 h-6 bg-gray-200 rounded"></div>
+                  <div className="w-24 h-4 bg-gray-200 rounded"></div>
+                  <div className="w-28 h-6 bg-gray-200 rounded"></div>
+                  <div className="w-32 h-3 bg-gray-200 rounded"></div>
                 </div>
-                <div className="w-10 h-10 bg-gray-200 rounded-lg"></div>
               </div>
             </Card>
           ))}
@@ -250,9 +237,9 @@ export function AdminMetrics() {
 
   return (
     <div className="space-y-6">
-      {/* Top Row - Main Summaries */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.summaryMetrics.map((metric) => {
+      {/* First Row - 3 Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {metrics.row1Metrics.map((metric) => {
           const IconComponent = iconMap[metric.icon as keyof typeof iconMap];
           const colors = colorMap[metric.color as keyof typeof colorMap];
 
@@ -278,27 +265,28 @@ export function AdminMetrics() {
         })}
       </div>
 
-      {/* Second Row - Entity Counts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {metrics.entityMetrics.map((metric) => {
+      {/* Second Row - 3 Budget Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {metrics.row2Metrics.map((metric) => {
           const IconComponent = iconMap[metric.icon as keyof typeof iconMap];
           const colors = colorMap[metric.color as keyof typeof colorMap];
 
           return (
             <Card
               key={metric.id}
-              className={`p-4 flex-row items-center justify-between ${colors.cardBg} border ${colors.cardBorder} shadow-sm`}
+              className={`p-6 flex-row items-center space-x-4 border-l-4 ${colors.border} shadow-sm hover:shadow-md transition-shadow`}
             >
+              <div className={`${colors.bg} p-4 rounded-xl`}>
+                <IconComponent className={`${colors.text} w-8 h-8`} />
+              </div>
               <div>
-                <p className={`text-sm font-medium ${colors.label}`}>
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
                   {metric.label}
                 </p>
-                <h3 className={`text-2xl font-bold ${colors.value} mt-1`}>
+                <h3 className="text-3xl font-bold text-gray-800 mt-1">
                   {metric.value}
                 </h3>
-              </div>
-              <div className="bg-white p-2 rounded-lg shadow-sm">
-                <IconComponent className={`${colors.text} w-5 h-5`} />
+                <p className="text-sm text-gray-400 mt-1">{metric.subtitle}</p>
               </div>
             </Card>
           );

@@ -172,8 +172,8 @@ function TaskForceMainDashboardPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-yellow-100">
-                <Clock className="h-6 w-6 text-yellow-600" />
+              <div className="p-3 rounded-lg bg-blue-100">
+                <Clock className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">
@@ -190,8 +190,8 @@ function TaskForceMainDashboardPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-blue-100">
-                <AlertCircle className="h-6 w-6 text-blue-600" />
+              <div className="p-3 rounded-lg bg-orange-100">
+                <AlertCircle className="h-6 w-6 text-orange-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">
@@ -324,7 +324,7 @@ function TaskForceMainDashboardPage() {
                           >
                             {metadata.statuses.find(
                               (s) => s.value === issue.status,
-                            )?.label || issue.status}
+                            )?.label || issue.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                           </Badge>
                           <Badge className={getPriorityColor(issue.priority)}>
                             {issue.priority}
@@ -351,15 +351,22 @@ function TaskForceMainDashboardPage() {
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Link href={`/task-force-dashboard/assess/${issue.id}`}>
-                          <Button
-                            size="sm"
-                            className="bg-purple-600 hover:bg-purple-700"
-                          >
-                            <FileText className="h-4 w-4 mr-2" />
-                            Assess
-                          </Button>
-                        </Link>
+                        {[
+                          "assigned_to_task_force",
+                          "pending_assessment",
+                          "assessment_in_progress",
+                          "needs_revision",
+                        ].includes(issue.status) && (
+                          <Link href={`/task-force-dashboard/assess/${issue.id}`}>
+                            <Button
+                              size="sm"
+                              className="bg-purple-600 hover:bg-purple-700"
+                            >
+                              <FileText className="h-4 w-4 mr-2" />
+                              Assess
+                            </Button>
+                          </Link>
+                        )}
                       </div>
                     </div>
                   ))

@@ -105,6 +105,7 @@ interface RawAssessmentData {
     estimatedCost?: number;
     justification?: string;
   }[];
+  review_notes?: string; // Admin feedback
 }
 
 // Helper to adapt API response to UI shape
@@ -194,14 +195,13 @@ const adaptIssueToUi = (
       recommendations: assessment.recommendations,
       requiredResources: assessment.required_resources
     } : {
-      affectedPopulation: 0,
-      householdsAffected: 0,
-      estimatedCost: apiIssue.allocated_budget || 0,
-      urgencyLevel: apiIssue.priority,
       environmentalImpact: "Not Assessed",
       economicImpact: "Not Assessed",
       socialImpact: "Not Assessed",
     },
+    // Map review notes from assessment report if available
+    assessment_report: assessment ? { ...assessment, review_notes: assessment.review_notes } : undefined, 
+    status: apiIssue.status, // Ensure status is passed through
     attachments: [...issueAttachments, ...assessmentAttachments],
     timeline:
       (apiIssue.timeline || []).length > 0
@@ -367,6 +367,27 @@ export default function IssueDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Review Feedback Alert */}
+      {issue.assessment_report?.review_notes && 
+       (issue.status === 'assessment_in_progress' || issue.status === 'pending_assessment') && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm animate-pulse">
+            <div className="flex items-start">
+               <AlertTriangle className="h-5 w-5 text-red-600 mr-3 mt-0.5" />
+               <div>
+                  <h3 className="text-sm font-bold text-red-800 uppercase tracking-wide">
+                     Attention Needed: Admin Feedback
+                  </h3>
+                  <p className="text-sm text-red-700 mt-1 whitespace-pre-wrap font-medium">
+                     {issue.assessment_report.review_notes}
+                  </p>
+                  <p className="text-xs text-red-500 mt-2">
+                     Please review the feedback above and re-submit your assessment.
+                  </p>
+               </div>
+            </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}

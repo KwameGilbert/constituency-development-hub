@@ -5,6 +5,7 @@ import { AdminMetrics } from "@/components/admin-dashboard/AdminMetrics";
 import { AdminCharts } from "@/components/admin-dashboard/AdminCharts";
 import { AdminRecentIssues } from "@/components/admin-dashboard/AdminRecentIssues";
 import { AdminRecentActivity } from "@/components/admin-dashboard/AdminRecentActivity";
+import { BudgetChart } from "@/components/admin-dashboard/analytics/BudgetChart";
 import { Users } from "lucide-react";
 
 function AdminDashboardMainPage() {
@@ -28,6 +29,7 @@ function AdminDashboardMainPage() {
 
         {/* Charts Section */}
         <AdminCharts />
+        <BudgetChart />
 
         {/* Recent Activity & Issues */}
         <div className="flex flex-col lg:flex-row gap-6">

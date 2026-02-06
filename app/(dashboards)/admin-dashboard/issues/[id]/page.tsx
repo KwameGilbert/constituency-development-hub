@@ -252,16 +252,26 @@ export default async function IssueDetailPage({
               const assessment = issue.assessment_report || issue.assessment;
               
               return assessment ? (
-              <Card>
+              <Card className={`
+                transition-all duration-300
+                ${assessment.status === 'rejected' ? 'border-red-500 border-2 shadow-red-100' : ''}
+                ${assessment.status === 'needs_revision' ? 'border-orange-500 border-2 shadow-orange-100' : ''}
+                ${assessment.status === 'approved' ? 'border-green-500 border-2 shadow-green-100' : ''}
+              `}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-blue-600" />
+                    <AlertCircle className={`h-5 w-5 ${
+                      assessment.status === 'rejected' ? 'text-red-600' : 
+                      assessment.status === 'approved' ? 'text-green-600' : 
+                      'text-blue-600'
+                    }`} />
                     Task Force Assessment
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                    {/* Status Badge */}
-                   <div className="flex justify-end">
+                   <div className="flex justify-end items-center gap-2">
+                      <span className="text-xs text-gray-400 font-mono">DEBUG_STATUS: [{assessment.status}]</span>
                       <Badge variant={assessment.status === 'approved' ? 'default' : assessment.status === 'rejected' ? 'destructive' : 'secondary'}>
                         Status: {assessment.status ? assessment.status.toUpperCase() : 'SUBMITTED'}
                       </Badge>

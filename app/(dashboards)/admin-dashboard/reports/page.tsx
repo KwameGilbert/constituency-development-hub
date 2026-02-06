@@ -17,6 +17,8 @@ import {
   getColumnsForType,
 } from "@/lib/services/reports-service";
 
+import { BudgetChart } from "@/components/admin-dashboard/analytics/BudgetChart";
+
 export default function ReportsPage() {
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [currentColumns, setCurrentColumns] = useState<ReportColumn[]>(
@@ -68,6 +70,8 @@ export default function ReportsPage() {
         ]}
       />
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <BudgetChart />
+        
         {/* Report Builder */}
         <ReportBuilder onPreview={handlePreview} />
 

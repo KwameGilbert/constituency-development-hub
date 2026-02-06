@@ -322,14 +322,43 @@ export default function IssuesPage() {
                 </p>
               </div>
             ) : (
-              filteredIssues.map((issue) => (
+              filteredIssues.map((issue) => {
+                const assessmentStatus = issue.assessment_report?.status; // Access the nested assessment status
+                const isRejected = assessmentStatus === 'rejected';
+                const isRevision = assessmentStatus === 'needs_revision';
+                const isPendingAssessment = issue.status === 'assigned_to_task_force';
+                
+                return (
                 <Card
                   key={issue.id}
-                  className="hover:shadow-lg transition-shadow"
+                  className={`
+                    hover:shadow-lg transition-all duration-300
+                    ${isRejected ? 'border-red-500 border-2 shadow-red-100 bg-red-50/10' : ''}
+                    ${isRevision ? 'border-orange-500 border-2 shadow-orange-100 bg-orange-50/10' : ''}
+                    ${isPendingAssessment ? 'border-blue-500 border-2 shadow-blue-100 bg-blue-50/10' : ''}
+                  `}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
+                        {isRejected && (
+                          <div className="flex items-center gap-1 text-red-600 text-xs font-bold uppercase tracking-wider mb-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            Assessment Rejected
+                          </div>
+                        )}
+                        {isRevision && (
+                          <div className="flex items-center gap-1 text-orange-600 text-xs font-bold uppercase tracking-wider mb-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            Revision Requested
+                          </div>
+                        )}
+                        {isPendingAssessment && (
+                          <div className="flex items-center gap-1 text-blue-600 text-xs font-bold uppercase tracking-wider mb-1">
+                            <Clock className="h-3 w-3" />
+                            Ready for Assessment
+                          </div>
+                        )}
                         <CardTitle className="text-lg leading-tight mb-1">
                           {issue.title}
                         </CardTitle>
@@ -342,7 +371,7 @@ export default function IssuesPage() {
                               {getStatusIcon(issue.status)}
                               {metadata.statuses.find(
                                 (s) => s.value === issue.status,
-                              )?.label || issue.status}
+                              )?.label || issue.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                             </div>
                           </Badge>
                           <Badge className={getPriorityColor(issue.priority)}>
@@ -414,7 +443,8 @@ export default function IssuesPage() {
                     </div>
                   </CardContent>
                 </Card>
-              ))
+              );
+            })
             )}
           </div>
         </TabsContent>

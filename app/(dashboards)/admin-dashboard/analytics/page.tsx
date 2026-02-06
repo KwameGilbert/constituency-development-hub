@@ -7,6 +7,8 @@ import { AnalyticsInsights } from "@/components/admin-dashboard/analytics/Analyt
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { BudgetChart } from "@/components/admin-dashboard/analytics/BudgetChart";
+
 export default function AnalyticsPage() {
   return (
     <div className="flex flex-col h-full bg-slate-50">
@@ -33,14 +35,17 @@ export default function AnalyticsPage() {
         {/* Bottom Insights */}
         <AnalyticsInsights />
 
-        {/* Footer Section Title */}
-        <div className="flex items-center justify-between pb-6">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Budget Analytics
-          </h3>
-          <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-            Project Finances
-          </span>
+        {/* Budget Analytics */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Budget Analytics
+            </h3>
+            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+              Project Finances
+            </span>
+          </div>
+          <BudgetChart />
         </div>
       </div>
     </div>

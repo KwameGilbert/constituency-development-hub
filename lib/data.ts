@@ -33,8 +33,18 @@ const teamData = {
 const metadataData = {
   statuses: [
     { value: "submitted", label: "Submitted", color: "blue" },
-    { value: "under_review", label: "Under Review", color: "yellow" },
-    { value: "approved", label: "Approved", color: "green" },
+    { value: "under_officer_review", label: "Under Officer Review", color: "yellow" },
+    { value: "forwarded_to_admin", label: "Forwarded To Admin", color: "purple" },
+    { value: "assigned_to_task_force", label: "Assigned To Task Force", color: "blue" },
+    { value: "pending_assessment", label: "Pending Assessment", color: "blue" },
+    { value: "assessment_in_progress", label: "Assessment In Progress", color: "orange" },
+    { value: "assessment_submitted", label: "Assessment Submitted", color: "indigo" },
+    { value: "needs_revision", label: "Needs Revision", color: "orange" },
+    { value: "resources_allocated", label: "Resources Allocated", color: "cyan" },
+    { value: "resolution_in_progress", label: "Resolution In Progress", color: "orange" },
+    { value: "resolution_submitted", label: "Resolution Submitted", color: "indigo" },
+    { value: "resolved", label: "Resolved", color: "green" },
+    { value: "closed", label: "Closed", color: "green" },
     { value: "rejected", label: "Rejected", color: "red" },
   ],
   priorities: [
@@ -235,10 +245,13 @@ export const getStatusColor = (status: string): string => {
   const colorMap: { [key: string]: string } = {
     yellow: "bg-yellow-100 text-yellow-800 border-yellow-200",
     blue: "bg-blue-100 text-blue-800 border-blue-200",
-    green: "bg-green-100 text-green-800 border-green-200",
+    green: "bg-green-700 text-green-100 border-green-200",
     red: "bg-red-100 text-red-800 border-red-200",
     orange: "bg-orange-100 text-orange-800 border-orange-200",
     gray: "bg-gray-100 text-gray-800 border-gray-200",
+    purple: "bg-purple-100 text-purple-800 border-purple-200",
+    indigo: "bg-indigo-100 text-indigo-800 border-indigo-200",
+    cyan: "bg-cyan-700 text-cyan-100 border-cyan-200",
   };
 
   return (

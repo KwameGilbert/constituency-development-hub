@@ -76,8 +76,10 @@ interface UiIssue extends ApiIssue {
     urgencyLevel: string;
     environmentalImpact: string;
     economicImpact: string;
+    economicImpact: string;
     socialImpact: string;
   };
+  review_notes?: string; // Added field
   attachments: {
     id: number;
     name: string;
@@ -112,6 +114,7 @@ const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
       economicImpact: "Not Assessed",
       socialImpact: "Not Assessed",
     },
+    review_notes: apiIssue.assessment?.review_notes || apiIssue.assessment_report?.review_notes, // Map from either source
     attachments: (apiIssue.images || []).map((img, i) => ({
       id: i,
       name: `Image ${i + 1}`,
@@ -441,6 +444,28 @@ export default function AssessIssue() {
           </Badge>
         </div>
       </div>
+
+      {/* Admin Feedback Alert */}
+      {issue.review_notes && (
+         <Card className="border-red-500 bg-red-50 shadow-sm">
+            <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                   <AlertTriangle className="h-6 w-6 text-red-600 shrink-0" />
+                   <div>
+                      <h3 className="font-bold text-red-900 text-lg mb-1">
+                         Revision Requested
+                      </h3>
+                      <p className="text-red-800 font-medium whitespace-pre-wrap">
+                         &ldquo;{issue.review_notes}&rdquo;
+                      </p>
+                      <p className="text-sm text-red-600 mt-2">
+                        The admin has returned this assessment for the reasons above. Please update the necessary fields and submit again.
+                      </p>
+                   </div>
+                </div>
+            </CardContent>
+         </Card>
+      )}
 
       {/* Progress Indicator */}
       <Card>

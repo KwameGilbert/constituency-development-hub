@@ -7,6 +7,8 @@ export interface AdminDashboardStats {
     active_users: number;
     total_projects: number;
     total_budget: number;
+    total_issues_budget: number;
+    grand_total_budget: number;
   };
   users_by_role: {
     admin: number;
@@ -53,6 +55,15 @@ export interface AdminChartsData {
       name: string;
       value: number;
       color: string;
+    }>;
+    budgetDistribution?: Array<{
+      name: string;
+      value: number;
+      color: string;
+    }>;
+    budgetTrends?: Array<{
+      name: string;
+      value: number; // Reusing structure or defining new one? Let's use generic value for simplicity in frontend mapping
     }>;
   };
 }
