@@ -17,6 +17,8 @@ export interface AgentProfile {
   id_number: string | null;
   id_verified: boolean;
   address: string | null;
+  emergency_contact_name: string | null;
+  emergency_contact_phone: string | null;
   reports_submitted: number;
   last_active_at: string | null;
   created_at: string;
@@ -36,6 +38,25 @@ export interface AgentProfile {
       email: string;
     };
   } | null;
+}
+
+export interface AgentStatistics {
+  pending: number;
+  resolved: number;
+  rejected: number;
+  approved: number;
+}
+
+export interface RecentIssue {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  priority: string;
+  status: string;
+  location: string;
+  created_at: string;
+  case_id?: string;
 }
 
 export interface AgentReport {
@@ -166,6 +187,24 @@ class AgentService {
   }
 
   /**
+   * Admin: Get agent statistics
+   * GET /v1/admin/agents/stats
+   */
+  async getStatistics(): Promise<
+    ApiResponse<{
+      total_agents: number;
+      active_agents: number;
+      inactive_agents: number;
+      issues_handled: number;
+    }>
+  > {
+    return apiClient("/admin/agents/stats", {
+      method: "GET",
+      requiresAuth: true,
+    });
+  }
+
+  /**
    * Admin: Create new agent
    * POST /v1/admin/agents
    */
@@ -188,7 +227,11 @@ class AgentService {
    */
   async getAgentById(
     id: number,
-  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
+  ): Promise<ApiResponse<{ 
+    agent: AgentProfile;
+    issue_stats?: AgentStatistics;
+    recent_issues?: RecentIssue[];
+  }>> {
     return apiClient(`/admin/agents/${id}`, {
       method: "GET",
       requiresAuth: true,
@@ -201,13 +244,20 @@ class AgentService {
    */
   async updateAgent(
     id: number,
-    data: Partial<AgentProfile>,
+    data: Partial<AgentProfile> | { status?: string },
   ): Promise<ApiResponse<{ agent: AgentProfile }>> {
     return apiClient(`/admin/agents/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
     });
+  }
+
+  /**
+   * Admin: Deactivate agent (set status to inactive)
+   */
+  async deactivateAgent(id: number): Promise<ApiResponse<{ agent: AgentProfile }>> {
+    return this.updateAgent(id, { status: "suspended" });
   }
 
   /**

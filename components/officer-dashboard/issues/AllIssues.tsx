@@ -121,7 +121,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       resolution_submitted:
         "bg-emerald-100 text-emerald-700 hover:bg-emerald-100/80",
       resolved: "bg-green-100 text-green-700 hover:bg-green-100/80",
-      closed: "bg-gray-100 text-gray-700 hover:bg-gray-100/80",
+      closed: "bg-gray-100 text-green-700 hover:bg-green-100/80",
     };
     return statusColors[status] || "bg-gray-100 text-gray-700";
   }
@@ -134,6 +134,13 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       low: "bg-gray-100 text-gray-700 hover:bg-gray-100/80",
     };
     return priorityColors[priority] || "bg-gray-100 text-gray-700";
+  }
+
+  function formatStatus(status: string) {
+    return status
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   }
 
   return (
@@ -302,7 +309,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                             variant="outline"
                             className={`border-0 whitespace-nowrap ${getStatusColor(issue.status)}`}
                           >
-                            {issue.status.replace(/_/g, " ")}
+                            {formatStatus(issue.status)}
                           </Badge>
                         </div>
                       </TableCell>
@@ -369,7 +376,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                         variant="outline"
                         className={`border-0 ${getStatusColor(issue.status)}`}
                       >
-                        {issue.status.replace(/_/g, " ")}
+                        {formatStatus(issue.status)}
                       </Badge>
 
                       <Button

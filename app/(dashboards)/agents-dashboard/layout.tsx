@@ -5,7 +5,13 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute allowedRoles={["agent"]}>
-      <SidebarProvider>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "20rem",
+          } as React.CSSProperties
+        }
+      >
         <AgentSidebar />
         <main className="w-full">
           <section>{children}</section>

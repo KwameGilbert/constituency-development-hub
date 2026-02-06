@@ -78,7 +78,7 @@ export function HelpSections() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Welcome to the SWMA Officer Dashboard! This system helps you
+                 This system helps you
                 efficiently manage issues, oversee agents, and generate
                 comprehensive reports.
               </p>

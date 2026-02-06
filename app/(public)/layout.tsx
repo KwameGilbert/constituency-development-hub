@@ -12,7 +12,7 @@ export default function PublicLayout({
     <div>
       <SiteHeader />
       <main>{children}</main>
-      <FloatingWhatsApp phoneNumber="233247730625" />
+      <FloatingWhatsApp phoneNumber="233554334259" />
       <SiteFooter />
     </div>
   );

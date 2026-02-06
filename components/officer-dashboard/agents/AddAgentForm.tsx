@@ -325,7 +325,7 @@ export function AddAgentForm() {
                     <SelectValue placeholder="Select ID Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="national_id">
+                    <SelectItem value="ghana_card">
                       National ID (Ghana Card)
                     </SelectItem>
                     <SelectItem value="passport">Passport</SelectItem>

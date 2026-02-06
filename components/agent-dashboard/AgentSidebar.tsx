@@ -56,9 +56,9 @@ export function AgentSidebar() {
   };
 
   return (
-    <Sidebar className="bg-white border-r border-slate-200">
+    <Sidebar className="bg-white border-r border-slate-200 px-6">
       <SidebarHeader className="h-16 border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-4 py-2">
+        <div className="flex items-center gap-2 px-6 py-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">
             <User className="h-5 w-5" />
           </div>
@@ -121,24 +121,24 @@ export function AgentSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Avatar>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <Avatar className="h-10 w-10 shrink-0">
               <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback>
+              <AvatarFallback className="bg-slate-900 text-white">
                 {userName.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-slate-900">
+            <div className="flex flex-col overflow-hidden">
+              <span className="truncate text-sm font-medium text-slate-900">
                 {userName}
               </span>
-              <span className="text-xs text-slate-500">{userEmail}</span>
+              <span className="truncate text-xs text-slate-500">{userEmail}</span>
             </div>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="text-slate-500 hover:text-red-600 transition-colors">
+              <button className="shrink-0 text-slate-500 transition-colors hover:text-red-600">
                 <LogOut className="h-5 w-5" />
               </button>
             </AlertDialogTrigger>

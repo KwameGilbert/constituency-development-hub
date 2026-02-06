@@ -12,7 +12,7 @@ export default async function EditAgentPage({
     <div className="space-y-6">
       <EditAgentHeader agentId={id} />
       <div className="p-6">
-        <EditAgentForm />
+        <EditAgentForm agentId={id} />
       </div>
     </div>
   );

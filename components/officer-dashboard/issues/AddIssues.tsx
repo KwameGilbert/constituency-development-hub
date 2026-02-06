@@ -103,6 +103,7 @@ export function AddIssues() {
           locationsService.getLocations({
             type: "community",
             status: "active",
+            limit: 1000,
           }),
           sectorsService.getSectors(),
           categoriesService.getCategories(),
@@ -186,6 +187,7 @@ export function AddIssues() {
           parent_id: selectedLocation.id,
           type: "suburb",
           status: "active",
+          limit: 1000,
         });
 
         if (suburbRes.success && suburbRes.data?.locations) {
@@ -611,7 +613,7 @@ export function AddIssues() {
                 disabled={loadingData}
               />
             </FormItem>
-            <FormItem label="Smaller Community">
+            <FormItem label="Suburb">
               <SearchableSelect
                 value={formData.suburb || ""}
                 onChange={(v) => updateField("suburb", v)}
