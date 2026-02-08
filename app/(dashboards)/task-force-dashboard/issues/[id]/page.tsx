@@ -358,7 +358,7 @@ export default function IssueDetailPage() {
             </Link>
           )}
 
-          {[
+          {/* {[
             "resources_allocated",
             "resolution_in_progress",
           ].includes(issue.status) && (
@@ -368,7 +368,7 @@ export default function IssueDetailPage() {
                 Resolve Issue
               </Button>
             </Link>
-          )}
+          )} */}
         </div>
       </div>
 

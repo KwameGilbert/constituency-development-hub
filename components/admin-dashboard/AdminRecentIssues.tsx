@@ -8,6 +8,7 @@ import {
   dashboardService,
   RecentIssue,
 } from "@/lib/services/dashboard-service";
+import { cleanupHtml } from "@/lib/utils";
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -187,9 +188,9 @@ export function AdminRecentIssues() {
                       </div>
                       <span
                         className="text-xs text-gray-500 truncate mt-1"
-                        title={issue.description}
+                        title={cleanupHtml(issue.description)}
                       >
-                        {issue.description}
+                        {cleanupHtml(issue.description)}
                       </span>
                     </div>
 

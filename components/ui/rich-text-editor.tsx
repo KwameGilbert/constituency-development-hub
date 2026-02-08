@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { cn } from "@/lib/utils";
+
 
 interface RichTextEditorProps {
   value?: string;
@@ -14,6 +15,8 @@ interface RichTextEditorProps {
   error?: boolean;
 }
 
+
+
 export function RichTextEditor({
   value = "",
   onChange,
@@ -23,7 +26,7 @@ export function RichTextEditor({
   height = 400,
   error = false,
 }: RichTextEditorProps) {
-  const editorRef = useRef<any>(null);
+
 
   // Detect if dark mode is active
   const isDarkMode =
@@ -39,8 +42,8 @@ export function RichTextEditor({
       )}
     >
       <Editor
-        apiKey="kq54asy1zm0lhnt1x2zsqhel46zq48awgwxzw51xfjx1unf9"
-        onInit={(_evt, editor) => (editorRef.current = editor)}
+        apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
+
         value={value}
         onEditorChange={(content) => {
           if (onChange) {

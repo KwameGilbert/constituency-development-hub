@@ -1,1 +1,2 @@
 NEXT_PUBLIC_API_URL=http://app.comdevhub-api.com/v1
+NEXT_PUBLIC_TINYMCE_API_KEY=kq54asy1zm0lhnt1x2zsqhel46zq48awgwxzw51xfjx1unf9

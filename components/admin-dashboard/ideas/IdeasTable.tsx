@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, ThumbsUp } from "lucide-react";
 import { Idea } from "@/lib/services/ideas-service";
 import { Button } from "@/components/ui/button";
+import { cleanupHtml } from "@/lib/utils";
 
 interface IdeasTableProps {
   ideas: Idea[];
@@ -103,8 +104,10 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
                       <p className="font-medium text-slate-900 max-w-md">
                         {idea.title}
                       </p>
+
+
                       <p className="text-sm text-slate-500 truncate max-w-md mt-1">
-                        {idea.description}
+                        {cleanupHtml(idea.description)}
                       </p>
                     </div>
                   </td>

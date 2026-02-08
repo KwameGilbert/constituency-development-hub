@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +24,14 @@ import {
   CreateProjectData,
   Project,
 } from "@/lib/services/projects-service";
+import { 
+  sectorsService, 
+  Sector 
+} from "@/lib/services/sectors-service";
+import { 
+  locationsService, 
+  Location 
+} from "@/lib/services/locations-service";
 import { uploadService } from "@/lib/services/upload-service";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
@@ -58,6 +66,36 @@ export function NewProjectForm({ project }: ProjectFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(
     project?.image || null,
   );
+  const [sectors, setSectors] = useState<Sector[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoadingData(true);
+      try {
+        const [sectorsResponse, locationsResponse] = await Promise.all([
+          sectorsService.getSectors(),
+          locationsService.getLocations({ limit: 100 }), // Adjust limit as needed
+        ]);
+
+        if (sectorsResponse.success) {
+          setSectors(sectorsResponse.data.sectors);
+        }
+
+        if (locationsResponse.success) {
+          setLocations(locationsResponse.data.locations);
+        }
+      } catch (error) {
+        console.error("Failed to fetch form data:", error);
+        toast.error("Failed to load sectors and locations");
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const isEditMode = !!project;
 
@@ -266,23 +304,22 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                 </div>
               </div>
 
-              <div>
+              <div> 
                 <Label htmlFor="sector_id">Sector *</Label>
                 <Select
                   onValueChange={(value) => form.setValue("sector_id", value)}
                   defaultValue={form.getValues("sector_id")}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isLoadingData}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select sector" />
+                    <SelectValue placeholder={isLoadingData ? "Loading sectors..." : "Select sector"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">Education</SelectItem>
-                    <SelectItem value="2">Healthcare</SelectItem>
-                    <SelectItem value="3">Infrastructure</SelectItem>
-                    <SelectItem value="4">Agriculture</SelectItem>
-                    <SelectItem value="5">Water & Sanitation</SelectItem>
-                    <SelectItem value="6">Environment</SelectItem>
+                    {sectors.map((sector) => (
+                      <SelectItem key={sector.id} value={sector.id.toString()}>
+                        {sector.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {form.formState.errors.sector_id && (
@@ -294,12 +331,22 @@ export function NewProjectForm({ project }: ProjectFormProps) {
 
               <div>
                 <Label htmlFor="location">Location *</Label>
-                <Input
-                  id="location"
-                  placeholder="e.g., Central District"
-                  {...form.register("location")}
-                  disabled={isSubmitting}
-                />
+                 <Select
+                  onValueChange={(value) => form.setValue("location", value)}
+                  defaultValue={form.getValues("location")}
+                  disabled={isSubmitting || isLoadingData}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={isLoadingData ? "Loading locations..." : "Select location"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {locations.map((location) => (
+                      <SelectItem key={location.id} value={location.name}>
+                        {location.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {form.formState.errors.location && (
                   <p className="text-red-500 text-sm mt-1">
                     {form.formState.errors.location.message}

@@ -57,6 +57,7 @@ export interface IdeaSubmissionData {
   submitter_email: string;
   submitter_contact?: string;
   location?: string;
+  documents?: string[];
 }
 
 // --- Service Class ---

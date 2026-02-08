@@ -13,8 +13,9 @@ import {
   Briefcase,
   Phone,
   User,
-  DollarSign,
 } from "lucide-react";
+import Image from "next/image";
+import { getImageUrl } from "@/lib/utils";
 import { Project } from "@/lib/services/projects-service";
 import Link from "next/link";
 import {
@@ -109,12 +110,28 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   </Badge>
                 )}
               </div>
+
+
               <h2 className="text-2xl font-bold text-slate-900 mb-2">
                 {project.title}
               </h2>
-              <p className="text-slate-700 leading-relaxed">
-                {project.description}
-              </p>
+
+              {project.image && (
+                <div className="relative w-full h-72 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src={getImageUrl(project.image)}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+              )}
+
+              <div
+                className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: project.description }}
+              />
             </div>
             <div className="flex gap-2">
               <Link href={`/admin-dashboard/projects/${project.id}/edit`}>
@@ -134,7 +151,7 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Project</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete "{project.title}"? This
+                      Are you sure you want to delete &quot;{project.title}&quot;? This
                       action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>

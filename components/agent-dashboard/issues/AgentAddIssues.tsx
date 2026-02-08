@@ -318,7 +318,7 @@ export function AgentAddIssues() {
               value={formData.description}
               onChange={(value) => updateField("description", value)}
               placeholder="Describe the issue in detail..."
-              height={200}
+              height={400}
             />
           </FormItem>
 

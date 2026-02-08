@@ -162,9 +162,16 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-slate-700">
-                        {job.company || "Not specified"}
-                      </span>
+                      <div>
+                        <span className="text-sm text-slate-700 block">
+                          {job.company || "Not specified"}
+                        </span>
+                        {job.description?.startsWith("Sector: ") && (
+                          <span className="text-xs text-slate-500 block mt-1">
+                            {job.description}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <Badge className={getJobTypeColor(job.job_type)}>

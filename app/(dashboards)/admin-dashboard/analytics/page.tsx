@@ -1,15 +1,159 @@
 "use client";
 
+import { useState } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { AnalyticsMetrics } from "@/components/admin-dashboard/analytics/AnalyticsMetrics";
 import { AnalyticsCharts } from "@/components/admin-dashboard/analytics/AnalyticsCharts";
 import { AnalyticsInsights } from "@/components/admin-dashboard/analytics/AnalyticsInsights";
 import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
+import { toast } from "sonner";
+import * as XLSX from "xlsx";
+import { dashboardService } from "@/lib/services/dashboard-service";
 
 import { BudgetChart } from "@/components/admin-dashboard/analytics/BudgetChart";
 
 export default function AnalyticsPage() {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    try {
+      setIsExporting(true);
+      toast.info("Generating comprehensive analytics report...");
+
+      // Fetch all necessary data
+      const [metricsRes, chartsRes, insightsRes] = await Promise.all([
+        dashboardService.getAnalyticsMetrics(),
+        dashboardService.getAdminCharts(),
+        dashboardService.getAnalyticsInsights(),
+      ]);
+
+      if (!metricsRes.success || !chartsRes.success || !insightsRes.success) {
+        throw new Error("Failed to fetch analytics data");
+      }
+
+      const metrics = metricsRes.data;
+      const charts = chartsRes.data;
+      const insights = insightsRes.data;
+
+      // Create a new workbook
+      const wb = XLSX.utils.book_new();
+
+      // --- Sheet 1: Overview (Metrics + Monthly Trends) ---
+      const overviewData: (string | number)[][] = [
+        ["SUMMARY METRICS"],
+        ["Metric", "Value", "Trend"],
+        ["Total Issues", metrics.metrics.totalIssues, `${metrics.trends.issuesChange}%`],
+        ["Active Staff", metrics.metrics.activeStaff, `${metrics.trends.staffChange}%`],
+        ["Total Projects", metrics.metrics.totalProjects, `${metrics.trends.projectsChange}%`],
+        ["Active Budget", metrics.metrics.activeBudget, `${metrics.trends.budgetChange}%`],
+        ["New Issues (Week)", metrics.metrics.newIssuesThisWeek, `${metrics.trends.newIssuesChange}%`],
+        ["Resolved (Week)", metrics.metrics.resolvedThisWeek, `${metrics.trends.resolvedChange}%`],
+        ["Active Users (7d)", metrics.metrics.activeUsers7Days, `${metrics.trends.activeUsersChange}%`],
+        ["Ongoing Projects", metrics.metrics.ongoingProjects, `${metrics.trends.ongoingProjectsChange}%`],
+        [], // Empty row
+        ["MONTHLY TRENDS"],
+        ["Month", "Issues Reported", "Issues Resolved"],
+      ];
+
+      if (charts.charts.monthlyTrends) {
+        charts.charts.monthlyTrends.forEach((item) => {
+          overviewData.push([item.name, item.issues, item.resolved]);
+        });
+      }
+
+      const overviewWs = XLSX.utils.aoa_to_sheet(overviewData);
+      XLSX.utils.book_append_sheet(wb, overviewWs, "Overview");
+
+      // --- Sheet 2: Distributions (Status + Categories) ---
+      const distributionsData: (string | number)[][] = [
+        ["ISSUES BY STATUS"],
+        ["Status", "Count"],
+      ];
+
+      if (charts.charts.issueStatusDistribution) {
+        charts.charts.issueStatusDistribution.forEach((item) => {
+          distributionsData.push([item.name, item.value]);
+        });
+      }
+
+      distributionsData.push([], ["ISSUES BY CATEGORY / SEVERITY"], ["Category", "Count"]);
+
+      if (charts.charts.categoryDistribution) {
+        charts.charts.categoryDistribution.forEach((item) => {
+          distributionsData.push([item.name, item.value]);
+        });
+      }
+
+      const distributionsWs = XLSX.utils.aoa_to_sheet(distributionsData);
+      XLSX.utils.book_append_sheet(wb, distributionsWs, "Distributions");
+
+      // --- Sheet 3: Budget Analysis ---
+      const budgetData: (string | number)[][] = [
+        ["BUDGET DISTRIBUTION"],
+        ["Category", "Amount (GHS)"],
+      ];
+
+      if (charts.charts.budgetDistribution) {
+        charts.charts.budgetDistribution.forEach((item) => {
+          budgetData.push([item.name, item.value]);
+        });
+      }
+
+      const budgetWs = XLSX.utils.aoa_to_sheet(budgetData);
+      XLSX.utils.book_append_sheet(wb, budgetWs, "Budget Analysis");
+
+      // --- Sheet 4: Insights (Performers + Community) ---
+      const insightsData: (string | number)[][] = [
+        ["TOP PERFORMERS"],
+        ["Rank", "Name", "Role", "Resolved Count", "Total Assigned", "Resolution Rate"],
+      ];
+
+      if (insights.insights.topPerformers) {
+        insights.insights.topPerformers.forEach((p) => {
+          insightsData.push([
+            p.rank,
+            p.name,
+            p.role,
+            p.resolvedCount,
+            p.totalCount,
+            `${p.resolutionRate}%`,
+          ]);
+        });
+      }
+
+      insightsData.push([], ["COMMUNITY INSIGHTS"], ["Location", "Issues Reported", "Avg Resolution Time", "Resolution Rate"]);
+
+      if (insights.insights.communityInsights) {
+        insights.insights.communityInsights.forEach((c) => {
+          insightsData.push([
+            c.location,
+            c.issuesReported,
+            c.avgResolutionTime,
+            `${c.resolutionRate}%`,
+          ]);
+        });
+      }
+
+      const insightsWs = XLSX.utils.aoa_to_sheet(insightsData);
+      XLSX.utils.book_append_sheet(wb, insightsWs, "Insights");
+
+      // Generate filename with date
+      const dateStr = new Date().toISOString().split("T")[0];
+      const fileName = `Comprehensive_Analytics_Report_${dateStr}.xlsx`;
+
+      // Download file
+      XLSX.writeFile(wb, fileName);
+
+      toast.success("Report downloaded successfully");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error("Failed to generate report. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-slate-50">
       <AdminHeader
@@ -18,10 +162,10 @@ export default function AnalyticsPage() {
         roleAbbr="MP"
         actionButtons={[
           {
-            label: "Export Report",
-            href: "#",
+            label: isExporting ? "Exporting..." : "Export Report",
+            onClick: handleExport,
             icon: Download,
-            className: "bg-red-900 text-white hover:bg-red-800 shadow-sm",
+            className: "bg-red-900 text-white hover:bg-red-800 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed",
           },
         ]}
       />

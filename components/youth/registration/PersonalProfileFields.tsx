@@ -12,6 +12,7 @@ const personalFields: Array<{
   placeholder: string;
   type?: string;
   id: string;
+  maxLength?: number;
 }> = [
   {
     id: "name",
@@ -24,6 +25,7 @@ const personalFields: Array<{
     name: "phone_number",
     label: "Phone number",
     placeholder: "054 000 1234",
+    maxLength: 10,
   },
   {
     id: "dob",
@@ -67,13 +69,14 @@ function PersonalProfileFields({
         <Rocket className="h-5 w-5 text-amber-500" /> Personal profile
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        {personalFields.map(({ id, name, label, placeholder, type }) => (
+        {personalFields.map(({ id, name, label, placeholder, type, maxLength }) => (
           <div key={id} className="space-y-2">
             <Label htmlFor={id}>{label}</Label>
             <Input
               id={id}
               type={type}
               placeholder={placeholder}
+              maxLength={maxLength}
               {...register(name)}
             />
             <FieldErrorText

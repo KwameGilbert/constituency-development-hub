@@ -109,9 +109,10 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
 
             <div>
               <h3 className="font-semibold text-slate-900 mb-2">Description</h3>
-              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                {idea.description}
-              </p>
+              <div
+                className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: idea.description }}
+              />
             </div>
 
             <Separator />

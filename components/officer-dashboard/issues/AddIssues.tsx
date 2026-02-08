@@ -272,12 +272,7 @@ export function AddIssues() {
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8 bg-slate-100">
-          <TabsTrigger
-            value="issue-details"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
-          >
-            Issue Details
-          </TabsTrigger>
+          
           <TabsTrigger
             value="constituent-details"
             className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
@@ -290,9 +285,173 @@ export function AddIssues() {
           >
             Location
           </TabsTrigger>
+
+          <TabsTrigger
+            value="issue-details"
+            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+          >
+            Issue Details
+          </TabsTrigger>
         </TabsList>
 
-        {/* Tab 1: Issue Details */}
+     
+
+        {/* Tab 2: Constituent Details */}
+        <TabsContent value="constituent-details" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormItem label="Constituent Name" required>
+              <Input
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                value={formData.reporter_name || ""}
+                onChange={(e) => updateField("reporter_name", e.target.value)}
+              />
+            </FormItem>
+            <FormItem label="Phone Number" required>
+              <Input
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                placeholder="+233 ..."
+                value={formData.reporter_phone || ""}
+                onChange={(e) => updateField("reporter_phone", e.target.value)}
+              />
+            </FormItem>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormItem label="Email Address">
+              <Input
+                type="email"
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                value={formData.reporter_email || ""}
+                onChange={(e) => updateField("reporter_email", e.target.value)}
+              />
+            </FormItem>
+            <FormItem label="Gender">
+              <Select
+                value={formData.reporter_gender || ""}
+                onValueChange={(v) => updateField("reporter_gender", v)}
+              >
+                <SelectTrigger className="border-slate-200">
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormItem>
+          </div>
+
+          <FormItem label="Home Address">
+            <Input
+              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+              value={formData.reporter_address || ""}
+              onChange={(e) => updateField("reporter_address", e.target.value)}
+            />
+          </FormItem>
+
+          <div className="flex justify-between items-center pt-4">
+            <p className="text-sm text-red-500">* Required fields</p>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => handleNext("issue-details")}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+              </Button>
+              <Button
+                onClick={() => handleNext("location")}
+                className="bg-slate-900 hover:bg-slate-800 text-white"
+              >
+                Next <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Tab 3: Location */}
+        <TabsContent value="location" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormItem label="Main Community" required>
+              <SearchableSelect
+                value={formData.location}
+                onChange={(v) => updateField("location", v)}
+                options={locations.map((loc) => ({
+                  label: loc.name,
+                  value: loc.name,
+                }))}
+                placeholder={
+                  loadingData ? "Loading..." : "Select Main Community"
+                }
+                searchPlaceholder="Search communities..."
+                loading={loadingData}
+                disabled={loadingData}
+              />
+            </FormItem>
+            <FormItem label="Suburb">
+              <SearchableSelect
+                value={formData.suburb || ""}
+                onChange={(v) => updateField("suburb", v)}
+                options={suburbs.map((loc) => ({
+                  label: loc.name,
+                  value: loc.name,
+                }))}
+                placeholder={
+                  !formData.location
+                    ? "Select Main Community first"
+                    : "Select Smaller Community (Optional)"
+                }
+                searchPlaceholder="Search smaller communities..."
+                disabled={!formData.location || loadingSubLocations}
+                loading={loadingSubLocations}
+                emptyMessage="No smaller community found."
+              />
+            </FormItem>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormItem label="Specific Location Details">
+              <Input
+                placeholder="e.g., 'Near the old market'"
+                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                value={formData.cottage || ""}
+                onChange={(e) => updateField("cottage", e.target.value)}
+              />
+            </FormItem>
+          </div>
+
+          <div className="flex justify-between items-center pt-4">
+            <p className="text-sm text-red-500">* Required fields</p>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => handleNext("constituent-details")}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+              </Button>
+              <Button
+                className="bg-slate-900 hover:bg-slate-800 text-white"
+                onClick={handleSubmit}
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+           {/* Tab 1: Issue Details */}
         <TabsContent value="issue-details" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Issue Title" required>
@@ -517,161 +676,6 @@ export function AddIssues() {
             >
               Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-          </div>
-        </TabsContent>
-
-        {/* Tab 2: Constituent Details */}
-        <TabsContent value="constituent-details" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Constituent Name" required>
-              <Input
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                value={formData.reporter_name || ""}
-                onChange={(e) => updateField("reporter_name", e.target.value)}
-              />
-            </FormItem>
-            <FormItem label="Phone Number" required>
-              <Input
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                placeholder="+233 ..."
-                value={formData.reporter_phone || ""}
-                onChange={(e) => updateField("reporter_phone", e.target.value)}
-              />
-            </FormItem>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Email Address">
-              <Input
-                type="email"
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                value={formData.reporter_email || ""}
-                onChange={(e) => updateField("reporter_email", e.target.value)}
-              />
-            </FormItem>
-            <FormItem label="Gender">
-              <Select
-                value={formData.reporter_gender || ""}
-                onValueChange={(v) => updateField("reporter_gender", v)}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          </div>
-
-          <FormItem label="Home Address">
-            <Input
-              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-              value={formData.reporter_address || ""}
-              onChange={(e) => updateField("reporter_address", e.target.value)}
-            />
-          </FormItem>
-
-          <div className="flex justify-between items-center pt-4">
-            <p className="text-sm text-red-500">* Required fields</p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => handleNext("issue-details")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <Button
-                onClick={() => handleNext("location")}
-                className="bg-slate-900 hover:bg-slate-800 text-white"
-              >
-                Next <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Tab 3: Location */}
-        <TabsContent value="location" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Main Community" required>
-              <SearchableSelect
-                value={formData.location}
-                onChange={(v) => updateField("location", v)}
-                options={locations.map((loc) => ({
-                  label: loc.name,
-                  value: loc.name,
-                }))}
-                placeholder={
-                  loadingData ? "Loading..." : "Select Main Community"
-                }
-                searchPlaceholder="Search communities..."
-                loading={loadingData}
-                disabled={loadingData}
-              />
-            </FormItem>
-            <FormItem label="Suburb">
-              <SearchableSelect
-                value={formData.suburb || ""}
-                onChange={(v) => updateField("suburb", v)}
-                options={suburbs.map((loc) => ({
-                  label: loc.name,
-                  value: loc.name,
-                }))}
-                placeholder={
-                  !formData.location
-                    ? "Select Main Community first"
-                    : "Select Smaller Community (Optional)"
-                }
-                searchPlaceholder="Search smaller communities..."
-                disabled={!formData.location || loadingSubLocations}
-                loading={loadingSubLocations}
-                emptyMessage="No smaller community found."
-              />
-            </FormItem>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Specific Location Details">
-              <Input
-                placeholder="e.g., 'Near the old market'"
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                value={formData.cottage || ""}
-                onChange={(e) => updateField("cottage", e.target.value)}
-              />
-            </FormItem>
-          </div>
-
-          <div className="flex justify-between items-center pt-4">
-            <p className="text-sm text-red-500">* Required fields</p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => handleNext("constituent-details")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <Button
-                className="bg-slate-900 hover:bg-slate-800 text-white"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
-                  </>
-                )}
-              </Button>
-            </div>
           </div>
         </TabsContent>
       </Tabs>

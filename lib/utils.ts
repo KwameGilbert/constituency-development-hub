@@ -32,3 +32,15 @@ export function getImageUrl(path: string | null | undefined): string {
   // Ensure we don't have double slashes
   return `${apiOrigin}/${path.replace(/^\/+/, "")}`;
 }
+
+export function cleanupHtml(html: string): string {
+  if (!html) return "";
+  // Create a temporary DOM element to extract text content
+  if (typeof window !== "undefined") {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
+  }
+  // Fallback for server-side rendering (basic regex strip)
+  return html.replace(/<[^>]*>?/gm, "");
+}

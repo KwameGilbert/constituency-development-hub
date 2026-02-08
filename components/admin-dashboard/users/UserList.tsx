@@ -25,12 +25,13 @@ import Link from "next/link";
 import { userService, User } from "@/lib/services/user-service";
 import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
+import { dashboardService, AdminDashboardStats } from "@/lib/services/dashboard-service";
 
 export function UserList() {
   const [users, setUsers] = useState<User[]>([]);
+  const [stats, setStats] = useState<AdminDashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("All Users");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -45,55 +46,48 @@ export function UserList() {
     task_force: "Task Force",
   };
 
-  // Fetch users from API
+  // Fetch users and stats
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await userService.getUsers({
-          role: roleFilter !== "all" ? roleFilter : undefined,
-          status: statusFilter !== "all" ? statusFilter : undefined,
-          search: searchTerm || undefined,
-        });
+        const [usersRes, statsRes] = await Promise.all([
+          userService.getUsers({
+            role: roleFilter !== "all" ? roleFilter : undefined,
+            status: statusFilter !== "all" ? statusFilter : undefined,
+            search: searchTerm || undefined,
+          }),
+          dashboardService.getAdminStats(),
+        ]);
 
-        if (response.success && response.data.users) {
-          setUsers(response.data.users);
+        if (usersRes.success && usersRes.data.users) {
+          setUsers(usersRes.data.users);
         } else {
-          setError(response.message || "Failed to load users");
+          setError(usersRes.message || "Failed to load users");
+        }
+
+        if (statsRes.success && statsRes.data) {
+          setStats(statsRes.data);
         }
       } catch (err) {
-        setError("Failed to load users");
-        console.error("Error fetching users:", err);
+        setError("Failed to load data");
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchData();
   }, [roleFilter, statusFilter, searchTerm]);
 
-  // Calculate tab counts
-  const getTabCounts = () => {
-    const counts = {
-      "All Users": users.length,
-      Admin: users.filter((u) => u.role === "admin").length,
-      "Web Admin": users.filter((u) => u.role === "web_admin").length,
-      Officer: users.filter((u) => u.role === "officer").length,
-      Agent: users.filter((u) => u.role === "agent").length,
-      "Task Force": users.filter((u) => u.role === "task_force").length,
-    };
-    return counts;
-  };
-
-  const tabCounts = getTabCounts();
-
+  // Use stats for counts if available
   const tabs = [
-    { name: "All Users", count: tabCounts["All Users"] },
-    { name: "Admin", count: tabCounts["Admin"] },
-    { name: "Web Admin", count: tabCounts["Web Admin"] },
-    { name: "Officer", count: tabCounts["Officer"] },
-    { name: "Agent", count: tabCounts["Agent"] },
-    { name: "Task Force", count: tabCounts["Task Force"] },
+    { name: "All Users", value: "all", count: stats?.users_by_role ? Object.values(stats.users_by_role).reduce((a, b) => a + b, 0) : 0 },
+    { name: "Admin", value: "admin", count: stats?.users_by_role.admin || 0 },
+    { name: "Web Admin", value: "web_admin", count: stats?.users_by_role.web_admin || 0 },
+    { name: "Officer", value: "officer", count: stats?.users_by_role.officer || 0 },
+    { name: "Agent", value: "agent", count: stats?.users_by_role.agent || 0 },
+    { name: "Task Force", value: "task_force", count: stats?.users_by_role.task_force || 0 },
   ];
 
   const getRoleBadgeColor = (roleType: string) => {
@@ -127,10 +121,10 @@ export function UserList() {
       <div className="flex flex-wrap gap-2">
         {tabs.map((tab) => (
           <button
-            key={tab.name}
-            onClick={() => setActiveTab(tab.name)}
+            key={tab.value}
+            onClick={() => setRoleFilter(tab.value)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activeTab === tab.name
+              roleFilter === tab.value
                 ? "bg-slate-800 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}

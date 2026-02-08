@@ -127,3 +127,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles */
+@media print {
+  /* Hide sidebar and other navigation elements */
+  aside, 
+  nav, 
+  header, 
+  footer,
+  .sidebar,
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Ensure main content takes full width */
+  main, 
+  .main-content,
+  body > div > div {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Hide buttons and interactive elements */
+  button, 
+  .btn,
+  [role="button"],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset background colors for printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Ensure cards and containers don't break across pages awkwardly */
+  .card, 
+  .rounded-lg {
+    break-inside: avoid;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    margin-bottom: 20px !important;
+  }
+  
+  /* Force background graphics to print if needed (optional) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

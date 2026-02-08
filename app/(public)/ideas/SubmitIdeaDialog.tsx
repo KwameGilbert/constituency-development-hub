@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { ideasService, IdeaSubmissionData } from "@/lib/services/ideas-service";
 import { Loader2, Send } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { uploadService } from "@/lib/services/upload-service";
 import { toast } from "sonner";
 
 interface SubmitIdeaDialogProps {
@@ -44,7 +46,9 @@ export default function SubmitIdeaDialog({
     submitter_email: "",
     submitter_contact: "",
     location: "",
+    documents: [],
   });
+  const [file, setFile] = useState<File | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -59,6 +63,16 @@ export default function SubmitIdeaDialog({
 
   const handleDescriptionChange = (value: string) => {
     setFormData((prev) => ({ ...prev, description: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const removeFile = () => {
+    setFile(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,7 +92,27 @@ export default function SubmitIdeaDialog({
 
     try {
       setLoading(true);
-      const response = await ideasService.submitIdea(formData);
+
+      let documentUrl = "";
+      if (file) {
+        try {
+          const uploadResponse = await uploadService.uploadFile(file);
+          documentUrl = uploadResponse.data.url;
+        } catch {
+          toast.error("File upload failed", {
+            description: "Could not upload the attached file. Please try again.",
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
+      const submissionData = {
+        ...formData,
+        documents: documentUrl ? [documentUrl] : [],
+      };
+
+      const response = await ideasService.submitIdea(submissionData);
 
       if (response.success) {
         toast.success("Your idea has been submitted successfully!", {
@@ -93,7 +127,9 @@ export default function SubmitIdeaDialog({
           submitter_email: "",
           submitter_contact: "",
           location: "",
+          documents: [],
         });
+        setFile(null);
         if (onSuccess) onSuccess();
       } else {
         toast.error("Submission failed", {
@@ -203,6 +239,45 @@ export default function SubmitIdeaDialog({
                   placeholder="Describe your idea in detail. What problem does it solve? Who will benefit?"
                   height={120}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="file">Attachment (Optional)</Label>
+                <div className="flex items-center gap-4">
+                  <Input
+                    id="file"
+                    type="file"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*,application/pdf"
+                  />
+                  {!file ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById("file")?.click()}
+                      className="w-full border-dashed"
+                    >
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Image or PDF
+                    </Button>
+                  ) : (
+                    <div className="flex items-center justify-between w-full p-2 border rounded-md bg-gray-50">
+                      <span className="text-sm truncate max-w-[200px]">
+                        {file.name}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeFile}
+                        className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

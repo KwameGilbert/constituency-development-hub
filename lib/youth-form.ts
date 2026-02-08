@@ -20,6 +20,7 @@ export const youthFormSchema = z.object({
   phone_number: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
+    .max(10, "Phone number cannot exceed 10 digits")
     .regex(/^[0-9+\-\s]+$/, "Use digits only"),
   jhs_completed: z.boolean(),
   shs_qualification: optionalText(),

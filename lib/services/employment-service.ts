@@ -17,6 +17,10 @@ export interface JobPosting {
   status: "draft" | "published" | "closed";
   category?: string;
   experience_level?: string;
+  // Personal Info
+  beneficiary_name?: string;
+  beneficiary_gender?: "male" | "female" | "other";
+  sector?: string;
   applicants_count?: number;
   created_at?: string;
   updated_at?: string;
@@ -97,6 +101,12 @@ export interface CreateJobData {
   status: "draft" | "published" | "closed";
   category?: string;
   experience_level?: string;
+  // Personal Info
+  beneficiary_name?: string;
+  beneficiary_gender?: "male" | "female" | "other";
+  sector?: string;
+  contact_phone?: string;
+  application_email?: string;
 }
 
 export interface UpdateJobData {
@@ -112,6 +122,12 @@ export interface UpdateJobData {
   status?: "draft" | "published" | "closed";
   category?: string;
   experience_level?: string;
+  // Personal Info
+  beneficiary_name?: string;
+  beneficiary_gender?: "male" | "female" | "other";
+  sector?: string;
+  contact_phone?: string;
+  application_email?: string;
 }
 
 // --- Service Class ---

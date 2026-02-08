@@ -149,9 +149,10 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
               {job.company && (
                 <p className="text-lg text-slate-600 mb-2">{job.company}</p>
               )}
-              <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                {job.description}
-              </p>
+              <div
+                className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: job.description }}
+              />
             </div>
             <div className="flex gap-2">
               <Link href={`/admin-dashboard/employment/${job.id}/edit`}>
@@ -267,9 +268,10 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <h4 className="font-semibold text-slate-900 mb-2">
                     Key Responsibilities
                   </h4>
-                  <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                    {job.responsibilities}
-                  </p>
+                  <div
+                    className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.responsibilities }}
+                  />
                 </div>
               </>
             )}
@@ -282,9 +284,10 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <h4 className="font-semibold text-slate-900 mb-2">
                     Requirements & Qualifications
                   </h4>
-                  <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
-                    {job.requirements}
-                  </p>
+                  <div
+                    className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
+                    dangerouslySetInnerHTML={{ __html: job.requirements }}
+                  />
                 </div>
               </>
             )}
