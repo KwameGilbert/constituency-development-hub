@@ -37,7 +37,7 @@ const jobSchema = z.object({
   requirements: z.string().optional(),
   responsibilities: z.string().optional(),
   application_deadline: z.string().optional(),
-  status: z.enum(["draft", "published", "closed"]).default("published"),
+  status: z.enum(["draft", "published", "closed"]),
   experience_level: z.string().optional(),
   // Personal Info
   beneficiary_name: z.string().min(3, "Beneficiary Name is required"),

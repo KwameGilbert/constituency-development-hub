@@ -20,6 +20,8 @@ export interface JobPosting {
   // Personal Info
   beneficiary_name?: string;
   beneficiary_gender?: "male" | "female" | "other";
+  contact_phone?: string;
+  application_email?: string;
   sector?: string;
   applicants_count?: number;
   created_at?: string;
