@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { AnalyticsMetrics } from "@/components/admin-dashboard/analytics/AnalyticsMetrics";
 import { AnalyticsCharts } from "@/components/admin-dashboard/analytics/AnalyticsCharts";
@@ -9,12 +9,38 @@ import { Download } from "lucide-react";
 
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
-import { dashboardService } from "@/lib/services/dashboard-service";
+import {
+  dashboardService,
+  AdminChartsData,
+} from "@/lib/services/dashboard-service";
 
 import { BudgetChart } from "@/components/admin-dashboard/analytics/BudgetChart";
 
 export default function AnalyticsPage() {
   const [isExporting, setIsExporting] = useState(false);
+  const [chartsData, setChartsData] = useState<AdminChartsData | null>(null);
+  const [chartsLoading, setChartsLoading] = useState(true);
+  const [chartsError, setChartsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCharts = async () => {
+      try {
+        const response = await dashboardService.getAdminCharts();
+        if (response.success && response.data) {
+          setChartsData(response.data);
+        } else {
+          setChartsError(response.message || "Failed to load chart data");
+        }
+      } catch (err) {
+        console.error("Error fetching chart data:", err);
+        setChartsError("Failed to load chart data");
+      } finally {
+        setChartsLoading(false);
+      }
+    };
+
+    fetchCharts();
+  }, []);
 
   const handleExport = async () => {
     try {
@@ -24,7 +50,10 @@ export default function AnalyticsPage() {
       // Fetch all necessary data
       const [metricsRes, chartsRes, insightsRes] = await Promise.all([
         dashboardService.getAnalyticsMetrics(),
-        dashboardService.getAdminCharts(),
+        // Use already-fetched data if available, otherwise refetch
+        chartsData
+          ? Promise.resolve({ success: true, data: chartsData, message: "" })
+          : dashboardService.getAdminCharts(),
         dashboardService.getAnalyticsInsights(),
       ]);
 
@@ -174,7 +203,11 @@ export default function AnalyticsPage() {
         <AnalyticsMetrics />
 
         {/* Charts Sections */}
-        <AnalyticsCharts />
+        <AnalyticsCharts
+          chartsData={chartsData}
+          loading={chartsLoading}
+          error={chartsError}
+        />
 
         {/* Bottom Insights */}
         <AnalyticsInsights />
@@ -189,7 +222,11 @@ export default function AnalyticsPage() {
               Project Finances
             </span>
           </div>
-          <BudgetChart />
+          <BudgetChart
+            chartsData={chartsData}
+            loading={chartsLoading}
+            error={chartsError}
+          />
         </div>
       </div>
     </div>

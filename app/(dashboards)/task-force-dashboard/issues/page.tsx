@@ -41,9 +41,9 @@ import {
   getMetadata,
 } from "@/lib/data";
 import {
-  issuesService,
-  Issue as ApiIssue,
-} from "@/lib/services/issues-service";
+  taskForceService,
+  TaskForceIssue,
+} from "@/lib/services/task-force-service";
 
 const getPriorityIcon = (priority: string) => {
   switch (priority) {
@@ -74,7 +74,7 @@ const getStatusIcon = (status: string) => {
 export default function IssuesPage() {
   const metadata = getMetadata();
 
-  const [allIssues, setAllIssues] = useState<ApiIssue[]>([]);
+  const [allIssues, setAllIssues] = useState<TaskForceIssue[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -89,10 +89,9 @@ export default function IssuesPage() {
       setLoading(true);
       try {
         // Fetch a reasonable limit of issues to allow client-side filtering/counting
-        // In a real large-scale app, we'd fetch counts separately from the list
-        const response = await issuesService.getAllIssues({ limit: 100 });
+        const response = await taskForceService.getAllTaskForceIssues({ limit: 100 });
         if (response.success) {
-          setAllIssues(response.data.reports);
+          setAllIssues(response.data.issues);
         }
       } catch (error) {
         console.error("Failed to fetch issues:", error);
@@ -323,9 +322,8 @@ export default function IssuesPage() {
               </div>
             ) : (
               filteredIssues.map((issue) => {
-                const assessmentStatus = issue.assessment_report?.status; // Access the nested assessment status
-                const isRejected = assessmentStatus === 'rejected';
-                const isRevision = assessmentStatus === 'needs_revision';
+                const isRejected = issue.status === 'rejected';
+                const isRevision = issue.status === 'needs_revision';
                 const isPendingAssessment = issue.status === 'assigned_to_task_force';
                 
                 return (
@@ -410,11 +408,7 @@ export default function IssuesPage() {
 
                     <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                       <div className="flex items-center gap-2">
-                        {issue.allocated_budget && (
-                          <div className="text-xs text-gray-500">
-                            Budget: ${issue.allocated_budget.toLocaleString()}
-                          </div>
-                        )}
+                        {/* Budget display removed as it is not part of TaskForceIssue */}
                       </div>
                       <div className="flex items-center gap-1">
                         <Link href={`/task-force-dashboard/issues/${issue.id}`}>

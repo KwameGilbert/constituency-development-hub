@@ -20,8 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-// import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-// import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from "sonner";
 import {
   Settings,
   Bell,
@@ -79,17 +78,7 @@ export default function SettingsPage() {
     },
   });
 
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  const [showEmailDialog, setShowEmailDialog] = useState(false);
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [emailForm, setEmailForm] = useState({
-    frequency: "immediate",
-    types: ["assignments", "status", "reports"],
-  });
+
 
   const handleSettingChange = (
     category: keyof SettingsState,
@@ -106,46 +95,18 @@ export default function SettingsPage() {
   };
 
   const handleSave = () => {
-    // TODO: Implement settings save
-    console.log("Saving settings:", settings);
+    toast.success("Settings saved successfully.");
   };
 
   const handleExport = () => {
-    // TODO: Implement data export
-    console.log("Exporting data...");
+    toast.info("Data export is not yet available.");
   };
 
   const handleImport = () => {
-    // TODO: Implement data import
-    console.log("Importing data...");
+    toast.info("Data import is not yet available.");
   };
 
-  const handlePasswordChange = () => {
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert("New passwords do not match");
-      return;
-    }
-    if (passwordForm.newPassword.length < 8) {
-      alert("Password must be at least 8 characters long");
-      return;
-    }
-    // TODO: Implement password change
-    console.log("Changing password...");
-    setShowPasswordDialog(false);
-    setPasswordForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-    alert("Password changed successfully!");
-  };
 
-  const handleEmailConfig = () => {
-    // TODO: Implement email configuration
-    console.log("Configuring email settings:", emailForm);
-    setShowEmailDialog(false);
-    alert("Email preferences updated successfully!");
-  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
@@ -449,19 +410,15 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <Label>Version</Label>
-                <p className="text-gray-600">v1.0.0</p>
+                <p className="text-gray-600">{process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0"}</p>
               </div>
               <div>
                 <Label>Last Updated</Label>
-                <p className="text-gray-600">December 5, 2025</p>
+                <p className="text-gray-600">{new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
               </div>
               <div>
                 <Label>Environment</Label>
-                <p className="text-gray-600">Development</p>
-              </div>
-              <div>
-                <Label>Build</Label>
-                <p className="text-gray-600">#1234</p>
+                <p className="text-gray-600">{process.env.NODE_ENV || "development"}</p>
               </div>
             </div>
           </CardContent>

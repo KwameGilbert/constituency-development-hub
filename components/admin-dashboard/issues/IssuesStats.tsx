@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-// Mock data fallback
 
 export function IssuesStats() {
   const [stats, setStats] = useState<IssueStatistics | null>(null);

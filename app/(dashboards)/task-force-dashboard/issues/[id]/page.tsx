@@ -38,7 +38,7 @@ import {
 import { Issue as ApiIssue } from "@/lib/services/issues-service";
 import { taskForceService } from "@/lib/services/task-force-service";
 
-// UI Type definition matching the previous mock structure
+// UI Type definition for detailed issue display
 interface UiIssue extends Omit<ApiIssue, "assessment_report"> {
   assessment_report?: RawAssessmentData;
   community: string;

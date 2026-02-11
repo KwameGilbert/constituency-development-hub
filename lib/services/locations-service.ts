@@ -107,6 +107,8 @@ export interface LocationDashboardStatsResponse {
     counts: {
       community: number;
       suburb: number;
+      cottage: number;
+      smaller_community: number;
     };
     total: number;
     recent_locations: Array<{

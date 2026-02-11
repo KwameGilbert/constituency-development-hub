@@ -17,8 +17,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Save, Upload, X } from "lucide-react";
+import { Loader2, Save, Upload, X, ChevronsUpDown, Check } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import {
   projectsService,
   CreateProjectData,
@@ -69,6 +83,8 @@ export function NewProjectForm({ project }: ProjectFormProps) {
   const [sectors, setSectors] = useState<Sector[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [sectorOpen, setSectorOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -304,24 +320,58 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                 </div>
               </div>
 
-              <div> 
+              <div>
                 <Label htmlFor="sector_id">Sector *</Label>
-                <Select
-                  onValueChange={(value) => form.setValue("sector_id", value)}
-                  defaultValue={form.getValues("sector_id")}
-                  disabled={isSubmitting || isLoadingData}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={isLoadingData ? "Loading sectors..." : "Select sector"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sectors.map((sector) => (
-                      <SelectItem key={sector.id} value={sector.id.toString()}>
-                        {sector.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={sectorOpen} onOpenChange={setSectorOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={sectorOpen}
+                      className="w-full justify-between font-normal"
+                      disabled={isSubmitting || isLoadingData}
+                    >
+                      {form.watch("sector_id")
+                        ? sectors.find(
+                            (s) => s.id.toString() === form.watch("sector_id")
+                          )?.name || "Select sector"
+                        : isLoadingData
+                        ? "Loading sectors..."
+                        : "Select sector"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search sectors..." />
+                      <CommandList>
+                        <CommandEmpty>No sector found.</CommandEmpty>
+                        <CommandGroup>
+                          {sectors.map((sector) => (
+                            <CommandItem
+                              key={sector.id}
+                              value={sector.name}
+                              onSelect={() => {
+                                form.setValue("sector_id", sector.id.toString());
+                                setSectorOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  form.watch("sector_id") === sector.id.toString()
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {sector.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 {form.formState.errors.sector_id && (
                   <p className="text-red-500 text-sm mt-1">
                     {form.formState.errors.sector_id.message}
@@ -331,22 +381,54 @@ export function NewProjectForm({ project }: ProjectFormProps) {
 
               <div>
                 <Label htmlFor="location">Location *</Label>
-                 <Select
-                  onValueChange={(value) => form.setValue("location", value)}
-                  defaultValue={form.getValues("location")}
-                  disabled={isSubmitting || isLoadingData}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={isLoadingData ? "Loading locations..." : "Select location"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {locations.map((location) => (
-                      <SelectItem key={location.id} value={location.name}>
-                        {location.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={locationOpen}
+                      className="w-full justify-between font-normal"
+                      disabled={isSubmitting || isLoadingData}
+                    >
+                      {form.watch("location")
+                        ? form.watch("location")
+                        : isLoadingData
+                        ? "Loading locations..."
+                        : "Select location"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search locations..." />
+                      <CommandList>
+                        <CommandEmpty>No location found.</CommandEmpty>
+                        <CommandGroup>
+                          {locations.map((location) => (
+                            <CommandItem
+                              key={location.id}
+                              value={location.name}
+                              onSelect={() => {
+                                form.setValue("location", location.name);
+                                setLocationOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  form.watch("location") === location.name
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {location.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 {form.formState.errors.location && (
                   <p className="text-red-500 text-sm mt-1">
                     {form.formState.errors.location.message}

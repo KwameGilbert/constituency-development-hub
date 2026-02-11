@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
@@ -15,7 +15,7 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import { dashboardService } from "@/lib/services/dashboard-service";
+import { AdminChartsData } from "@/lib/services/dashboard-service";
 
 interface ChartData {
   issuesStatusDistribution: Array<{
@@ -30,43 +30,25 @@ interface ChartData {
   }>;
 }
 
-export function AdminCharts() {
-  const [chartData, setChartData] = useState<ChartData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface AdminChartsProps {
+  chartsData: AdminChartsData | null;
+  loading: boolean;
+  error: string | null;
+}
 
-  useEffect(() => {
-    const fetchChartData = async () => {
-      try {
-        const response = await dashboardService.getAdminCharts();
-
-        if (response.success && response.data?.charts) {
-          // Transform API response to component format
-          const transformedData: ChartData = {
-            issuesStatusDistribution:
-              response.data.charts.issueStatusDistribution || [],
-            monthlyTrends: (response.data.charts.monthlyTrends || []).map(
-              (item) => ({
-                name: item.name,
-                total: item.issues,
-                resolved: item.resolved,
-              }),
-            ),
-          };
-          setChartData(transformedData);
-        } else {
-          setError(response.message || "Failed to load chart data");
-        }
-      } catch (err) {
-        setError("Failed to load chart data");
-        console.error("Error fetching chart data:", err);
-      } finally {
-        setLoading(false);
+export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
+  // Transform API data to component format
+  const chartData: ChartData | null = chartsData?.charts
+    ? {
+        issuesStatusDistribution:
+          chartsData.charts.issueStatusDistribution || [],
+        monthlyTrends: (chartsData.charts.monthlyTrends || []).map((item) => ({
+          name: item.name,
+          total: item.issues,
+          resolved: item.resolved,
+        })),
       }
-    };
-
-    fetchChartData();
-  }, []);
+    : null;
 
   if (loading) {
     return (
@@ -108,9 +90,12 @@ export function AdminCharts() {
           <CardTitle className="text-lg font-semibold text-gray-800">
             Issues Status Distribution
           </CardTitle>
-          <a href="#" className="text-sm text-blue-600 hover:underline">
+          <Link
+            href="/admin-dashboard/issues"
+            className="text-sm text-blue-600 hover:underline"
+          >
             View All →
-          </a>
+          </Link>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] w-full">
@@ -158,12 +143,12 @@ export function AdminCharts() {
           <CardTitle className="text-lg font-semibold text-gray-800">
             Monthly Trends
           </CardTitle>
-          <a
-            href="#"
+          <Link
+            href="/admin-dashboard/analytics"
             className="text-sm text-blue-600 hover:underline flex items-center"
           >
-            Detailed Analytics
-          </a>
+            Detailed Analytics →
+          </Link>
         </CardHeader>
         <CardContent>
           <div className="h-[300px] w-full bg-white rounded-lg">
@@ -209,7 +194,6 @@ export function AdminCharts() {
                   dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
                   activeDot={{ r: 6 }}
                 />
-                {/* Area for fill effect if desired, but Line matches image better */}
               </LineChart>
             </ResponsiveContainer>
           </div>

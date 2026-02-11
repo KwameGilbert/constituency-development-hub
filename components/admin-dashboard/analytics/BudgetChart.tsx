@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart,
@@ -15,7 +14,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import { dashboardService } from "@/lib/services/dashboard-service";
+import { AdminChartsData } from "@/lib/services/dashboard-service";
 
 interface BudgetData {
   distribution: Array<{
@@ -25,30 +24,17 @@ interface BudgetData {
   }>;
 }
 
-export function BudgetChart() {
-  const [data, setData] = useState<BudgetData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface BudgetChartProps {
+  chartsData: AdminChartsData | null;
+  loading: boolean;
+  error: string | null;
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await dashboardService.getAdminCharts();
-        if (response.success && response.data?.charts?.budgetDistribution) {
-          setData({
-            distribution: response.data.charts.budgetDistribution,
-          });
-        }
-      } catch (err) {
-        console.error("Failed to load budget data", err);
-        setError("Failed to load budget data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+export function BudgetChart({ chartsData, loading, error }: BudgetChartProps) {
+  const data: BudgetData | null =
+    chartsData?.charts?.budgetDistribution
+      ? { distribution: chartsData.charts.budgetDistribution }
+      : null;
 
   if (loading) {
     return (

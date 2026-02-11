@@ -150,7 +150,7 @@ export default function LocationsPage() {
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
         <div className="max-w-[1600px] mx-auto space-y-6">
           {/* Metrics Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {metrics.map((metric, index) => (
               <div
                 key={index}

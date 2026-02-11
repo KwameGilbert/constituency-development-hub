@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   PieChart,
@@ -16,35 +15,16 @@ import {
   CartesianGrid,
 } from "recharts";
 import {
-  dashboardService,
   AdminChartsData,
 } from "@/lib/services/dashboard-service";
 
-export function AnalyticsCharts() {
-  const [chartsData, setChartsData] = useState<AdminChartsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface AnalyticsChartsProps {
+  chartsData: AdminChartsData | null;
+  loading: boolean;
+  error: string | null;
+}
 
-  useEffect(() => {
-    const fetchCharts = async () => {
-      try {
-        const response = await dashboardService.getAdminCharts();
-
-        if (response.success && response.data) {
-          setChartsData(response.data);
-        } else {
-          setError(response.message || "Failed to load charts data");
-        }
-      } catch (err) {
-        setError("Failed to load charts data");
-        console.error("Error fetching charts:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCharts();
-  }, []);
+export function AnalyticsCharts({ chartsData, loading, error }: AnalyticsChartsProps) {
 
   if (loading) {
     return (

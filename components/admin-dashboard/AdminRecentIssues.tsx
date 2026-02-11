@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Inbox } from "lucide-react";
+import Link from "next/link";
 import {
   dashboardService,
   RecentIssue,
@@ -73,9 +74,9 @@ export function AdminRecentIssues() {
           <CardTitle className="text-lg font-semibold text-gray-800">
             Recent Issues
           </CardTitle>
-          <a href="#" className="text-sm text-blue-600 hover:underline">
+          <Link href="/admin-dashboard/issues" className="text-sm text-blue-600 hover:underline">
             View All Issues →
-          </a>
+          </Link>
         </CardHeader>
         <CardContent className="p-0">
           <div className="bg-white">
@@ -108,9 +109,9 @@ export function AdminRecentIssues() {
           <CardTitle className="text-lg font-semibold text-gray-800">
             Recent Issues
           </CardTitle>
-          <a href="#" className="text-sm text-blue-600 hover:underline">
+          <Link href="/admin-dashboard/issues" className="text-sm text-blue-600 hover:underline">
             View All Issues →
-          </a>
+          </Link>
         </CardHeader>
         <CardContent className="p-0">
           <div className="bg-white">
@@ -144,9 +145,9 @@ export function AdminRecentIssues() {
         <CardTitle className="text-lg font-semibold text-gray-800">
           Recent Issues
         </CardTitle>
-        <a href="#" className="text-sm text-blue-600 hover:underline">
+        <Link href="/admin-dashboard/issues" className="text-sm text-blue-600 hover:underline">
           View All Issues →
-        </a>
+        </Link>
       </CardHeader>
       <CardContent className="p-0">
         <div className="bg-white">

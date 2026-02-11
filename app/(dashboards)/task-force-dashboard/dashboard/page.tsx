@@ -41,19 +41,19 @@ import {
   getMetadata,
 } from "@/lib/data";
 import {
-  issuesService,
-  Issue as ApiIssue,
-  IssueStatistics as ApiStatistics,
-} from "@/lib/services/issues-service";
+  taskForceService,
+  DashboardStats,
+  TaskForceIssue,
+} from "@/lib/services/task-force-service";
 import Link from "next/link";
 import * as XLSX from "xlsx";
 
 function TaskForceMainDashboardPage() {
   const metadata = getMetadata();
 
-  const [stats, setStats] = useState<ApiStatistics | null>(null);
-  const [filteredIssues, setFilteredIssues] = useState<ApiIssue[]>([]);
-  const [recentIssues, setRecentIssues] = useState<ApiIssue[]>([]);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [filteredIssues, setFilteredIssues] = useState<TaskForceIssue[]>([]);
+  const [recentIssues, setRecentIssues] = useState<TaskForceIssue[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,29 +65,37 @@ function TaskForceMainDashboardPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch stats and recent issues (for sidebar)
-        const [statsRes, recentRes, filteredRes] = await Promise.all([
-          issuesService.getStatistics(),
-          issuesService.getAllIssues({ limit: 5 }), // Recent global
-          issuesService.getAllIssues({
-            // Filtered for main view
-            search: searchTerm,
+        // Fetch dashboard stats and issues from task force service
+        const [dashboardRes, recentRes, filteredRes] = await Promise.all([
+          taskForceService.getDashboardStats(),
+          taskForceService.getAllTaskForceIssues({ limit: 5 }),
+          taskForceService.getAllTaskForceIssues({
             status: statusFilter !== "all" ? statusFilter : undefined,
             category: categoryFilter !== "all" ? categoryFilter : undefined,
-            limit: 5, // Dashboard only shows top 5 of filtered results
+            limit: 50, // Increase limit to support client-side search
           }),
         ]);
 
-        if (statsRes.success) {
-          setStats(statsRes.data);
+        if (dashboardRes.success) {
+          setStats(dashboardRes.data);
         }
 
         if (recentRes.success) {
-          setRecentIssues(recentRes.data.reports);
+          setRecentIssues(recentRes.data.issues);
         }
 
         if (filteredRes.success) {
-          setFilteredIssues(filteredRes.data.reports);
+          let issues = filteredRes.data.issues;
+          // Apply client-side search filtering since API does not support it yet
+          if (searchTerm) {
+             const lower = searchTerm.toLowerCase();
+             issues = issues.filter(i => 
+               i.title.toLowerCase().includes(lower) || 
+               i.description.toLowerCase().includes(lower) ||
+               i.location.toLowerCase().includes(lower)
+             );
+          }
+          setFilteredIssues(issues);
         }
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -180,7 +188,7 @@ function TaskForceMainDashboardPage() {
                   Pending Assessment
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {stats?.by_status?.["assigned_to_task_force"] || 0}
+                  {stats?.overview?.pending_assessment || 0}
                 </p>
               </div>
             </div>
@@ -198,7 +206,7 @@ function TaskForceMainDashboardPage() {
                   Under Assessment
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {stats?.by_status?.["assessment_in_progress"] || 0}
+                  {stats?.overview?.assessment_in_progress || 0}
                 </p>
               </div>
             </div>
@@ -214,7 +222,7 @@ function TaskForceMainDashboardPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Resolved</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {stats?.resolved || 0}
+                  {stats?.overview?.resolved || 0}
                 </p>
               </div>
             </div>
@@ -232,7 +240,11 @@ function TaskForceMainDashboardPage() {
                   Total Issues
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {stats?.total || 0}
+                  {(stats?.overview?.pending_assessment || 0) +
+                   (stats?.overview?.assessment_in_progress || 0) +
+                   (stats?.overview?.assessment_submitted || 0) +
+                   (stats?.overview?.resolution_in_progress || 0) +
+                   (stats?.overview?.resolved || 0)}
                 </p>
               </div>
             </div>
@@ -391,18 +403,24 @@ function TaskForceMainDashboardPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Total Issues</span>
-                <span className="font-semibold">{stats?.total || 0}</span>
+                <span className="font-semibold">
+                  {(stats?.overview?.pending_assessment || 0) +
+                   (stats?.overview?.assessment_in_progress || 0) +
+                   (stats?.overview?.assessment_submitted || 0) +
+                   (stats?.overview?.resolution_in_progress || 0) +
+                   (stats?.overview?.resolved || 0)}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Resolved</span>
                 <span className="font-semibold text-green-600">
-                  {stats?.resolved || 0}
+                  {stats?.overview?.resolved || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Pending</span>
                 <span className="font-semibold text-yellow-600">
-                  {stats?.pending || 0}
+                  {stats?.overview?.pending_assessment || 0}
                 </span>
               </div>
               <div className="pt-2 border-t">
@@ -450,7 +468,7 @@ function TaskForceMainDashboardPage() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    {stats?.by_priority?.["urgent"] || 0} urgent issues need
+                    {stats?.priority?.urgent || 0} urgent issues need
                     attention
                   </AlertDescription>
                 </Alert>

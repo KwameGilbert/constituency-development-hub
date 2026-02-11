@@ -4,7 +4,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { Pie, PieChart, Label } from "recharts";
 import { Loader2, AlertCircle } from "lucide-react";
-import { issuesService } from "@/lib/services/issues-service";
+import { officerReportsService } from "@/lib/services/officer-reports-service";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -74,37 +74,16 @@ export function IssuesByStatus({
 
     async function fetchStats() {
       try {
-        const response = await issuesService.getStatistics();
+        const response = await officerReportsService.getStatusDistribution();
         if (response.success && response.data) {
-          const stats = response.data;
-          const byStatus = stats.by_status || {};
+          const distribution = response.data.distribution || [];
 
-          // Build chart data from status breakdown
-          const data: ChartDataItem[] = [];
-
-          const resolved = (byStatus.resolved || 0) + (byStatus.closed || 0);
-          const pending =
-            (byStatus.submitted || 0) +
-            (byStatus.under_officer_review || 0) +
-            (byStatus.forwarded_to_admin || 0);
-          const inProgress =
-            (byStatus.resolution_in_progress || 0) +
-            (byStatus.assessment_in_progress || 0) +
-            (byStatus.assigned_to_task_force || 0);
-
-          if (resolved > 0) {
-            data.push({ status: "resolved", count: resolved, fill: "#22c55e" });
-          }
-          if (pending > 0) {
-            data.push({ status: "submitted", count: pending, fill: "#3b82f6" });
-          }
-          if (inProgress > 0) {
-            data.push({
-              status: "in_progress",
-              count: inProgress,
-              fill: "#f59e0b",
-            });
-          }
+          // Map distribution items to chart data format
+          const data: ChartDataItem[] = distribution.map((item) => ({
+            status: item.status,
+            count: item.value,
+            fill: item.color,
+          }));
 
           // If no data, show placeholder
           if (data.length === 0) {

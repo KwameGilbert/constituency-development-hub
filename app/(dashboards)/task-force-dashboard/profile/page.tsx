@@ -272,8 +272,7 @@ export default function ProfilePage() {
             <CardContent>
               <div className="text-center py-8 text-gray-500">
                 <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>Activity history will be displayed here</p>
-                <p className="text-sm mt-2">Coming soon...</p>
+                <p>No recent activity found.</p>
               </div>
             </CardContent>
           </Card>
@@ -293,7 +292,7 @@ export default function ProfilePage() {
                     Receive notifications about new assignments
                   </p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => toast.info("Email configuration coming soon")}>
                   Configure
                 </Button>
               </div>
@@ -302,7 +301,7 @@ export default function ProfilePage() {
                   <h4 className="font-medium">Password</h4>
                   <p className="text-sm text-gray-600">Update your password</p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => toast.info("Password change coming soon")}>
                   Change
                 </Button>
               </div>
@@ -313,7 +312,7 @@ export default function ProfilePage() {
                     Add an extra layer of security
                   </p>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => toast.info("2FA configuration coming soon")}>
                   Enable
                 </Button>
               </div>

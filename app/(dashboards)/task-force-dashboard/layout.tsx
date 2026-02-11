@@ -9,6 +9,8 @@ import {
   Users,
   Clock,
   AlertCircle,
+  UserCircle,
+  Settings,
 } from "lucide-react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
@@ -42,6 +44,16 @@ const taskForceNavItems = [
     label: "Team",
     href: "/task-force-dashboard/team",
     icon: <Users className="h-4 w-4" />,
+  },
+  {
+    label: "Profile",
+    href: "/task-force-dashboard/profile",
+    icon: <UserCircle className="h-4 w-4" />,
+  },
+  {
+    label: "Settings",
+    href: "/task-force-dashboard/settings",
+    icon: <Settings className="h-4 w-4" />,
   },
 ];
 

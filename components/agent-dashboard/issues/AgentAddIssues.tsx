@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Plus, Loader2, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +36,24 @@ import { locationsService } from "@/lib/services/locations-service";
 import { sectorsService, Sector, SubSector } from "@/lib/services/sectors-service";
 import { categoriesService, Category } from "@/lib/services/categories-service";
 
+// Zod schema for constituent details validation
+const constituentSchema = z.object({
+  reporter_name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .regex(/^[a-zA-Z\s\-'.]+$/, "Name should only contain letters, spaces, hyphens, or apostrophes"),
+  reporter_phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .regex(/^\+?[0-9]+$/, "Phone number should only contain digits (optionally starting with +)"),
+  reporter_email: z
+    .string()
+    .email("Please enter a valid email address")
+    .or(z.literal("")),
+});
+
+type ConstituentFieldErrors = Partial<Record<keyof z.infer<typeof constituentSchema>, string>>;
+
 interface Location {
   id: number;
   name: string;
@@ -42,8 +61,9 @@ interface Location {
 
 export function AgentAddIssues() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("issue-details");
+  const [activeTab, setActiveTab] = useState("constituent-details");
   const [submitting, setSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<ConstituentFieldErrors>({});
   const [locations, setLocations] = useState<Location[]>([]);
 
   const [suburbs, setSuburbs] = useState<Location[]>([]);
@@ -91,6 +111,7 @@ export function AgentAddIssues() {
           locationsService.getLocations({
             type: "community",
             status: "active",
+            limit: 10000,
           }),
           sectorsService.getSectors(),
           categoriesService.getCategories(),
@@ -174,6 +195,7 @@ export function AgentAddIssues() {
           parent_id: selectedLocation.id,
           type: "suburb",
           status: "active",
+          limit: 10000,
         });
 
         if (suburbRes.success && suburbRes.data?.locations) {
@@ -199,6 +221,26 @@ export function AgentAddIssues() {
     value: string | number | undefined,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Real-time validation for constituent fields
+  const validateConstituentField = (
+    field: keyof z.infer<typeof constituentSchema>,
+    value: string,
+  ) => {
+    // Only validate if user has typed something
+    if (!value) {
+      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+      return;
+    }
+    const fieldSchema = constituentSchema.shape[field];
+    const result = fieldSchema.safeParse(value);
+    setFieldErrors((prev) => ({
+      ...prev,
+      [field]: result.success
+        ? undefined
+        : result.error?.issues?.[0]?.message || "Invalid input",
+    }));
   };
 
   const validateForm = (): boolean => {
@@ -252,12 +294,6 @@ export function AgentAddIssues() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8 bg-slate-100">
           <TabsTrigger
-            value="issue-details"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
-          >
-            Issue Details
-          </TabsTrigger>
-          <TabsTrigger
             value="constituent-details"
             className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
           >
@@ -268,6 +304,12 @@ export function AgentAddIssues() {
             className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
           >
             Location
+          </TabsTrigger>
+          <TabsTrigger
+            value="issue-details"
+            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+          >
+            Issue Details
           </TabsTrigger>
         </TabsList>
 
@@ -480,42 +522,81 @@ export function AgentAddIssues() {
 
           <div className="flex justify-between items-center pt-4">
             <p className="text-sm text-red-500">* Required fields</p>
-            <Button
-              onClick={() => handleNext("constituent-details")}
-              className="bg-slate-900 hover:bg-slate-800 text-white"
-            >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => handleNext("location")}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+              </Button>
+              <Button
+                className="bg-slate-900 hover:bg-slate-800 text-white"
+                onClick={handleSubmit}
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </TabsContent>
 
         {/* Tab 2: Constituent Details */}
         <TabsContent value="constituent-details" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Constituent Name" required>
+            <FormItem label="Constituent Name" required error={fieldErrors.reporter_name}>
               <Input
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                className={cn(
+                  "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
+                  fieldErrors.reporter_name && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                )}
                 value={formData.reporter_name || ""}
-                onChange={(e) => updateField("reporter_name", e.target.value)}
+                onChange={(e) => {
+                  updateField("reporter_name", e.target.value);
+                  validateConstituentField("reporter_name", e.target.value);
+                }}
               />
             </FormItem>
-            <FormItem label="Phone Number" required>
+            <FormItem label="Phone Number" required error={fieldErrors.reporter_phone}>
               <Input
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                type="tel"
+                maxLength={13}
+                className={cn(
+                  "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
+                  fieldErrors.reporter_phone && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                )}
                 placeholder="+233 ..."
                 value={formData.reporter_phone || ""}
-                onChange={(e) => updateField("reporter_phone", e.target.value)}
+                onChange={(e) => {
+                  updateField("reporter_phone", e.target.value);
+                  validateConstituentField("reporter_phone", e.target.value);
+                }}
               />
             </FormItem>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Email Address">
+            <FormItem label="Email Address" error={fieldErrors.reporter_email}>
               <Input
                 type="email"
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                className={cn(
+                  "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
+                  fieldErrors.reporter_email && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                )}
                 value={formData.reporter_email || ""}
-                onChange={(e) => updateField("reporter_email", e.target.value)}
+                onChange={(e) => {
+                  updateField("reporter_email", e.target.value);
+                  validateConstituentField("reporter_email", e.target.value);
+                }}
               />
             </FormItem>
             <FormItem label="Gender">
@@ -545,21 +626,12 @@ export function AgentAddIssues() {
 
           <div className="flex justify-between items-center pt-4">
             <p className="text-sm text-red-500">* Required fields</p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => handleNext("issue-details")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <Button
-                onClick={() => handleNext("location")}
-                className="bg-slate-900 hover:bg-slate-800 text-white"
-              >
-                Next <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+            <Button
+              onClick={() => handleNext("location")}
+              className="bg-slate-900 hover:bg-slate-800 text-white"
+            >
+              Next <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </TabsContent>
 
@@ -623,20 +695,10 @@ export function AgentAddIssues() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
+                onClick={() => handleNext("issue-details")}
                 className="bg-slate-900 hover:bg-slate-800 text-white"
-                onClick={handleSubmit}
-                disabled={submitting}
               >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
-                  </>
-                )}
+                Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -649,10 +711,12 @@ export function AgentAddIssues() {
 function FormItem({
   label,
   required,
+  error,
   children,
 }: {
   label: string;
   required?: boolean;
+  error?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -661,6 +725,9 @@ function FormItem({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
+      {error && (
+        <p className="text-xs text-red-500 mt-1">{error}</p>
+      )}
     </div>
   );
 }

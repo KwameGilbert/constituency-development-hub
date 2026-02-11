@@ -170,7 +170,7 @@ class AgentService {
     location?: string;
     verified?: boolean;
     supervisor?: number;
-  }): Promise<ApiResponse<{ agents: AgentProfile[] }>> {
+  }): Promise<ApiResponse<{ agents: AgentProfile[]; summary: { total: number; active: number; inactive: number } }>> {
     const queryParams = new URLSearchParams();
     if (params?.location) queryParams.append("location", params.location);
     if (params?.verified !== undefined)

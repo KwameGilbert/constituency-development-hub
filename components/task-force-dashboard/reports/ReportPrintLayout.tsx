@@ -15,7 +15,7 @@ import { TaskForceReports, TeamMember } from "@/lib/services/task-force-service"
 interface ReportPrintLayoutProps {
   reports: TaskForceReports | null;
   teamMembers: TeamMember[];
-  velocityData: { date: string; assessments: number; resolved: number }[];
+  velocityData: { month: string; submitted: number; resolved: number }[];
   dateRange: { from: Date | undefined; to: Date | undefined };
   notes: string;
   automatedInsights: string[];

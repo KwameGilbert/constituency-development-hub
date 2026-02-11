@@ -96,20 +96,9 @@ export default function AgentsPage() {
         if (response.success && response.data.agents) {
           const agents = response.data.agents;
 
-          // Calculate summary stats
-          const total = agents.length;
-          const active = agents.filter(
-            (a) => a.user.status === "active",
-          ).length;
-          const inactive = total - active;
-
           setAgentsData({
             agents,
-            summary: {
-              total,
-              active,
-              inactive,
-            },
+            summary: response.data.summary,
           });
         }
       } catch (err) {

@@ -193,8 +193,16 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                 onChange={setSelectedStatus}
                 options={[
                   { value: "all", label: "All Statuses" },
-                  { value: "submitted", label: "Submitted" },
-                  { value: "under_officer_review", label: "Under Review" },
+                  // Hide submitted/under_review for admins as backend blocks them
+                  ...(!readOnly
+                    ? [
+                        { value: "submitted", label: "Submitted" },
+                        {
+                          value: "under_officer_review",
+                          label: "Under Review",
+                        },
+                      ]
+                    : []),
                   { value: "forwarded_to_admin", label: "Forwarded to Admin" },
                   {
                     value: "assigned_to_task_force",

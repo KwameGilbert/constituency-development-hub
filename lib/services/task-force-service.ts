@@ -84,7 +84,27 @@ export interface TaskForceIssue {
   created_at: string;
   updated_at?: string;
   formatted_date?: string;
-  assessment_report?: any; // Using any for now to avoid circular deps or complex type import duplicates, but ideally should be AssessmentReport
+  assessment_report?: AssessmentReportData;
+}
+
+export interface AssessmentReportData {
+  assessment_summary?: string;
+  findings?: string;
+  issue_confirmed?: boolean;
+  severity?: string;
+  estimated_cost?: string | number;
+  estimated_duration?: string;
+  recommendations?: string;
+  review_notes?: string;
+  required_resources?: {
+    item: string;
+    quantity: number;
+    estimatedCost?: number;
+    justification?: string;
+  }[];
+  images?: string | string[];
+  documents?: string | string[];
+  created_at?: string;
 }
 
 export interface IssuesResponse {

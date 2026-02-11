@@ -60,22 +60,6 @@ import { cn } from "@/lib/utils";
 import { ReportPrintLayout } from "@/components/task-force-dashboard/reports/ReportPrintLayout";
 
 
-// --- Mock Data Generators ---
-const generateVelocityData = (days: number): VelocityDataPoint[] => {
-  const data = [];
-  const now = new Date();
-  for (let i = days; i >= 0; i--) {
-    const date = new Date(now);
-    date.setDate(now.getDate() - i);
-    data.push({
-      date: date.toLocaleDateString("en-GB", { month: "short", day: "numeric" }),
-      assessments: Math.floor(Math.random() * 8) + 2,
-      resolved: Math.floor(Math.random() * 5),
-    });
-  }
-  return data;
-};
-
 const COLORS = {
   primary: "#7e22ce",
   secondary: "#a855f7",
@@ -92,12 +76,6 @@ interface TooltipPayloadEntry {
   value: number | string;
   color: string;
   [key: string]: unknown;
-}
-
-interface VelocityDataPoint {
-  date: string;
-  assessments: number;
-  resolved: number;
 }
 
 interface CustomTooltipProps {
@@ -139,10 +117,7 @@ export default function ReportsPage() {
   const [notes, setNotes] = useState("");
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // Client-side generated data
-  const [velocityData, setVelocityData] = useState<VelocityDataPoint[]>([]);
-
-  // Derived days count for velocity
+  // Derived days count for date range display
   const daysDiff = useMemo(() => {
     if (date?.from && date?.to) {
       const diffTime = Math.abs(date.to.getTime() - date.from.getTime());
@@ -166,8 +141,6 @@ export default function ReportsPage() {
         if (teamRes.success) {
           setTeamMembers(teamRes.data.members);
         }
-        
-        setVelocityData(generateVelocityData(daysDiff));
 
       } catch (error) {
         console.error("Failed to fetch reports data:", error);
@@ -177,7 +150,7 @@ export default function ReportsPage() {
     };
 
     fetchData();
-  }, [daysDiff]);
+  }, []); // daysDiff removed from dependencies as API currently does not support date filtering
 
   // Derived Metrics
   const statusData = useMemo(() => {
@@ -422,14 +395,15 @@ export default function ReportsPage() {
         {/* --- CHARTS ROW 1 --- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 print:gap-4 print:grid-cols-2">
             
-            {/* VELOCITY CHART */}
+            {/* MONTHLY TRENDS CHART */}
             <div className="border rounded-lg p-6 break-inside-avoid">
-                <h3 className="text-lg font-bold mb-4">Assessment Velocity</h3>
+                <h3 className="text-lg font-bold mb-4">Monthly Trends</h3>
                 <div className="h-[300px]">
+                {(reports?.monthly_trends?.length ?? 0) > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={velocityData}>
+                    <AreaChart data={reports?.monthly_trends}>
                     <defs>
-                        <linearGradient id="colorAssessments" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="colorSubmitted" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.8}/>
                         <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0}/>
                         </linearGradient>
@@ -439,17 +413,38 @@ export default function ReportsPage() {
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                    <XAxis dataKey="date" stroke="#9CA3AF" fontSize={10} tickLine={false} axisLine={false} />
+                    <XAxis dataKey="month" stroke="#9CA3AF" fontSize={10} tickLine={false} axisLine={false} />
                     <YAxis stroke="#9CA3AF" fontSize={10} tickLine={false} axisLine={false} />
                     <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#9CA3AF', strokeWidth: 1 }} />
                     <Legend />
-                    <Area type="monotone" dataKey="assessments" name="New" stroke={COLORS.primary} fillOpacity={1} fill="url(#colorAssessments)" />
+                    <Area type="monotone" dataKey="submitted" name="Submitted" stroke={COLORS.primary} fillOpacity={1} fill="url(#colorSubmitted)" />
                     <Area type="monotone" dataKey="resolved" name="Resolved" stroke={COLORS.success} fillOpacity={1} fill="url(#colorResolved)" />
                     </AreaChart>
                 </ResponsiveContainer>
+                ) : (
+                  <div className="flex h-full items-center justify-center text-gray-400">
+                    No trend data available yet.
+                  </div>
+                )}
                 </div>
                 <div className="mt-4 bg-purple-50 p-3 rounded text-sm text-purple-900">
-                    <strong>Interpretation:</strong> Assessment activity is stable. Peak activity observed mid-period.
+                    <strong>Interpretation:</strong>{" "}
+                    {(() => {
+                      const trends = reports?.monthly_trends;
+                      if (!trends || trends.length < 2) return "Not enough data to determine trend.";
+                      const recent = trends[trends.length - 1];
+                      const previous = trends[trends.length - 2];
+                      const submittedDelta = recent.submitted - previous.submitted;
+                      const resolvedDelta = recent.resolved - previous.resolved;
+                      const parts = [];
+                      if (submittedDelta > 0) parts.push(`Submissions increased by ${submittedDelta} vs previous month.`);
+                      else if (submittedDelta < 0) parts.push(`Submissions decreased by ${Math.abs(submittedDelta)} vs previous month.`);
+                      else parts.push("Submissions are steady.");
+                      if (resolvedDelta > 0) parts.push(`Resolutions up by ${resolvedDelta}.`);
+                      else if (resolvedDelta < 0) parts.push(`Resolutions down by ${Math.abs(resolvedDelta)}.`);
+                      else parts.push("Resolutions are steady.");
+                      return parts.join(" ");
+                    })()}
                 </div>
             </div>
 
@@ -558,7 +553,7 @@ export default function ReportsPage() {
                     ))}
                     <li className="flex items-start gap-2 text-gray-700">
                         <ArrowUpRight className="h-5 w-5 text-gray-400 mt-0.5" />
-                        Avg Turnaround time is consistent with KPI targets.
+                        Avg resolution time: {reports?.avg_resolution_days ? Number(reports.avg_resolution_days).toFixed(1) : "N/A"} days.
                     </li>
                 </ul>
             </div>
@@ -580,7 +575,7 @@ export default function ReportsPage() {
       <ReportPrintLayout 
         reports={reports}
         teamMembers={teamMembers}
-        velocityData={velocityData}
+        velocityData={reports?.monthly_trends ?? []}
         dateRange={{ from: date?.from, to: date?.to }}
         notes={notes}
         automatedInsights={automatedInsights}

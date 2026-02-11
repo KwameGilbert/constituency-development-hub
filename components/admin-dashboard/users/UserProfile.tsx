@@ -15,10 +15,7 @@ import { Button } from "@/components/ui/button";
 import {
   History,
   BarChart3,
-  Clock,
   User as UserIcon,
-  LogIn,
-  Shield,
   Loader2,
 } from "lucide-react";
 import { userService, User } from "@/lib/services/user-service";
@@ -40,66 +37,7 @@ export function UserProfile() {
     task_force: "Task Force",
   };
 
-  // Mock data for development when API is not available
-  const mockUserData: Record<string, User> = {
-    "1": {
-      id: 1,
-      name: "John Admin",
-      email: "john.admin@kofibenteh.com",
-      phone: "+233 24 123 4567",
-      role: "admin",
-      status: "active",
-      location: "Accra Central",
-      created_at: "2024-01-15T10:00:00Z",
-      last_login: "2024-12-11T15:33:00Z",
-    },
-    "2": {
-      id: 2,
-      name: "Sarah Web Admin",
-      email: "sarah.web@kofibenteh.com",
-      phone: "+233 24 234 5678",
-      role: "web_admin",
-      status: "active",
-      location: "Tema",
-      created_at: "2024-02-20T09:30:00Z",
-      last_login: "2024-12-10T14:22:00Z",
-    },
-    "3": {
-      id: 3,
-      name: "Michael Officer",
-      email: "michael.officer@kofibenteh.com",
-      phone: "+233 24 345 6789",
-      role: "officer",
-      status: "active",
-      location: "Kumasi",
-      created_at: "2024-03-10T11:15:00Z",
-      last_login: "2024-12-09T16:45:00Z",
-    },
-    "4": {
-      id: 4,
-      name: "Emma Agent",
-      email: "emma.agent@kofibenteh.com",
-      phone: "+233 24 456 7890",
-      role: "agent",
-      status: "inactive",
-      location: "Cape Coast",
-      created_at: "2024-04-05T08:45:00Z",
-      last_login: "2024-11-28T12:30:00Z",
-    },
-    "5": {
-      id: 5,
-      name: "David Task Force",
-      email: "david.task@kofibenteh.com",
-      phone: "+233 24 567 8901",
-      role: "task_force",
-      status: "active",
-      location: "Takoradi",
-      created_at: "2024-05-12T13:20:00Z",
-      last_login: "2024-12-08T10:15:00Z",
-    },
-  };
-
-  // Fetch user data with fallback to mock data
+  // Fetch user data
   useEffect(() => {
     const fetchUser = async () => {
       if (!userId) return;
@@ -115,15 +53,8 @@ export function UserProfile() {
           setError(response.message || "Failed to load user");
         }
       } catch (err) {
-        console.warn("API not available, using mock data:", err);
-        // Use mock data for the requested user ID
-        const mockUser = mockUserData[userId];
-        if (mockUser) {
-          setUser(mockUser);
-          setError(null);
-        } else {
-          setError("User not found");
-        }
+        console.error("Failed to fetch user:", err);
+        setError("Failed to load user profile");
       } finally {
         setLoading(false);
       }
