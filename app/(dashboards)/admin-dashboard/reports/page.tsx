@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { ReportBuilder } from "@/components/admin-dashboard/reports/ReportBuilder";
 import { ReportPreview } from "@/components/admin-dashboard/reports/ReportPreview";
@@ -18,12 +18,39 @@ import {
 } from "@/lib/services/reports-service";
 
 import { BudgetChart } from "@/components/admin-dashboard/analytics/BudgetChart";
+import {
+  dashboardService,
+  AdminChartsData,
+} from "@/lib/services/dashboard-service";
 
 export default function ReportsPage() {
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [currentColumns, setCurrentColumns] = useState<ReportColumn[]>(
     getColumnsForType("issues"),
   );
+  const [chartsData, setChartsData] = useState<AdminChartsData | null>(null);
+  const [chartsLoading, setChartsLoading] = useState(true);
+  const [chartsError, setChartsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCharts = async () => {
+      try {
+        const response = await dashboardService.getAdminCharts();
+        if (response.success && response.data) {
+          setChartsData(response.data);
+        } else {
+          setChartsError(response.message || "Failed to load chart data");
+        }
+      } catch (err) {
+        console.error("Error fetching chart data:", err);
+        setChartsError("Failed to load chart data");
+      } finally {
+        setChartsLoading(false);
+      }
+    };
+
+    fetchCharts();
+  }, []);
 
   const handlePreview = (data: ReportData, columns: ReportColumn[]) => {
     setReportData(data);
@@ -70,7 +97,11 @@ export default function ReportsPage() {
         ]}
       />
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <BudgetChart />
+        <BudgetChart
+          chartsData={chartsData}
+          loading={chartsLoading}
+          error={chartsError}
+        />
         
         {/* Report Builder */}
         <ReportBuilder onPreview={handlePreview} />
