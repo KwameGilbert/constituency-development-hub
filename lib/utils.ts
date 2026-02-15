@@ -35,12 +35,51 @@ export function getImageUrl(path: string | null | undefined): string {
 
 export function cleanupHtml(html: string): string {
   if (!html) return "";
-  // Create a temporary DOM element to extract text content
   if (typeof window !== "undefined") {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = html;
-    return tempDiv.textContent || tempDiv.innerText || "";
+    // Use DOMParser to handle potentially escaped HTML entities
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const text = doc.body.textContent || "";
+    // If the text still contains HTML tags (was escaped), strip them
+    return text.replace(/<[^>]*>/g, "");
   }
-  // Fallback for server-side rendering (basic regex strip)
-  return html.replace(/<[^>]*>?/gm, "");
+  // Fallback for server-side rendering: decode common HTML entities then strip tags
+  const decodeEntities = (str: string) => {
+    return str
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&nbsp;/g, " ");
+  };
+
+  const decoded = decodeEntities(html);
+  return decoded.replace(/<[^>]*>/g, "");
+}
+
+// Sanitize HTML for safe rendering in the client. Uses isomorphic-dompurify
+// which works on both server and client environments.
+import DOMPurify from "isomorphic-dompurify";
+
+function decodeEntities(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ");
+}
+
+export function sanitizeHtml(html: string): string {
+  if (!html) return "";
+  try {
+    const decoded = decodeEntities(html);
+    // Allow a reasonable HTML profile (basic formatting)
+    return DOMPurify.sanitize(decoded, { USE_PROFILES: { html: true } });
+  } catch (err) {
+    // On error, fallback to stripping tags
+    return cleanupHtml(html);
+  }
 }

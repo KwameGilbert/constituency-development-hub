@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { galleryService, Gallery } from "@/lib/services/gallery-service";
-import { getImageUrl } from "@/lib/utils";
+import { getImageUrl, cleanupHtml } from "@/lib/utils";
 
 const categories: ("All" | string)[] = [
   "All",
@@ -226,7 +226,7 @@ export default function GalleryClient() {
                     {item.title}
                   </h3>
                   <p className="text-sm text-slate-600 line-clamp-2 mb-3">
-                    {item.description}
+                    {cleanupHtml(item.description || "")}
                   </p>
                   <div className="flex flex-wrap gap-3 text-xs text-slate-500">
                     <span className="flex items-center gap-1">
@@ -310,7 +310,7 @@ export default function GalleryClient() {
                 {/* Caption */}
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                   <p className="text-white text-center text-sm">
-                    {selectedItem.images[currentImageIndex].caption}
+                    {cleanupHtml(selectedItem.images[currentImageIndex].caption || "")}
                   </p>
                 </div>
 

@@ -56,7 +56,7 @@ export function AgentSidebar() {
   };
 
   return (
-    <Sidebar className="bg-white border-r border-slate-200 px-6">
+    <Sidebar className="bg-white border-r border-slate-200 px-4">
       <SidebarHeader className="h-16 border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-6 py-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">

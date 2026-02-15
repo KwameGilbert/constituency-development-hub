@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { agentService, IssueDetail } from "@/lib/services/agent-service";
 import AgentDashboardHeader from "@/components/agent-dashboard/AgentDashboardHeader";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
@@ -226,9 +227,9 @@ export default function AgentIssueDetailPage({
 
                 <div>
                   <label className="text-sm text-slate-500">Description</label>
-                  <div
+                  <SanitizedHtml
                     className="mt-1 text-slate-700 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: issue.description }}
+                    html={issue.description}
                   />
                 </div>
 

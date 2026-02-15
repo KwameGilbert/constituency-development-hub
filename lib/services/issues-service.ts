@@ -260,6 +260,24 @@ class IssuesService {
       isFormData: true,
     });
   }
+
+  async updateOfficerIssue(
+    id: number | string,
+    data: any,
+  ): Promise<ApiResponse<{ report: Issue }>> {
+    return apiClient(`/officer/issues/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteOfficerIssue(
+    id: number | string,
+  ): Promise<ApiResponse<void>> {
+    return apiClient(`/officer/issues/${id}`, {
+      method: "DELETE",
+    });
+  }
 }
 
 export const issuesService = new IssuesService();

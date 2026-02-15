@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import type { Issue } from "@/lib/data";
 import { getMetadata } from "@/lib/data";
+import { cleanupHtml } from "@/lib/utils";
 
 interface IssueDetailModalProps {
   issue: Issue | null;
@@ -137,7 +138,7 @@ export function IssueDetailModal({
                   </h3>
                   <div className="p-4 bg-gray-50 rounded-lg">
                     <p className="text-gray-700 whitespace-pre-wrap">
-                      {issue.description}
+                      {cleanupHtml(issue.description)}
                     </p>
                   </div>
                 </div>

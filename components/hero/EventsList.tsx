@@ -7,30 +7,7 @@ import { eventsService, Event } from "@/lib/services/events-service";
 import { Loader2, Calendar, Clock, MapPin } from "lucide-react";
 import { format } from "date-fns";
 
-// Fallback events if API fails
-const fallbackEvents = [
-  {
-    id: 1,
-    title: "Constituency Townhall",
-    event_date: "2026-01-12",
-    start_time: "10:00",
-    location: "Sefwi Wiawso Community Hall",
-  },
-  {
-    id: 2,
-    title: "Youth Skills Expo",
-    event_date: "2026-01-27",
-    start_time: "09:00",
-    location: "Asonomaso Resource Center",
-  },
-  {
-    id: 3,
-    title: "Healthcare Outreach",
-    event_date: "2026-02-04",
-    start_time: "08:30",
-    location: "Ofankor Health Post",
-  },
-];
+// Note: removed local fallback events — rely on API data only
 
 function EventsList() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -39,20 +16,37 @@ function EventsList() {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const response = await eventsService.getUpcomingEvents(5);
-        if (
-          response.success &&
-          response.data.events &&
-          response.data.events.length > 0
-        ) {
-          setEvents(response.data.events);
-        } else {
-          // Use fallback if no upcoming events
-          setEvents(fallbackEvents as Event[]);
+        // Fetch first page to learn pagination
+        const first = await eventsService.getAllEvents(1, 50);
+        if (!first.success) {
+          setEvents([]);
+          return;
         }
-      } catch {
-        // API error - use fallback data silently
-        setEvents(fallbackEvents as Event[]);
+
+        const pages: Event[] = first.data.events || [];
+
+        const pagination = first.data.pagination;
+        if (pagination && pagination.total_pages && pagination.total_pages > 1) {
+          const totalPages = pagination.total_pages;
+          // Fetch remaining pages in sequence (small number expected)
+          for (let p = 2; p <= totalPages; p++) {
+            try {
+              // use same limit as first call
+              const resp = await eventsService.getAllEvents(p, 50);
+              if (resp.success && resp.data.events) {
+                pages.push(...resp.data.events);
+              }
+            } catch (err) {
+              // ignore page errors, continue
+              console.error("Error fetching events page", p, err);
+            }
+          }
+        }
+
+        setEvents(pages);
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+        setEvents([]);
       } finally {
         setLoading(false);
       }

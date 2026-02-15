@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { projectsService } from "@/lib/services/projects-service";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { cleanupHtml } from "@/lib/utils";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -156,7 +157,7 @@ function ProjectsShowcase() {
                     {project.title}
                   </h3>
                   <p className="line-clamp-2 text-sm text-slate-500">
-                    {project.description}
+                    {cleanupHtml(project.description || "")}
                   </p>
                   <div className="text-sm text-slate-500">
                     <p>

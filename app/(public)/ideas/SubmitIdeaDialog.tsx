@@ -67,7 +67,28 @@ export default function SubmitIdeaDialog({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selected = e.target.files[0];
+
+      // Allow common document types (PDF, Word, Excel, text) and common images
+      const allowedMime = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "text/plain",
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+
+      if (!allowedMime.includes(selected.type)) {
+        toast.error("Invalid file format. Allowed: PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG, GIF, WEBP");
+        return;
+      }
+
+      setFile(selected);
     }
   };
 
@@ -96,11 +117,13 @@ export default function SubmitIdeaDialog({
       let documentUrl = "";
       if (file) {
         try {
-          const uploadResponse = await uploadService.uploadFile(file);
+          // Hint to backend that this is an ideas/document upload
+          const uploadResponse = await uploadService.uploadFile(file, "ideas", "document");
           documentUrl = uploadResponse.data.url;
-        } catch {
+        } catch (err: any) {
+          const message = err?.message || err?.toString() || "Could not upload the attached file. Please try again.";
           toast.error("File upload failed", {
-            description: "Could not upload the attached file. Please try again.",
+            description: message,
           });
           setLoading(false);
           return;
@@ -156,7 +179,7 @@ export default function SubmitIdeaDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[900px] max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-900">
             Submit a Community Idea
@@ -237,7 +260,7 @@ export default function SubmitIdeaDialog({
                   value={formData.description}
                   onChange={handleDescriptionChange}
                   placeholder="Describe your idea in detail. What problem does it solve? Who will benefit?"
-                  height={120}
+                  height={250}
                 />
               </div>
 
@@ -249,7 +272,7 @@ export default function SubmitIdeaDialog({
                     type="file"
                     onChange={handleFileChange}
                     className="hidden"
-                    accept="image/*,application/pdf"
+                    accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,image/*"
                   />
                   {!file ? (
                     <Button
@@ -259,7 +282,7 @@ export default function SubmitIdeaDialog({
                       className="w-full border-dashed"
                     >
                       <Upload className="mr-2 h-4 w-4" />
-                      Upload Image or PDF
+                        Upload Document (PDF, DOCX, XLSX, TXT) or Image
                     </Button>
                   ) : (
                     <div className="flex items-center justify-between w-full p-2 border rounded-md bg-gray-50">

@@ -29,6 +29,7 @@ const getStatusColor = (status: string) => {
 const getSeverityColor = (severity: string) => {
   switch (severity.toLowerCase()) {
     case "critical":
+    case "urgent":
       return "bg-red-100 text-red-800";
     case "high":
       return "bg-orange-100 text-orange-800";

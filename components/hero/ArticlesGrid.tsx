@@ -6,6 +6,7 @@ import Link from "next/link";
 import { blogService, BlogPost } from "@/lib/services/blog-service";
 import { Loader2 } from "lucide-react";
 import { getImageUrl } from "@/lib/utils";
+import { cleanupHtml } from "@/lib/utils";
 
 function ArticlesGrid() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -115,7 +116,7 @@ function ArticlesGrid() {
                   {post.title}
                 </h3>
                 <p className="text-sm text-slate-500 line-clamp-2">
-                  {post.excerpt}
+                  {cleanupHtml(post.excerpt || "")}
                 </p>
                 <Link
                   href={`/blog/${post.slug}`}

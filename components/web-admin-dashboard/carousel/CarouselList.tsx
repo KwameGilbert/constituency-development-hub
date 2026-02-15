@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
+import { cleanupHtml } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -213,11 +214,11 @@ export function CarouselList() {
 
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-bold text-slate-900 truncate">
-                      {slide.title}
+                      {cleanupHtml(slide.title || "")}
                     </h3>
                     {slide.subtitle && (
                       <p className="text-xs text-slate-500 truncate">
-                        {slide.subtitle}
+                        {cleanupHtml(slide.subtitle || "")}
                       </p>
                     )}
                     {slide.cta_link && (

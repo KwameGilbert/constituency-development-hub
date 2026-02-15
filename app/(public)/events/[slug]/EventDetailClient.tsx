@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/utils";
 
@@ -146,9 +147,8 @@ export default function EventDetailClient({
             </div>
 
             <div className="prose prose-slate max-w-none text-slate-600">
-              <p className="text-lg leading-relaxed">{event.description}</p>
-              {/* If there was rich text content, we would render it here. 
-                  Currently using description as the main content based on Interface */}
+              <SanitizedHtml html={event.description} className="text-lg leading-relaxed" />
+              {/* If there was rich text content, we would render it here. */}
             </div>
 
             <div className="pt-8 border-t border-slate-100 flex items-center justify-between">

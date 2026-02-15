@@ -7,6 +7,7 @@ import {
   RotateCcw,
   AlertCircle,
   FileX,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { agentService, AgentReport } from "@/lib/services/agent-service";
 import Link from "next/link";
+import { AgentEditIssueDialog } from "./AgentEditIssueDialog";
+import { toast } from "sonner";
+import { cn, cleanupHtml } from "@/lib/utils";
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
@@ -110,6 +114,38 @@ export function AgentAllIssues() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
+
+  // Action states
+  const [editingIssue, setEditingIssue] = useState<AgentReport | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  // Handle delete
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this issue? This action cannot be undone.")) {
+      return;
+    }
+
+    setDeletingId(id);
+    try {
+      const response = await agentService.deleteIssue(id);
+      if (response.success) {
+        toast.success("Issue deleted successfully");
+        setIssues(issues.filter(i => i.id !== id));
+      } else {
+        toast.error(response.message || "Failed to delete issue");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete issue");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  // Handle edit success
+  const handleEditSuccess = (updatedIssue: AgentReport) => {
+    setIssues(issues.map(i => i.id === updatedIssue.id ? updatedIssue : i));
+  };
 
   useEffect(() => {
     const fetchIssues = async () => {
@@ -326,8 +362,8 @@ export function AgentAllIssues() {
                     </div>
                     {getStatusBadge(issue.status)}
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {issue.description}
+                  <p className="text-sm text-muted-foreground line-clamp-2" title={cleanupHtml(issue.description)}>
+                    {cleanupHtml(issue.description)}
                   </p>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex flex-col gap-1">
@@ -343,39 +379,60 @@ export function AgentAllIssues() {
                       <span>{formatDate(issue.created_at)}</span>
                     </div>
                   </div>
-                  <Link href={`/agents-dashboard/issues/${issue.id}`}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      View Details
+                  
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="flex-1" asChild>
+                      <Link href={`/agents-dashboard/issues/${issue.id}`}>
+                        View
+                      </Link>
                     </Button>
-                  </Link>
+                     <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-blue-600 border-blue-200 hover:bg-blue-50"
+                        onClick={() => setEditingIssue(issue)}
+                        disabled={!['submitted', 'pending', 'rejected'].includes(issue.status)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                        onClick={() => handleDelete(issue.id)}
+                        disabled={!['submitted', 'pending', 'rejected'].includes(issue.status) || deletingId === issue.id}
+                      >
+                        {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin mx-auto"/> : "Delete"}
+                      </Button>
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* Desktop Table View */}
             <div className="hidden md:block overflow-x-auto">
-              <Table className="min-w-[700px]">
+              <Table className="min-w-[700px] table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-32">ID</TableHead>
-                    <TableHead className="min-w-[200px]">TITLE & DESCRIPTION</TableHead>
-                    <TableHead className="w-28">CATEGORY</TableHead>
-                    <TableHead className="w-28">STATUS</TableHead>
-                    <TableHead className="w-28">DATE</TableHead>
-                    <TableHead className="text-right w-20">ACTIONS</TableHead>
+                    <TableHead className="w-[80px]">ID</TableHead>
+                    <TableHead className="min-w-[170px]">TITLE & DESCRIPTION</TableHead>
+                    <TableHead className="w-[160px]">CATEGORY</TableHead>
+                    <TableHead className="w-[150px]">STATUS</TableHead>
+                    <TableHead className="w-[120px]">DATE</TableHead>
+                    <TableHead className="text-right w-[180px]">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredIssues.map((issue) => (
                     <TableRow key={issue.id}>
-                      <TableCell className="font-medium text-xs">
+                      <TableCell className="font-medium text-xs truncate max-w-[80px]" title={issue.case_id || `#${issue.id}`}>
                         {issue.case_id || `#${issue.id}`}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col max-w-[300px]">
-                          <span className="font-semibold truncate">{issue.title}</span>
-                          <span className="text-muted-foreground text-sm line-clamp-1">
-                            {issue.description}
+                        <div className="flex flex-col max-w-[170px]">
+                          <span className="font-semibold text-sm truncate" title={issue.title}>{issue.title}</span>
+                          <span className="text-muted-foreground text-xs line-clamp-1" title={cleanupHtml(issue.description)}>
+                            {cleanupHtml(issue.description)}
                           </span>
                         </div>
                       </TableCell>
@@ -383,14 +440,37 @@ export function AgentAllIssues() {
                       <TableCell>{getStatusBadge(issue.status)}</TableCell>
                       <TableCell className="text-sm">{formatDate(issue.created_at)}</TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/agents-dashboard/issues/${issue.id}`}>
-                          <Button
-                            variant="link"
-                            className="h-auto p-0 text-slate-600 hover:text-slate-900"
+                        <div className="flex justify-end gap-2">
+                           <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 text-indigo-600 hover:text-indigo-700"
+                            asChild
                           >
-                            View
+                            <Link href={`/agents-dashboard/issues/${issue.id}`}>
+                              View
+                            </Link>
                           </Button>
-                        </Link>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 text-blue-600 hover:text-blue-700"
+                            onClick={() => setEditingIssue(issue)}
+                            disabled={!['submitted', 'pending', 'rejected'].includes(issue.status)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 text-red-600 hover:text-red-700"
+                            onClick={() => handleDelete(issue.id)}
+                            disabled={!['submitted', 'pending', 'rejected'].includes(issue.status) || deletingId === issue.id}
+                          >
+                            {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin"/> : "Delete"}
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -400,6 +480,15 @@ export function AgentAllIssues() {
           </>
         )}
       </div>
+      
+      {editingIssue && (
+        <AgentEditIssueDialog
+          issue={editingIssue}
+          open={!!editingIssue}
+          onOpenChange={(open) => !open && setEditingIssue(null)}
+          onSuccess={handleEditSuccess}
+        />
+      )}
     </div>
   );
 }

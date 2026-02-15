@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { ideasService, Idea } from "@/lib/services/ideas-service";
+import { cleanupHtml } from "@/lib/utils";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -204,7 +205,7 @@ export default function IdeasClient() {
                       </CardTitle>
 
                       <p className="text-gray-600 text-sm line-clamp-4 flex-1 mb-4">
-                        {idea.description}
+                        {cleanupHtml(idea.description)}
                       </p>
 
                       {/* Stats / Info Footer */}

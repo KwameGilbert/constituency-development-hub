@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -288,9 +289,10 @@ export default function PendingIssuesPage() {
                               )}
                             </div>
 
-                            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                              {issue.description}
-                            </p>
+                            <SanitizedHtml
+                              html={issue.description}
+                              className="text-sm text-gray-600 mb-3 line-clamp-2"
+                            />
 
                             <div className="flex flex-wrap gap-2 mb-3">
                               <Badge

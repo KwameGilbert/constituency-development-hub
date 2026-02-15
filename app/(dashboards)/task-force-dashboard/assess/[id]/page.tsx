@@ -50,6 +50,7 @@ import {
   getMetadata,
   getCurrentUser,
 } from "@/lib/data";
+import { cleanupHtml } from "@/lib/utils";
 import { useAssessmentStore } from "@/lib/stores/assessment-store";
 import {
   Issue as ApiIssue,
@@ -499,7 +500,7 @@ export default function AssessIssue() {
                 <h3 className="font-semibold text-gray-900 mb-2">
                   {issue.title}
                 </h3>
-                <p className="text-sm text-gray-600">{issue.description}</p>
+                <p className="text-sm text-gray-600">{cleanupHtml(issue.description)}</p>
               </div>
 
               <div className="space-y-3">

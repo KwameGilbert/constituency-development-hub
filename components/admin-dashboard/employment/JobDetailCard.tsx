@@ -14,6 +14,7 @@ import {
   Users,
 } from "lucide-react";
 import { JobPosting, JobApplicant } from "@/lib/services/employment-service";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import Link from "next/link";
 import {
   AlertDialog,
@@ -149,9 +150,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
               {job.company && (
                 <p className="text-lg text-slate-600 mb-2">{job.company}</p>
               )}
-              <div
+              <SanitizedHtml
+                html={job.description}
                 className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: job.description }}
               />
             </div>
             <div className="flex gap-2">
@@ -268,9 +269,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <h4 className="font-semibold text-slate-900 mb-2">
                     Key Responsibilities
                   </h4>
-                  <div
+                  <SanitizedHtml
+                    html={job.responsibilities}
                     className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: job.responsibilities }}
                   />
                 </div>
               </>
@@ -284,9 +285,9 @@ export function JobDetailCard({ job }: JobDetailCardProps) {
                   <h4 className="font-semibold text-slate-900 mb-2">
                     Requirements & Qualifications
                   </h4>
-                  <div
+                  <SanitizedHtml
+                    html={job.requirements}
                     className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: job.requirements }}
                   />
                 </div>
               </>

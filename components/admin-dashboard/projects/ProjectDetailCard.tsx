@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { Project } from "@/lib/services/projects-service";
 import Link from "next/link";
 import {
@@ -93,7 +94,7 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
     <div className="space-y-6">
       {/* Header Card */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-6 px-12">
           <div className="flex flex-col md:flex-row justify-between items-start gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
@@ -128,10 +129,11 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                 </div>
               )}
 
-              <div
-                className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: project.description }}
-              />
+              <div className="text-slate-700 leading-relaxed prose prose-sm max-w-none">
+                {project.description ? (
+                  <SanitizedHtml html={project.description} className="" />
+                ) : null}
+              </div>
             </div>
             <div className="flex gap-2">
               <Link href={`/admin-dashboard/projects/${project.id}/edit`}>

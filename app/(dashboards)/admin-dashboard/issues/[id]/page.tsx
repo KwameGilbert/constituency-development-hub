@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IssueActions } from "@/components/admin-dashboard/issues/IssueActions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { sanitizeHtml } from "@/lib/utils";
 
 export default async function IssueDetailPage({
   params,
@@ -150,7 +151,7 @@ export default async function IssueDetailPage({
                   </h3>
                   <div
                     className="text-gray-600 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: issue.description }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(issue.description) }}
                   />
                 </div>
 

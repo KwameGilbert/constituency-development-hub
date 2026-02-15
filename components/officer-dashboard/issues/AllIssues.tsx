@@ -21,12 +21,15 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn, cleanupHtml } from "@/lib/utils";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import {
   issuesService,
   Issue,
   IssueFilters,
 } from "@/lib/services/issues-service";
 import Link from "next/link";
+import { EditIssueDialog } from "./EditIssueDialog";
 
 interface AllIssuesProps {
   /**
@@ -51,6 +54,13 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Edit Dialog State
+  const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+  // Delete Action State
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const fetchIssues = useCallback(async () => {
     setLoading(true);
@@ -104,6 +114,36 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
     fetchIssues();
   }
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this issue? This action cannot be undone.")) return;
+    
+    setDeletingId(id);
+    try {
+      const response = await issuesService.deleteOfficerIssue(id);
+      if (response.success) {
+        // toast.success("Issue deleted successfully"); // Assuming toast is available or will be added
+        fetchIssues(); // Refresh list
+      } else {
+        alert(response.message || "Failed to delete issue");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("An error occurred while deleting");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleEdit = (issue: Issue) => {
+    setEditingIssue(issue);
+    setEditDialogOpen(true);
+  };
+
+  const handleEditSuccess = (updatedIssue: Issue) => {
+    setIssues(issues.map(i => i.id === updatedIssue.id ? updatedIssue : i));
+  };
+
+
   function getStatusColor(status: string) {
     const statusColors: Record<string, string> = {
       submitted: "bg-blue-100 text-blue-700 hover:bg-blue-100/80",
@@ -145,6 +185,13 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
   return (
     <div className="space-y-6">
+      <EditIssueDialog 
+        issue={editingIssue!} 
+        open={editDialogOpen} 
+        onOpenChange={setEditDialogOpen}
+        onSuccess={handleEditSuccess}
+      />
+
       {/* Filter Section */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-6">
         <div className="flex items-center justify-between">
@@ -271,19 +318,19 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
               <Table className="w-full table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[140px]">CASE ID</TableHead>
+                    <TableHead className="w-[100px]">CASE ID</TableHead>
                     <TableHead className="min-w-[250px]">TITLE & DESCRIPTION</TableHead>
                     <TableHead className="w-[140px]">CATEGORY</TableHead>
                     <TableHead className="w-[100px]">PRIORITY</TableHead>
                     <TableHead className="w-[160px]">STATUS</TableHead>
                     <TableHead className="w-[100px]">DATE</TableHead>
-                    <TableHead className="text-right w-[80px]">ACTIONS</TableHead>
+                    <TableHead className="text-right w-[200px]">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {issues.map((issue) => (
                     <TableRow key={issue.id}>
-                      <TableCell className="font-medium text-sm text-gray-600 truncate max-w-[140px]" title={issue.case_id || `#${issue.id}`}>
+                      <TableCell className="font-medium text-sm text-gray-600 truncate max-w-[100px]" title={issue.case_id || `#${issue.id}`}>
                         {issue.case_id || `#${issue.id}`}
                       </TableCell>
                       <TableCell>
@@ -291,8 +338,8 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                           <span className="font-semibold text-gray-900 truncate" title={issue.title}>
                             {issue.title}
                           </span>
-                          <span className="text-muted-foreground text-sm truncate" title={issue.description?.replace(/<[^>]*>/g, "")}>
-                            {issue.description?.replace(/<[^>]*>/g, "")}
+                          <span className="text-muted-foreground text-sm truncate" title={cleanupHtml(issue.description)}>
+                            {cleanupHtml(issue.description)}
                           </span>
                         </div>
                       </TableCell>
@@ -324,17 +371,44 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                       <TableCell className="text-sm text-gray-600">
                         {new Date(issue.created_at).toLocaleDateString()}
                       </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="link"
-                          className="h-auto p-0 text-indigo-600 hover:text-indigo-700"
-                          asChild
-                        >
-                          <Link href={`${basePath}/${issue.id}`}>
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Link>
-                        </Button>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                           <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-2 text-indigo-600 hover:text-indigo-700"
+                            asChild
+                          >
+                            <Link href={`${basePath}/${issue.id}`}>
+                              View
+                            </Link>
+                          </Button>
+                          
+                          {!readOnly && (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 px-2 text-blue-600 hover:text-blue-700"
+                                onClick={() => handleEdit(issue)}
+                                // Show edit for more statuses, or always show but disable
+                                disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status)}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 px-2 text-red-600 hover:text-red-700"
+                                onClick={() => handleDelete(issue.id)}
+                                // Show delete for more statuses
+                                disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status) || deletingId === issue.id}
+                              >
+                                {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin"/> : "Delete"}
+                              </Button>
+                            </>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -366,9 +440,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                       </Badge>
                     </div>
 
-                    <p className="text-sm text-slate-600 line-clamp-2">
-                      {issue.description}
-                    </p>
+                    <SanitizedHtml
+                      html={issue.description}
+                      className="text-sm text-slate-600 line-clamp-2"
+                    />
 
                     <div className="flex flex-wrap gap-2 text-xs">
                       <span className="px-2 py-1 bg-slate-100 rounded-md text-slate-600 font-medium">
@@ -380,23 +455,47 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-2">
-                      <Badge
+                       <Badge
                         variant="outline"
                         className={`border-0 ${getStatusColor(issue.status)}`}
                       >
                         {formatStatus(issue.status)}
                       </Badge>
-
+                    </div>
+                    
+                    <div className="flex items-center gap-2 pt-2 justify-end">
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        className="h-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                        className="h-8 flex-1"
                         asChild
                       >
                         <Link href={`${basePath}/${issue.id}`}>
-                          View Details <ArrowRight className="ml-1 h-3 w-3" />
+                          View
                         </Link>
                       </Button>
+                       {!readOnly && (
+                          <>
+                           <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 flex-1 text-blue-600 border-blue-200 hover:bg-blue-50"
+                              onClick={() => handleEdit(issue)}
+                              disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                              onClick={() => handleDelete(issue.id)}
+                              disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status) || deletingId === issue.id}
+                            >
+                              {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin mx-auto"/> : "Delete"}
+                            </Button>
+                          </>
+                        )}
                     </div>
                   </CardContent>
                 </Card>

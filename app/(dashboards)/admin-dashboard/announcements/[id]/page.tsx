@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 export default async function AnnouncementDetailPage({
   params,
@@ -57,9 +58,7 @@ export default async function AnnouncementDetailPage({
                 <Badge>{announcement.priority}</Badge>
                 <Badge variant="outline">{announcement.category}</Badge>
               </div>
-              <p className="text-slate-700 whitespace-pre-wrap">
-                {announcement.content}
-              </p>
+              <SanitizedHtml html={announcement.content} className="text-slate-700 whitespace-pre-wrap" />
             </div>
           </CardContent>
         </Card>

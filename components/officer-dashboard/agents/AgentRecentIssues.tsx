@@ -4,6 +4,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, MapPin, Calendar, AlertCircle } from "lucide-react";
+import { cleanupHtml } from "@/lib/utils";
 import Link from "next/link";
 import { RecentIssue } from "@/lib/services/agent-service";
 
@@ -65,7 +66,7 @@ export function AgentRecentIssues({ issues = [] }: AgentRecentIssuesProps) {
                     <ArrowRight className="h-4 w-4" />
                 </Link>
                 </div>
-                <p className="text-sm text-muted-foreground line-clamp-2">{issue.description}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2">{cleanupHtml(issue.description)}</p>
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                     <MapPin className="h-3 w-3" />

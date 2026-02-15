@@ -44,6 +44,7 @@ import {
   taskForceService,
   TaskForceIssue,
 } from "@/lib/services/task-force-service";
+import { cleanupHtml } from "@/lib/utils";
 
 const getPriorityIcon = (priority: string) => {
   switch (priority) {
@@ -384,7 +385,7 @@ export default function IssuesPage() {
                   </CardHeader>
                   <CardContent>
                     <CardDescription className="mb-4 line-clamp-3">
-                      {issue.description}
+                      {cleanupHtml(issue.description)}
                     </CardDescription>
 
                     <div className="space-y-2 text-sm text-gray-600 mb-4">

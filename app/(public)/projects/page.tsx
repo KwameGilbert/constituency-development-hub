@@ -16,6 +16,7 @@ const cardVariants = {
 };
 
 import ProjectDetailsModal from "@/components/projects/ProjectDetailsModal";
+import { cleanupHtml } from "@/lib/utils";
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -152,7 +153,7 @@ export default function ProjectsPage() {
                           {project.title}
                         </h3>
                         <p className="line-clamp-2 text-sm text-slate-500">
-                          {project.description}
+                          {cleanupHtml(project.description || "")}
                         </p>
                         <hr className="border-slate-100" />
                         <div className="text-sm text-slate-500 grid grid-cols-2 gap-2">

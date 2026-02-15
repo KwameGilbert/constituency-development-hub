@@ -23,6 +23,7 @@ import {
   XCircle,
   Clock,
 } from "lucide-react";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { Idea } from "@/lib/services/ideas-service";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -109,9 +110,9 @@ export function IdeaDetailCard({ idea }: IdeaDetailCardProps) {
 
             <div>
               <h3 className="font-semibold text-slate-900 mb-2">Description</h3>
-              <div
+              <SanitizedHtml
                 className="text-slate-700 leading-relaxed prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: idea.description }}
+                html={idea.description}
               />
             </div>
 

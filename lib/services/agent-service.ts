@@ -349,6 +349,32 @@ class AgentService {
   }
 
   /**
+   * Update an issue report
+   * PUT /v1/agent/issues/{id}
+   */
+  async updateIssue(
+    id: number,
+    data: any,
+  ): Promise<ApiResponse<{ report: AgentReport }>> {
+    return apiClient(`/agent/issues/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+      requiresAuth: true,
+    });
+  }
+
+  /**
+   * Delete an issue report
+   * DELETE /v1/agent/issues/{id}
+   */
+  async deleteIssue(id: number): Promise<ApiResponse<null>> {
+    return apiClient(`/agent/issues/${id}`, {
+      method: "DELETE",
+      requiresAuth: true,
+    });
+  }
+
+  /**
    * Update agent profile
    * PUT /v1/agent/profile
    */

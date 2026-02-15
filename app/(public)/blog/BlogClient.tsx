@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/utils";
+import { cleanupHtml } from "@/lib/utils";
 
 const categories = [
   "All",
@@ -252,7 +253,7 @@ export default function BlogClient() {
 
                   {/* Excerpt */}
                   <p className="text-sm text-slate-600 line-clamp-3 mb-4">
-                    {post.excerpt}
+                    {cleanupHtml(post.excerpt || "")}
                   </p>
 
                   {/* Read More */}

@@ -11,6 +11,7 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -214,34 +215,27 @@ export function AllAgents() {
 
       {/* Table Section */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
-        {loading ? (
+        {loading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
             <p className="ml-3 text-gray-500">Loading agents...</p>
           </div>
-        ) : agents.length === 0 ? (
+        )}
+
+        {!loading && agents.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No agents found</p>
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table className="min-w-[900px]">
-              <TableHeader>
-                <TableRow className="text-sm">
-                  <TableHead>AGENT</TableHead>
-                  <TableHead>CONTACT INFO</TableHead>
-                  <TableHead>AGENT CODE</TableHead>
-                  <TableHead>LOCATION</TableHead>
-                  <TableHead>REPORTS</TableHead>
-                  <TableHead>STATUS</TableHead>
-                  <TableHead>VERIFIED</TableHead>
-                  <TableHead className="text-right">ACTIONS</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {agents.map((agent) => (
-                  <TableRow key={agent.id}>
-                    <TableCell>
+        )}
+
+        {!loading && agents.length > 0 && (
+          <div>
+            {/* Mobile: stacked cards */}
+            <div className="md:hidden space-y-3">
+              {agents.map((agent) => (
+                <Card key={agent.id} className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-8 w-8 bg-indigo-100 text-indigo-600">
                           <AvatarImage src={agent.profile_image || undefined} />
@@ -249,110 +243,174 @@ export function AllAgents() {
                             {agent.user?.name?.charAt(0) || "A"}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="font-medium">
-                          {agent.user?.name || "Unknown"}
-                        </span>
+                        <div>
+                          <p className="font-medium">{agent.user?.name || "Unknown"}</p>
+                          <p className="text-sm text-muted-foreground">{agent.user?.email}</p>
+                        </div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col text-sm">
-                        <span>{agent.user?.email}</span>
-                        <span className="text-muted-foreground">
-                          {agent.user?.phone || "No phone"}
-                        </span>
+
+                      <div className="mt-3 flex items-center gap-3 text-sm text-slate-700">
+                        <span className="font-mono">{agent.agent_code}</span>
+                        <span className="text-muted-foreground">{agent.assigned_location || "Not Assigned"}</span>
+                        <span className="font-medium">{agent.reports_submitted || 0}</span>
                       </div>
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">
-                      {agent.agent_code}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {agent.assigned_location || "Not Assigned"}
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-medium">
-                        {agent.reports_submitted || 0}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={`${getStatusBadge(agent.user?.status || "pending")} border-0`}
-                      >
-                        {agent.user?.status || "pending"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={
-                          agent.id_verified
-                            ? "bg-green-100 text-green-700"
-                            : "bg-yellow-100 text-yellow-700"
-                        }
-                      >
+                    </div>
+
+                    <div className="flex flex-col items-end gap-2">
+                      <Badge className={`${getStatusBadge(agent.user?.status || "pending")} border-0`}>{agent.user?.status || "pending"}</Badge>
+                      <Badge className={agent.id_verified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}>
                         {agent.id_verified ? "Verified" : "Pending"}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+
+                      <div className="mt-2 flex items-center gap-2">
                         <Link href={`/officer-dashboard/agents/${agent.id}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                          >
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
                             <Eye className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Link
-                          href={`/officer-dashboard/agents/${agent.id}/edit`}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                          >
+                        <Link href={`/officer-dashboard/agents/${agent.id}/edit`}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
                             <Edit className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {/* Desktop/tablet: show table on md+ */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table className="min-w-[900px]">
+                <TableHeader>
+                  <TableRow className="text-sm">
+                    <TableHead>AGENT</TableHead>
+                    <TableHead className="max-w-[160px]">CONTACT INFO</TableHead>
+                    <TableHead>AGENT CODE</TableHead>
+                    <TableHead>LOCATION</TableHead>
+                    <TableHead>REPORTS</TableHead>
+                    <TableHead>STATUS</TableHead>
+                    <TableHead>VERIFIED</TableHead>
+                    <TableHead className="text-right">ACTIONS</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {agents.map((agent) => (
+                    <TableRow key={agent.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8 bg-indigo-100 text-indigo-600">
+                            <AvatarImage src={agent.profile_image || undefined} />
+                            <AvatarFallback>
+                              {agent.user?.name?.charAt(0) || "A"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">
+                            {agent.user?.name || "Unknown"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-40 overflow-hidden">
+                        <div className="flex flex-col text-sm">
+                          <span className="truncate">{agent.user?.email}</span>
+                          <span className="text-muted-foreground truncate">
+                            {agent.user?.phone || "No phone"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-sm">
+                        {agent.agent_code}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {agent.assigned_location || "Not Assigned"}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">
+                          {agent.reports_submitted || 0}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={`${getStatusBadge(agent.user?.status || "pending")} border-0`}
+                        >
+                          {agent.user?.status || "pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            agent.id_verified
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }
+                        >
+                          {agent.id_verified ? "Verified" : "Pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Link href={`/officer-dashboard/agents/${agent.id}`}>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Eye className="h-4 w-4" />
                             </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Agent</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete{" "}
-                                {agent.user?.name}? This action cannot be
-                                undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDelete(agent.id)}
-                                className="bg-red-600 hover:bg-red-700"
-                                disabled={deletingId === agent.id}
+                          </Link>
+                          <Link
+                            href={`/officer-dashboard/agents/${agent.id}/edit`}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                               >
-                                {deletingId === agent.id ? (
-                                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                ) : null}
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Agent</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete{" "}
+                                  {agent.user?.name}? This action cannot be
+                                  undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(agent.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                  disabled={deletingId === agent.id}
+                                >
+                                  {deletingId === agent.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                  ) : null}
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         )}
       </div>

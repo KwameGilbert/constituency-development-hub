@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { Bell } from "lucide-react";
 
 export default function AnnouncementPopup() {
@@ -70,7 +71,10 @@ export default function AnnouncementPopup() {
         </DialogHeader>
 
         <div className="py-2">
-          <p className="text-center text-gray-600">{announcement.content}</p>
+          <SanitizedHtml
+            html={announcement.content}
+            className="text-center text-gray-600"
+          />
         </div>
 
         <DialogFooter className="sm:justify-center">

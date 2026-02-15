@@ -70,7 +70,7 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-44">
                   Idea
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
@@ -99,14 +99,13 @@ export function IdeasTable({ ideas, pagination }: IdeasTableProps) {
                   key={idea.id}
                   className="hover:bg-slate-50 transition-colors"
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 w-44">
                     <div>
-                      <p className="font-medium text-slate-900 max-w-md">
+                      <p className="font-medium text-slate-900 truncate max-w-[180px]">
                         {idea.title}
                       </p>
 
-
-                      <p className="text-sm text-slate-500 truncate max-w-md mt-1">
+                      <p className="text-sm text-slate-500 truncate max-w-[180px] mt-1">
                         {cleanupHtml(idea.description)}
                       </p>
                     </div>

@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 
+import { sanitizeHtml } from "@/lib/utils";
 import EventFilters from "@/components/events/EventFilters";
 import EventsHero, { type EventStat } from "@/components/events/EventsHero";
 import { Button } from "@/components/ui/button";
@@ -127,9 +128,11 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       <h3 className="mt-4 text-2xl font-semibold text-slate-900 line-clamp-2">
         {event.name || event.title}
       </h3>
-      <p className="mt-2 text-sm text-slate-600 line-clamp-3">
-        {event.description}
-      </p>
+      <div
+        className="mt-2 text-sm text-slate-600 line-clamp-3 max-w-full"
+        // Safe because we sanitize server-provided HTML
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description || "") }}
+      />
 
       {/* Details */}
       <div className="mt-4 grid gap-2 text-sm text-slate-500">
@@ -167,59 +170,12 @@ function EventCard({ event, index }: { event: Event; index: number }) {
   );
 }
 
-// Fallback events if API fails
-const fallbackEventsData: Event[] = [
-  {
-    id: 1,
-    name: "Youth Skills Acceleration Clinic",
-    description:
-      "Hands-on mentorship with artisans and digital mentors focused on employability for senior high school graduates.",
-    event_date: "2025-02-12",
-    start_time: "09:00",
-    location: "Sefwi Wiawso Innovation Hub",
-    status: "upcoming",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "Parliamentary Briefing on Cocoa Roads",
-    description:
-      "Presented updates to local media and chiefs on the phased rehabilitation of feeder roads across the cocoa belt.",
-    event_date: "2025-02-21",
-    start_time: "14:30",
-    location: "Sefwi Boako Palace Forecourt",
-    status: "upcoming",
-    image: "",
-  },
-  {
-    id: 3,
-    name: "Constituency Health Outreach",
-    description:
-      "Mobile screening with nurses, NHIS officers, and volunteers delivering basic care and insurance renewals.",
-    event_date: "2025-03-01",
-    start_time: "08:00",
-    location: "Asafo Community Park",
-    status: "upcoming",
-    image: "",
-  },
-  {
-    id: 4,
-    name: "Education Stakeholder Roundtable",
-    description:
-      "Dialogue with head teachers, PTA leaders, and tertiary alumni on resourcing STEM labs in deprived schools.",
-    event_date: "2025-03-09",
-    start_time: "16:00",
-    location: "Sefwi Wiawso Municipal Assembly Hall",
-    status: "upcoming",
-    image: "",
-  },
-];
+// fallback events removed — rely on live API data
 
 export default function EventsClient() {
   const [activeFilter, setActiveFilter] = useState("All");
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [usingFallback, setUsingFallback] = useState(false);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -233,13 +189,13 @@ export default function EventsClient() {
           setEvents(response.data.events);
         } else {
           // Use fallback if no events from API
-          setEvents(fallbackEventsData);
-          setUsingFallback(true);
+            setEvents([]); // Set to empty array instead of fallback
+            // Removed usingFallback state
         }
       } catch {
         // API error - use fallback data silently
-        setEvents(fallbackEventsData);
-        setUsingFallback(true);
+          setEvents([]); // Set to empty array instead of fallback
+          // Removed usingFallback state
       } finally {
         setLoading(false);
       }
@@ -255,7 +211,6 @@ export default function EventsClient() {
 
   const filteredEvents = useMemo(() => {
     if (activeFilter === "All") return events;
-    // Filter by matching the status or a category field if available
     return events.filter(
       (event) =>
         event.name?.toLowerCase().includes(activeFilter.toLowerCase()) ||
@@ -299,6 +254,7 @@ export default function EventsClient() {
               onSelect={setActiveFilter}
             />
           </div>
+
           <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-500">
             <CalendarDays className="h-4 w-4 text-emerald-500" />
             <span>{filteredEvents.length} records shown</span>
@@ -306,8 +262,8 @@ export default function EventsClient() {
             <span>
               {loading
                 ? "Loading events..."
-                : usingFallback
-                  ? "Showing sample events"
+                : events.length === 0
+                  ? "No events available"
                   : "Data synced from live API"}
             </span>
           </div>

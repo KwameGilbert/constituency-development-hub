@@ -1,6 +1,7 @@
 import { Variants, motion } from "framer-motion";
 
 import { Badge } from "@/components/ui/badge";
+import { sanitizeHtml } from "@/lib/utils";
 
 export type EventStat = {
   label: string;
@@ -47,9 +48,8 @@ function EventsHero({ title, description, stats, variants }: EventsHeroProps) {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.7 }}
-        >
-          {description}
-        </motion.p>
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(description || "") }}
+        />
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (

@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft,
@@ -24,8 +24,7 @@ import {
   MessageSquare,
   Clock,
   AlertTriangle,
-  Phone,
-  Mail,
+
   TrendingUp,
   DollarSign,
   Users,
@@ -34,6 +33,7 @@ import {
   Search,
   Loader2,
 } from "lucide-react";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 import { Issue as ApiIssue } from "@/lib/services/issues-service";
 import { taskForceService } from "@/lib/services/task-force-service";
@@ -412,9 +412,10 @@ export default function IssueDetailPage() {
                   <CardTitle>Issue Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 leading-relaxed mb-4">
-                    {issue.description}
-                  </p>
+                      <SanitizedHtml
+                        className="text-gray-700 leading-relaxed mb-4 prose prose-sm max-w-none text-slate-700"
+                        html={issue.description}
+                      />
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
                     <div>
@@ -627,9 +628,10 @@ export default function IssueDetailPage() {
                   <CardTitle>Detailed Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 leading-relaxed">
-                    {issue.detailedDescription || issue.description}
-                  </p>
+                  <SanitizedHtml
+                    className="text-gray-700 leading-relaxed prose prose-sm max-w-none text-slate-700"
+                    html={issue.detailedDescription || issue.description}
+                  />
                 </CardContent>
               </Card>
 
@@ -644,28 +646,6 @@ export default function IssueDetailPage() {
                     </Label>
                     <p className="font-medium">
                       {issue.location_details.address}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium text-gray-500">
-                      GPS Coordinates
-                    </Label>
-                    <p className="font-medium">{issue.location_details.gps}</p>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium text-gray-500">
-                      Nearest Landmark
-                    </Label>
-                    <p className="font-medium">
-                      {issue.location_details.nearestLandmark}
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium text-gray-500">
-                      Access Route
-                    </Label>
-                    <p className="font-medium">
-                      {issue.location_details.accessRoute}
                     </p>
                   </div>
                 </CardContent>
@@ -798,17 +778,7 @@ export default function IssueDetailPage() {
                 </Label>
                 <p>{issue.submitter.role}</p>
               </div>
-              <Separator />
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-gray-500" />
-                  <span>{issue.submitter.phone}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <span>{issue.submitter.email}</span>
-                </div>
-              </div>
+
             </CardContent>
           </Card>
 

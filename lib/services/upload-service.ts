@@ -11,11 +11,15 @@ export interface UploadResponse {
 
 export const uploadService = {
   // Upload a single file
-  uploadFile: async (file: File, folder?: string): Promise<UploadResponse> => {
+  // now accepts optional `type` (e.g. 'document') and appends it to FormData
+  uploadFile: async (file: File, folder?: string, type?: string): Promise<UploadResponse> => {
     const formData = new FormData();
     formData.append("file", file);
     if (folder) {
       formData.append("folder", folder);
+    }
+    if (type) {
+      formData.append("type", type);
     }
 
     // Use fetch directly for FormData (don't set Content-Type header)

@@ -6,6 +6,7 @@ import {
   Announcement,
 } from "@/lib/services/announcements-service";
 import Link from "next/link";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { Calendar, ArrowRight } from "lucide-react";
 
 export default function AnnouncementSection() {
@@ -85,9 +86,10 @@ export default function AnnouncementSection() {
                 {announcement.title}
               </h3>
 
-              <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
-                {announcement.content}
-              </p>
+              <SanitizedHtml
+                html={announcement.content}
+                className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3"
+              />
 
               <Link
                 href={`/announcements/${announcement.slug}`}

@@ -19,6 +19,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { getImageUrl } from "@/lib/utils";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
+import { cleanupHtml } from "@/lib/utils";
 
 interface BlogPostClientProps {
   initialPost?: BlogPost | null;
@@ -240,19 +242,19 @@ export default function BlogPostClient({
           {/* Excerpt */}
           {post.excerpt && (
             <p className="text-lg text-slate-600 leading-relaxed mb-8 font-medium">
-              {post.excerpt}
+              {cleanupHtml(post.excerpt)}
             </p>
           )}
 
           {/* Content */}
           {post.content ? (
-            <div
+            <SanitizedHtml
+              html={post.content}
               className="prose prose-slate prose-lg max-w-none prose-headings:text-slate-900 prose-a:text-amber-600 prose-img:rounded-xl"
-              dangerouslySetInnerHTML={{ __html: post.content }}
             />
           ) : (
             <div className="text-slate-600 leading-relaxed space-y-4">
-              <p>{post.excerpt}</p>
+              <p>{cleanupHtml(post.excerpt || "")}</p>
               <p className="text-slate-400 italic">
                 Full article content coming soon...
               </p>

@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/utils";
 import Image from "next/image";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 export default function AnnouncementsClient() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -182,7 +183,7 @@ export default function AnnouncementsClient() {
                         </CardTitle>
 
                         <div className="prose prose-sm max-w-none text-gray-600 line-clamp-3 mb-4">
-                          {announcement.content}
+                          <SanitizedHtml html={announcement.content} />
                         </div>
 
                         <div className="flex justify-end">

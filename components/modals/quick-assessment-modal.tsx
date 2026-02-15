@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import {
   CheckCircle,
   XCircle,
@@ -191,9 +192,10 @@ export function QuickAssessmentModal({
             </div>
 
             <div className="mt-3">
-              <p className="text-gray-700 text-sm line-clamp-3">
-                {issue.description}
-              </p>
+              <SanitizedHtml
+                html={issue.description}
+                className="text-gray-700 text-sm line-clamp-3"
+              />
             </div>
 
             {issue.impactAssessment?.estimatedCost && (

@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, cleanupHtml } from "@/lib/utils";
 
 interface PortalCardProps {
   title: string;
@@ -66,7 +66,7 @@ export function PortalCard({
           {title}
         </h3>
         <p className="text-sm text-muted-foreground leading-relaxed max-w-[250px] mx-auto">
-          {description}
+          {cleanupHtml(description || "")}
         </p>
       </div>
       <Link href={href} className="w-full cursor-pointer">

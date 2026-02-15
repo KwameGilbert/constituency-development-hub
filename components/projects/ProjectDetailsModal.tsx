@@ -15,6 +15,7 @@ import {
 import Image from "next/image";
 import { Project } from "@/lib/services/projects-service";
 import { Button } from "@/components/ui/button";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 interface ProjectDetailsModalProps {
   project: Project | null;
@@ -168,9 +169,14 @@ export default function ProjectDetailsModal({
                   <h3 className="text-lg font-semibold text-slate-900">
                     About this Project
                   </h3>
-                  <p className="text-slate-600 leading-relaxed whitespace-pre-wrap">
-                    {project.description}
-                  </p>
+                  {project.description ? (
+                    <SanitizedHtml
+                      html={project.description}
+                      className="text-slate-600 leading-relaxed whitespace-pre-wrap"
+                    />
+                  ) : (
+                    <p className="text-slate-600 leading-relaxed">No description available.</p>
+                  )}
                 </div>
 
                 {/* Additional Details (Budget/Progress) - Optional based on privacy */}

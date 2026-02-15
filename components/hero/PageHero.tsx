@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { sanitizeHtml } from "@/lib/utils";
 
 interface PageHeroProps {
   title: string;
@@ -47,9 +48,10 @@ export default function PageHero({
           </h1>
 
           {description && (
-            <p className="text-lg text-gray-200 max-w-2xl leading-relaxed">
-              {description}
-            </p>
+            <p
+              className="text-lg text-gray-200 max-w-2xl leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(description || "") }}
+            />
           )}
         </motion.div>
       </div>

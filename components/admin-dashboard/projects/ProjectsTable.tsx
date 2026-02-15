@@ -94,30 +94,90 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
 
   return (
     <div className="space-y-4">
+      {/* Mobile: stacked cards */}
+      <div className="md:hidden space-y-3">
+        {projects.map((project) => (
+          <Card key={project.id} className="p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1">
+                <p className="font-medium text-slate-900">{project.title}</p>
+                <p className="text-sm text-slate-500">{project.location}</p>
+
+                <div className="mt-3 flex items-center gap-2">
+                  <Badge className={getStatusColor(project.status)}>
+                    {project.status.replace("_", " ").toUpperCase()}
+                  </Badge>
+                  {project.progress_percent !== undefined && (
+                    <div className="ml-2 flex items-center gap-2">
+                      <div className="w-24 bg-slate-200 rounded-full h-2">
+                        <div
+                          className="bg-red-600 h-2 rounded-full"
+                          style={{ width: `${project.progress_percent}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-slate-600">{project.progress_percent}%</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-3 text-sm text-slate-700">
+                  <p className="font-medium">{formatCurrency(project.budget)}</p>
+                  {project.spent !== undefined && (
+                    <p className="text-xs text-slate-500">Spent: {formatCurrency(project.spent)}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-2">
+                <div className="text-sm text-slate-500">
+                  <p>{formatDate(project.start_date)}</p>
+                  <p className="text-xs text-slate-400">to {formatDate(project.end_date)}</p>
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <Link href={`/admin-dashboard/projects/${project.id}`}>
+                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                  <Link href={`/admin-dashboard/projects/${project.id}/edit`}>
+                    <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-900">
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop/tablet: show table on md+ */}
+      <div className="hidden md:block">
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Project
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Sector
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Progress
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Budget
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Timeline
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                <th className="px-3 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -128,7 +188,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                   key={project.id}
                   className="hover:bg-slate-50 transition-colors"
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     <div>
                       <p className="font-medium text-slate-900">
                         {project.title}
@@ -138,17 +198,17 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                       </p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     <span className="text-sm text-slate-700">
                       {project.sector.name}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     <Badge className={getStatusColor(project.status)}>
                       {project.status.replace("_", " ").toUpperCase()}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     {project.progress_percent !== undefined ? (
                       <div className="flex items-center gap-2">
                         <div className="flex-1 bg-slate-200 rounded-full h-2 w-20">
@@ -165,7 +225,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                       <span className="text-sm text-slate-400">N/A</span>
                     )}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     <div>
                       <p className="text-sm font-medium text-slate-900">
                         {formatCurrency(project.budget)}
@@ -177,7 +237,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                       )}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     <div className="text-sm">
                       <p className="text-slate-700">
                         {formatDate(project.start_date)}
@@ -187,7 +247,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
                       </p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 py-4">
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/admin-dashboard/projects/${project.id}`}>
                         <Button
@@ -247,6 +307,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
           </table>
         </div>
       </Card>
+      </div>
 
       {pagination && pagination.total_pages > 1 && (
         <div className="flex items-center justify-between">

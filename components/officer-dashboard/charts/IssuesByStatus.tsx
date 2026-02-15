@@ -34,14 +34,6 @@ const chartConfig = {
     label: "Closed",
     color: "#6b7280", // Gray 500
   },
-  submitted: {
-    label: "Submitted",
-    color: "#3b82f6", // Blue 500
-  },
-  under_review: {
-    label: "Under Review",
-    color: "#8b5cf6", // Violet 500
-  },
   in_progress: {
     label: "In Progress",
     color: "#f59e0b", // Amber 500
@@ -79,16 +71,19 @@ export function IssuesByStatus({
           const distribution = response.data.distribution || [];
 
           // Map distribution items to chart data format
-          const data: ChartDataItem[] = distribution.map((item) => ({
-            status: item.status,
-            count: item.value,
-            fill: item.color,
-          }));
-
-          // If no data, show placeholder
-          if (data.length === 0) {
-            data.push({ status: "submitted", count: 0, fill: "#3b82f6" });
-          }
+          // Filter and map distribution items to chart data format
+          const allowedStatuses = ["resolved", "closed", "resolution_in_progress", "in_progress"];
+          const data: ChartDataItem[] = distribution
+            .filter((item) => allowedStatuses.includes(item.status))
+            .map((item) => {
+              // Map resolution_in_progress to in_progress to match chartConfig
+              const statusKey = item.status === "resolution_in_progress" ? "in_progress" : item.status;
+              return {
+                status: statusKey,
+                count: item.value,
+                fill: item.status === "resolution_in_progress" ? chartConfig.in_progress.color : item.color,
+              };
+            });
 
           setChartData(data);
         }

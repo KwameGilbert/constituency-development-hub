@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn, cleanupHtml } from "@/lib/utils";
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -39,6 +39,19 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  const children = props.children as React.ReactNode;
+  // If children is a plain string, sanitize HTML so TinyMCE markup doesn't render as literal tags
+  if (typeof children === "string") {
+    return (
+      <div
+        data-slot="card-description"
+        className={cn("text-muted-foreground text-sm", className)}
+      >
+        {cleanupHtml(children)}
+      </div>
+    );
+  }
+
   return (
     <div
       data-slot="card-description"

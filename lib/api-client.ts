@@ -53,6 +53,23 @@ export async function apiClient<T>(
 
   let response;
   try {
+    // Debug: log request details to help diagnose network/CORS issues
+    if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+      try {
+        // Clone headers for safe logging
+        const headersObj: Record<string, string> = {};
+        headers.forEach((v, k) => (headersObj[k] = v));
+        // eslint-disable-next-line no-console
+        console.debug("[API Network Request]", {
+          method,
+          url: `${BASE_URL}${endpoint}`,
+          headers: headersObj,
+          requiresAuth,
+        });
+      } catch (e) {
+        // ignore logging errors
+      }
+    }
     response = await fetch(`${BASE_URL}${endpoint}`, {
       ...fetchOptions,
       headers,

@@ -19,6 +19,7 @@ import {
   Send,
   CheckCircle,
 } from "lucide-react";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { issuesService, Issue } from "@/lib/services/issues-service";
 import { toast } from "sonner";
 
@@ -200,9 +201,9 @@ export default function OfficerIssueDetailPage() {
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Description
               </h3>
-              <div
+              <SanitizedHtml
                 className="text-gray-600 prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: issue.description }}
+                html={issue.description}
               />
             </div>
 

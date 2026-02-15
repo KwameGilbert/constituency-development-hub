@@ -42,6 +42,7 @@ import {
   formatDate,
   getMetadata,
 } from "@/lib/data";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 export default function UnderAssessmentPage() {
   const metadata = getMetadata();
@@ -291,9 +292,10 @@ export default function UnderAssessmentPage() {
                               )}
                             </div>
 
-                            <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                              {issue.description}
-                            </p>
+                            <SanitizedHtml
+                              html={issue.description}
+                              className="text-sm text-gray-600 mb-3 line-clamp-2"
+                            />
 
                             <div className="flex flex-wrap gap-2 mb-3">
                               <Badge

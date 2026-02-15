@@ -1,12 +1,21 @@
+"use client";
+
 import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { heroSlides } from "@/data/data";
+import { sanitizeHtml, cleanupHtml } from "@/lib/utils";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 const slideDuration = 6000;
 
 function HeroCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
   const slides = useMemo(() => heroSlides, []);
+
+  const stripOuterParagraph = (html) => {
+    if (!html) return "";
+    return html.replace(/^<p\b[^>]*>\s*([\s\S]*?)\s*<\/p>$/i, "$1");
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,7 +57,7 @@ function HeroCarousel() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-bold"
               >
-                {slides[activeIndex].title}
+                {cleanupHtml(slides[activeIndex].title || "")}
               </motion.h1>
               <motion.h2
                 initial={{ y: 30, opacity: 0 }}
@@ -56,7 +65,11 @@ function HeroCarousel() {
                 transition={{ delay: 0.35, duration: 0.6 }}
                 className="mt-2 text-lg sm:text-xl text-white/80"
               >
-                {slides[activeIndex].subtitle}
+                <SanitizedHtml
+                  tag="span"
+                  className="text-white/80"
+                  html={stripOuterParagraph(sanitizeHtml(slides[activeIndex].subtitle || ""))}
+                />
               </motion.h2>
               <motion.p
                 initial={{ y: 30, opacity: 0 }}
@@ -64,7 +77,11 @@ function HeroCarousel() {
                 transition={{ delay: 0.4, duration: 0.6 }}
                 className="mt-4 max-w-2xl text-base sm:text-lg text-white/80"
               >
-                {slides[activeIndex].description}
+                <SanitizedHtml
+                  tag="span"
+                  className="text-white/80"
+                  html={stripOuterParagraph(sanitizeHtml(slides[activeIndex].description || ""))}
+                />
               </motion.p>
               <motion.div
                 initial={{ y: 30, opacity: 0 }}

@@ -1,6 +1,7 @@
 import { blogPosts } from "@/data/data";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { cleanupHtml } from "@/lib/utils";
 
 function ArticlesGrid() {
   return (
@@ -37,7 +38,7 @@ function ArticlesGrid() {
                 <h3 className="text-xl font-semibold text-slate-900">
                   {post.title}
                 </h3>
-                <p className="text-sm text-slate-500">{post.excerpt}</p>
+                <p className="text-sm text-slate-500">{cleanupHtml(post.excerpt || "")}</p>
                 <a href="/blog" className="text-sm font-semibold text-red-600">
                   Read story →
                 </a>

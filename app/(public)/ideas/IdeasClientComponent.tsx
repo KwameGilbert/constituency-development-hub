@@ -13,6 +13,7 @@ import {
 import PageHero from "@/components/hero/PageHero";
 import { ideasService, Idea } from "@/lib/services/ideas-service";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { cleanupHtml } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -144,7 +145,7 @@ export default function IdeasClient() {
                       </CardTitle>
 
                       <p className="text-gray-600 text-sm line-clamp-4 flex-1 mb-4">
-                        {idea.description}
+                        {cleanupHtml(idea.description || "")}
                       </p>
 
                       {/* Stats / Info Footer */}

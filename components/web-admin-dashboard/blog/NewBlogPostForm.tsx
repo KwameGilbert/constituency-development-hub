@@ -303,7 +303,7 @@ export function NewBlogPostForm() {
             disabled={isLoading}
             error={!!form.formState.errors.excerpt}
             placeholder="A brief summary of your blog post..."
-            height={150}
+            height={350}
           />
           {form.formState.errors.excerpt && (
             <p className="text-red-500 text-sm">
