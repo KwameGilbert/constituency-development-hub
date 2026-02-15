@@ -115,289 +115,301 @@ const adaptIssueToUi = (
     assessment?: RawAssessmentData;
   }
 ): UiIssue => {
-  // Fallback to check both 'assessment_report' (new) and 'assessment' (legacy/potential backend mismatch)
-  const assessment = apiIssue.assessment_report || apiIssue.assessment;
-  
-  // Parse attachment strings if they are JSON strings (backend might return them as JSON strings or arrays)
-  let assessmentImages: string[] = [];
-  let assessmentDocs: string[] = [];
-  
-  if (assessment) {
-      // Handle potentially json-encoded or array fields
-      const parseFiles = (field: string | string[] | undefined | null) => {
-          if (Array.isArray(field)) return field;
-          if (typeof field === 'string') {
-              try { return JSON.parse(field); } catch { return []; }
-          }
-          return [];
-      }
-      assessmentImages = parseFiles(assessment.images);
-      assessmentDocs = parseFiles(assessment.documents);
-  }
-
-  const issueAttachments = (apiIssue.images || []).map((img, i) => ({
-      name: `Issue Image ${i + 1}`,
-      type: "image",
-      size: "N/A",
-      uploadDate: apiIssue.created_at,
-      url: img 
-    }));
-
-  const assessmentAttachments = [
-      ...assessmentImages.map((img: string, i: number) => ({
-          name: `Assessment Image ${i + 1}`,
-          type: "image",
-          size: "N/A",
-          uploadDate: assessment?.created_at || apiIssue.created_at,
-          url: img
-      })),
-      ...assessmentDocs.map((doc: string, i: number) => ({
-          name: `Assessment Doc ${i + 1}`,
-          type: "document",
-          size: "N/A",
-          uploadDate: assessment?.created_at || apiIssue.created_at,
-          url: doc
-      }))
-  ];
-
-  return {
-    ...apiIssue,
-    community: apiIssue.location || "Unknown Community",
-    submissionDate: apiIssue.created_at,
-    lastUpdated: apiIssue.updated_at || apiIssue.created_at,
-    sector: "General", // Default
-    detailedDescription: apiIssue.description, 
-    submitter: {
-      name: apiIssue.reporter_name || "Anonymous",
-      role: "Community Member",
-      phone: apiIssue.reporter_phone || "N/A",
-      email: "N/A",
-    },
-    location_details: {
-      address: apiIssue.location || "",
-      gps:
-        apiIssue.latitude && apiIssue.longitude
-          ? `${apiIssue.latitude}, ${apiIssue.longitude}`
-          : "N/A",
-      nearestLandmark: "N/A",
-      accessRoute: "N/A",
-    },
-    impactAssessment: assessment ? {
-      affectedPopulation: 0, // Not currently in assessment report
-      householdsAffected: 0, // Not currently in assessment report
-      estimatedCost: Number(assessment.estimated_cost) || 0,
-      urgencyLevel: assessment.severity || apiIssue.priority,
-      environmentalImpact: "See Findings", // Not structurally in report
-      economicImpact: "See Findings",
-      socialImpact: "See Findings",
-      summary: assessment.assessment_summary,
-      findings: assessment.findings,
-      recommendations: assessment.recommendations,
-      requiredResources: assessment.required_resources
-    } : {
-      affectedPopulation: 0,
-      householdsAffected: 0,
-      estimatedCost: 0,
-      urgencyLevel: "N/A",
-      environmentalImpact: "Not Assessed",
-      economicImpact: "Not Assessed",
-      socialImpact: "Not Assessed",
-    },
-    // Map review notes from assessment report if available
-    assessment_report: assessment ? { ...assessment, review_notes: assessment.review_notes } : undefined, 
-    status: apiIssue.status, // Ensure status is passed through
-    attachments: [...issueAttachments, ...assessmentAttachments],
-    timeline:
-      (apiIssue.timeline || []).length > 0
-        ? apiIssue.timeline!
-        : [
-            {
-              id: "1",
-              date: apiIssue.created_at,
-              event: "Issue Submitted",
-              type: "submission",
-            },
-          ],
-    relatedIssues: [],
-  };
-};
-
-const getStatusColor = (status: string) => {
-  // Reuse specific logic or fallback to lib/data
-  switch (status) {
-    case "pending_assessment":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "assigned_to_task_force":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "under_assessment":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "assessment_in_progress":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "approved":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "resolved":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "rejected":
-      return "bg-red-100 text-red-800 border-red-200";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
-  }
-};
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "high":
-    case "urgent":
-      return "bg-red-100 text-red-800";
-    case "medium":
-      return "bg-yellow-100 text-yellow-800";
-    case "low":
-      return "bg-green-100 text-green-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
-export default function IssueDetailPage() {
-  const router = useRouter();
-  const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id;
-
-  const [issue, setIssue] = useState<UiIssue | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchIssue = async () => {
-      if (!id) return;
-      setLoading(true);
-      try {
-        const response = await taskForceService.getIssue(id);
-        if (response.success && response.data.issue) {
-          // Cast to ApiIssue as API returns full object similar to Issue
-          setIssue(adaptIssueToUi(response.data.issue as unknown as ApiIssue));
+    // Helper to safely parse file fields which might be JSON strings or arrays
+    const parseFiles = (field: string | string[] | undefined | null) => {
+        if (Array.isArray(field)) return field;
+        if (typeof field === 'string') {
+            try { return JSON.parse(field); } catch { return []; }
         }
-      } catch (error) {
-        console.error("Failed to fetch issue:", error);
-      } finally {
-        setLoading(false);
-      }
+        return [];
+    }
+  
+    // Fallback to check both 'assessment_report' (new) and 'assessment' (legacy/potential backend mismatch)
+    const assessment = apiIssue.assessment_report || apiIssue.assessment;
+    
+    console.log("DEBUG: Raw API Issue:", apiIssue);
+    console.log("DEBUG: Raw Assessment:", assessment);
+    console.log("DEBUG: apiIssue.images:", apiIssue.images, typeof apiIssue.images);
+    if (assessment) {
+        console.log("DEBUG: assessment.images:", assessment.images, typeof assessment.images);
+        console.log("DEBUG: assessment.documents:", assessment.documents, typeof assessment.documents);
+    }
+    
+    // Parse assessment attachments
+    let assessmentImages: string[] = [];
+    let assessmentDocs: string[] = [];
+    
+    if (assessment) {
+        assessmentImages = parseFiles(assessment.images);
+        assessmentDocs = parseFiles(assessment.documents);
+    }
+  
+    // Parse issue images safely
+    const issueImagesList = parseFiles(apiIssue.images);
+  
+    const issueAttachments = issueImagesList.map((img: string, i: number) => ({
+        name: `Issue Image ${i + 1}`,
+        type: "image",
+        size: "N/A",
+        uploadDate: apiIssue.created_at,
+        url: img 
+      }));
+  
+    const assessmentAttachments = [
+        ...assessmentImages.map((img: string, i: number) => ({
+            name: `Assessment Image ${i + 1}`,
+            type: "image",
+            size: "N/A",
+            uploadDate: assessment?.created_at || apiIssue.created_at,
+            url: img
+        })),
+        ...assessmentDocs.map((doc: string, i: number) => ({
+            name: `Assessment Doc ${i + 1}`,
+            type: "document",
+            size: "N/A",
+            uploadDate: assessment?.created_at || apiIssue.created_at,
+            url: doc
+        }))
+    ];
+  
+    return {
+      ...apiIssue,
+      community: apiIssue.location || "Unknown Community",
+      submissionDate: apiIssue.created_at,
+      lastUpdated: apiIssue.updated_at || apiIssue.created_at,
+      sector: "General", // Default
+      detailedDescription: apiIssue.description, 
+      submitter: {
+        name: apiIssue.reporter_name || "Anonymous",
+        role: "Community Member",
+        phone: apiIssue.reporter_phone || "N/A",
+        email: "N/A",
+      },
+      location_details: {
+        address: apiIssue.location || "",
+        gps:
+          apiIssue.latitude && apiIssue.longitude
+            ? `${apiIssue.latitude}, ${apiIssue.longitude}`
+            : "N/A",
+        nearestLandmark: "N/A",
+        accessRoute: "N/A",
+      },
+      impactAssessment: assessment ? {
+        affectedPopulation: 0, // Not currently in assessment report
+        householdsAffected: 0, // Not currently in assessment report
+        estimatedCost: Number(assessment.estimated_cost) || 0,
+        urgencyLevel: assessment.severity || apiIssue.priority,
+        environmentalImpact: "See Findings", // Not structurally in report
+        economicImpact: "See Findings",
+        socialImpact: "See Findings",
+        summary: assessment.assessment_summary,
+        findings: assessment.findings,
+        recommendations: assessment.recommendations,
+        requiredResources: assessment.required_resources
+      } : {
+        affectedPopulation: 0,
+        householdsAffected: 0,
+        estimatedCost: 0,
+        urgencyLevel: "N/A",
+        environmentalImpact: "Not Assessed",
+        economicImpact: "Not Assessed",
+        socialImpact: "Not Assessed",
+      },
+      // Map review notes from assessment report if available
+      assessment_report: assessment ? { ...assessment, review_notes: assessment.review_notes } : undefined, 
+      status: apiIssue.status, // Ensure status is passed through
+      attachments: [...issueAttachments, ...assessmentAttachments],
+      timeline:
+        (apiIssue.timeline || []).length > 0
+          ? apiIssue.timeline!
+          : [
+              {
+                id: "1",
+                date: apiIssue.created_at,
+                event: "Issue Submitted",
+                type: "submission",
+              },
+            ],
+      relatedIssues: [],
     };
-    fetchIssue();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!issue) {
-    return (
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-bold">Issue Not Found</h2>
-        <Button className="mt-4" onClick={() => router.back()}>
-          Go Back
-        </Button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.back()}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-gray-900">{issue.title}</h1>
-            <Badge className={getStatusColor(issue.status)}>
-              {issue.status
-                .replace(/_/g, " ")
-                .replace(/\b\w/g, (l) => l.toUpperCase())}
-            </Badge>
-          </div>
-          <p className="text-gray-600">
-            Issue #{issue.id} • {issue.community}
-          </p>
+  };
+  
+  const getStatusColor = (status: string) => {
+    // Reuse specific logic or fallback to lib/data
+    switch (status) {
+      case "pending_assessment":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "assigned_to_task_force":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "under_assessment":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "assessment_in_progress":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "approved":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "resolved":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "rejected":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+  
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+      case "urgent":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+  
+  export default function IssueDetailPage() {
+    const router = useRouter();
+    const params = useParams();
+    const id = Array.isArray(params.id) ? params.id[0] : params.id;
+  
+    const [issue, setIssue] = useState<UiIssue | null>(null);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      const fetchIssue = async () => {
+        if (!id) return;
+        setLoading(true);
+        try {
+          const response = await taskForceService.getIssue(id);
+          if (response.success && response.data.issue) {
+            // Cast to ApiIssue as API returns full object similar to Issue
+            setIssue(adaptIssueToUi(response.data.issue as unknown as ApiIssue));
+          }
+        } catch (error) {
+          console.error("Failed to fetch issue:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchIssue();
+    }, [id]);
+  
+    if (loading) {
+      return (
+        <div className="flex h-screen items-center justify-center">
+          <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
         </div>
-        <div className="flex gap-2">
-          {[
-            "submitted",
-            "pending_assessment",
-            "assigned_to_task_force",
-            "assessment_in_progress",
-            "under_review",
-          ].includes(issue.status) && (
-            <Link href={`/task-force-dashboard/assess/${issue.id}`}>
-              <Button className="bg-purple-600 hover:bg-purple-700">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Assess Issue
-              </Button>
-            </Link>
-          )}
-
-          {[
-            "resources_allocated",
-            "resolution_in_progress",
-          ].includes(issue.status) && (
-            <Link href={`/task-force-dashboard/resolve/${issue.id}`}>
-              <Button className="bg-green-600 hover:bg-green-700">
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Resolve Issue
-              </Button>
-            </Link>
-          )}
-
-          {/* {[
-            "resources_allocated",
-            "resolution_in_progress",
-          ].includes(issue.status) && (
-            <Link href={`/task-force-dashboard/resolve/${issue.id}`}>
-              <Button className="bg-green-600 hover:bg-green-700">
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Resolve Issue
-              </Button>
-            </Link>
-          )} */}
+      );
+    }
+  
+    if (!issue) {
+      return (
+        <div className="p-6 text-center">
+          <h2 className="text-xl font-bold">Issue Not Found</h2>
+          <Button className="mt-4" onClick={() => router.back()}>
+            Go Back
+          </Button>
         </div>
-      </div>
-
-      {/* Review Feedback Alert */}
-      {issue.assessment_report?.review_notes && 
-       (issue.status === 'assessment_in_progress' || issue.status === 'pending_assessment') && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm animate-pulse">
-            <div className="flex items-start">
-               <AlertTriangle className="h-5 w-5 text-red-600 mr-3 mt-0.5" />
-               <div>
-                  <h3 className="text-sm font-bold text-red-800 uppercase tracking-wide">
-                     Attention Needed: Admin Feedback
-                  </h3>
-                  <p className="text-sm text-red-700 mt-1 whitespace-pre-wrap font-medium">
-                     {issue.assessment_report.review_notes}
-                  </p>
-                  <p className="text-xs text-red-500 mt-2">
-                     Please review the feedback above and re-submit your assessment.
-                  </p>
-               </div>
+      );
+    }
+  
+    return (
+      <div className="p-6 max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.back()}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-2xl font-bold text-gray-900">{issue.title}</h1>
+              <Badge className={getStatusColor(issue.status)}>
+                {issue.status
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (l) => l.toUpperCase())}
+              </Badge>
             </div>
+            <p className="text-gray-600">
+              Issue #{issue.id} • {issue.community}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            {[
+              "submitted",
+              "pending_assessment",
+              "assigned_to_task_force",
+              "assessment_in_progress",
+              "under_review",
+            ].includes(issue.status) && (
+              <Link href={`/task-force-dashboard/assess/${issue.id}`}>
+                <Button className="bg-purple-600 hover:bg-purple-700">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Assess Issue
+                </Button>
+              </Link>
+            )}
+  
+            {[
+              "resources_allocated",
+              "resolution_in_progress",
+            ].includes(issue.status) && (
+              <Link href={`/task-force-dashboard/resolve/${issue.id}`}>
+                <Button className="bg-green-600 hover:bg-green-700">
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Resolve Issue
+                </Button>
+              </Link>
+            )}
+  
+            {/* {[
+              "resources_allocated",
+              "resolution_in_progress",
+            ].includes(issue.status) && (
+              <Link href={`/task-force-dashboard/resolve/${issue.id}`}>
+                <Button className="bg-green-600 hover:bg-green-700">
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Resolve Issue
+                </Button>
+              </Link>
+            )} */}
+          </div>
         </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+  
+        {/* Review Feedback Alert */}
+        {issue.assessment_report?.review_notes && 
+         (issue.status === 'assessment_in_progress' || issue.status === 'pending_assessment') && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm animate-pulse">
+              <div className="flex items-start">
+                 <AlertTriangle className="h-5 w-5 text-red-600 mr-3 mt-0.5" />
+                 <div>
+                    <h3 className="text-sm font-bold text-red-800 uppercase tracking-wide">
+                       Attention Needed: Admin Feedback
+                    </h3>
+                    <p className="text-sm text-red-700 mt-1 whitespace-pre-wrap font-medium">
+                       {issue.assessment_report.review_notes}
+                    </p>
+                    <p className="text-xs text-red-500 mt-2">
+                       Please review the feedback above and re-submit your assessment.
+                    </p>
+                 </div>
+              </div>
+          </div>
+        )}
+  
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="assessment">Assessment</TabsTrigger>
               <TabsTrigger value="allocation">Allocation</TabsTrigger>
@@ -666,34 +678,47 @@ export default function IssueDetailPage() {
                       issue.attachments.map((attachment, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+                          className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 bg-white"
                         >
                           <div className="flex items-center gap-3">
-                            {attachment.type === "image" ? (
-                              <Camera className="h-6 w-6 text-blue-600" />
-                            ) : (
-                              <FileText className="h-6 w-6 text-gray-600" />
-                            )}
+                            <div className={`p-2 rounded-lg ${attachment.type === 'image' ? 'bg-blue-100' : 'bg-red-100'}`}>
+                                {attachment.type === "image" ? (
+                                  <Camera className="h-5 w-5 text-blue-600" />
+                                ) : (
+                                  <FileText className="h-5 w-5 text-red-600" />
+                                )}
+                            </div>
                             <div>
-                              <p className="font-medium">{attachment.name}</p>
-                              <p className="text-sm text-gray-500">
-                                {attachment.size} • Uploaded{" "}
-                                {new Date(
-                                  attachment.uploadDate,
-                                ).toLocaleDateString()}
+                              <p className="font-medium text-gray-900">{attachment.name}</p>
+                              <p className="text-xs text-gray-500 flex items-center gap-1">
+                                {new Date(attachment.uploadDate).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4 mr-1" />
-                            Download
-                          </Button>
+                          
+                          {attachment.url ? (
+                              <a 
+                                href={attachment.url} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-gray-200 bg-white hover:bg-gray-100 text-sm font-medium transition-colors"
+                              >
+                                <Download className="h-4 w-4 mr-2" />
+                                Download
+                              </a>
+                          ) : (
+                              <Button size="sm" variant="outline" disabled>
+                                <Download className="h-4 w-4 mr-2" />
+                                Unavailable
+                              </Button>
+                          )}
                         </div>
                       ))
                     ) : (
-                      <p className="text-gray-500 italic">
-                        No attachments found.
-                      </p>
+                      <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed">
+                        <FileText className="h-10 w-10 text-gray-300 mx-auto mb-2" />
+                        <p className="text-gray-500 italic">No attachments found.</p>
+                      </div>
                     )}
                   </div>
                 </CardContent>

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
 import { Loader2 } from "lucide-react";
 import { getImageUrl } from "@/lib/utils";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 
 // Fallback slides if API fails
 const fallbackSlides: HeroSlide[] = [
@@ -121,7 +122,10 @@ function HeroCarousel() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-bold"
               >
-                {currentSlide.title}
+                 <SanitizedHtml
+                  tag="span"
+                  html={currentSlide.title}
+                />
               </motion.h1>
               {currentSlide.subtitle && (
                 <motion.h2
@@ -130,7 +134,11 @@ function HeroCarousel() {
                   transition={{ delay: 0.35, duration: 0.6 }}
                   className="mt-2 text-lg sm:text-xl text-white/80"
                 >
-                  {currentSlide.subtitle}
+                  <SanitizedHtml
+                    tag="span"
+                    html={currentSlide.subtitle}
+                    className="text-white/80"
+                  />
                 </motion.h2>
               )}
               {currentSlide.cta_link && currentSlide.cta_text && (

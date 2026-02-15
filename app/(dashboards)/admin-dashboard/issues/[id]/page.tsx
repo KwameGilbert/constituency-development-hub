@@ -9,6 +9,8 @@ import {
   Phone,
   AlertCircle,
   CheckCircle,
+  Camera,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -127,14 +129,16 @@ export default async function IssueDetailPage({
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-5 mb-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="assessment">Assessment</TabsTrigger>
             <TabsTrigger value="resolution">Resolution</TabsTrigger>
             <TabsTrigger value="allocation">Allocation</TabsTrigger>
+            <TabsTrigger value="attachments">Attachments</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
+            {/* ... keeping existing overview content ... */}
             {/* Issue Details Card */}
             <Card>
               <CardHeader>
@@ -215,7 +219,7 @@ export default async function IssueDetailPage({
                   </div>
                 </div>
 
-                {/* Images */}
+                {/* Images - Hidden in Overview since they are in Attachments now, or keep them? Keeping them for quick view */}
                 {issue.images && issue.images.length > 0 && (
                   <div className="pt-4 border-t">
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">
@@ -246,7 +250,6 @@ export default async function IssueDetailPage({
           </TabsContent>
 
           <TabsContent value="assessment" className="space-y-6">
-            {/* Assessment Details (if assessment exists) */}
             {/* Assessment Details (if assessment exists) */}
             {(() => {
               // Normalized access to handle potential API inconsistencies (assessment_report vs assessment)
@@ -493,6 +496,78 @@ export default async function IssueDetailPage({
                   <p className="text-gray-500 italic">No resources allocated yet.</p>
                 </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="attachments" className="space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Supporting Documents & Files</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {(() => {
+                        // Helper to parse lists safely
+                        const parseList = (field: any) => {
+                             if (Array.isArray(field)) return field;
+                             if (typeof field === 'string') {
+                                 try { return JSON.parse(field); } catch { return []; }
+                             }
+                             return [];
+                         };
+
+                        const issueImages = parseList(issue?.images).map((url: any) => ({ type: 'image', url, name: 'Issue Image', date: issue?.created_at }));
+                        const assessment = issue?.assessment_report || issue?.assessment;
+                        
+                        let assessmentFiles = [];
+                        if (assessment) {
+                             const aImages = parseList(assessment.images).map((url: any) => ({ type: 'image', url, name: 'Assessment Image', date: assessment.created_at }));
+                             const aDocs = parseList(assessment.documents).map((url: any) => ({ type: 'document', url, name: 'Assessment Document', date: assessment.created_at }));
+                             assessmentFiles = [...aImages, ...aDocs];
+                        }
+                        
+                        const allAttachments = [...issueImages, ...assessmentFiles];
+
+                        if (allAttachments.length === 0) {
+                            return (
+                                <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed">
+                                    <p className="text-gray-500 italic">No attachments found.</p>
+                                </div>
+                            );
+                        }
+
+                        return (
+                            <div className="space-y-3">
+                                {allAttachments.map((file, idx) => (
+                                    <div key={idx} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 bg-white">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`p-2 rounded-lg ${file.type === 'image' ? 'bg-blue-100' : 'bg-red-100'}`}>
+                                                {file.type === 'image' ? (
+                                                  <Camera className="h-5 w-5 text-blue-600" />
+                                                ) : (
+                                                  <FileText className="h-5 w-5 text-red-600" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-gray-900">{file.name} {idx + 1}</p>
+                                                <p className="text-xs text-gray-500">
+                                                    Uploaded {file.date ? new Date(file.date).toLocaleDateString() : 'N/A'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <a 
+                                            href={file.url} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center justify-center h-9 px-3 rounded-md border border-gray-200 bg-white hover:bg-gray-100 text-sm font-medium transition-colors"
+                                        >
+                                            View / Download
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
+                        );
+                    })()}
+                </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 
