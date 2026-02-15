@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 03, 2026 at 05:12 PM
+-- Generation Time: Feb 15, 2026 at 08:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -58,9 +58,10 @@ CREATE TABLE `agents` (
 INSERT INTO `agents` (`id`, `user_id`, `agent_code`, `supervisor_id`, `assigned_communities`, `assigned_location`, `can_submit_reports`, `can_collect_data`, `can_register_residents`, `profile_image`, `id_type`, `id_number`, `id_verified`, `id_verified_at`, `address`, `emergency_contact_name`, `emergency_contact_phone`, `reports_submitted`, `last_active_at`, `created_at`, `updated_at`) VALUES
 (1, 8, 'AGT-001', 1, '[\"Adum Central\",\"Adum North\"]', '5', 1, 1, 1, NULL, 'ghana_card', 'GHA-123456789-0', 1, '2026-01-03 18:33:21', '123 Main St, Adum', 'Kofi Frimpong', '+233201111111', 25, '2026-01-03 12:33:21', '2026-01-03 18:33:21', '2026-01-22 10:08:23'),
 (2, 9, 'AGT-002', 1, '[\"Bantama East\",\"Bantama West\"]', 'Bantama', 1, 1, 0, NULL, 'voter_id', 'VID-987654321', 1, '2026-01-03 18:33:21', '45 Station Road, Bantama', 'Ama Kyere', '+233202222222', 18, '2026-01-02 04:33:21', '2026-01-03 18:33:21', '2026-01-03 18:33:21'),
-(3, 10, 'AGT-003', 2, '[\"Asafo Market\",\"Asafo Residential\"]', 'Asafo', 1, 1, 1, NULL, 'ghana_card', 'GHA-567890123-4', 1, '2026-01-03 18:33:21', '78 Commerce Street, Asafo', 'Yaw Mensah', '+233203333333', 41, '2026-01-01 23:33:21', '2026-01-03 18:33:21', '2026-02-02 15:07:48'),
-(4, 11, 'AGT-004', 3, '[\"Subin Central\"]', 'Subin', 1, 1, 0, NULL, 'ghana_card', 'GHA-234567890-1', 0, NULL, '12 Unity Lane, Subin', 'Akua Boateng', '+233204444444', 12, '2026-01-02 05:33:21', '2026-01-03 18:33:21', '2026-01-03 18:33:21'),
-(6, 19, 'AGT-2026-0005', NULL, NULL, '6', 1, 1, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL, '2026-01-22 10:09:05', '2026-01-22 10:09:05');
+(3, 10, 'AGT-003', 2, '[\"Asafo Market\",\"Asafo Residential\"]', 'Asafo', 1, 1, 1, NULL, 'ghana_card', 'GHA-567890123-4', 1, '2026-01-03 18:33:21', '78 Commerce Street, Asafo', 'Yaw Mensah', '+233203333333', 42, '2026-01-01 23:33:21', '2026-01-03 18:33:21', '2026-02-14 15:30:11'),
+(4, 11, 'AGT-004', 3, '[\"Subin Central\"]', 'Subin', 1, 1, 0, NULL, 'ghana_card', 'GHA-234567890-1', 0, NULL, '12 Unity Lane, Subin', 'Akua Boateng', '+233204444444', 14, '2026-01-02 05:33:21', '2026-01-03 18:33:21', '2026-02-13 18:31:26'),
+(6, 19, 'AGT-2026-0005', NULL, NULL, '6', 1, 1, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL, '2026-01-22 10:09:05', '2026-01-22 10:09:05'),
+(7, 24, 'AGT-2026-0006', NULL, '[\"Tano\"]', 'Kwadaso', 1, 1, 0, NULL, 'ghana_card', '', 0, NULL, 'P.O.Box 1277', '', '', 0, NULL, '2026-02-06 14:28:34', '2026-02-06 15:01:36');
 
 -- --------------------------------------------------------
 
@@ -155,14 +156,6 @@ CREATE TABLE `categories` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`id`, `created_by`, `updated_by`, `name`, `slug`, `description`, `icon`, `color`, `display_order`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, NULL, 'WATER', 'water', NULL, NULL, '#6366f1', 1, 'active', '2026-02-01 23:09:48', '2026-02-01 23:09:48'),
-(2, 2, NULL, 'ELECTRICITY', 'electricity', NULL, NULL, '#f20707', 2, 'active', '2026-02-01 23:10:48', '2026-02-01 23:10:48');
 
 -- --------------------------------------------------------
 
@@ -330,7 +323,8 @@ CREATE TABLE `employment_jobs` (
   `application_email` varchar(255) DEFAULT NULL,
   `contact_phone` varchar(50) DEFAULT NULL,
   `status` enum('draft','published','closed','archived') NOT NULL DEFAULT 'draft',
-  `category` enum('administration','technical','health','education','social_services','finance','communications','monitoring_evaluation','other') NOT NULL DEFAULT 'other',
+  `category` varchar(255) NOT NULL DEFAULT 'Other' COMMENT 'Job category (e.g. Health Services)',
+  `sector` varchar(255) DEFAULT NULL COMMENT 'Specific sector (e.g. Nursing)',
   `experience_level` enum('entry','mid','senior','executive') NOT NULL DEFAULT 'entry',
   `applicants_count` int(11) UNSIGNED NOT NULL DEFAULT 0,
   `views` int(11) UNSIGNED NOT NULL DEFAULT 0,
@@ -824,7 +818,7 @@ CREATE TABLE `task_force_members` (
 INSERT INTO `task_force_members` (`id`, `user_id`, `employee_id`, `title`, `specialization`, `assigned_sectors`, `skills`, `can_assess_issues`, `can_resolve_issues`, `can_request_resources`, `profile_image`, `id_type`, `id_number`, `id_verified`, `id_verified_at`, `address`, `emergency_contact_name`, `emergency_contact_phone`, `assessments_completed`, `resolutions_completed`, `last_active_at`, `created_at`, `updated_at`) VALUES
 (1, 12, 'TFM-001', 'Infrastructure Specialist', 'infrastructure', '[1,3]', '[\"road construction\",\"drainage systems\",\"building inspection\"]', 1, 1, 1, NULL, 'ghana_card', 'GHA-111222333-4', 1, '2026-01-03 18:33:21', '56 Engineers Ave, Kumasi', 'Mary Tetteh', '+233205555555', 15, 12, '2026-01-03 01:33:21', '2026-01-03 18:33:21', '2026-01-03 18:33:21'),
 (2, 13, 'TFM-002', 'Water & Sanitation Expert', 'water_sanitation', '[5]', '[\"water supply\",\"sanitation systems\",\"environmental health\"]', 1, 1, 0, NULL, 'ghana_card', 'GHA-444555666-7', 1, '2026-01-03 18:33:21', '89 Water Works Rd, Kumasi', 'Peter Amoako', '+233206666666', 22, 18, '2026-01-03 12:33:21', '2026-01-03 18:33:21', '2026-01-03 18:33:21'),
-(3, 14, 'TF-2026-0003', 'Task Force Member', 'general', NULL, NULL, 1, 1, 1, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 8, 2, '2026-02-02 15:42:07', '2026-01-16 18:22:59', '2026-02-02 15:42:07'),
+(3, 14, 'TF-2026-0003', 'Task Force Member', 'general', NULL, NULL, 1, 1, 1, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, 12, 2, '2026-02-15 18:46:59', '2026-01-16 18:22:59', '2026-02-15 18:46:59'),
 (4, 20, NULL, NULL, 'general', NULL, NULL, 1, 1, 0, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 0, 0, NULL, '2026-01-30 21:06:20', '2026-01-30 21:06:20');
 
 -- --------------------------------------------------------
@@ -857,22 +851,26 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `phone`, `password`, `role`, `email_verified`, `email_verified_at`, `status`, `first_login`, `last_login_at`, `last_login_ip`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Admin User', 'admin@eventic.com', NULL, '$argon2id$v=19$m=65536,t=4,p=2$eS9QZHdPVG5xQk96T0E4Uw$SZjba/QDub+aelbZ63IEsz3tNSFsht7x5FBPpZpsL5s', '', 1, '2026-01-03 18:33:19', 'active', 0, NULL, NULL, NULL, '2026-01-03 18:33:19', '2026-01-03 18:33:19'),
-(2, 'Super Admin1', 'superadmin@constituency.gov.gh', '+233201234567', '$argon2id$v=19$m=65536,t=4,p=2$SzhLVTAybS4vcXRRbnpCSw$RPPEQ0g2UPO0MLjdvI/5e3oPmGGcybsk/xTMUyG2AvQ', 'admin', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-02 15:11:12', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-02 15:11:12'),
-(3, 'John Mensah', 'john.mensah@constituency.gov.gh', '+233202345678', '$argon2id$v=19$m=65536,t=4,p=2$UUV1alVJMndiY0R0cjhlMg$qZ+uoNNVFb2I8xZZyvWOIjituIbq6r1gbGLbpTxrBk4', 'web_admin', 1, '2026-01-03 18:33:19', 'active', 0, '2026-01-30 17:21:53', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-01-30 17:21:53'),
-(4, 'Abena Osei1', 'abena.osei@constituency.gov.gh', '+233203456789', '$argon2id$v=19$m=65536,t=4,p=2$R1d1UTJVTUhyTHY0V1pURA$PmRmiM02Sj1m4eII5S36jZHFN4iullJnXW5ns/ysA6I', 'web_admin', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-01 03:01:12', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-01 03:01:12'),
-(5, 'Kwame Asante', 'kwame.asante@constituency.gov.gh', '+233204567890', '$argon2id$v=19$m=65536,t=4,p=2$S016Q3YyVE1ZWkphRnBaSA$AZuKIMWrbG/tX8+bVCOsNbg7f1p04me68u0hENLVbIM', 'officer', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-01 01:48:06', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-01 01:48:06'),
-(6, 'Efua Boateng1', 'efua.boateng@constituency.gov.gh', '+233205678901', '$argon2id$v=19$m=65536,t=4,p=2$RGhVcjFWL1FzSHNTcEwxdg$xeMlwLAw5mmqu3dsJleuxS2fjT3DwqDL0e+ofbHCpEw', 'officer', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-02 15:08:30', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-02 15:08:30'),
-(7, 'Kofi Adjei', 'kofi.adjei@constituency.gov.gh', '+233206789012', '$argon2id$v=19$m=65536,t=4,p=2$bHBJcFMxYi44NXNWM0pWVg$CT6nWaowAmCCrBkoLACgyOtIOOArpgrjxzqsTrsm1jk', 'admin', 1, '2026-01-03 18:33:20', 'active', 0, '2026-01-30 17:15:30', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-01-30 17:15:30'),
-(8, 'Akosua Darko2', 'akosua.darko@constituency.gov.gh', '+233207890123', '$argon2id$v=19$m=65536,t=4,p=2$M3JKLi40ZVdGbnRaRFJILw$T/PBF/Qjx+3XDgbL7t/KsohDrLvMQ1YVfjAH+9W9Q5M', 'officer', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-01 01:49:06', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-01 01:49:06'),
+(2, 'Super Admin1', 'superadmin@constituency.gov.gh', '+233201234567', '$argon2id$v=19$m=65536,t=4,p=2$SzhLVTAybS4vcXRRbnpCSw$RPPEQ0g2UPO0MLjdvI/5e3oPmGGcybsk/xTMUyG2AvQ', 'admin', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-15 18:50:40', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 18:50:40'),
+(3, 'John Mensah', 'john.mensah@constituency.gov.gh', '+233202345678', '$argon2id$v=19$m=65536,t=4,p=2$UUV1alVJMndiY0R0cjhlMg$qZ+uoNNVFb2I8xZZyvWOIjituIbq6r1gbGLbpTxrBk4', 'web_admin', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-15 03:45:28', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 03:45:28'),
+(4, 'Abena Osei1', 'abena.osei@constituency.gov.gh', '+233203456789', '$argon2id$v=19$m=65536,t=4,p=2$R1d1UTJVTUhyTHY0V1pURA$PmRmiM02Sj1m4eII5S36jZHFN4iullJnXW5ns/ysA6I', 'web_admin', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-15 03:17:50', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 03:17:50'),
+(5, 'Kwame Asante3', 'kwame.asante@constituency.gov.gh', '+233204567890', '$argon2id$v=19$m=65536,t=4,p=2$NG1rcENNQXEyZnUySE9Zeg$IYmfeismZyaLRFkhqaXPNkzWLOXB8nWZC23mvX3Jb5E', 'officer', 1, '2026-01-03 18:33:19', 'active', 0, '2026-02-15 18:03:52', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 18:03:52'),
+(6, 'Efua Boateng1', 'efua.boateng@constituency.gov.gh', '+233205678901', '$argon2id$v=19$m=65536,t=4,p=2$RGhVcjFWL1FzSHNTcEwxdg$xeMlwLAw5mmqu3dsJleuxS2fjT3DwqDL0e+ofbHCpEw', 'officer', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-15 03:19:02', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 03:19:02'),
+(7, 'Kofi Adjei', 'kofi.adjei@constituency.gov.gh', '+233206789012', '$argon2id$v=19$m=65536,t=4,p=2$bHBJcFMxYi44NXNWM0pWVg$CT6nWaowAmCCrBkoLACgyOtIOOArpgrjxzqsTrsm1jk', 'admin', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-15 04:02:36', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 04:02:36'),
+(8, 'Akosua Darko2', 'akosua.darko@constituency.gov.gh', '+233207890123', '$argon2id$v=19$m=65536,t=4,p=2$M3JKLi40ZVdGbnRaRFJILw$T/PBF/Qjx+3XDgbL7t/KsohDrLvMQ1YVfjAH+9W9Q5M', 'officer', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-15 03:18:07', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 03:18:07'),
 (9, 'Yaw Frimpong', 'yaw.frimpong@constituency.gov.gh', '+233208901234', '$argon2id$v=19$m=65536,t=4,p=2$QXhLQ2F6WDRuNmpFRXpRaQ$9rM0Zb9auttQqC6gd5ioCnCCuzleb89WtX3ORzSXiJc', 'agent', 1, '2026-01-03 18:33:20', 'active', 0, '2026-01-09 01:18:21', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-01-09 01:18:21'),
-(10, 'Ama Serwaa', 'ama.serwaa@constituency.gov.gh', '+233209012345', '$argon2id$v=19$m=65536,t=4,p=2$NXR3RUc5cVRianFrZ0Y0RQ$UcxjArTufXRRnAHEsPxyuniSjuTVsq3DGEO/lmXJ35c', 'agent', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-02 15:01:19', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-02 15:01:19'),
-(11, 'Kwabena Owusu', 'kwabena.owusu@constituency.gov.gh', '+233200123456', '$argon2id$v=19$m=65536,t=4,p=2$Q2lwRDJ6WnFXTC4zRC85Uw$3lr7ZYbNR8nUcIqnrl8OjvUzl8BGQEka7pPJ7WghU30', 'agent', 1, '2026-01-03 18:33:20', 'active', 0, NULL, NULL, NULL, '2026-01-03 18:33:21', '2026-01-03 18:33:21'),
+(10, 'Ama Serwaa1', 'ama.serwaa@constituency.gov.gh', '+233209012345', '$2y$10$pyWCyO1mfWJfGiEKdEXbR.NbKNU42996tqWFgqApLTF400oa/jUEK', 'agent', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-15 03:46:48', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 03:46:48'),
+(11, 'Kwabena Owusu', 'kwabena.owusu@constituency.gov.gh', '+233200123456', '$argon2id$v=19$m=65536,t=4,p=2$Q2lwRDJ6WnFXTC4zRC85Uw$3lr7ZYbNR8nUcIqnrl8OjvUzl8BGQEka7pPJ7WghU30', 'agent', 1, '2026-01-03 18:33:20', 'active', 0, '2026-02-13 17:52:09', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-13 17:52:09'),
 (12, 'Adwoa Mensah', 'adwoa.mensah@constituency.gov.gh', '+233201234599', '$argon2id$v=19$m=65536,t=4,p=2$dXlLT3VRWVZNazUwTTdmTw$UsuSxIx6jqr13sEpT/HaibfNTiC475qZQRQBo+yzIwQ', 'agent', 1, '2026-01-03 18:33:21', 'active', 0, '2026-02-01 23:42:38', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-01 23:42:38'),
 (13, 'Emmanuel Tetteh', 'emmanuel.tetteh@constituency.gov.gh', '+233202345699', '$argon2id$v=19$m=65536,t=4,p=2$bEZOUUpYWFUvenhpNnNVRg$y+f0Cu+4dS7731u3iUKH7Hq3qvJ3HQZpccyMn6WD6Tk', 'officer', 1, '2026-01-03 18:33:21', 'active', 0, NULL, NULL, NULL, '2026-01-03 18:33:21', '2026-01-03 18:33:21'),
-(14, 'Grace Amoako', 'grace.amoako@constituency.gov.gh', '+233203456799', '$argon2id$v=19$m=65536,t=4,p=2$c0owSTdnLmF3L0Y2LmlxNw$qpR3mYaT20uwWSmwINEZ6Ob0q9xle+PQfPpg9a+pucQ', 'task_force', 1, '2026-01-03 18:33:21', 'active', 0, '2026-02-02 12:00:00', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-02 12:00:00'),
+(14, 'Grace Amoako', 'grace.amoako@constituency.gov.gh', '', '$argon2id$v=19$m=65536,t=4,p=2$c0owSTdnLmF3L0Y2LmlxNw$qpR3mYaT20uwWSmwINEZ6Ob0q9xle+PQfPpg9a+pucQ', 'task_force', 1, '2026-01-03 18:33:21', 'active', 0, '2026-02-15 18:45:09', '127.0.0.1', NULL, '2026-01-03 18:33:21', '2026-02-15 18:45:09'),
 (18, 'Omega1', 'omega@gmail.com', '+233 24 123 4567', '$argon2id$v=19$m=65536,t=4,p=2$eURvWkpmajZTZy5WM2JTQg$6Qaxu22XSOXJrrHy827IwK0xrhUOKTXCzFekd5jsX9Q', 'officer', 1, NULL, 'active', 1, NULL, NULL, NULL, '2026-01-22 10:00:47', '2026-01-22 10:07:05'),
 (19, 'Abena Ampofowaa Agyei', 'a@a.com', '111-222-3333', '$argon2id$v=19$m=65536,t=4,p=2$Llduemhya1pWUTdlUDFJVA$FDUa0gWNCYxokERFBLWWNkc4yAwk/Xb868YeUx2TbBg', 'agent', 0, NULL, 'pending', 1, NULL, NULL, NULL, '2026-01-22 10:09:05', '2026-01-22 10:09:05'),
-(20, 'Joshua Asemani', 'an@gmail.com', '+233 24 123 4567', '$argon2id$v=19$m=65536,t=4,p=2$eTlyc3pZWi51NHFBMVZ6Rg$VyEUR3XvKEYJzmwtmke8KgDPIGQUlgpfJ4xqg8t3HBc', 'task_force', 0, '2026-01-30 21:06:20', 'active', 1, NULL, NULL, NULL, '2026-01-30 21:06:20', '2026-01-30 21:06:20');
+(20, 'Joshua Asemani', 'an@gmail.com', '+233 24 123 4567', '$argon2id$v=19$m=65536,t=4,p=2$eTlyc3pZWi51NHFBMVZ6Rg$VyEUR3XvKEYJzmwtmke8KgDPIGQUlgpfJ4xqg8t3HBc', 'task_force', 0, '2026-01-30 21:06:20', 'active', 1, NULL, NULL, NULL, '2026-01-30 21:06:20', '2026-01-30 21:06:20'),
+(21, 'Anthony Afriyie', 'anthony@gmail.com', '+233 24 123 4567', '$argon2id$v=19$m=65536,t=4,p=2$MVguajdPU0U1WWlqY2EzRg$UqBhCCtEe4m0JGy8xtHE8MEvPPDe9mubEBtnyz9CXDA', 'agent', 0, NULL, 'pending', 1, NULL, NULL, NULL, '2026-02-06 13:58:06', '2026-02-06 13:58:06'),
+(22, 'Anthony Afriyie', 'anthony25@gmail.com', '+233 24 123 4567', '$argon2id$v=19$m=65536,t=4,p=2$czJlTzNWZ1VTdmdML3hCUg$8+smzjaOitxlXmz2ZpCkG7zro/c24AWpsUULn7vsqtc', 'agent', 0, NULL, 'pending', 1, NULL, NULL, NULL, '2026-02-06 14:05:16', '2026-02-06 14:05:16'),
+(23, 'Kwadwo Mensah', 'kwadwo@gmil.com', '0551274173', '$argon2id$v=19$m=65536,t=4,p=2$SEZjNXRsYTV3eXBUdS9ZaA$kKNj6mScxpc8cVLdscKs6d0zN0pF6xxphlil4pcOf9A', 'agent', 0, NULL, 'pending', 1, NULL, NULL, NULL, '2026-02-06 14:09:19', '2026-02-06 14:09:19'),
+(24, 'Ronaldo Sheep5', 'ronaldosheep@gmail.com', '0551274173', '$argon2id$v=19$m=65536,t=4,p=2$YVFVUS9nNDlOWmxlOXMybw$1nDPv25I9GV8QWvA8SaELuB94T0sJI2Wl6sMRG4TXa4', 'agent', 0, NULL, 'suspended', 1, NULL, NULL, NULL, '2026-02-06 14:28:34', '2026-02-06 15:10:46');
 
 -- --------------------------------------------------------
 
@@ -1401,7 +1399,7 @@ ALTER TABLE `youth_records`
 -- AUTO_INCREMENT for table `agents`
 --
 ALTER TABLE `agents`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `announcements`
@@ -1425,7 +1423,7 @@ ALTER TABLE `blog_posts`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `community_ideas`
@@ -1587,7 +1585,7 @@ ALTER TABLE `task_force_members`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `web_admins`
