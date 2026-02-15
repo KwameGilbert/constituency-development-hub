@@ -506,10 +506,13 @@ export default async function IssueDetailPage({
                 <CardContent>
                     {(() => {
                         // Helper to parse lists safely
-                        const parseList = (field: any) => {
+                        const parseList = (field: any): any[] => {
                              if (Array.isArray(field)) return field;
                              if (typeof field === 'string') {
-                                 try { return JSON.parse(field); } catch { return []; }
+                                 try { 
+                                     const parsed = JSON.parse(field);
+                                     return Array.isArray(parsed) ? parsed : [];
+                                 } catch { return []; }
                              }
                              return [];
                          };
@@ -517,7 +520,7 @@ export default async function IssueDetailPage({
                         const issueImages = parseList(issue?.images).map((url: any) => ({ type: 'image', url, name: 'Issue Image', date: issue?.created_at }));
                         const assessment = issue?.assessment_report || issue?.assessment;
                         
-                        let assessmentFiles = [];
+                        let assessmentFiles: { type: string, url: any, name: string, date: any }[] = [];
                         if (assessment) {
                              const aImages = parseList(assessment.images).map((url: any) => ({ type: 'image', url, name: 'Assessment Image', date: assessment.created_at }));
                              const aDocs = parseList(assessment.documents).map((url: any) => ({ type: 'document', url, name: 'Assessment Document', date: assessment.created_at }));

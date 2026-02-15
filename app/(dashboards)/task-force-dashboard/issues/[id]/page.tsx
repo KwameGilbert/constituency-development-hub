@@ -116,13 +116,16 @@ const adaptIssueToUi = (
   }
 ): UiIssue => {
     // Helper to safely parse file fields which might be JSON strings or arrays
-    const parseFiles = (field: string | string[] | undefined | null) => {
-        if (Array.isArray(field)) return field;
-        if (typeof field === 'string') {
-            try { return JSON.parse(field); } catch { return []; }
-        }
-        return [];
-    }
+  const parseFiles = (field: string | string[] | undefined | null): string[] => {
+      if (Array.isArray(field)) return field;
+      if (typeof field === 'string') {
+          try { 
+              const parsed = JSON.parse(field);
+              return Array.isArray(parsed) ? parsed : [];
+          } catch { return []; }
+      }
+      return [];
+  }
   
     // Fallback to check both 'assessment_report' (new) and 'assessment' (legacy/potential backend mismatch)
     const assessment = apiIssue.assessment_report || apiIssue.assessment;

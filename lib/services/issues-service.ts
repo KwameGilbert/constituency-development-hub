@@ -51,7 +51,8 @@ export interface AssessmentReport {
   estimated_duration?: string;
   required_resources?: ResourceItem[];
   recommendations?: string;
-  images?: string[];
+  images?: string | string[];
+  documents?: string | string[];
   submitted_by?: number;
   created_at?: string;
   status: "submitted" | "approved" | "rejected" | "needs_revision";
