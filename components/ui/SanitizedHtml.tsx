@@ -6,7 +6,7 @@ import { sanitizeHtml } from "@/lib/utils";
 type SanitizedHtmlProps = {
   html?: string | null;
   className?: string;
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: keyof React.JSX.IntrinsicElements;
 };
 
 export default function SanitizedHtml({
@@ -20,7 +20,7 @@ export default function SanitizedHtml({
       className,
       dangerouslySetInnerHTML: { __html: sanitized },
     });
-  } catch (err) {
+  } catch (err) { // eslint-disable-line @typescript-eslint/no-unused-vars
     return React.createElement(tag, { className }, html);
   }
 }

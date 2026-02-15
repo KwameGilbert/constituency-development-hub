@@ -15,11 +15,11 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
-import SanitizedHtml from "@/components/ui/SanitizedHtml";
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import {
   Search,
   Filter,

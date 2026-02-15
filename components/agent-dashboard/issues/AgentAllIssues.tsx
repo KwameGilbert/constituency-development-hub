@@ -32,7 +32,7 @@ import { agentService, AgentReport } from "@/lib/services/agent-service";
 import Link from "next/link";
 import { AgentEditIssueDialog } from "./AgentEditIssueDialog";
 import { toast } from "sonner";
-import { cn, cleanupHtml } from "@/lib/utils";
+import { cleanupHtml } from "@/lib/utils";
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
