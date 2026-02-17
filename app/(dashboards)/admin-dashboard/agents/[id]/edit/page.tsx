@@ -217,8 +217,13 @@ export default function EditAgentPage({
                     </Label>
                     <Input
                       id="phone"
+                      type="tel"
+                      inputMode="numeric"
                       value={formData.phone}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        const filtered = e.target.value.replace(/[^0-9+]/g, '');
+                        setFormData((prev) => ({ ...prev, phone: filtered }));
+                      }}
                       placeholder="Enter phone number"
                       className="bg-white"
                     />

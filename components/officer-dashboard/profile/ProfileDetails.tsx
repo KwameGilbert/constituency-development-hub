@@ -441,9 +441,11 @@ export function ProfileDetails() {
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
+                      type="tel"
+                      inputMode="numeric"
                       placeholder="e.g., +233 20 123 4567"
                       value={formData.phone}
-                      onChange={(e) => handleChange("phone", e.target.value)}
+                      onChange={(e) => handleChange("phone", e.target.value.replace(/[^0-9+]/g, ''))}
                     />
                   </div>
                   <div className="space-y-2">

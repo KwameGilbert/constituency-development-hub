@@ -235,8 +235,10 @@ export function EditAgentForm({ agentId }: EditAgentFormProps) {
                 <Label htmlFor="phone">Phone Number</Label>
                 <Input 
                     id="phone" 
+                    type="tel"
+                    inputMode="numeric"
                     value={formData.phone} 
-                    onChange={(e) => handleChange("phone", e.target.value)}
+                    onChange={(e) => handleChange("phone", e.target.value.replace(/[^0-9+]/g, ''))}
                 />
               </div>
               <div className="space-y-2">
@@ -344,8 +346,10 @@ export function EditAgentForm({ agentId }: EditAgentFormProps) {
                 <div className="space-y-2">
                     <Label>Phone</Label>
                     <Input
+                        type="tel"
+                        inputMode="numeric"
                         value={formData.emergency_contact_phone}
-                        onChange={(e) => handleChange("emergency_contact_phone", e.target.value)}
+                        onChange={(e) => handleChange("emergency_contact_phone", e.target.value.replace(/[^0-9+]/g, ''))}
                     />
                 </div>
             </div>

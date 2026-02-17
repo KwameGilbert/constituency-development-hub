@@ -193,8 +193,10 @@ export default function ContactClient() {
                   </label>
                   <Input
                     type="tel"
+                    inputMode="numeric"
                     placeholder="(+233)"
                     className="border-slate-200 focus-visible:border-emerald-400"
+                    onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
                   />
                 </div>
                 <div className="space-y-2">

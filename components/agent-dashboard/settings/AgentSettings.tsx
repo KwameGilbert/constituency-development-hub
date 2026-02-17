@@ -263,8 +263,10 @@ export function AgentSettings() {
                   Phone Number
                 </label>
                 <Input
+                  type="tel"
+                  inputMode="numeric"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ''))}
                   placeholder="e.g., +233 20 123 4567"
                   className="border-slate-200 focus:border-slate-900 focus:ring-slate-900"
                 />

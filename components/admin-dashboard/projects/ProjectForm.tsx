@@ -594,8 +594,11 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                 <Label htmlFor="contact_phone">Contact Phone</Label>
                 <Input
                   id="contact_phone"
+                  type="tel"
+                  inputMode="numeric"
                   placeholder="e.g., +233249973054"
                   {...form.register("contact_phone")}
+                  onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
                   disabled={isSubmitting}
                 />
               </div>

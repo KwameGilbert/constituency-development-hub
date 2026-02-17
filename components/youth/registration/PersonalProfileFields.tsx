@@ -13,6 +13,7 @@ const personalFields: Array<{
   type?: string;
   id: string;
   maxLength?: number;
+  inputMode?: "numeric" | "text";
 }> = [
   {
     id: "name",
@@ -25,6 +26,8 @@ const personalFields: Array<{
     name: "phone_number",
     label: "Phone number",
     placeholder: "054 000 1234",
+    type: "tel",
+    inputMode: "numeric",
     maxLength: 10,
   },
   {
@@ -69,7 +72,7 @@ function PersonalProfileFields({
         <Rocket className="h-5 w-5 text-amber-500" /> Personal profile
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        {personalFields.map(({ id, name, label, placeholder, type, maxLength }) => (
+        {personalFields.map(({ id, name, label, placeholder, type, maxLength, inputMode }) => (
           <div key={id} className="space-y-2">
             <Label htmlFor={id}>{label}</Label>
             <Input
@@ -77,7 +80,9 @@ function PersonalProfileFields({
               type={type}
               placeholder={placeholder}
               maxLength={maxLength}
+              inputMode={inputMode}
               {...register(name)}
+              {...(type === "tel" ? { onInput: (e: React.FormEvent<HTMLInputElement>) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); } } : {})}
             />
             <FieldErrorText
               message={errors[name]?.message as string | undefined}

@@ -189,11 +189,12 @@ export default function ProfilePage() {
                   <Input
                     id="phone"
                     type="tel"
+                    inputMode="numeric"
                     value={formData.phone}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        phone: e.target.value,
+                        phone: e.target.value.replace(/[^0-9+]/g, ''),
                       }))
                     }
                     disabled={!isEditing}

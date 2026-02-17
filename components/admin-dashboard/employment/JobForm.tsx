@@ -212,8 +212,11 @@ export function NewJobForm({ job }: JobFormProps) {
                 <Label htmlFor="contact_phone">Phone Number *</Label>
                 <Input
                   id="contact_phone"
+                  type="tel"
+                  inputMode="numeric"
                   placeholder="e.g., 024XXXXXXX"
                   {...form.register("contact_phone")}
+                  onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.contact_phone && (

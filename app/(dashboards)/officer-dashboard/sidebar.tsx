@@ -146,7 +146,7 @@ export function OfficerSidebar({
         <div className="p-2">
           <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent/10 p-3">
             <Avatar className="h-10 w-10 rounded-full bg-blue-100">
-              <AvatarImage src="/avatars/officer.png" alt="Officer" />
+              <AvatarImage src="" alt="Officer" />
               <AvatarFallback className="text-blue-600">
                 {userName.slice(0, 2).toUpperCase()}
               </AvatarFallback>

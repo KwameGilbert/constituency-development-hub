@@ -254,9 +254,14 @@ export default function AddOfficerPage() {
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
+                      type="tel"
+                      inputMode="numeric"
                       placeholder="Enter phone number"
                       value={formData.phone}
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        const filtered = e.target.value.replace(/[^0-9+]/g, '');
+                        setFormData((prev) => ({ ...prev, phone: filtered }));
+                      }}
                     />
                   </div>
                   <div className="space-y-2">

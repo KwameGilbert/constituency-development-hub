@@ -569,6 +569,7 @@ export function AgentAddIssues() {
             <FormItem label="Phone Number" required error={fieldErrors.reporter_phone}>
               <Input
                 type="tel"
+                inputMode="numeric"
                 maxLength={13}
                 className={cn(
                   "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
@@ -576,9 +577,11 @@ export function AgentAddIssues() {
                 )}
                 placeholder="+233 ..."
                 value={formData.reporter_phone || ""}
+                onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
                 onChange={(e) => {
-                  updateField("reporter_phone", e.target.value);
-                  validateConstituentField("reporter_phone", e.target.value);
+                  const filtered = e.target.value.replace(/[^0-9+]/g, '');
+                  updateField("reporter_phone", filtered);
+                  validateConstituentField("reporter_phone", filtered);
                 }}
               />
             </FormItem>
