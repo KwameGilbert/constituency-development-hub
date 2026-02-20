@@ -96,9 +96,15 @@ export default function AgentsPage() {
         if (response.success && response.data.agents) {
           const agents = response.data.agents;
 
+          const summary = response.data.summary || {
+            total: agents.length,
+            active: agents.filter((a) => a.user?.status === "active").length,
+            inactive: agents.filter((a) => a.user?.status !== "active").length,
+          };
+
           setAgentsData({
             agents,
-            summary: response.data.summary,
+            summary,
           });
         }
       } catch (err) {
