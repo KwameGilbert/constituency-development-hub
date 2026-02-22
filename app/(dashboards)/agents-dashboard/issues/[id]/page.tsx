@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { agentService, IssueDetail } from "@/lib/services/agent-service";
 import AgentDashboardHeader from "@/components/agent-dashboard/AgentDashboardHeader";
 import SanitizedHtml from "@/components/ui/SanitizedHtml";
+import IssueDescription from "@/components/ui/IssueDescription";
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
@@ -227,9 +228,9 @@ export default function AgentIssueDetailPage({
 
                 <div>
                   <label className="text-sm text-slate-500">Description</label>
-                  <SanitizedHtml
+                  <IssueDescription
+                    description={issue.description}
                     className="mt-1 text-slate-700 prose prose-sm max-w-none"
-                    html={issue.description}
                   />
                 </div>
 
@@ -238,7 +239,7 @@ export default function AgentIssueDetailPage({
                     <label className="text-sm text-slate-500">
                       Additional Notes
                     </label>
-                    <p className="mt-1 text-slate-700">
+                    <p className="mt-1 text-slate-700 whitespace-pre-wrap">
                       {issue.additional_notes}
                     </p>
                   </div>

@@ -222,7 +222,6 @@ export default function AddAgentPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  {/* Other dropdowns can remain static or be enhanced later */}
                 </div>
               </div>
 

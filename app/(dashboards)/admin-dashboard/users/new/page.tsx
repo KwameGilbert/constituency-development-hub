@@ -30,28 +30,42 @@ import {
   ShieldAlert,
   Settings2,
   LogOut,
+  ChevronsUpDown,
+  Check,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { locationsService, Location } from "@/lib/services/locations-service";
 import { usersService } from "@/lib/services/users-service";
 import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 export default function AddUserPage() {
   const router = useRouter();
   
   // Location state
   const [communities, setCommunities] = useState<Location[]>([]);
-  const [smallerCommunities, setSmallerCommunities] = useState<Location[]>([]);
   const [suburbs, setSuburbs] = useState<Location[]>([]);
-  const [cottages, setCottages] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   
   const [selectedCommunity, setSelectedCommunity] = useState<string>("");
-  const [selectedSmallerCommunity, setSelectedSmallerCommunity] = useState<string>("");
   const [selectedSuburb, setSelectedSuburb] = useState<string>("");
-  const [selectedCottage, setSelectedCottage] = useState<string>("");
+  const [communityOpen, setCommunityOpen] = useState(false);
+  const [suburbOpen, setSuburbOpen] = useState(false);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -90,24 +104,6 @@ export default function AddUserPage() {
     }
   };
 
-  const fetchSmallerCommunities = async (parentId: number) => {
-    try {
-      const response = await locationsService.getLocations({
-        type: "smaller_community",
-        parent_id: parentId,
-        status: "active",
-        limit: 100,
-      });
-      
-      if (response.success) {
-        setSmallerCommunities(response.data.locations);
-      }
-    } catch (error) {
-      console.error("Error fetching smaller communities:", error);
-      toast.error("Failed to load smaller communities");
-    }
-  };
-
   const fetchSuburbs = async (parentId: number) => {
     try {
       const response = await locationsService.getLocations({
@@ -126,44 +122,10 @@ export default function AddUserPage() {
     }
   };
 
-  const fetchCottages = async (parentId: number) => {
-    try {
-      const response = await locationsService.getLocations({
-        type: "cottage",
-        parent_id: parentId,
-        status: "active",
-        limit: 100,
-      });
-      
-      if (response.success) {
-        setCottages(response.data.locations);
-      }
-    } catch (error) {
-      console.error("Error fetching cottages:", error);
-      toast.error("Failed to load cottages");
-    }
-  };
-
   const handleCommunityChange = (value: string) => {
     setSelectedCommunity(value);
-    setSelectedSmallerCommunity("");
     setSelectedSuburb("");
-    setSelectedCottage("");
-    setSmallerCommunities([]);
     setSuburbs([]);
-    setCottages([]);
-    
-    if (value) {
-      fetchSmallerCommunities(parseInt(value));
-    }
-  };
-
-  const handleSmallerCommunityChange = (value: string) => {
-    setSelectedSmallerCommunity(value);
-    setSelectedSuburb("");
-    setSelectedCottage("");
-    setSuburbs([]);
-    setCottages([]);
     
     if (value) {
       fetchSuburbs(parseInt(value));
@@ -172,16 +134,6 @@ export default function AddUserPage() {
 
   const handleSuburbChange = (value: string) => {
     setSelectedSuburb(value);
-    setSelectedCottage("");
-    setCottages([]);
-    
-    if (value) {
-      fetchCottages(parseInt(value));
-    }
-  };
-
-  const handleCottageChange = (value: string) => {
-    setSelectedCottage(value);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -218,17 +170,9 @@ export default function AddUserPage() {
       const community = communities.find(c => c.id.toString() === selectedCommunity);
       if (community) locations.push(community.name);
     }
-    if (selectedSmallerCommunity) {
-      const smallerCom = smallerCommunities.find(c => c.id.toString() === selectedSmallerCommunity);
-      if (smallerCom) locations.push(smallerCom.name);
-    }
     if (selectedSuburb) {
       const suburb = suburbs.find(s => s.id.toString() === selectedSuburb);
       if (suburb) locations.push(suburb.name);
-    }
-    if (selectedCottage) {
-      const cottage = cottages.find(c => c.id.toString() === selectedCottage);
-      if (cottage) locations.push(cottage.name);
     }
 
     try {
@@ -421,109 +365,107 @@ export default function AddUserPage() {
                     <Label htmlFor="mainCommunity" className="text-gray-700">
                       Main Community
                     </Label>
-                    <Select
-                      value={selectedCommunity}
-                      onValueChange={handleCommunityChange}
-                      disabled={loading}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={loading ? "Loading..." : "Select Main Community"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {communities.map((community) => (
-                          <SelectItem key={community.id} value={community.id.toString()}>
-                            {community.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="smallerCommunity" className="text-gray-700">
-                      Smaller Community
-                    </Label>
-                    <Select
-                      value={selectedSmallerCommunity}
-                      onValueChange={handleSmallerCommunityChange}
-                      disabled={!selectedCommunity || smallerCommunities.length === 0}
-                    >
-                      <SelectTrigger>
-                        <SelectValue 
-                          placeholder={
-                            !selectedCommunity 
-                              ? "Select main community first" 
-                              : smallerCommunities.length === 0 
-                              ? "No smaller communities" 
-                              : "Select Smaller Community"
-                          } 
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {smallerCommunities.map((community) => (
-                          <SelectItem key={community.id} value={community.id.toString()}>
-                            {community.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Popover open={communityOpen} onOpenChange={setCommunityOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={communityOpen}
+                          className="w-full justify-between font-normal"
+                          disabled={loading}
+                        >
+                          {selectedCommunity
+                            ? communities.find((community) => community.id.toString() === selectedCommunity)?.name
+                            : loading
+                              ? "Loading..."
+                              : "Select Main Community"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search main community..." />
+                          <CommandList>
+                            <CommandEmpty>No community found.</CommandEmpty>
+                            <CommandGroup>
+                              {communities.map((community) => (
+                                <CommandItem
+                                  key={community.id}
+                                  value={community.name}
+                                  onSelect={() => {
+                                    handleCommunityChange(community.id.toString());
+                                    setCommunityOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedCommunity === community.id.toString() ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {community.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="suburb" className="text-gray-700">
                       Suburb
                     </Label>
-                    <Select
-                      value={selectedSuburb}
-                      onValueChange={handleSuburbChange}
-                      disabled={!selectedSmallerCommunity || suburbs.length === 0}
-                    >
-                      <SelectTrigger>
-                        <SelectValue 
-                          placeholder={
-                            !selectedSmallerCommunity 
-                              ? "Select smaller community first" 
-                              : suburbs.length === 0 
-                              ? "No suburbs" 
-                              : "Select Suburb"
-                          } 
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {suburbs.map((suburb) => (
-                          <SelectItem key={suburb.id} value={suburb.id.toString()}>
-                            {suburb.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cottage" className="text-gray-700">
-                      Cottage
-                    </Label>
-                    <Select
-                      value={selectedCottage}
-                      onValueChange={handleCottageChange}
-                      disabled={!selectedSuburb || cottages.length === 0}
-                    >
-                      <SelectTrigger>
-                        <SelectValue 
-                          placeholder={
-                            !selectedSuburb 
-                              ? "Select suburb first" 
-                              : cottages.length === 0 
-                              ? "No cottages" 
-                              : "Select Cottage"
-                          } 
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {cottages.map((cottage) => (
-                          <SelectItem key={cottage.id} value={cottage.id.toString()}>
-                            {cottage.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Popover open={suburbOpen} onOpenChange={setSuburbOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={suburbOpen}
+                          className="w-full justify-between font-normal"
+                          disabled={!selectedCommunity || suburbs.length === 0}
+                        >
+                          {selectedSuburb
+                            ? suburbs.find((suburb) => suburb.id.toString() === selectedSuburb)?.name
+                            : !selectedCommunity
+                              ? "Select main community first"
+                              : suburbs.length === 0
+                                ? "No suburbs"
+                                : "Select Suburb"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search suburbs..." />
+                          <CommandList>
+                            <CommandEmpty>No suburb found.</CommandEmpty>
+                            <CommandGroup>
+                              {suburbs.map((suburb) => (
+                                <CommandItem
+                                  key={suburb.id}
+                                  value={suburb.name}
+                                  onSelect={() => {
+                                    handleSuburbChange(suburb.id.toString());
+                                    setSuburbOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedSuburb === suburb.id.toString() ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {suburb.name}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
               </div>

@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { IssueActions } from "@/components/admin-dashboard/issues/IssueActions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { sanitizeHtml } from "@/lib/utils";
+import IssueDescription from "@/components/ui/IssueDescription";
 
 export default async function IssueDetailPage({
   params,
@@ -153,9 +154,9 @@ export default async function IssueDetailPage({
                   <h3 className="text-sm font-semibold text-gray-700 mb-2">
                     Description
                   </h3>
-                  <div
+                  <IssueDescription
+                    description={issue.description}
                     className="text-gray-600 prose prose-sm max-w-none"
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(issue.description) }}
                   />
                 </div>
 

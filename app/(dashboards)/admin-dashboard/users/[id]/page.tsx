@@ -19,7 +19,6 @@ export default function UserProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  // In a real app, use id to fetch user data
 
   return (
     <div className="flex flex-col h-full bg-slate-50">

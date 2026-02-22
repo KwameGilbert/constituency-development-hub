@@ -67,7 +67,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
     try {
       const filters: IssueFilters = {
         page: currentPage,
-        limit: 10,
+        limit: 50,
       };
 
       if (searchQuery) filters.search = searchQuery;

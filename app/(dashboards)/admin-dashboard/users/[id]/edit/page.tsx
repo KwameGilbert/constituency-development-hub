@@ -1,5 +1,7 @@
 "use client";
 
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import {
   Select,
   SelectContent,
@@ -26,10 +29,280 @@ import {
   ShieldAlert,
   Settings2,
   LogOut,
+  ChevronsUpDown,
+  Check,
+  User,
+  MapPin,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { locationsService, Location } from "@/lib/services/locations-service";
+import { usersService } from "@/lib/services/users-service";
+import { toast } from "sonner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
-export default function EditUserPage({ params }: { params: { id: string } }) {
+export default function EditUserPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const router = useRouter();
+  const { id } = use(params);
+  const [communities, setCommunities] = useState<Location[]>([]);
+  const [suburbs, setSuburbs] = useState<Location[]>([]);
+  const [selectedCommunity, setSelectedCommunity] = useState<string>("");
+  const [selectedSuburb, setSelectedSuburb] = useState<string>("");
+  const [communityOpen, setCommunityOpen] = useState(false);
+  const [suburbOpen, setSuburbOpen] = useState(false);
+  const [loadingCommunities, setLoadingCommunities] = useState(true);
+  const [loadingSuburbs, setLoadingSuburbs] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [prefillCommunityName, setPrefillCommunityName] = useState("");
+  const [prefillSuburbName, setPrefillSuburbName] = useState("");
+
+  const [initialRole, setInitialRole] = useState<string>("");
+  const [initialStatus, setInitialStatus] = useState<string>("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    department: "",
+    role: "",
+    status: "active",
+  });
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      try {
+        setLoadingCommunities(true);
+        const response = await locationsService.getLocations({
+          type: "community",
+          status: "active",
+          limit: 100,
+        });
+
+        if (response.success) {
+          setCommunities(response.data.locations);
+        }
+      } catch (error) {
+        console.error("Error fetching communities:", error);
+        toast.error("Failed to load communities");
+      } finally {
+        setLoadingCommunities(false);
+      }
+    };
+
+    fetchCommunities();
+  }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userId = Number(id);
+      if (!Number.isFinite(userId)) {
+        return;
+      }
+
+      try {
+        setLoadingUser(true);
+        const response = await usersService.getUserById(userId);
+        if (!response.success) {
+          toast.error(response.message || "Failed to load user details");
+          return;
+        }
+
+        const user = response.data.user as typeof response.data.user & {
+          bio?: string;
+          role_profile?: { department?: string };
+          created_at?: string;
+          last_login?: string;
+          last_login_at?: string;
+        };
+
+        setFormData({
+          fullName: user.name || "",
+          email: user.email || "",
+          phone: user.phone || "",
+          department: user.role_profile?.department || "",
+          role: user.role || "",
+          status: user.status || "active",
+        });
+        setInitialRole(user.role || "");
+        setInitialStatus(user.status || "active");
+
+        const location = user.location?.trim();
+        if (!location) {
+          return;
+        }
+
+        const parts = location
+          .split(",")
+          .map((part) => part.trim())
+          .filter(Boolean);
+
+        setPrefillCommunityName(parts[0] ?? "");
+        setPrefillSuburbName(parts[1] ?? "");
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        toast.error("Failed to load user details");
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+
+    fetchUser();
+  }, [id]);
+
+  const fetchSuburbs = async (parentId: number, suburbNameToPrefill?: string) => {
+    try {
+      setLoadingSuburbs(true);
+      const response = await locationsService.getLocations({
+        type: "suburb",
+        parent_id: parentId,
+        status: "active",
+        limit: 100,
+      });
+
+      if (response.success) {
+        setSuburbs(response.data.locations);
+
+        if (suburbNameToPrefill) {
+          const matchedSuburb = response.data.locations.find(
+            (suburb) => suburb.name.toLowerCase() === suburbNameToPrefill.toLowerCase()
+          );
+          if (matchedSuburb) {
+            setSelectedSuburb(matchedSuburb.id.toString());
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching suburbs:", error);
+      toast.error("Failed to load suburbs");
+    } finally {
+      setLoadingSuburbs(false);
+    }
+  };
+
+  const handleCommunityChange = (value: string) => {
+    setSelectedCommunity(value);
+    setSelectedSuburb("");
+    setSuburbs([]);
+
+    if (value) {
+      fetchSuburbs(parseInt(value));
+    }
+  };
+
+  const handleSuburbChange = (value: string) => {
+    setSelectedSuburb(value);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSelectChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.fullName || !formData.email || !formData.role) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const userId = Number(id);
+    if (!Number.isFinite(userId)) {
+      toast.error("Invalid user id");
+      return;
+    }
+
+    const locations: string[] = [];
+    if (selectedCommunity) {
+      const community = communities.find(
+        (item) => item.id.toString() === selectedCommunity
+      );
+      if (community) locations.push(community.name);
+    }
+    if (selectedSuburb) {
+      const suburb = suburbs.find((item) => item.id.toString() === selectedSuburb);
+      if (suburb) locations.push(suburb.name);
+    }
+
+    try {
+      setSubmitting(true);
+
+      await usersService.updateUser(userId, {
+        name: formData.fullName,
+        phone: formData.phone || undefined,
+        location: locations.join(", ") || undefined,
+      });
+
+      if (formData.role !== initialRole) {
+        await usersService.updateUserRole(userId, { role: formData.role });
+      }
+
+      if (formData.status !== initialStatus) {
+        await usersService.updateUserStatus(userId, {
+          status: formData.status,
+        });
+      }
+
+      toast.success("User updated successfully");
+      router.push(`/admin-dashboard/users/${id}`);
+      router.refresh();
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error("Failed to update user");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!prefillCommunityName || communities.length === 0 || selectedCommunity) {
+      return;
+    }
+
+    const matchedCommunity = communities.find(
+      (community) => community.name.toLowerCase() === prefillCommunityName.toLowerCase()
+    );
+
+    if (!matchedCommunity) {
+      return;
+    }
+
+    setSelectedCommunity(matchedCommunity.id.toString());
+    fetchSuburbs(matchedCommunity.id, prefillSuburbName || undefined);
+  }, [prefillCommunityName, prefillSuburbName, communities, selectedCommunity]);
+
+  if (loadingUser) {
+    return (
+      <div className="flex h-full items-center justify-center bg-slate-50">
+        <Loader2 className="w-6 h-6 animate-spin text-indigo-600 mr-2" />
+        <span className="text-gray-600">Loading user details...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-slate-50">
       <AdminHeader
@@ -41,7 +314,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
         dropdownItems={[
           {
             label: "Back to Profile",
-            href: `/admin-dashboard/users/${params.id}`,
+            href: `/admin-dashboard/users/${id}`,
             icon: ArrowLeft,
           },
           { label: "Deactivate User", icon: UserX, className: "text-gray-700" },
@@ -68,61 +341,91 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
         ]}
       />
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <div className="max-w-3xl mx-auto">
-          <Card>
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-t-4 border-t-red-900">
             <CardHeader>
-              <CardTitle>Account Details</CardTitle>
+              <CardTitle className="text-lg text-gray-900">User Information</CardTitle>
               <CardDescription>
-                Update the user's personal information and role.
+                Update user profile, role assignment, and location details.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit}>
+              <CardContent className="space-y-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                  <User className="w-4 h-4" />
+                  <h3>Personal Information</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="fullName" className="text-gray-700">
+                    Full Name <span className="text-red-500">*</span>
+                  </Label>
                   <Input
-                    id="firstName"
-                    placeholder="Admin"
-                    defaultValue="Admin"
+                    id="fullName"
+                    placeholder="Enter full name"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Rock" defaultValue="Rock" />
+                  <Label htmlFor="email" className="text-gray-700">
+                    Email Address <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    readOnly
+                    className="bg-gray-50 text-gray-500"
+                  />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  defaultValue="admin.rock@kofibenteh.com"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select defaultValue="mp">
+                  <Label htmlFor="phone" className="text-gray-700">Phone Number</Label>
+                  <Input
+                    id="phone"
+                    placeholder="e.g. +233 20 123 4567"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="department" className="text-gray-700">Department</Label>
+                  <Input
+                    id="department"
+                    value={formData.department}
+                    readOnly
+                    className="bg-gray-50 text-gray-500"
+                    placeholder="No department"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role" className="text-gray-700">
+                    User Role <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value) => handleSelectChange("role", value)}
+                  >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
+                      <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="mp">Member of Parliament</SelectItem>
-                      <SelectItem value="mce">
-                        Municipal Chief Executive
-                      </SelectItem>
-                      <SelectItem value="pa">Personal Assistant</SelectItem>
-                      <SelectItem value="officer">Officer</SelectItem>
-                      <SelectItem value="agent">Agent</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="web_admin">Web Admin</SelectItem>
+                      <SelectItem value="task_force">Task Force</SelectItem>
+                      <SelectItem value="agent">Agent</SelectItem>
+                      <SelectItem value="officer">Officer</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select defaultValue="active">
+                  <Label htmlFor="status" className="text-gray-700">Account Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => handleSelectChange("status", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -134,33 +437,139 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
                   </Select>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="location">Assigned Location</Label>
-                <Select defaultValue="none">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No location assigned</SelectItem>
-                    <SelectItem value="seiwi">Seiwi</SelectItem>
-                    <SelectItem value="accra">Accra</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                  <MapPin className="w-4 h-4" />
+                  <h3>Location Assignment</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                <Label htmlFor="mainCommunity" className="text-gray-700">Main Community</Label>
+                <Popover open={communityOpen} onOpenChange={setCommunityOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={communityOpen}
+                      className="w-full justify-between font-normal"
+                      disabled={loadingCommunities}
+                    >
+                      {selectedCommunity
+                        ? communities.find((community) => community.id.toString() === selectedCommunity)?.name
+                        : loadingCommunities
+                          ? "Loading..."
+                          : "Select Main Community"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search main community..." />
+                      <CommandList>
+                        <CommandEmpty>No community found.</CommandEmpty>
+                        <CommandGroup>
+                          {communities.map((community) => (
+                            <CommandItem
+                              key={community.id}
+                              value={community.name}
+                              onSelect={() => {
+                                handleCommunityChange(community.id.toString());
+                                setCommunityOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  selectedCommunity === community.id.toString() ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {community.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="suburb" className="text-gray-700">Suburb</Label>
+                <Popover open={suburbOpen} onOpenChange={setSuburbOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={suburbOpen}
+                      className="w-full justify-between font-normal"
+                      disabled={!selectedCommunity || loadingSuburbs || suburbs.length === 0}
+                    >
+                      {selectedSuburb
+                        ? suburbs.find((suburb) => suburb.id.toString() === selectedSuburb)?.name
+                        : !selectedCommunity
+                          ? "Select main community first"
+                          : loadingSuburbs
+                            ? "Loading..."
+                            : suburbs.length === 0
+                              ? "No suburbs"
+                              : "Select Suburb"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search suburbs..." />
+                      <CommandList>
+                        <CommandEmpty>No suburb found.</CommandEmpty>
+                        <CommandGroup>
+                          {suburbs.map((suburb) => (
+                            <CommandItem
+                              key={suburb.id}
+                              value={suburb.name}
+                              onSelect={() => {
+                                handleSuburbChange(suburb.id.toString());
+                                setSuburbOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  selectedSuburb === suburb.id.toString() ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {suburb.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              </div>
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
                 <Button variant="outline" asChild>
-                  <Link href={`/admin-dashboard/users/${params.id}`}>
+                  <Link href={`/admin-dashboard/users/${id}`}>
                     Cancel
                   </Link>
                 </Button>
-                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2">
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
+                >
                   <Save className="w-4 h-4" />
-                  Save Changes
+                  {submitting ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </CardContent>
+            </form>
           </Card>
         </div>
       </div>

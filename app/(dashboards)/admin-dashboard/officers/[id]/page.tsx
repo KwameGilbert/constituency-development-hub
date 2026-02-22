@@ -252,7 +252,6 @@ export default function OfficerDetailsPage({
                         Pending Reports
                       </div>
                     </div>
-                    {/* Mock data for others for now */}
                     <div className="text-center p-3 bg-green-50/50 rounded-lg">
                       <div className="text-2xl font-bold text-green-600">-</div>
                       <div className="text-xs text-gray-500">Resolved</div>

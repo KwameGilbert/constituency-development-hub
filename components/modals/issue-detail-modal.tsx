@@ -28,6 +28,7 @@ import {
 import type { Issue } from "@/lib/data";
 import { getMetadata } from "@/lib/data";
 import { cleanupHtml } from "@/lib/utils";
+import IssueDescription from "@/components/ui/IssueDescription";
 
 interface IssueDetailModalProps {
   issue: Issue | null;
@@ -137,9 +138,10 @@ export function IssueDetailModal({
                     Description
                   </h3>
                   <div className="p-4 bg-gray-50 rounded-lg">
-                    <p className="text-gray-700 whitespace-pre-wrap">
-                      {cleanupHtml(issue.description)}
-                    </p>
+                    <IssueDescription
+                      description={issue.description}
+                      className="text-gray-700"
+                    />
                   </div>
                 </div>
 

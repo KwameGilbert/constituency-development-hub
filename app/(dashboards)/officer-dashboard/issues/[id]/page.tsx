@@ -20,6 +20,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import SanitizedHtml from "@/components/ui/SanitizedHtml";
+import IssueDescription from "@/components/ui/IssueDescription";
 import { issuesService, Issue } from "@/lib/services/issues-service";
 import { toast } from "sonner";
 
@@ -201,9 +202,9 @@ export default function OfficerIssueDetailPage() {
               <h3 className="text-sm font-semibold text-gray-700 mb-2">
                 Description
               </h3>
-              <SanitizedHtml
+              <IssueDescription
+                description={issue.description}
                 className="text-gray-600 prose prose-sm max-w-none"
-                html={issue.description}
               />
             </div>
 

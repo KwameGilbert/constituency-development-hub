@@ -213,7 +213,7 @@ export function IssueBreakdown({
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-h-[250px] w-full">
+        <ChartContainer config={chartConfig} className="min-h-[250px] max-h-[250px] w-full">
           <BarChart accessibilityLayer data={data}>
             <CartesianGrid vertical={false} />
             <XAxis

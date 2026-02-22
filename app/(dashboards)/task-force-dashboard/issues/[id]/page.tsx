@@ -34,6 +34,7 @@ import {
   Loader2,
 } from "lucide-react";
 import SanitizedHtml from "@/components/ui/SanitizedHtml";
+import IssueDescription from "@/components/ui/IssueDescription";
 
 import { Issue as ApiIssue } from "@/lib/services/issues-service";
 import { taskForceService } from "@/lib/services/task-force-service";
@@ -427,9 +428,9 @@ const adaptIssueToUi = (
                   <CardTitle>Issue Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                      <SanitizedHtml
-                        className="text-gray-700 leading-relaxed mb-4 prose prose-sm max-w-none text-slate-700"
-                        html={issue.description}
+                      <IssueDescription
+                        description={issue.description}
+                        className="leading-relaxed mb-4 prose prose-sm max-w-none text-slate-700"
                       />
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
@@ -643,9 +644,9 @@ const adaptIssueToUi = (
                   <CardTitle>Detailed Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <SanitizedHtml
-                    className="text-gray-700 leading-relaxed prose prose-sm max-w-none text-slate-700"
-                    html={issue.detailedDescription || issue.description}
+                  <IssueDescription
+                    description={issue.detailedDescription || issue.description}
+                    className="leading-relaxed prose prose-sm max-w-none text-slate-700"
                   />
                 </CardContent>
               </Card>

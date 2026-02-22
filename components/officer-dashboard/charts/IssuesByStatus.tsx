@@ -134,12 +134,29 @@ export function IssuesByStatus({
     );
   }
 
+  if (!chartData.length || totalIssues === 0) {
+    return (
+      <Card className="flex flex-col border-none shadow-md">
+        <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[300px]">
+          <div className="text-center text-gray-500">
+            <p className="text-sm">No status data available</p>
+          </div>
+        </CardContent>
+        <CardHeader className="items-center pb-0">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Issues by Status
+          </CardTitle>
+        </CardHeader>
+      </Card>
+    );
+  }
+
   return (
     <Card className="flex flex-col border-none shadow-md">
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[350px]"
+          className="mx-auto w-full min-h-[300px] max-h-[350px]"
         >
           <PieChart>
             <ChartTooltip
@@ -151,6 +168,7 @@ export function IssuesByStatus({
               dataKey="count"
               nameKey="status"
               innerRadius={80}
+              outerRadius={120}
               strokeWidth={5}
             >
               <Label
