@@ -75,7 +75,62 @@ const removeCookie = (name: string) => {
   document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT`;
 };
 
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  data: Record<string, never>;
+}
+
+export interface VerifyOTPResponse {
+  success: boolean;
+  message: string;
+  data: {
+    verified: boolean;
+  };
+}
+
+export interface ResetPasswordPayload {
+  email: string;
+  otp: string;
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
+  data: Record<string, never>;
+}
+
 export const authService = {
+  forgotPassword: async (email: string): Promise<ForgotPasswordResponse> => {
+    return apiClient<ForgotPasswordResponse>("/auth/password/forgot", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+      requiresAuth: false,
+    });
+  },
+
+  verifyOTP: async (
+    email: string,
+    otp: string,
+  ): Promise<VerifyOTPResponse> => {
+    return apiClient<VerifyOTPResponse>("/auth/password/verify-otp", {
+      method: "POST",
+      body: JSON.stringify({ email, otp }),
+      requiresAuth: false,
+    });
+  },
+
+  resetPassword: async (
+    payload: ResetPasswordPayload,
+  ): Promise<ResetPasswordResponse> => {
+    return apiClient<ResetPasswordResponse>("/auth/password/reset", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      requiresAuth: false,
+    });
+  },
+
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const response = await apiClient<LoginResponse>("/auth/login", {
       method: "POST",

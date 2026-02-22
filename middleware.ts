@@ -46,6 +46,6 @@ export const config = {
      * - public (public folder)
      * - login
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|login|public).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|login|forgot-password|reset-password|public).*)",
   ],
 };
