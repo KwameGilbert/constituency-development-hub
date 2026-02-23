@@ -210,12 +210,7 @@ export default function DisabledPage() {
 //                 </CardDescription>
 //               </CardHeader>
 //               <CardContent className="space-y-8">
-//                 {/* Header for Form */}
-//                 <div className="flex justify-between items-center bg-indigo-50 text-indigo-900 p-4 rounded-lg border border-indigo-100">
-//                   <h3 className="font-semibold text-sm uppercase tracking-wider">
-//                     Basic Information
-//                   </h3>
-//                   <User className="w-5 h-5 text-indigo-400" />
+// ...existing code...
 //                 </div>
 // 
 //                 {/* Personal Information */}

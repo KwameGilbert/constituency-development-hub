@@ -124,10 +124,7 @@ export default function DisabledPage() {
 //       />
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
-//           {/* Officer Profile Card */}
-//           <Card className="border-none shadow-sm">
-//             <CardContent className="p-8">
-//               <div className="flex flex-col md:flex-row gap-8">
+// ...existing code...
 //                 {/* Profile Header */}
 //                 <div className="flex-1">
 //                   <div className="flex items-start gap-4">

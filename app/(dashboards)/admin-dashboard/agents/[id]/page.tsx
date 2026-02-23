@@ -133,11 +133,7 @@ export default function DisabledPage() {
 //       />
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
-//           {/* Agent Profile Card */}
-//           <Card className="border-none shadow-sm">
-//             <CardContent className="p-8">
-//               <div className="flex flex-col md:flex-row gap-8">
-//                 {/* Profile Header */}
+// ...existing code...
 //                 <div className="flex-1">
 //                   <div className="flex items-start gap-4">
 //                     <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 overflow-hidden">

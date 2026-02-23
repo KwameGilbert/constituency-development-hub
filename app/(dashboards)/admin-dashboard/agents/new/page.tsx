@@ -154,10 +154,7 @@ export default function DisabledPage() {
 //         <div className="max-w-[1600px] mx-auto">
 //           <Card className="border-none shadow-sm">
 //             <CardContent className="space-y-8 p-8">
-//               {/* Personal Information */}
-//               <div className="space-y-4">
-//                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//                   <div className="space-y-2">
+// ...existing code...
 //                     <Label htmlFor="name" className="text-gray-700">
 //                       Full Name <span className="text-red-500">*</span>
 //                     </Label>

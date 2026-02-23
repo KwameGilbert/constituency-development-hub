@@ -482,12 +482,7 @@ export default function SuburbsPage() {
               </Table>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200 mt-4">
-                <p className="text-sm text-gray-600">
-                  Showing{" "}
-                  <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
+// ...existing code...
                   {" "}to{" "}
                   <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredSuburbs.length)}</span>
                   {" "}of{" "}

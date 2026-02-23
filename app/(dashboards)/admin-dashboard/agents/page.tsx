@@ -300,14 +300,7 @@ export default function DisabledPage() {
 // 
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
-//           {/* Filters and Search */}
-//           <Card className="p-4 bg-white">
-//             <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-//               <div className="space-y-1">
-//                 <h3 className="font-semibold text-gray-700">Agents</h3>
-//                 <p className="text-sm text-gray-500">
-//                   Total: {agentsData.summary.total} agents
-//                 </p>
+// ...existing code...
 //               </div>
 //               <div className="flex flex-1 w-full md:w-auto gap-3 items-center justify-end">
 //                 <div className="relative w-full md:w-96">
