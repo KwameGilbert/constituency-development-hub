@@ -11,7 +11,6 @@ import {
   Search,
   Plus,
   MapPin,
-  Filter,
   Edit,
   Trash2,
   Loader2,
@@ -431,7 +430,8 @@ export default function SmallerCommunitiesPage() {
               </Button>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
+            <>
+              <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
               <Table>
                 <TableHeader className="bg-gray-50/50">
                   <TableRow className="hover:bg-transparent border-gray-100">
@@ -504,7 +504,8 @@ export default function SmallerCommunitiesPage() {
                 </div>
               </div>
             )}
-          )}
+          </>
+        )}
         </div>
       </div>
 

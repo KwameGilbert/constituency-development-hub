@@ -6,7 +6,7 @@ export interface User {
   email: string;
   phone?: string;
   role: "web_admin" | "officer" | "agent" | "task_force" | "admin";
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "suspended";
   location?: string;
   bio?: string;
   created_at?: string;

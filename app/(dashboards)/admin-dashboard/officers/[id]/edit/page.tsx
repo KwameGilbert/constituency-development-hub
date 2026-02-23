@@ -5,7 +5,7 @@ export default function DisabledPage() {
   return null;
 }
 
-/*  ===== ORIGINAL CODE (commented out) =====
+//  ===== ORIGINAL CODE (commented out) =====
 // "use client";
 // 
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
@@ -245,13 +245,15 @@ export default function DisabledPage() {
 //                 </CardDescription>
 //               </CardHeader>
 //               <CardContent className="space-y-8 pt-6">
-// ...existing code...
+//                 Header for Form
+//                 <div className="flex justify-between items-center bg-indigo-50 text-indigo-900 p-4 rounded-lg border border-indigo-100">
+//                   <h3 className="font-semibold text-sm uppercase tracking-wider">
 //                     Basic Information
 //                   </h3>
 //                   <User className="w-5 h-5 text-indigo-400" />
 //                 </div>
 // 
-//                 {/* Personal Information */}
+//                 Personal Information
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
 //                     <Label htmlFor="name">
@@ -346,7 +348,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 // 
-//                 {/* Checkboxes for Permissions */}
+//                 Checkboxes for Permissions
 //                 <div className="space-y-4 pt-4 border-t border-gray-100">
 //                   <h3 className="font-semibold text-gray-900">Permissions</h3>
 //                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -413,7 +415,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 // 
-//                 {/* Sectors Assignment */}
+//                 Sectors Assignment
 //                 <div className="space-y-4 pt-4 border-t border-gray-100">
 //                   <h3 className="font-semibold text-gray-900">
 //                     Assign Sectors
@@ -449,7 +451,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 // 
-//                 {/* Locations Assignment */}
+//                 Locations Assignment
 //                 <div className="space-y-4 pt-4 border-t border-gray-100">
 //                   <h3 className="font-semibold text-gray-900">
 //                     Assign Locations
@@ -499,7 +501,7 @@ export default function DisabledPage() {
 //                   />
 //                 </div>
 // 
-//                 {/* Footer Actions */}
+//                 Footer Actions
 //                 <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
 //                   <Button
 //                     variant="outline"
@@ -529,4 +531,4 @@ export default function DisabledPage() {
 //   );
 // }
 // 
-===== END ORIGINAL CODE ===== */
+// ===== END ORIGINAL CODE =====
