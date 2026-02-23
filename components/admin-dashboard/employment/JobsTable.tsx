@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Edit, Trash2, Users } from "lucide-react";
+import { Eye, Edit, Trash2, Users, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { JobPosting } from "@/lib/services/employment-service";
 import {
   AlertDialog,
@@ -30,6 +30,7 @@ interface JobsTableProps {
     total: number;
     total_pages: number;
   };
+  onPageChange?: (page: number) => void;
 }
 
 const getStatusColor = (status: string) => {
@@ -79,9 +80,17 @@ const isDeadlinePassed = (deadline: string) => {
   return new Date(deadline) < new Date();
 };
 
-export function JobsTable({ jobs, pagination }: JobsTableProps) {
+export function JobsTable({ jobs }: JobsTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(jobs.length / pageSize);
+  const paginatedJobs = jobs.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleDelete = async (id: number) => {
     setDeletingId(id);
@@ -143,7 +152,7 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {jobs.map((job) => {
+              {paginatedJobs.map((job) => {
                 const deadlinePassed = isDeadlinePassed(
                   job.application_deadline,
                 );
@@ -270,17 +279,35 @@ export function JobsTable({ jobs, pagination }: JobsTableProps) {
         </div>
       </Card>
 
-      {pagination && pagination.total_pages > 1 && (
-        <div className="flex items-center justify-between">
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200">
           <p className="text-sm text-slate-600">
-            Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
-            {pagination.total} jobs
+            Showing{" "}
+            <span className="font-medium text-slate-900">{(currentPage - 1) * pageSize + 1}</span>
+            {" "}to{" "}
+            <span className="font-medium text-slate-900">{Math.min(currentPage * pageSize, jobs.length)}</span>
+            {" "}of{" "}
+            <span className="font-medium text-slate-900">{jobs.length}</span>{" "}
+            jobs
           </p>
-          <div className="flex gap-2">
-            <p className="text-sm text-slate-500">
-              Page {pagination.page} of {pagination.total_pages}
-            </p>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-slate-500">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

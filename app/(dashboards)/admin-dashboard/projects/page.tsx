@@ -7,23 +7,19 @@ import { ProjectsTable } from "@/components/admin-dashboard/projects/ProjectsTab
 import { projectsService, Project, ProjectResponse } from "@/lib/services/projects-service";
 import { Loader2 } from "lucide-react";
 
-type PaginationData = ProjectResponse["data"]["pagination"];
-
 export default function ProjectsListPage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [pagination, setPagination] = useState<PaginationData | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const response = await projectsService.getAdminProjects();
+        setLoading(true);
+        const response = await projectsService.getAdminProjects({ limit: 1000 });
         if (response && response.success && response.data) {
           setProjects(response.data.projects || []);
-          setPagination(response.data.pagination);
         } else {
-            // specific case where success might be false but no error thrown
             setError(response.message || "Failed to load projects");
         }
       } catch (e) {
@@ -52,7 +48,7 @@ export default function ProjectsListPage() {
             Error: {error}
           </div>
         ) : (
-          <ProjectsTable projects={projects} pagination={pagination} />
+          <ProjectsTable projects={projects} />
         )}
       </div>
     </div>

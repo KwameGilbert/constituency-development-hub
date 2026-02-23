@@ -11,18 +11,8 @@ import {
   Announcement,
 } from "@/lib/services/announcements-service";
 
-interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  total_pages: number;
-}
-
 export default function AnnouncementsListPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [pagination, setPagination] = useState<Pagination | undefined>(
-    undefined,
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,11 +20,9 @@ export default function AnnouncementsListPage() {
     const fetchAnnouncements = async () => {
       try {
         setLoading(true);
-        const response = await announcementsService.getAdminAnnouncements();
+        const response = await announcementsService.getAdminAnnouncements({ limit: 1000 });
         if (response.success) {
           setAnnouncements(response.data.announcements);
-          // Assuming the pagination structure matches or is adapted
-          setPagination(response.data.pagination);
           setError(null);
         } else {
           setError(response.message || "Failed to load announcements");
@@ -108,7 +96,6 @@ export default function AnnouncementsListPage() {
         <AnnouncementsHeader />
         <AnnouncementsTable
           announcements={announcements}
-          pagination={pagination}
         />
       </div>
     </div>

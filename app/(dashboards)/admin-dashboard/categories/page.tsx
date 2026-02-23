@@ -14,6 +14,10 @@ import {
   Trash2,
   Loader2,
   Layers,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,6 +61,8 @@ export default function CategoriesPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Form State
   const [formData, setFormData] = useState({
@@ -101,6 +107,18 @@ export default function CategoriesPage() {
   const filteredCategories = categories.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredCategories.length / pageSize);
+  const paginatedCategories = filteredCategories.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   // Reset form data
   const resetForm = () => {
@@ -338,7 +356,7 @@ export default function CategoriesPage() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : filteredCategories.length === 0 ? (
+                  ) : paginatedCategories.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={4}
@@ -348,7 +366,7 @@ export default function CategoriesPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredCategories.map((category) => (
+                    paginatedCategories.map((category) => (
                       <TableRow
                         key={category.id}
                         className="hover:bg-gray-50/50 border-gray-100 transition-colors"
@@ -413,6 +431,40 @@ export default function CategoriesPage() {
               </Table>
             </div>
           </div>
+
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+              <p className="text-sm text-gray-600">
+                Showing{" "}
+                <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
+                {" "}to{" "}
+                <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredCategories.length)}</span>
+                {" "}of{" "}
+                <span className="font-medium text-gray-900">{filteredCategories.length}</span>{" "}
+                categories
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                    <ChevronsLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                    <ChevronsRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

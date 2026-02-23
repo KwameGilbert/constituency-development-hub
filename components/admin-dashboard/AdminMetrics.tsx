@@ -150,7 +150,7 @@ export function AdminMetrics() {
             row2Metrics: [
               {
                 id: "grand-total-budget",
-                label: "Grand Total Budget",
+                label: "Total Funds Available",
                 value: `₵${(response.data.overview.grand_total_budget || 0).toLocaleString()}`,
                 subtitle: "Total Projects + Issues",
                 icon: "Wallet",
@@ -158,7 +158,7 @@ export function AdminMetrics() {
               },
               {
                 id: "project-budget",
-                label: "Total Project Budget",
+                label: "Funds for Development Projects",
                 value: `₵${response.data.overview.total_budget.toLocaleString()}`,
                 subtitle: "Allocated project funds",
                 icon: "FolderKanban",
@@ -166,7 +166,7 @@ export function AdminMetrics() {
               },
               {
                 id: "issues-budget",
-                label: "Total Issues Budget",
+                label: "Funds for Community Support",
                 value: `₵${(response.data.overview.total_issues_budget || 0).toLocaleString()}`,
                 subtitle: "Allocated for issue resolution",
                 icon: "Banknote",
@@ -274,16 +274,22 @@ export function AdminMetrics() {
           return (
             <Card
               key={metric.id}
-              className={`p-6 flex-row items-center space-x-4 border-l-4 ${colors.border} shadow-sm hover:shadow-md transition-shadow`}
+              className={`p-6 flex-col border-l-4 ${colors.border} shadow-sm hover:shadow-md transition-shadow`}
             >
-              <div className={`${colors.bg} p-4 rounded-xl`}>
-                <IconComponent className={`${colors.text} w-8 h-8`} />
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    {metric.label}
+                  </p>
+                </div>
+
+                <div className={`${colors.bg} p-3 rounded-xl`}>
+                  <IconComponent className={`${colors.text} w-6 h-6`} />
+                </div>
               </div>
+
               <div>
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  {metric.label}
-                </p>
-                <h3 className="text-3xl font-bold text-gray-800 mt-1">
+                <h3 className="text-3xl font-bold text-gray-800">
                   {metric.value}
                 </h3>
                 <p className="text-sm text-gray-400 mt-1">{metric.subtitle}</p>

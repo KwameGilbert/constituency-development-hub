@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Edit, Trash2, Send } from "lucide-react";
+import { Eye, Edit, Trash2, Send, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Announcement } from "@/lib/services/announcements-service";
 import {
   AlertDialog,
@@ -31,6 +31,7 @@ interface AnnouncementsTableProps {
     total_pages: number;
   };
   basePath?: string;
+  onPageChange?: (page: number) => void;
 }
 
 const getStatusColor = (status: string) => {
@@ -71,11 +72,18 @@ const formatDate = (dateString: string) => {
 
 export function AnnouncementsTable({
   announcements,
-  pagination,
   basePath = "/admin-dashboard/announcements",
 }: AnnouncementsTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(announcements.length / pageSize);
+  const paginatedAnnouncements = announcements.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleDelete = async (id: number) => {
     setDeletingId(id);
@@ -127,7 +135,7 @@ export function AnnouncementsTable({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {announcements.map((announcement) => (
+              {paginatedAnnouncements.map((announcement) => (
                 <tr
                   key={announcement.id}
                   className="hover:bg-slate-50 transition-colors"
@@ -217,6 +225,39 @@ export function AnnouncementsTable({
           </table>
         </div>
       </Card>
+
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+          <p className="text-sm text-slate-600">
+            Showing{" "}
+            <span className="font-medium text-slate-900">{(currentPage - 1) * pageSize + 1}</span>
+            {" "}to{" "}
+            <span className="font-medium text-slate-900">{Math.min(currentPage * pageSize, announcements.length)}</span>
+            {" "}of{" "}
+            <span className="font-medium text-slate-900">{announcements.length}</span>{" "}
+            announcements
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-slate-500">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

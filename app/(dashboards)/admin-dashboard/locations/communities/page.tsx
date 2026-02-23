@@ -14,6 +14,10 @@ import {
   Trash2,
   ArrowLeft,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -60,6 +64,8 @@ export default function CommunitiesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [newCommunityName, setNewCommunityName] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // API State
   const [communities, setCommunities] = useState<Community[]>([]);
@@ -110,6 +116,18 @@ export default function CommunitiesPage() {
   const filteredCommunities = communities.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredCommunities.length / pageSize);
+  const paginatedCommunities = filteredCommunities.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -341,7 +359,7 @@ export default function CommunitiesPage() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : filteredCommunities.length === 0 ? (
+                  ) : paginatedCommunities.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={4}
@@ -351,7 +369,7 @@ export default function CommunitiesPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredCommunities.map((community) => (
+                    paginatedCommunities.map((community) => (
                       <TableRow
                         key={community.id}
                         className="hover:bg-gray-50/50 border-gray-100 transition-colors"
@@ -408,6 +426,30 @@ export default function CommunitiesPage() {
               </Table>
             </div>
           </div>
+
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+              <p className="text-sm text-gray-600">
+                Showing{" "}
+                <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
+                {" "}to{" "}
+                <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredCommunities.length)}</span>
+                {" "}of{" "}
+                <span className="font-medium text-gray-900">{filteredCommunities.length}</span>{" "}
+                communities
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">Page {currentPage} of {totalPages}</span>
+                <div className="flex items-center gap-1">
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

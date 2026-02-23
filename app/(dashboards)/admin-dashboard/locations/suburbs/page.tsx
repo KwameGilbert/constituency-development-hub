@@ -14,6 +14,10 @@ import {
   Edit,
   Trash2,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -71,6 +75,8 @@ export default function SuburbsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Filter State
   const [selectedCommunityFilter, setSelectedCommunityFilter] = useState("all");
@@ -167,6 +173,18 @@ export default function SuburbsPage() {
       (s.parent_name &&
         s.parent_name.toLowerCase().includes(searchQuery.toLowerCase())),
   );
+
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredSuburbs.length / pageSize);
+  const paginatedSuburbs = filteredSuburbs.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   // Handle adding a new suburb
   const handleAddSuburb = async () => {
@@ -422,7 +440,7 @@ export default function SuburbsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredSuburbs.map((suburb) => (
+                  {paginatedSuburbs.map((suburb) => (
                     <TableRow
                       key={suburb.id}
                       className="hover:bg-gray-50/50 border-gray-100 transition-colors"
@@ -463,6 +481,30 @@ export default function SuburbsPage() {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200 mt-4">
+                <p className="text-sm text-gray-600">
+                  Showing{" "}
+                  <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
+                  {" "}to{" "}
+                  <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredSuburbs.length)}</span>
+                  {" "}of{" "}
+                  <span className="font-medium text-gray-900">{filteredSuburbs.length}</span>{" "}
+                  suburbs
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">Page {currentPage} of {totalPages}</span>
+                  <div className="flex items-center gap-1">
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
+                  </div>
+                </div>
+              </div>
+            )}
           )}
         </div>
       </div>

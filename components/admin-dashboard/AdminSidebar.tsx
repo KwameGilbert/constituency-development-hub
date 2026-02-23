@@ -18,7 +18,7 @@ import {
   FileText,
   ClipboardList,
   Users,
-  Shield,
+  // Shield,    // Commented out: Officers page disabled
   Briefcase,
   GraduationCap,
   MapPin,
@@ -171,16 +171,16 @@ export function AdminSidebar() {
                   href: "/admin-dashboard/issues",
                 },
                 { title: "Users", icon: Users, href: "/admin-dashboard/users" },
-                {
-                  title: "Officers",
-                  icon: Shield,
-                  href: "/admin-dashboard/officers",
-                },
-                {
-                  title: "Field Agents",
-                  icon: Briefcase,
-                  href: "/admin-dashboard/agents",
-                },
+                // {
+                //   title: "Officers",
+                //   icon: Shield,
+                //   href: "/admin-dashboard/officers",
+                // },
+                // {
+                //   title: "Field Agents",
+                //   icon: Briefcase,
+                //   href: "/admin-dashboard/agents",
+                // },
                 {
                   title: "Youth Records",
                   icon: GraduationCap,

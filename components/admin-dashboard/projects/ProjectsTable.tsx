@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Edit, Trash2, TrendingUp } from "lucide-react";
+import { Eye, Edit, Trash2, TrendingUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Project } from "@/lib/services/projects-service";
 import {
   AlertDialog,
@@ -21,6 +21,13 @@ import {
 import { toast } from "sonner";
 import { projectsService } from "@/lib/services/projects-service";
 import { useRouter } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProjectsTableProps {
   projects: Project[];
@@ -30,6 +37,7 @@ interface ProjectsTableProps {
     total: number;
     total_pages: number;
   };
+  onPageChange?: (page: number) => void;
 }
 
 const getStatusColor = (status: string) => {
@@ -59,9 +67,17 @@ const formatDate = (dateString: string) => {
   });
 };
 
-export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
+export function ProjectsTable({ projects }: ProjectsTableProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(projects.length / pageSize);
+  const paginatedProjects = projects.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
 
   const handleDelete = async (id: number) => {
     setDeletingId(id);
@@ -96,7 +112,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
     <div className="space-y-4">
       {/* Mobile: stacked cards */}
       <div className="md:hidden space-y-3">
-        {projects.map((project) => (
+        {paginatedProjects.map((project) => (
           <Card key={project.id} className="p-4">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
@@ -183,7 +199,7 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {projects.map((project) => (
+              {paginatedProjects.map((project) => (
                 <tr
                   key={project.id}
                   className="hover:bg-slate-50 transition-colors"
@@ -309,18 +325,57 @@ export function ProjectsTable({ projects, pagination }: ProjectsTableProps) {
       </Card>
       </div>
 
-      {pagination && pagination.total_pages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-slate-600">
-            Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of{" "}
-            {pagination.total} projects
-          </p>
-          <div className="flex gap-2">
-            {/* Pagination buttons would go here */}
-            <p className="text-sm text-slate-500">
-              Page {pagination.page} of {pagination.total_pages}
-            </p>
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+          <div className="text-sm text-slate-600">
+            Showing{" "}
+            <span className="font-medium text-slate-900">{(currentPage - 1) * pageSize + 1}</span>
+            {" "}to{" "}
+            <span className="font-medium text-slate-900">{Math.min(currentPage * pageSize, projects.length)}</span>
+            {" "}of{" "}
+            <span className="font-medium text-slate-900">{projects.length}</span>{" "}
+            projects
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 mr-4">
+              <span className="text-sm text-slate-500">Rows per page:</span>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(value) => {
+                  setPageSize(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px] h-8 bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <span className="text-sm text-slate-500">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

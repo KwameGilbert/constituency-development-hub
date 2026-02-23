@@ -8,18 +8,8 @@ import { ideasService, Idea } from "@/lib/services/ideas-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 
-interface PaginationType {
-  page: number;
-  limit: number;
-  total: number;
-  total_pages: number;
-}
-
 export default function IdeasListPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | undefined>(
-    undefined,
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,10 +17,9 @@ export default function IdeasListPage() {
     const fetchIdeas = async () => {
       try {
         setLoading(true);
-        const response = await ideasService.getAdminIdeas();
+        const response = await ideasService.getAdminIdeas({ limit: 1000 });
         if (response.success && response.data) {
           setIdeas(response.data.ideas || []);
-          setPagination(response.data.pagination);
         }
         setError(null);
       } catch (err) {
@@ -85,7 +74,7 @@ export default function IdeasListPage() {
 
         {/* Ideas Table */}
         {!loading && !error && (
-          <IdeasTable ideas={ideas} pagination={pagination} />
+          <IdeasTable ideas={ideas} />
         )}
       </div>
     </div>

@@ -11,18 +11,8 @@ import {
   JobPosting,
 } from "@/lib/services/employment-service";
 
-interface PaginationType {
-  page: number;
-  limit: number;
-  total: number;
-  total_pages: number;
-}
-
 export default function JobsListPage() {
   const [jobs, setJobs] = useState<JobPosting[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | undefined>(
-    undefined,
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,9 +20,8 @@ export default function JobsListPage() {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        const response = await employmentService.getAdminJobs();
+        const response = await employmentService.getAdminJobs({ limit: 1000 });
         setJobs(response.data.jobs);
-        setPagination(response.data.pagination);
         setError(null);
       } catch (err) {
         console.error("Failed to load jobs data:", err);
@@ -87,7 +76,7 @@ export default function JobsListPage() {
 
         {/* Jobs Table */}
         {!loading && !error && (
-          <JobsTable jobs={jobs} pagination={pagination} />
+          <JobsTable jobs={jobs} />
         )}
       </div>
     </div>

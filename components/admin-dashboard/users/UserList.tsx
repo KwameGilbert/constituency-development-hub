@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Eye, Edit, UserX, Search, Loader2 } from "lucide-react";
+import { Eye, Edit, UserX, Search, Loader2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import Link from "next/link";
 import { userService, User } from "@/lib/services/user-service";
 import { Card } from "@/components/ui/card";
@@ -36,6 +36,10 @@ export function UserList() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
 
   // Role mapping for display
   const roleDisplayNames: Record<User["role"], string> = {
@@ -53,6 +57,8 @@ export function UserList() {
         setLoading(true);
         const [usersRes, statsRes] = await Promise.all([
           userService.getUsers({
+            page: currentPage,
+            limit: pageSize,
             role: roleFilter !== "all" ? roleFilter : undefined,
             status: statusFilter !== "all" ? statusFilter : undefined,
             search: searchTerm || undefined,
@@ -62,6 +68,10 @@ export function UserList() {
 
         if (usersRes.success && usersRes.data.users) {
           setUsers(usersRes.data.users);
+          if (usersRes.data.pagination) {
+            setTotalPages(usersRes.data.pagination.total_pages);
+            setTotalUsers(usersRes.data.pagination.total);
+          }
         } else {
           setError(usersRes.message || "Failed to load users");
         }
@@ -78,6 +88,11 @@ export function UserList() {
     };
 
     fetchData();
+  }, [roleFilter, statusFilter, searchTerm, currentPage, pageSize]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
   }, [roleFilter, statusFilter, searchTerm]);
 
   // Use stats for counts if available
@@ -308,6 +323,91 @@ export function UserList() {
               ))}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && !error && totalPages > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+          <div className="text-sm text-gray-500">
+            Showing{" "}
+            <span className="font-medium text-gray-900">
+              {(currentPage - 1) * pageSize + 1}
+            </span>
+            {" "}to{" "}
+            <span className="font-medium text-gray-900">
+              {Math.min(currentPage * pageSize, totalUsers)}
+            </span>
+            {" "}of{" "}
+            <span className="font-medium text-gray-900">{totalUsers}</span>{" "}
+            users
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 mr-4">
+              <span className="text-sm text-gray-500">Rows per page:</span>
+              <Select
+                value={pageSize.toString()}
+                onValueChange={(value) => {
+                  setPageSize(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[70px] h-8 bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <span className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

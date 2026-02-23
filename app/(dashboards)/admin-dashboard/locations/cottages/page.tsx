@@ -15,6 +15,10 @@ import {
   Trash2,
   Loader2,
   Filter,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -78,6 +82,8 @@ export default function CottagesPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   // Filter State
   const [selectedSuburbFilter, setSelectedSuburbFilter] = useState("all");
@@ -284,6 +290,18 @@ export default function CottagesPage() {
 
     return true;
   });
+
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredCottages.length / pageSize);
+  const paginatedCottages = filteredCottages.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize,
+  );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedSuburbFilter, selectedSmallerCommunityFilter]);
 
   // Filtered lists for dropdowns based on selections
   const getFilteredSmallerCommunities = (suburbId: string) => {
@@ -611,7 +629,7 @@ export default function CottagesPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredCottages.map((cottage) => {
+                  {paginatedCottages.map((cottage) => {
                     const { suburbName, smallerCommunityName } =
                       getCottageContext(cottage);
                     return (
@@ -659,6 +677,30 @@ export default function CottagesPage() {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200 mt-4">
+                <p className="text-sm text-gray-600">
+                  Showing{" "}
+                  <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
+                  {" "}to{" "}
+                  <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredCottages.length)}</span>
+                  {" "}of{" "}
+                  <span className="font-medium text-gray-900">{filteredCottages.length}</span>{" "}
+                  cottages
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">Page {currentPage} of {totalPages}</span>
+                  <div className="flex items-center gap-1">
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
+                  </div>
+                </div>
+              </div>
+            )}
           )}
         </div>
       </div>
