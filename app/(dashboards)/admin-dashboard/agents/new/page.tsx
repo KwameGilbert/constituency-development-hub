@@ -5,7 +5,7 @@ export default function DisabledPage() {
   return null;
 }
 
-/*  ===== ORIGINAL CODE (commented out) =====
+//  ===== ORIGINAL CODE (commented out) =====
 // "use client";
 // 
 // import { useState, useEffect } from "react";
@@ -154,7 +154,7 @@ export default function DisabledPage() {
 //         <div className="max-w-[1600px] mx-auto">
 //           <Card className="border-none shadow-sm">
 //             <CardContent className="space-y-8 p-8">
-//               {/* Personal Information */}
+//               Personal Information
 //               <div className="space-y-4">
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
@@ -202,7 +202,7 @@ export default function DisabledPage() {
 //                 </div>
 //               </div>
 // 
-//               {/* Location Assignment */}
+//               Location Assignment
 //               <div className="space-y-4">
 //                 <h3 className="text-gray-900 font-semibold text-lg">
 //                   Location Assignment
@@ -233,7 +233,7 @@ export default function DisabledPage() {
 //                 </div>
 //               </div>
 // 
-//               {/* Footer Actions */}
+//               Footer Actions
 //               <div className="pt-4 flex items-center justify-end gap-3 mt-6">
 //                 <Button
 //                   variant="ghost"
@@ -258,4 +258,4 @@ export default function DisabledPage() {
 //   );
 // }
 // 
-===== END ORIGINAL CODE ===== */
+// ===== END ORIGINAL CODE =====

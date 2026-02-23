@@ -610,7 +610,8 @@ export default function CottagesPage() {
               </Button>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
+            <>
+              <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
               <Table>
                 <TableHeader className="bg-gray-50/50">
                   <TableRow className="hover:bg-transparent border-gray-100">
@@ -701,7 +702,8 @@ export default function CottagesPage() {
                 </div>
               </div>
             )}
-          )}
+          </>
+        )}
         </div>
       </div>
 

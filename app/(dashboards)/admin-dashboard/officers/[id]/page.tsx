@@ -5,7 +5,7 @@ export default function DisabledPage() {
   return null;
 }
 
-/*  ===== ORIGINAL CODE (commented out) =====
+//  ===== ORIGINAL CODE (commented out) =====
 // "use client";
 // 
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
@@ -124,11 +124,11 @@ export default function DisabledPage() {
 //       />
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
-//           {/* Officer Profile Card */}
+//           Officer Profile Card
 //           <Card className="border-none shadow-sm">
 //             <CardContent className="p-8">
 //               <div className="flex flex-col md:flex-row gap-8">
-//                 {/* Profile Header */}
+//                 Profile Header
 //                 <div className="flex-1">
 //                   <div className="flex items-start gap-4">
 //                     <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 overflow-hidden">
@@ -170,7 +170,7 @@ export default function DisabledPage() {
 //               </div>
 // 
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 pt-8 border-t border-gray-100">
-//                 {/* Contact Information */}
+//                 Contact Information
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
 //                     Contact Information
@@ -200,7 +200,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 // 
-//                 {/* Location Assignment */}
+//                 Location Assignment
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
 //                     Location Assignment
@@ -246,7 +246,7 @@ export default function DisabledPage() {
 //                     )}
 //                 </div>
 // 
-//                 {/* Activity Statistics */}
+//                 Activity Statistics
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
 //                     Activity Statistics
@@ -280,7 +280,7 @@ export default function DisabledPage() {
 //             </CardContent>
 //           </Card>
 // 
-//           {/* Recent Issues Managed */}
+//           Recent Issues Managed
 //           <Card>
 //             <CardHeader>
 //               <CardTitle className="text-base font-semibold">
@@ -300,4 +300,4 @@ export default function DisabledPage() {
 //   );
 // }
 // 
-===== END ORIGINAL CODE ===== */
+// ===== END ORIGINAL CODE =====

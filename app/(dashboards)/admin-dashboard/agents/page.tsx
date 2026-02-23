@@ -5,7 +5,7 @@ export default function DisabledPage() {
   return null;
 }
 
-/*  ===== ORIGINAL CODE (commented out) =====
+//  ===== ORIGINAL CODE (commented out) =====
 // "use client";
 // 
 // import { useState, useEffect } from "react";
@@ -300,7 +300,7 @@ export default function DisabledPage() {
 // 
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
-//           {/* Filters and Search */}
+//           Filters and Search
 //           <Card className="p-4 bg-white">
 //             <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
 //               <div className="space-y-1">
@@ -364,7 +364,7 @@ export default function DisabledPage() {
 //             </div>
 //           </Card>
 // 
-//           {/* Agents Table */}
+//           Agents Table
 //           <Card className="bg-white overflow-hidden">
 //             <div className="overflow-x-auto">
 //               <table className="w-full text-sm text-left">
@@ -503,4 +503,4 @@ export default function DisabledPage() {
 //   );
 // }
 // 
-===== END ORIGINAL CODE ===== */
+// ===== END ORIGINAL CODE =====
