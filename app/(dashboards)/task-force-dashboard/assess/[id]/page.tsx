@@ -57,6 +57,7 @@ import {
   TimelineEvent,
 } from "@/lib/services/issues-service";
 import { taskForceService } from "@/lib/services/task-force-service";
+import { toast } from "sonner";
 
 // --- Adapter Logic (Client Side View Model) ---
 
@@ -161,6 +162,9 @@ export default function AssessIssue() {
     setTouched,
     setSubmitting,
     resetAssessment,
+    saveDraft,
+    loadDraft,
+    clearDraft,
   } = useAssessmentStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -169,6 +173,12 @@ export default function AssessIssue() {
   useEffect(() => {
     if (issueId) {
       setCurrentIssue(issueId);
+
+      // Load any saved draft
+      const hasDraft = loadDraft(issueId);
+      if (hasDraft) {
+        toast.info("Draft restored from your previous session.");
+      }
 
       const fetchIssue = async () => {
         setLoading(true);
@@ -224,9 +234,20 @@ export default function AssessIssue() {
           return "Budget seems unreasonably high, please verify";
         }
         return "";
-      case "timeline":
+      case "startDate":
         if (assessment.decision === "approve" && !value) {
-          return "Timeline is required for approved issues";
+          return "Start date is required for approved issues";
+        }
+        if (value && assessment.endDate && new Date(value) >= new Date(assessment.endDate)) {
+          return "Start date must be before end date";
+        }
+        return "";
+      case "endDate":
+        if (assessment.decision === "approve" && !value) {
+          return "End date is required for approved issues";
+        }
+        if (value && assessment.startDate && new Date(value) <= new Date(assessment.startDate)) {
+          return "End date must be after start date";
         }
         return "";
       default:
@@ -312,8 +333,7 @@ export default function AssessIssue() {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       console.log("Validation failed", validationErrors);
-      const errorMessages = Object.values(validationErrors).join("\n");
-      alert(`Please fix the following errors before submitting:\n${errorMessages}`);
+      toast.error("Please fix the form errors before submitting.");
       return;
     }
 
@@ -331,8 +351,10 @@ export default function AssessIssue() {
           "estimated_cost",
           assessment.estimatedBudget.toString(),
         );
-      if (assessment.timeline)
-        formData.append("estimated_duration", assessment.timeline);
+      if (assessment.startDate)
+        formData.append("start_date", assessment.startDate);
+      if (assessment.endDate)
+        formData.append("end_date", assessment.endDate);
 
       // Additional fields that might be needed/supported
       formData.append(
@@ -353,13 +375,14 @@ export default function AssessIssue() {
 
       await taskForceService.submitAssessment(issueId, formData);
 
-      alert("Assessment submitted successfully!");
+      clearDraft(issueId);
+      toast.success("Assessment submitted successfully!");
       router.push("/task-force-dashboard/issues");
     } catch (error: unknown) {
       console.error("Error submitting assessment:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Please try again.";
-      alert(`Error submitting assessment: ${errorMessage}`);
+      toast.error(`Error submitting assessment: ${errorMessage}`);
     } finally {
       setSubmitting(false);
     }
@@ -384,7 +407,9 @@ export default function AssessIssue() {
     if (assessment.comments) progress += 30;
     if (assessment.recommendations) progress += 20;
     if (assessment.estimatedBudget && assessment.decision === "approve")
-      progress += 10;
+      progress += 5;
+    if (assessment.startDate && assessment.decision === "approve")
+      progress += 5;
     return Math.min(progress, 100);
   };
 
@@ -717,40 +742,47 @@ export default function AssessIssue() {
 
                       <div className="space-y-2">
                         <Label
-                          htmlFor="timeline"
+                          htmlFor="startDate"
                           className="text-sm font-medium"
                         >
-                          Implementation Timeline *
+                          Start Date *
                         </Label>
-                        <Select
-                          value={assessment.timeline}
-                          onValueChange={(value) =>
-                            handleFieldChange("timeline", value)
+                        <Input
+                          id="startDate"
+                          type="date"
+                          value={assessment.startDate}
+                          onChange={(e) =>
+                            handleFieldChange("startDate", e.target.value)
                           }
+                          onBlur={() => handleFieldBlur("startDate")}
+                          className={errors.startDate && touched.startDate ? "border-red-500" : ""}
+                        />
+                        {errors.startDate && touched.startDate && (
+                          <p className="text-sm text-red-600 mt-1">{errors.startDate}</p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="endDate"
+                          className="text-sm font-medium"
                         >
-                          <SelectTrigger
-                            className={
-                              errors.timeline && touched.timeline
-                                ? "border-red-500"
-                                : ""
-                            }
-                          >
-                            <SelectValue placeholder="Select timeline" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {metadata.timelines.map((timeline) => (
-                              <SelectItem
-                                key={timeline.value}
-                                value={timeline.value}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <Clock className="h-4 w-4 text-gray-400" />
-                                  {timeline.label}
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          End Date *
+                        </Label>
+                        <Input
+                          id="endDate"
+                          type="date"
+                          value={assessment.endDate}
+                          onChange={(e) =>
+                            handleFieldChange("endDate", e.target.value)
+                          }
+                          onBlur={() => handleFieldBlur("endDate")}
+                          min={assessment.startDate || undefined}
+                          className={errors.endDate && touched.endDate ? "border-red-500" : ""}
+                        />
+                        {errors.endDate && touched.endDate && (
+                          <p className="text-sm text-red-600 mt-1">{errors.endDate}</p>
+                        )}
                       </div>
                     </div>
                   )}
@@ -820,7 +852,14 @@ export default function AssessIssue() {
                       <span>Assessor: {currentUser.name}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <Button variant="outline" disabled={isSubmitting}>
+                      <Button
+                        variant="outline"
+                        disabled={isSubmitting}
+                        onClick={() => {
+                          saveDraft();
+                          toast.success("Draft saved successfully.");
+                        }}
+                      >
                         <Save className="h-4 w-4 mr-2" />
                         Save Draft
                       </Button>

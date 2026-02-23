@@ -32,6 +32,7 @@ import {
   Crown,
   Star,
   Tag,
+  DollarSign,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -240,6 +241,11 @@ export function AdminSidebar() {
                   title: "Ideas & Suggestions",
                   icon: Lightbulb,
                   href: "/admin-dashboard/ideas",
+                },
+                {
+                  title: "Finance",
+                  icon: DollarSign,
+                  href: "/admin-dashboard/finance",
                 },
               ].map((item) => (
                 <SidebarMenuItem key={item.title}>

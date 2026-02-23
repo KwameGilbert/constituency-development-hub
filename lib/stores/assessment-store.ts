@@ -17,7 +17,8 @@ interface AssessmentState {
     comments: string;
     recommendations: string;
     estimatedBudget: string;
-    timeline: string;
+    startDate: string;
+    endDate: string;
   };
   files: AssessmentFile[];
   isSubmitting: boolean;
@@ -34,6 +35,9 @@ interface AssessmentState {
   setTouched: (field: string) => void;
   setSubmitting: (isSubmitting: boolean) => void;
   resetAssessment: () => void;
+  saveDraft: () => void;
+  loadDraft: (issueId: number) => boolean;
+  clearDraft: (issueId: number) => void;
 }
 
 export const useAssessmentStore = create<AssessmentState>((set, get) => ({
@@ -43,7 +47,8 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
     comments: "",
     recommendations: "",
     estimatedBudget: "",
-    timeline: "",
+    startDate: "",
+    endDate: "",
   },
   files: [],
   isSubmitting: false,
@@ -126,12 +131,53 @@ export const useAssessmentStore = create<AssessmentState>((set, get) => ({
         comments: "",
         recommendations: "",
         estimatedBudget: "",
-        timeline: "",
+        startDate: "",
+        endDate: "",
       },
       files: [],
       isSubmitting: false,
       errors: {},
       touched: {},
     });
+  },
+
+  saveDraft: () => {
+    const { currentIssueId, assessment } = get();
+    if (!currentIssueId) return;
+    try {
+      const key = `assessment_draft_${currentIssueId}`;
+      const draft = {
+        assessment,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(key, JSON.stringify(draft));
+    } catch (e) {
+      console.error("Failed to save draft:", e);
+    }
+  },
+
+  loadDraft: (issueId: number): boolean => {
+    try {
+      const key = `assessment_draft_${issueId}`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return false;
+      const draft = JSON.parse(raw);
+      if (draft?.assessment) {
+        set({ assessment: draft.assessment });
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error("Failed to load draft:", e);
+      return false;
+    }
+  },
+
+  clearDraft: (issueId: number) => {
+    try {
+      localStorage.removeItem(`assessment_draft_${issueId}`);
+    } catch (e) {
+      console.error("Failed to clear draft:", e);
+    }
   },
 }));
