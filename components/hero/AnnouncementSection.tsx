@@ -88,11 +88,15 @@ export default function AnnouncementSection() {
 
               <SanitizedHtml
                 html={announcement.content}
-                className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3"
+                className="text-gray-600 text-sm mb-4 grow line-clamp-3"
               />
 
               <Link
-                href={`/announcements/${announcement.slug}`}
+                href={
+                  announcement.slug
+                    ? `/announcements/${announcement.slug}`
+                    : "/announcements"
+                }
                 className="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center mt-auto"
               >
                 Read More <ArrowRight className="w-3 h-3 ml-1" />
