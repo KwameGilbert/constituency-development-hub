@@ -89,6 +89,7 @@ export function RichTextEditor({
     >
       <Editor
         apiKey={tinyMceApiKey}
+        licenseKey="gpl"
 
         value={value}
         onEditorChange={(content) => {
@@ -137,7 +138,6 @@ export function RichTextEditor({
           placeholder,
           branding: false,
           promotion: false,
-          license_key: "gpl",
           automatic_uploads: true,
           file_picker_types: "image",
           images_upload_handler: handleTinyMceImageUpload,

@@ -678,8 +678,17 @@ export default function CottagesPage() {
                 </TableBody>
               </Table>
             </div>
-
-// ...existing code...
+            
+            {/* Pagination */}
+            {!loading && totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                <p className="text-sm text-gray-600">
+                  Showing{" "}
+                  <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
+                  {" "}to{" "}
+                  <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredCottages.length)}</span>
+                  {" "}of{" "}
+                  <span className="font-medium text-gray-900">{filteredCottages.length}</span>{" "}
                   cottages
                 </p>
                 <div className="flex items-center gap-2">
