@@ -28,6 +28,7 @@ const blogSchema = z.object({
   content: z.string().optional(),
   category: z.string().min(1, "Category is required"),
   status: z.enum(["draft", "published"]),
+  publishDate: z.string().optional(),
 });
 
 type BlogFormValues = z.infer<typeof blogSchema>;
@@ -57,6 +58,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
       content: post.content || "",
       category: post.category || "news",
       status: post.status || "draft",
+      publishDate: post.published_at
+        ? new Date(post.published_at).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
     },
   });
 
@@ -113,6 +117,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
         image: !selectedFile ? imageUrl : undefined,
         category: data.category,
         status: data.status,
+        published_at: data.publishDate
+          ? `${data.publishDate} 00:00:00`
+          : undefined,
       };
 
       console.log("Updating post with payload:", payload);
@@ -391,6 +398,21 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
           <p className="text-xs text-slate-400">
             Draft posts are only visible to admins. Published posts are visible
             to the public.
+          </p>
+        </div>
+
+        {/* Publish Date */}
+        <div className="space-y-2">
+          <Label htmlFor="publishDate">Publish Date</Label>
+          <Input
+            id="publishDate"
+            type="date"
+            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            {...form.register("publishDate")}
+            disabled={isLoading}
+          />
+          <p className="text-xs text-slate-400">
+            Set the date this post should be considered published.
           </p>
         </div>
       </div>
