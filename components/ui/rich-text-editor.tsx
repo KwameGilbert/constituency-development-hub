@@ -3,6 +3,7 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { cn } from "@/lib/utils";
+import { uploadService } from "@/lib/services/upload-service";
 
 
 interface RichTextEditorProps {
@@ -26,6 +27,51 @@ export function RichTextEditor({
   height = 400,
   error = false,
 }: RichTextEditorProps) {
+  const envTinyMceApiKey = process.env.NEXT_PUBLIC_TINYMCE_API_KEY?.trim();
+  const tinyMceApiKey =
+    envTinyMceApiKey &&
+    envTinyMceApiKey !== "YOUR_TINYMCE_API_KEY" &&
+    envTinyMceApiKey !== "YOUR_API_KEY"
+      ? envTinyMceApiKey
+      : "no-api-key";
+
+  const uploadEditorImage = async (file: File): Promise<string> => {
+    const response = await uploadService.uploadFile(file, "editor", "image");
+    return response.data.url;
+  };
+
+  const handleTinyMceImageUpload = async (
+    blobInfo: { blob: () => Blob; filename: () => string },
+  ): Promise<string> => {
+    const file = new File([blobInfo.blob()], blobInfo.filename(), {
+      type: blobInfo.blob().type || "image/png",
+    });
+    return uploadEditorImage(file);
+  };
+
+  const handleTinyMceFilePicker = (
+    callback: (url: string, meta?: { title?: string }) => void,
+  ): void => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) {
+        return;
+      }
+
+      try {
+        const imageUrl = await uploadEditorImage(file);
+        callback(imageUrl, { title: file.name });
+      } catch {
+        callback("");
+      }
+    };
+
+    input.click();
+  };
 
 
   // Detect if dark mode is active
@@ -42,7 +88,7 @@ export function RichTextEditor({
       )}
     >
       <Editor
-        apiKey={process.env.NEXT_PUBLIC_TINYMCE_API_KEY}
+        apiKey={tinyMceApiKey}
 
         value={value}
         onEditorChange={(content) => {
@@ -91,6 +137,11 @@ export function RichTextEditor({
           placeholder,
           branding: false,
           promotion: false,
+          license_key: "gpl",
+          automatic_uploads: true,
+          file_picker_types: "image",
+          images_upload_handler: handleTinyMceImageUpload,
+          file_picker_callback: handleTinyMceFilePicker,
         }}
       />
     </div>
