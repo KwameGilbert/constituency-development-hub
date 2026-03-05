@@ -82,50 +82,51 @@ function ArticlesGrid() {
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {posts.map((post, index) => (
-            <motion.article
+            <Link
               key={post.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              className="overflow-hidden rounded-2xl bg-white shadow"
+              href={`/blog/${post.slug}`}
+              aria-label={`Read ${post.title}`}
+              className="block rounded-2xl overflow-hidden"
             >
-              <div className="h-48 overflow-hidden relative bg-slate-100">
-                {post.image ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={getImageUrl(post.image)}
-                    alt={post.title || "Blog post"}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-slate-400">
-                    <span>No image</span>
-                  </div>
-                )}
-              </div>
-              <div className="space-y-3 p-5">
-                <div className="flex items-center gap-2">
-                  {post.category && (
-                    <span className="text-xs font-medium uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
-                      {post.category}
-                    </span>
+              <motion.article
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                className="overflow-hidden rounded-2xl bg-white shadow hover:shadow-lg transition"
+              >
+                <div className="h-48 overflow-hidden relative bg-slate-100">
+                  {post.image ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={getImageUrl(post.image)}
+                      alt={post.title || "Blog post"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-slate-400">
+                      <span>No image</span>
+                    </div>
                   )}
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-slate-500 line-clamp-2">
-                  {cleanupHtml(post.excerpt || "")}
-                </p>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="text-sm font-semibold text-red-600 hover:text-red-700 transition-colors"
-                >
-                  Read story →
-                </Link>
-              </div>
-            </motion.article>
+                <div className="space-y-3 p-5">
+                  <div className="flex items-center gap-2">
+                    {post.category && (
+                      <span className="text-xs font-medium uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
+                        {post.category}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-slate-500 line-clamp-2">
+                    {cleanupHtml(post.excerpt || "")}
+                  </p>
+                  <span className="text-sm font-semibold text-red-600">Read story →</span>
+                </div>
+              </motion.article>
+            </Link>
           ))}
         </div>
 

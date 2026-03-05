@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import { getImageUrl } from "@/lib/utils";
 import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { cleanupHtml } from "@/lib/utils";
+import RelatedPosts from "@/components/blog/RelatedPosts";
 
 interface BlogPostClientProps {
   initialPost?: BlogPost | null;
@@ -432,7 +433,10 @@ export default function BlogPostClient({
           </div>
         </motion.article>
 
-        {/* Related Articles CTA */}
+        {/* Related Articles */}
+        <RelatedPosts currentId={post.id} category={post.category} />
+
+        {/* View more CTA */}
         <div className="my-16 text-center">
           <Link href="/blog">
             <Button variant="outline" className="rounded-full px-8">
