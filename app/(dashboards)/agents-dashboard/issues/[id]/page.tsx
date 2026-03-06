@@ -8,6 +8,9 @@ import {
   MapPin,
   Calendar,
   User,
+  Phone,
+  Mail,
+  Home,
   AlertCircle,
   Loader2,
   FileText,
@@ -21,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { agentService, IssueDetail } from "@/lib/services/agent-service";
+import { authService } from "@/lib/services/auth-service";
 import AgentDashboardHeader from "@/components/agent-dashboard/AgentDashboardHeader";
 import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import IssueDescription from "@/components/ui/IssueDescription";
@@ -179,6 +183,36 @@ export default function AgentIssueDetailPage({
 
   if (!issue) return null;
 
+  const currentUser = authService.getCurrentUser();
+
+  const parseLegacyField = (label: string): string | undefined => {
+    const text = issue.description || "";
+    const regex = new RegExp(`${label}\\s*:\\s*([^\\n\\r]+)`, "i");
+    const match = text.match(regex);
+    return match?.[1]?.trim();
+  };
+
+  const fallbackType = parseLegacyField("Issue Type");
+  const fallbackSector = parseLegacyField("Sector");
+  const fallbackSubsector = parseLegacyField("Subsector");
+  const fallbackGender = parseLegacyField("Gender");
+  const fallbackAddress = parseLegacyField("Address");
+
+  const issueTypeLabel =
+    issue.issue_type ||
+    issue.type ||
+    fallbackType ||
+    "community_based";
+
+  const sectorLabel = issue.sector || fallbackSector || "General";
+  const subsectorLabel = issue.subsector || fallbackSubsector || "Not specified";
+
+  const reporterNameLabel = issue.reporter_name || currentUser?.name || "Not provided";
+  const reporterPhoneLabel = issue.reporter_phone || currentUser?.phone || "Not provided";
+  const reporterEmailLabel = issue.reporter_email || currentUser?.email || "Not provided";
+  const reporterGenderLabel = issue.reporter_gender || fallbackGender || "Not specified";
+  const reporterAddressLabel = issue.reporter_address || fallbackAddress || "Not specified";
+
   return (
     <div className="flex flex-col h-full w-full bg-slate-50">
       <AgentDashboardHeader />
@@ -257,27 +291,23 @@ export default function AgentIssueDetailPage({
                   <div>
                     <label className="text-sm text-slate-500">Type</label>
                     <p className="mt-1 font-medium text-slate-900">
-                      {issue.type || "N/A"}
+                      {issueTypeLabel.replace(/_/g, " ")}
                     </p>
                   </div>
-                  {issue.sector && (
-                    <div>
-                      <label className="text-sm text-slate-500">Sector</label>
-                      <p className="mt-1 font-medium text-slate-900">
-                        {issue.sector}
-                      </p>
-                    </div>
-                  )}
-                  {issue.subsector && (
-                    <div>
-                      <label className="text-sm text-slate-500">
-                        Subsector
-                      </label>
-                      <p className="mt-1 font-medium text-slate-900">
-                        {issue.subsector}
-                      </p>
-                    </div>
-                  )}
+                  <div>
+                    <label className="text-sm text-slate-500">Sector</label>
+                    <p className="mt-1 font-medium text-slate-900">
+                      {sectorLabel}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-500">
+                      Subsector
+                    </label>
+                    <p className="mt-1 font-medium text-slate-900">
+                      {subsectorLabel}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -363,7 +393,7 @@ export default function AgentIssueDetailPage({
                   </div>
                 </div>
 
-                {issue.people_affected && (
+                {issue.people_affected != null && (
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-slate-100">
                       <Users className="h-4 w-4 text-slate-600" />
@@ -371,7 +401,7 @@ export default function AgentIssueDetailPage({
                     <div>
                       <p className="text-sm text-slate-500">People Affected</p>
                       <p className="font-medium">
-                        {issue.people_affected.toLocaleString()}
+                        {Number(issue.people_affected).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -392,40 +422,55 @@ export default function AgentIssueDetailPage({
             </Card>
 
             {/* Reporter Info */}
-            {issue.reporter_name && (
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <User className="h-5 w-5 text-slate-600" />
-                    Constituent Info
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <User className="h-5 w-5 text-slate-600" />
+                  Constituent Info
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <label className="text-sm text-slate-500">Name</label>
+                  <p className="font-medium text-slate-900">
+                    {reporterNameLabel}
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Phone className="h-4 w-4 text-slate-500 mt-0.5" />
                   <div>
-                    <label className="text-sm text-slate-500">Name</label>
+                    <label className="text-sm text-slate-500">Phone</label>
                     <p className="font-medium text-slate-900">
-                      {issue.reporter_name}
+                      {reporterPhoneLabel}
                     </p>
                   </div>
-                  {issue.reporter_phone && (
-                    <div>
-                      <label className="text-sm text-slate-500">Phone</label>
-                      <p className="font-medium text-slate-900">
-                        {issue.reporter_phone}
-                      </p>
-                    </div>
-                  )}
-                  {issue.reporter_email && (
-                    <div>
-                      <label className="text-sm text-slate-500">Email</label>
-                      <p className="font-medium text-slate-900">
-                        {issue.reporter_email}
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
+                </div>
+                <div className="flex items-start gap-2">
+                  <Mail className="h-4 w-4 text-slate-500 mt-0.5" />
+                  <div>
+                    <label className="text-sm text-slate-500">Email</label>
+                    <p className="font-medium text-slate-900">
+                      {reporterEmailLabel}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-slate-500">Gender</label>
+                  <p className="font-medium text-slate-900 capitalize">
+                    {reporterGenderLabel}
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Home className="h-4 w-4 text-slate-500 mt-0.5" />
+                  <div>
+                    <label className="text-sm text-slate-500">Address</label>
+                    <p className="font-medium text-slate-900">
+                      {reporterAddressLabel}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Assigned Officer */}
             {issue.assigned_officer && (

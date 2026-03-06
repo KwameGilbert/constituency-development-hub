@@ -8,7 +8,13 @@ export interface Issue {
   title: string;
   description: string;
   category: string;
+  sector?: string;
+  subsector?: string;
+  issue_type?: "community_based" | "individual_based" | string;
   location: string; // The API seems to return this as a string based on usage
+  smaller_community?: string;
+  suburb?: string;
+  cottage?: string;
   latitude?: number;
   longitude?: number;
   status:
@@ -28,6 +34,11 @@ export interface Issue {
   images: string[];
   reporter_name?: string;
   reporter_phone?: string;
+  reporter_email?: string;
+  reporter_gender?: string;
+  reporter_address?: string;
+  people_affected?: number;
+  additional_notes?: string;
   created_at: string;
   updated_at?: string;
   assigned_task_force_id?: number;

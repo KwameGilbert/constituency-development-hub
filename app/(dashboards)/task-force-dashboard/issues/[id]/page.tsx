@@ -48,6 +48,8 @@ interface UiIssue extends Omit<ApiIssue, "assessment_report"> {
     role: string;
     phone: string;
     email: string;
+    gender?: string;
+    address?: string;
     alternateContact?: string;
   };
   location_details: {
@@ -116,6 +118,17 @@ const adaptIssueToUi = (
     assessment?: RawAssessmentData;
   }
 ): UiIssue => {
+    const toDisplayName = (value: unknown): string | undefined => {
+      if (typeof value === "string") return value;
+      if (value && typeof value === "object" && "name" in value) {
+        const name = (value as { name?: unknown }).name;
+        return typeof name === "string" ? name : undefined;
+      }
+      return undefined;
+    };
+
+    const apiIssueAny = apiIssue as Record<string, unknown>;
+
     // Helper to safely parse file fields which might be JSON strings or arrays
   const parseFiles = (field: string | string[] | undefined | null): string[] => {
       if (Array.isArray(field)) return field;
@@ -181,13 +194,45 @@ const adaptIssueToUi = (
       community: apiIssue.location || "Unknown Community",
       submissionDate: apiIssue.created_at,
       lastUpdated: apiIssue.updated_at || apiIssue.created_at,
-      sector: "General", // Default
+      sector: toDisplayName(apiIssueAny.sector) || "General",
+      subsector:
+        toDisplayName(apiIssueAny.subsector) ||
+        toDisplayName(apiIssueAny.sub_sector) ||
+        undefined,
       detailedDescription: apiIssue.description, 
       submitter: {
-        name: apiIssue.reporter_name || "Anonymous",
+        name:
+          apiIssue.reporter_name ||
+          (typeof apiIssueAny.constituent_name === "string"
+            ? apiIssueAny.constituent_name
+            : "Anonymous"),
         role: "Community Member",
-        phone: apiIssue.reporter_phone || "N/A",
-        email: "N/A",
+        phone:
+          apiIssue.reporter_phone ||
+          (typeof apiIssueAny.constituent_contact === "string"
+            ? apiIssueAny.constituent_contact
+            : "N/A"),
+        email:
+          (typeof apiIssueAny.reporter_email === "string"
+            ? apiIssueAny.reporter_email
+            : undefined) ||
+          (typeof apiIssueAny.constituent_email === "string"
+            ? apiIssueAny.constituent_email
+            : "N/A"),
+        gender:
+          (typeof apiIssueAny.reporter_gender === "string"
+            ? apiIssueAny.reporter_gender
+            : undefined) ||
+          (typeof apiIssueAny.constituent_gender === "string"
+            ? apiIssueAny.constituent_gender
+            : undefined),
+        address:
+          (typeof apiIssueAny.reporter_address === "string"
+            ? apiIssueAny.reporter_address
+            : undefined) ||
+          (typeof apiIssueAny.constituent_address === "string"
+            ? apiIssueAny.constituent_address
+            : undefined),
       },
       location_details: {
         address: apiIssue.location || "",
@@ -445,6 +490,12 @@ const adaptIssueToUi = (
                         Sector
                       </Label>
                       <p className="font-medium">{issue.sector}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">
+                        Sub-Sector
+                      </Label>
+                      <p className="font-medium">{issue.subsector || "N/A"}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-gray-500">
@@ -807,6 +858,34 @@ const adaptIssueToUi = (
                 </Label>
                 <p>{issue.submitter.role}</p>
               </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-500">
+                  Phone
+                </Label>
+                <p>{issue.submitter.phone || "N/A"}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-500">
+                  Email
+                </Label>
+                <p>{issue.submitter.email || "N/A"}</p>
+              </div>
+              {issue.submitter.gender && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">
+                    Gender
+                  </Label>
+                  <p className="capitalize">{issue.submitter.gender}</p>
+                </div>
+              )}
+              {issue.submitter.address && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">
+                    Address
+                  </Label>
+                  <p>{issue.submitter.address}</p>
+                </div>
+              )}
 
             </CardContent>
           </Card>

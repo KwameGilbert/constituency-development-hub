@@ -54,7 +54,7 @@ interface Location {
 
 export function AddIssues() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("issue-details");
+  const [activeTab, setActiveTab] = useState("constituent-details");
   const [submitting, setSubmitting] = useState(false);
   const [locations, setLocations] = useState<Location[]>([]);
 
@@ -272,7 +272,6 @@ export function AddIssues() {
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8 bg-slate-100">
-          
           <TabsTrigger
             value="constituent-details"
             className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
@@ -285,7 +284,6 @@ export function AddIssues() {
           >
             Location
           </TabsTrigger>
-
           <TabsTrigger
             value="issue-details"
             className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
@@ -294,9 +292,7 @@ export function AddIssues() {
           </TabsTrigger>
         </TabsList>
 
-     
-
-        {/* Tab 2: Constituent Details */}
+        {/* Tab 1: Constituent Details */}
         <TabsContent value="constituent-details" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Constituent Name" required>
@@ -352,25 +348,16 @@ export function AddIssues() {
 
           <div className="flex justify-between items-center pt-4">
             <p className="text-sm text-red-500">* Required fields</p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => handleNext("issue-details")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <Button
-                onClick={() => handleNext("location")}
-                className="bg-slate-900 hover:bg-slate-800 text-white"
-              >
-                Next <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+            <Button
+              onClick={() => handleNext("location")}
+              className="bg-slate-900 hover:bg-slate-800 text-white"
+            >
+              Next <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         </TabsContent>
 
-        {/* Tab 3: Location */}
+        {/* Tab 2: Location */}
         <TabsContent value="location" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Main Community" required>
@@ -400,12 +387,12 @@ export function AddIssues() {
                 placeholder={
                   !formData.location
                     ? "Select Main Community first"
-                    : "Select Smaller Community (Optional)"
+                    : "Select Suburb (Optional)"
                 }
-                searchPlaceholder="Search smaller communities..."
+                searchPlaceholder="Search suburbs..."
                 disabled={!formData.location || loadingSubLocations}
                 loading={loadingSubLocations}
-                emptyMessage="No smaller community found."
+                emptyMessage="No suburb found."
               />
             </FormItem>
           </div>
@@ -432,26 +419,16 @@ export function AddIssues() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
+                onClick={() => handleNext("issue-details")}
                 className="bg-slate-900 hover:bg-slate-800 text-white"
-                onClick={handleSubmit}
-                disabled={submitting}
               >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
-                  </>
-                )}
+                Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
         </TabsContent>
 
-           {/* Tab 1: Issue Details */}
+        {/* Tab 3: Issue Details */}
         <TabsContent value="issue-details" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Issue Title" required>
@@ -467,7 +444,6 @@ export function AddIssues() {
                 value={formData.issue_type || "community_based"}
                 onValueChange={(v) => {
                   updateField("issue_type", v);
-                  // Reset people_affected if switching to individual
                   if (v === "individual_based") {
                     updateField("people_affected", 1);
                   }
@@ -513,7 +489,6 @@ export function AddIssues() {
                   );
                   updateField("category_id", categoryId);
                   updateField("category", selectedCat?.name || "");
-                  // Reset sector and subsector when category changes
                   updateField("sector_id", undefined);
                   updateField("sector", "");
                   updateField("sub_sector_id", undefined);
@@ -566,7 +541,6 @@ export function AddIssues() {
                   );
                   updateField("sector_id", sectorId);
                   updateField("sector", selectedSec?.name || "");
-                  // Reset subsector when sector changes
                   updateField("sub_sector_id", undefined);
                   updateField("subsector", "");
                 }}
@@ -639,7 +613,6 @@ export function AddIssues() {
             </FormItem>
           </div>
 
-          {/* Show People Affected only for community-based issues */}
           {formData.issue_type === "community_based" && (
             <FormItem label="People Affected (Approx.)" required>
               <Input
@@ -670,12 +643,31 @@ export function AddIssues() {
 
           <div className="flex justify-between items-center pt-4">
             <p className="text-sm text-red-500">* Required fields</p>
-            <Button
-              onClick={() => handleNext("constituent-details")}
-              className="bg-slate-900 hover:bg-slate-800 text-white"
-            >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                onClick={() => handleNext("location")}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+              </Button>
+              <Button
+                className="bg-slate-900 hover:bg-slate-800 text-white"
+                onClick={handleSubmit}
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </TabsContent>
       </Tabs>

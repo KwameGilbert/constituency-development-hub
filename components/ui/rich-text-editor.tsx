@@ -36,7 +36,17 @@ export function RichTextEditor({
 
   const uploadEditorImage = async (file: File): Promise<string> => {
     const response = await uploadService.uploadFile(file, "editor", "image");
-    return response.data.url;
+    const rawUrl = response.data.url;
+    
+    // If the server returns a relative path, prepend the backend API URL
+    if (rawUrl.startsWith("/")) {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      // Strip any trailing slashes from baseUrl for clean concatenation
+      const cleanBaseUrl = baseUrl.replace(/\/+$/, "");
+      return `${cleanBaseUrl}${rawUrl}`;
+    }
+    
+    return rawUrl;
   };
 
   const handleTinyMceImageUpload = async (
@@ -103,20 +113,17 @@ export function RichTextEditor({
             "image",
             "media",
             "table",
-            "paste",
             "code",
             "help",
             "quickbars",
             "wordcount",
           ],
           toolbar:
-            "undo redo | formatselect | " +
+            "undo redo | blocks | " +
             "bold italic underline | alignleft aligncenter alignright | " +
             "bullist numlist outdent indent | link image media | removeformat | code",
           /* Ensure Enter creates paragraphs */
           forced_root_block: "p",
-          force_p_newlines: true,
-          force_br_newlines: false,
           paste_as_text: false,
           paste_data_images: true,
           list_indent_on_tab: true,
@@ -127,7 +134,9 @@ export function RichTextEditor({
               padding: 8px;
             }
             p { margin-bottom: 1rem; line-height: 1.6; }
-            ul, ol { margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.25rem; }
+            ul { margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.5rem; list-style-type: disc !important; }
+            ol { margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.5rem; list-style-type: decimal !important; }
+            li { margin-bottom: 0.25rem; display: list-item; }
           `,
           skin: isDarkMode ? "oxide-dark" : "oxide",
           content_css: isDarkMode ? "dark" : "default",
@@ -137,16 +146,9 @@ export function RichTextEditor({
           automatic_uploads: true,
           file_picker_types: "image",
           images_upload_handler: async (
-            blobInfo: any,
-            success: (url: string) => void,
-            failure: (msg: string) => void,
+            blobInfo: { blob: () => Blob; filename: () => string }
           ) => {
-            try {
-              const url = await handleTinyMceImageUpload(blobInfo);
-              success(url);
-            } catch (e) {
-              failure("Image upload failed");
-            }
+            return handleTinyMceImageUpload(blobInfo);
           },
           file_picker_callback: (
             callback: (url: string, meta?: { title?: string }) => void,
@@ -154,7 +156,11 @@ export function RichTextEditor({
             handleTinyMceFilePicker(callback);
           },
           /* Ensure editor starts with a paragraph for predictable Enter behaviour */
-          setup: (editor: any) => {
+          setup: (editor: {
+            on: (event: string, cb: () => void) => void;
+            getContent: (opts: { format: "raw" }) => string;
+            setContent: (content: string) => void;
+          }) => {
             editor.on("init", () => {
               if (!editor.getContent({ format: "raw" })) {
                 editor.setContent("<p></p>");

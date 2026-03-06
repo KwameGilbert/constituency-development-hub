@@ -33,6 +33,9 @@ import {
   Check,
   User,
   MapPin,
+  Lock,
+  Eye,
+  EyeOff,
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
@@ -73,6 +76,8 @@ export default function EditUserPage({
   const [submitting, setSubmitting] = useState(false);
   const [prefillCommunityName, setPrefillCommunityName] = useState("");
   const [prefillSuburbName, setPrefillSuburbName] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [initialRole, setInitialRole] = useState<string>("");
   const [initialStatus, setInitialStatus] = useState<string>("");
@@ -80,6 +85,8 @@ export default function EditUserPage({
     fullName: "",
     email: "",
     phone: "",
+    newPassword: "",
+    confirmPassword: "",
     department: "",
     role: "",
     status: "active",
@@ -229,6 +236,18 @@ export default function EditUserPage({
       return;
     }
 
+    if (formData.newPassword) {
+      if (formData.newPassword.length < 8) {
+        toast.error("Password must be at least 8 characters");
+        return;
+      }
+
+      if (formData.newPassword !== formData.confirmPassword) {
+        toast.error("Passwords do not match");
+        return;
+      }
+    }
+
     const userId = Number(id);
     if (!Number.isFinite(userId)) {
       toast.error("Invalid user id");
@@ -252,6 +271,8 @@ export default function EditUserPage({
 
       await usersService.updateUser(userId, {
         name: formData.fullName,
+        email: formData.email,
+        password: formData.newPassword || undefined,
         phone: formData.phone || undefined,
         location: locations.join(", ") || undefined,
       });
@@ -265,6 +286,12 @@ export default function EditUserPage({
           status: formData.status,
         });
       }
+
+      setFormData((prev) => ({
+        ...prev,
+        newPassword: "",
+        confirmPassword: "",
+      }));
 
       toast.success("User updated successfully");
       router.push(`/admin-dashboard/users/${id}`);
@@ -376,9 +403,10 @@ export default function EditUserPage({
                   <Input
                     id="email"
                     type="email"
+                    placeholder="Enter email address"
                     value={formData.email}
-                    readOnly
-                    className="bg-gray-50 text-gray-500"
+                    onChange={handleInputChange}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -437,6 +465,72 @@ export default function EditUserPage({
                   </Select>
                 </div>
               </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                  <Lock className="w-4 h-4" />
+                  <h3>Password Reset</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword" className="text-gray-700">
+                      New Password
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="newPassword"
+                        type={showNewPassword ? "text" : "password"}
+                        placeholder="Leave blank to keep current password"
+                        value={formData.newPassword}
+                        onChange={handleInputChange}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword((prev) => !prev)}
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+                        aria-label={showNewPassword ? "Hide password" : "Show password"}
+                      >
+                        {showNewPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-gray-400">
+                      Minimum 8 characters
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-gray-700">
+                      Confirm New Password
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm new password"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-4">

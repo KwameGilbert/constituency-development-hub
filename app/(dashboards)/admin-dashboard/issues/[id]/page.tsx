@@ -7,6 +7,7 @@ import {
   Calendar,
   User,
   Phone,
+  Mail,
   AlertCircle,
   CheckCircle,
   Camera,
@@ -216,6 +217,46 @@ export default async function IssueDetailPage({
                     <div>
                       <p className="text-sm font-medium text-gray-700">Category</p>
                       <p className="text-gray-600 capitalize">{issue.category}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Sector</p>
+                      <p className="text-gray-600">{issue.sector || "N/A"}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Sub-Sector</p>
+                      <p className="text-gray-600">{issue.subsector || "N/A"}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Mail className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Constituent Email</p>
+                      <p className="text-gray-600">{issue.reporter_email || "N/A"}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <User className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Constituent Gender</p>
+                      <p className="text-gray-600 capitalize">{issue.reporter_gender || "N/A"}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 md:col-span-2">
+                    <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Constituent Address</p>
+                      <p className="text-gray-600">{issue.reporter_address || "N/A"}</p>
                     </div>
                   </div>
                 </div>

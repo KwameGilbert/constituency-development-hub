@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,7 @@ import { userService, User } from "@/lib/services/user-service";
 import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { dashboardService, AdminDashboardStats } from "@/lib/services/dashboard-service";
+import Swal from "sweetalert2";
 
 export function UserList() {
   const [users, setUsers] = useState<User[]>([]);
@@ -40,6 +41,7 @@ export function UserList() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
 
   // Role mapping for display
   const roleDisplayNames: Record<User["role"], string> = {
@@ -50,45 +52,46 @@ export function UserList() {
     task_force: "Task Force",
   };
 
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [usersRes, statsRes] = await Promise.all([
+        userService.getUsers({
+          page: currentPage,
+          limit: pageSize,
+          role: roleFilter !== "all" ? roleFilter : undefined,
+          status: statusFilter !== "all" ? statusFilter : undefined,
+          search: searchTerm || undefined,
+        }),
+        dashboardService.getAdminStats(),
+      ]);
+
+      if (usersRes.success && usersRes.data.users) {
+        setUsers(usersRes.data.users);
+        if (usersRes.data.pagination) {
+          setTotalPages(usersRes.data.pagination.total_pages);
+          setTotalUsers(usersRes.data.pagination.total);
+        }
+      } else {
+        setError(usersRes.message || "Failed to load users");
+      }
+
+      if (statsRes.success && statsRes.data) {
+        setStats(statsRes.data);
+      }
+    } catch (err) {
+      setError("Failed to load data");
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, roleFilter, statusFilter, searchTerm]);
+
   // Fetch users and stats
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [usersRes, statsRes] = await Promise.all([
-          userService.getUsers({
-            page: currentPage,
-            limit: pageSize,
-            role: roleFilter !== "all" ? roleFilter : undefined,
-            status: statusFilter !== "all" ? statusFilter : undefined,
-            search: searchTerm || undefined,
-          }),
-          dashboardService.getAdminStats(),
-        ]);
-
-        if (usersRes.success && usersRes.data.users) {
-          setUsers(usersRes.data.users);
-          if (usersRes.data.pagination) {
-            setTotalPages(usersRes.data.pagination.total_pages);
-            setTotalUsers(usersRes.data.pagination.total);
-          }
-        } else {
-          setError(usersRes.message || "Failed to load users");
-        }
-
-        if (statsRes.success && statsRes.data) {
-          setStats(statsRes.data);
-        }
-      } catch (err) {
-        setError("Failed to load data");
-        console.error("Error fetching data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
-  }, [roleFilter, statusFilter, searchTerm, currentPage, pageSize]);
+  }, [fetchData]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -128,6 +131,46 @@ export function UserList() {
 
   const handleSearch = () => {
     // The search is triggered automatically via useEffect when searchTerm changes
+  };
+
+  const handleDeleteUser = async (user: User) => {
+    const result = await Swal.fire({
+      title: "Delete user?",
+      text: `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, delete",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      setDeletingUserId(user.id);
+      await userService.deleteUser(user.id);
+      await Swal.fire({
+        title: "Deleted",
+        text: "User deleted successfully.",
+        icon: "success",
+        timer: 1800,
+        showConfirmButton: false,
+      });
+      await fetchData();
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      const message = err instanceof Error ? err.message : "Failed to delete user";
+      await Swal.fire({
+        title: "Delete failed",
+        text: message,
+        icon: "error",
+      });
+    } finally {
+      setDeletingUserId(null);
+    }
   };
 
   return (
@@ -314,8 +357,14 @@ export function UserList() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700"
+                        onClick={() => handleDeleteUser(user)}
+                        disabled={deletingUserId === user.id}
                       >
-                        <UserX className="w-4 h-4" />
+                        {deletingUserId === user.id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <UserX className="w-4 h-4" />
+                        )}
                       </Button>
                     </div>
                   </TableCell>

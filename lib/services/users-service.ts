@@ -50,6 +50,8 @@ export interface CreateUserPayload {
 
 export interface UpdateUserPayload {
   name?: string;
+  email?: string;
+  password?: string;
   phone?: string;
   location?: string;
   bio?: string;

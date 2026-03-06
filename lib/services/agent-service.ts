@@ -120,7 +120,8 @@ export interface IssueDetail {
   title: string;
   description: string;
   category: string;
-  type: string;
+  type?: string;
+  issue_type?: "community_based" | "individual_based" | string;
   priority: string;
   status: string;
   location: string;
@@ -137,6 +138,8 @@ export interface IssueDetail {
   reporter_name?: string;
   reporter_phone?: string;
   reporter_email?: string;
+  reporter_gender?: string;
+  reporter_address?: string;
   images?: string[];
   assigned_officer?: {
     id: number;

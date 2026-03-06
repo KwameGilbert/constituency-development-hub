@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { ChevronUp, RotateCcw, Search, Eye, Loader2, ArrowRight } from "lucide-react";
+import { ChevronUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RotateCcw, Search, Eye, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -54,6 +54,8 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Edit Dialog State
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
@@ -67,7 +69,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
     try {
       const filters: IssueFilters = {
         page: currentPage,
-        limit: 50,
+        limit: itemsPerPage,
       };
 
       if (searchQuery) filters.search = searchQuery;
@@ -91,7 +93,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       }
       if (response && response.success && response.data.reports) {
         setIssues(response.data.reports);
-        setTotalPages(Math.ceil(response.data.total / response.data.limit));
+        const total = response.data.total ?? response.data.reports.length;
+        const limit = response.data.limit ?? itemsPerPage;
+        setTotalItems(total);
+        setTotalPages(Math.max(1, Math.ceil(total / limit)));
       } else {
         setIssues([]);
       }
@@ -107,6 +112,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
     selectedStatus,
     selectedCategory,
     selectedPriority,
+    itemsPerPage,
   ]);
 
   useEffect(() => {
@@ -516,29 +522,83 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                <p className="text-sm text-gray-500">
-                  Page {currentPage} of {totalPages}
-                </p>
-                <div className="flex gap-2">
+            {totalPages >= 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-4 border-t gap-4">
+                <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <span>
+                    Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}–{Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} issues
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs">Per page:</span>
+                    <Select
+                      value={itemsPerPage.toString()}
+                      onValueChange={(v) => {
+                        setItemsPerPage(Number(v));
+                        setCurrentPage(1);
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-[70px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
                   <Button
                     variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage(1)}
                     disabled={currentPage === 1}
                   >
-                    Previous
+                    <ChevronsLeft className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  {getPageNumbers(currentPage, totalPages).map((page, i) =>
+                    page === "..." ? (
+                      <span key={`ellipsis-${i}`} className="px-2 text-sm text-gray-400">…</span>
+                    ) : (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="icon"
+                        className={cn("h-8 w-8 text-xs", currentPage === page && "pointer-events-none")}
+                        onClick={() => setCurrentPage(page as number)}
+                      >
+                        {page}
+                      </Button>
+                    )
+                  )}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
                   >
-                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronsRight className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -548,6 +608,19 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       </div>
     </div>
   );
+}
+
+function getPageNumbers(current: number, total: number): (number | "...")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | "...")[] = [];
+  pages.push(1);
+  if (current > 3) pages.push("...");
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (current < total - 2) pages.push("...");
+  pages.push(total);
+  return pages;
 }
 
 function FilterSelect({

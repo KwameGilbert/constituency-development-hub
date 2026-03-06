@@ -12,7 +12,9 @@ import {
   DollarSign,
   TrendingUp,
   AlertTriangle,
+  Download,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import {
   Select,
   SelectContent,
@@ -72,6 +74,146 @@ const getStatusColor = (status: string) => {
       return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
+
+// ---- Excel Export Helpers ----
+function exportProjectsToExcel(projects: FinanceProject[]) {
+  const data = projects.map((p, i) => ({
+    "#": i + 1,
+    "Project": p.title,
+    "Location": p.location,
+    "Sector": p.sector?.name || "—",
+    "Status": p.status.replace(/_/g, " "),
+    "Contractor": p.contractor || "—",
+    "Budget (₵)": p.budget || 0,
+    "Spent (₵)": p.spent || 0,
+    "Remaining (₵)": (p.budget || 0) - (p.spent || 0),
+    "Usage (%)": p.budget > 0 ? Number(((p.spent / p.budget) * 100).toFixed(1)) : 0,
+    "Progress (%)": p.progress_percent ?? 0,
+    "Start Date": p.start_date || "—",
+    "End Date": p.end_date || "—",
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  // Auto-size columns
+  ws["!cols"] = Object.keys(data[0] || {}).map((key) => ({
+    wch: Math.max(key.length, ...data.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+  }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Projects Finance");
+  XLSX.writeFile(wb, `Projects_Finance_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
+function exportIssuesToExcel(issues: FinanceIssue[]) {
+  const data = issues.map((issue, i) => ({
+    "#": i + 1,
+    "Issue": issue.title,
+    "Case ID": issue.case_id || `#${issue.id}`,
+    "Category": issue.category,
+    "Location": issue.location,
+    "Status": issue.status.replace(/_/g, " "),
+    "Priority": issue.priority,
+    "Allocated Budget (₵)": issue.allocated_budget || 0,
+    "Estimated Cost (₵)": issue.estimated_cost || 0,
+    "Actual Cost (₵)": issue.actual_cost || 0,
+    "Remaining (₵)": (issue.allocated_budget || issue.estimated_cost || 0) - (issue.actual_cost || 0),
+    "Usage (%)": (() => {
+      const budget = issue.allocated_budget || issue.estimated_cost || 0;
+      return budget > 0 ? Number(((issue.actual_cost / budget) * 100).toFixed(1)) : 0;
+    })(),
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  ws["!cols"] = Object.keys(data[0] || {}).map((key) => ({
+    wch: Math.max(key.length, ...data.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+  }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Issues Finance");
+  XLSX.writeFile(wb, `Issues_Finance_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
+function exportAllToExcel(
+  projects: FinanceProject[],
+  issues: FinanceIssue[],
+  summary: FinanceSummary | null
+) {
+  const wb = XLSX.utils.book_new();
+
+  // Summary sheet
+  if (summary) {
+    const summaryData = [
+      { "Category": "Projects - Total Budget", "Amount (₵)": summary.projects_total_budget },
+      { "Category": "Projects - Total Spent", "Amount (₵)": summary.projects_total_spent },
+      { "Category": "Projects - Remaining", "Amount (₵)": summary.projects_total_budget - summary.projects_total_spent },
+      { "Category": "Projects - Count", "Amount (₵)": summary.projects_count },
+      { "Category": "", "Amount (₵)": "" },
+      { "Category": "Issues - Total Allocated", "Amount (₵)": summary.issues_total_allocated },
+      { "Category": "Issues - Total Spent", "Amount (₵)": summary.issues_total_spent },
+      { "Category": "Issues - Remaining", "Amount (₵)": summary.issues_total_allocated - summary.issues_total_spent },
+      { "Category": "Issues - Count", "Amount (₵)": summary.issues_count },
+      { "Category": "", "Amount (₵)": "" },
+      { "Category": "Grand Total Budget", "Amount (₵)": summary.grand_total_budget },
+      { "Category": "Grand Total Spent", "Amount (₵)": summary.grand_total_spent },
+      { "Category": "Grand Total Remaining", "Amount (₵)": summary.grand_total_budget - summary.grand_total_spent },
+    ];
+    const summaryWs = XLSX.utils.json_to_sheet(summaryData);
+    summaryWs["!cols"] = [{ wch: 30 }, { wch: 20 }];
+    XLSX.utils.book_append_sheet(wb, summaryWs, "Summary");
+  }
+
+  // Projects sheet
+  const projData = projects.map((p, i) => ({
+    "#": i + 1,
+    "Project": p.title,
+    "Location": p.location,
+    "Sector": p.sector?.name || "—",
+    "Status": p.status.replace(/_/g, " "),
+    "Contractor": p.contractor || "—",
+    "Budget (₵)": p.budget || 0,
+    "Spent (₵)": p.spent || 0,
+    "Remaining (₵)": (p.budget || 0) - (p.spent || 0),
+    "Usage (%)": p.budget > 0 ? Number(((p.spent / p.budget) * 100).toFixed(1)) : 0,
+    "Progress (%)": p.progress_percent ?? 0,
+    "Start Date": p.start_date || "—",
+    "End Date": p.end_date || "—",
+    "Created At": p.created_at || "—",
+  }));
+  if (projData.length > 0) {
+    const projWs = XLSX.utils.json_to_sheet(projData);
+    projWs["!cols"] = Object.keys(projData[0]).map((key) => ({
+      wch: Math.max(key.length, ...projData.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+    }));
+    XLSX.utils.book_append_sheet(wb, projWs, "Projects");
+  }
+
+  // Issues sheet
+  const issueData = issues.map((issue, i) => ({
+    "#": i + 1,
+    "Issue": issue.title,
+    "Case ID": issue.case_id || `#${issue.id}`,
+    "Category": issue.category,
+    "Location": issue.location,
+    "Status": issue.status.replace(/_/g, " "),
+    "Priority": issue.priority,
+    "Allocated Budget (₵)": issue.allocated_budget || 0,
+    "Estimated Cost (₵)": issue.estimated_cost || 0,
+    "Actual Cost (₵)": issue.actual_cost || 0,
+    "Remaining (₵)": (issue.allocated_budget || issue.estimated_cost || 0) - (issue.actual_cost || 0),
+    "Usage (%)": (() => {
+      const budget = issue.allocated_budget || issue.estimated_cost || 0;
+      return budget > 0 ? Number(((issue.actual_cost / budget) * 100).toFixed(1)) : 0;
+    })(),
+    "Created At": issue.created_at || "—",
+  }));
+  if (issueData.length > 0) {
+    const issueWs = XLSX.utils.json_to_sheet(issueData);
+    issueWs["!cols"] = Object.keys(issueData[0]).map((key) => ({
+      wch: Math.max(key.length, ...issueData.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+    }));
+    XLSX.utils.book_append_sheet(wb, issueWs, "Issues");
+  }
+
+  XLSX.writeFile(wb, `Finance_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
 
 // ---- Pagination Hook ----
 function usePagination<T>(items: T[], defaultPageSize = 10) {
@@ -246,12 +388,26 @@ function ProjectsFinanceTab({ projects }: { projects: FinanceProject[] }) {
 
   return (
     <div>
-      <SummaryCards
-        totalBudget={totalBudget}
-        totalSpent={totalSpent}
-        itemCount={projects.length}
-        label="Projects"
-      />
+      <div className="flex items-center justify-between mb-2">
+        <SummaryCards
+          totalBudget={totalBudget}
+          totalSpent={totalSpent}
+          itemCount={projects.length}
+          label="Projects"
+        />
+      </div>
+      <div className="flex justify-end mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => exportProjectsToExcel(projects)}
+          disabled={projects.length === 0}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export to Excel
+        </Button>
+      </div>
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
@@ -394,12 +550,26 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
 
   return (
     <div>
-      <SummaryCards
-        totalBudget={totalBudget}
-        totalSpent={totalSpent}
-        itemCount={issues.length}
-        label="Issues"
-      />
+      <div className="flex items-center justify-between mb-2">
+        <SummaryCards
+          totalBudget={totalBudget}
+          totalSpent={totalSpent}
+          itemCount={issues.length}
+          label="Issues"
+        />
+      </div>
+      <div className="flex justify-end mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => exportIssuesToExcel(issues)}
+          disabled={issues.length === 0}
+          className="gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export to Excel
+        </Button>
+      </div>
 
       {/* Mobile cards */}
       <div className="md:hidden space-y-3">
@@ -553,6 +723,19 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
 // ---- Main Finance Table Component ----
 export function FinanceTable({ projects, issues, summary }: FinanceTableProps) {
   return (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => exportAllToExcel(projects, issues, summary)}
+          disabled={projects.length === 0 && issues.length === 0}
+          className="gap-2 bg-green-700 hover:bg-green-800 text-white"
+        >
+          <Download className="h-4 w-4" />
+          Export Full Report
+        </Button>
+      </div>
     <Tabs defaultValue="projects" className="w-full">
       <TabsList className="grid w-full max-w-md grid-cols-2">
         <TabsTrigger value="projects">Projects ({projects.length})</TabsTrigger>
@@ -565,5 +748,6 @@ export function FinanceTable({ projects, issues, summary }: FinanceTableProps) {
         <IssuesFinanceTab issues={issues} />
       </TabsContent>
     </Tabs>
+    </div>
   );
 }
