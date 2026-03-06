@@ -17,7 +17,6 @@ interface RichTextEditorProps {
 }
 
 
-
 export function RichTextEditor({
   value = "",
   onChange,
@@ -73,8 +72,7 @@ export function RichTextEditor({
     input.click();
   };
 
-
-  // Detect if dark mode is active
+  // Detect if dark mode is active (client-side)
   const isDarkMode =
     typeof window !== "undefined" &&
     document.documentElement.classList.contains("dark");
@@ -89,13 +87,9 @@ export function RichTextEditor({
     >
       <Editor
         apiKey={tinyMceApiKey}
-        licenseKey="gpl"
-
         value={value}
         onEditorChange={(content) => {
-          if (onChange) {
-            onChange(content);
-          }
+          if (onChange) onChange(content);
         }}
         disabled={disabled}
         init={{
@@ -107,31 +101,33 @@ export function RichTextEditor({
             "lists",
             "link",
             "image",
-            "charmap",
-            "preview",
-            "anchor",
-            "searchreplace",
-            "visualblocks",
-            "code",
-            "fullscreen",
-            "insertdatetime",
             "media",
             "table",
+            "paste",
             "code",
             "help",
+            "quickbars",
             "wordcount",
           ],
           toolbar:
-            "undo redo | blocks | " +
-            "bold italic forecolor | alignleft aligncenter " +
-            "alignright alignjustify | bullist numlist outdent indent | " +
-            "removeformat | link image | code | help",
+            "undo redo | formatselect | " +
+            "bold italic underline | alignleft aligncenter alignright | " +
+            "bullist numlist outdent indent | link image media | removeformat | code",
+          /* Ensure Enter creates paragraphs */
+          forced_root_block: "p",
+          force_p_newlines: true,
+          force_br_newlines: false,
+          paste_as_text: false,
+          paste_data_images: true,
+          list_indent_on_tab: true,
           content_style: `
             body { 
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
               font-size: 14px;
-              padding: 10px;
+              padding: 8px;
             }
+            p { margin-bottom: 1rem; line-height: 1.6; }
+            ul, ol { margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.25rem; }
           `,
           skin: isDarkMode ? "oxide-dark" : "oxide",
           content_css: isDarkMode ? "dark" : "default",
@@ -140,8 +136,31 @@ export function RichTextEditor({
           promotion: false,
           automatic_uploads: true,
           file_picker_types: "image",
-          images_upload_handler: handleTinyMceImageUpload,
-          file_picker_callback: handleTinyMceFilePicker,
+          images_upload_handler: async (
+            blobInfo: any,
+            success: (url: string) => void,
+            failure: (msg: string) => void,
+          ) => {
+            try {
+              const url = await handleTinyMceImageUpload(blobInfo);
+              success(url);
+            } catch (e) {
+              failure("Image upload failed");
+            }
+          },
+          file_picker_callback: (
+            callback: (url: string, meta?: { title?: string }) => void,
+          ) => {
+            handleTinyMceFilePicker(callback);
+          },
+          /* Ensure editor starts with a paragraph for predictable Enter behaviour */
+          setup: (editor: any) => {
+            editor.on("init", () => {
+              if (!editor.getContent({ format: "raw" })) {
+                editor.setContent("<p></p>");
+              }
+            });
+          },
         }}
       />
     </div>

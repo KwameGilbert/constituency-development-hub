@@ -338,6 +338,7 @@ export function NewBlogPostForm() {
           <Label>Publish Status</Label>
           <Select
             onValueChange={(value) =>
+
               form.setValue("status", value as "draft" | "published")
             }
             defaultValue={form.getValues("status")}

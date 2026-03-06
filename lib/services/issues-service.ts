@@ -156,6 +156,25 @@ class IssuesService {
     return apiClient(`/admin/issues?${params.toString()}`);
   }
 
+  async getOfficerIssues(filters: IssueFilters = {}): Promise<
+    ApiResponse<{
+      reports: Issue[];
+      total: number;
+      page: number;
+      limit: number;
+    }>
+  > {
+    const params = new URLSearchParams();
+    if (filters.search) params.append("search", filters.search);
+    if (filters.status) params.append("status", filters.status);
+    if (filters.priority) params.append("priority", filters.priority);
+    if (filters.category) params.append("category", filters.category);
+    if (filters.page) params.append("page", filters.page.toString());
+    if (filters.limit) params.append("limit", filters.limit.toString());
+
+    return apiClient(`/officer/issues?${params.toString()}`);
+  }
+
   async getIssueById(
     id: number | string,
   ): Promise<ApiResponse<{ report: Issue }>> {

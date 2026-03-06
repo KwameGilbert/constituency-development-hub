@@ -75,7 +75,20 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       if (selectedCategory !== "all") filters.category = selectedCategory;
       if (selectedPriority !== "all") filters.priority = selectedPriority;
 
-      const response = await issuesService.getAllIssues(filters);
+      let response;
+      if (readOnly) {
+        response = await issuesService.getAllIssues(filters);
+      } else {
+        try {
+          response = await issuesService.getOfficerIssues(filters);
+        } catch (err) {
+          // Fallback: some deployments don't expose /officer/issues — use admin endpoint
+          // Log to console for debugging and continue with admin endpoint
+          // eslint-disable-next-line no-console
+          console.warn("getOfficerIssues failed, falling back to getAllIssues:", err);
+          response = await issuesService.getAllIssues(filters);
+        }
+      }
       if (response && response.success && response.data.reports) {
         setIssues(response.data.reports);
         setTotalPages(Math.ceil(response.data.total / response.data.limit));

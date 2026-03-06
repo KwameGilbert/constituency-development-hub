@@ -39,7 +39,7 @@ export function BlogPostsHeader() {
           </Button>
         </div>
 
-        <Link href="/web-admin-dashboard/blog/new">
+        <Link href="./NewBlogPostForm.tsx">
           <Button className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white">
             <Plus className="mr-2 h-4 w-4" />
             New Post
