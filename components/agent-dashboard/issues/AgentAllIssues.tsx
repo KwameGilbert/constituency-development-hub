@@ -8,6 +8,9 @@ import {
   AlertCircle,
   FileX,
   Loader2,
+  Eye,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -247,88 +250,77 @@ export function AgentAllIssues() {
 
   return (
     <div className="space-y-6">
-      {/* Filter Section */}
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold leading-none tracking-tight">
-            Filter Issues
-          </h3>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            {showFilters ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
+      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 border-b border-slate-50">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-1 bg-amber-500 rounded-sm" />
+            <h3 className="font-bold text-slate-900 tracking-tight">
+              Inventory Filters
+            </h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetFilters}
+              className="text-xs font-semibold text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg px-4"
+            >
+              <RotateCcw className="h-3.5 w-3.5 mr-2" />
+              Reset
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className={`h-8 w-8 rounded-lg border-slate-200 ${showFilters ? 'bg-slate-100' : ''}`}
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              {showFilters ? (
+                <ChevronUp className="h-4 w-4 text-slate-600" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-slate-600" />
+              )}
+            </Button>
+          </div>
         </div>
 
         {showFilters && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none">Search</label>
+          <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-5 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="md:col-span-6 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Search Keywords</label>
               <Input
-                placeholder="Search by title, description, or location..."
-                className="w-full"
+                placeholder="Title, description, or location..."
+                className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-amber-500 rounded-lg"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">
-                  Category
-                </label>
-                <Select
-                  value={categoryFilter}
-                  onValueChange={setCategoryFilter}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium leading-none">
-                  Status
-                </label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="All Statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="md:col-span-3 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Category</label>
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={resetFilters}
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset Filters
-              </Button>
+            <div className="md:col-span-3 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Status</label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg">
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUSES.map((status) => (
+                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         )}
@@ -390,28 +382,30 @@ export function AgentAllIssues() {
                   </div>
                   
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1" asChild>
+                    <Button variant="outline" size="sm" className="flex-1 h-9" asChild title="View Details">
                       <Link href={`/agents-dashboard/issues/${issue.id}`}>
-                        View
+                        <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
                      <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 text-blue-600 border-blue-200 hover:bg-blue-50"
+                        className="flex-1 h-9 text-blue-600 border-blue-200 hover:bg-blue-50"
                         onClick={() => setEditingIssue(issue)}
                         disabled={!['submitted', 'pending', 'rejected'].includes(issue.status)}
+                        title="Edit Issue"
                       >
-                        Edit
+                        <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                        className="flex-1 h-9 text-red-600 border-red-200 hover:bg-red-50"
                         onClick={() => handleDelete(issue.id)}
                         disabled={!['submitted', 'pending', 'rejected'].includes(issue.status) || deletingId === issue.id}
+                        title="Delete Issue"
                       >
-                        {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin mx-auto"/> : "Delete"}
+                        {deletingId === issue.id ? <Loader2 className="h-4 w-4 animate-spin mx-auto"/> : <Trash2 className="h-4 w-4" />}
                       </Button>
                   </div>
                 </div>
@@ -423,12 +417,12 @@ export function AgentAllIssues() {
               <Table className="min-w-[700px] table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[80px]">ID</TableHead>
-                    <TableHead className="min-w-[170px]">TITLE & DESCRIPTION</TableHead>
-                    <TableHead className="w-[160px]">CATEGORY</TableHead>
-                    <TableHead className="w-[150px]">STATUS</TableHead>
-                    <TableHead className="w-[120px]">DATE</TableHead>
-                    <TableHead className="text-right w-[180px]">ACTIONS</TableHead>
+                    <TableHead className="w-[80px]">Id</TableHead>
+                    <TableHead className="min-w-[170px]">Issue</TableHead>
+                    <TableHead className="w-[160px]">Category</TableHead>
+                    <TableHead className="w-[150px]">Status</TableHead>
+                    <TableHead className="w-[120px]">Date</TableHead>
+                    <TableHead className="text-right w-[180px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -452,32 +446,35 @@ export function AgentAllIssues() {
                         <div className="flex justify-end gap-2">
                            <Button
                             variant="outline"
-                            size="sm"
-                            className="h-8 px-2 text-indigo-600 hover:text-indigo-700"
+                            size="icon"
+                            className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 border-indigo-100"
                             asChild
+                            title="View Details"
                           >
                             <Link href={`/agents-dashboard/issues/${issue.id}`}>
-                              View
+                              <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
                           
                           <Button
                             variant="outline"
-                            size="sm"
-                            className="h-8 px-2 text-blue-600 hover:text-blue-700"
+                            size="icon"
+                            className="h-8 w-8 text-blue-600 hover:text-blue-700 bg-blue-50/50 border-blue-100"
                             onClick={() => setEditingIssue(issue)}
                             disabled={!['submitted', 'pending', 'rejected'].includes(issue.status)}
+                            title="Edit Issue"
                           >
-                            Edit
+                            <Pencil className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="outline"
-                            size="sm"
-                            className="h-8 px-2 text-red-600 hover:text-red-700"
+                            size="icon"
+                            className="h-8 w-8 text-red-600 hover:text-red-700 bg-red-50/50 border-red-100"
                             onClick={() => handleDelete(issue.id)}
                             disabled={!['submitted', 'pending', 'rejected'].includes(issue.status) || deletingId === issue.id}
+                            title="Delete Issue"
                           >
-                            {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin"/> : "Delete"}
+                            {deletingId === issue.id ? <Loader2 className="h-4 w-4 animate-spin"/> : <Trash2 className="h-4 w-4" />}
                           </Button>
                         </div>
                       </TableCell>

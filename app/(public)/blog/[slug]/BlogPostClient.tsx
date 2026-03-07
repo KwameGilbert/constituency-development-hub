@@ -214,7 +214,15 @@ export default function BlogPostClient({
             {post.published_at && (
               <span className="flex items-center gap-1.5 text-sm text-slate-500">
                 <Calendar className="h-4 w-4" />
-                {format(new Date(post.published_at), "MMMM d, yyyy")}
+                {(() => {
+                  try {
+                    const date = new Date(post.published_at);
+                    if (isNaN(date.getTime())) return "Recently Published";
+                    return format(date, "MMMM d, yyyy");
+                  } catch (e) {
+                    return "Recently Published";
+                  }
+                })()}
               </span>
             )}
             <span className="flex items-center gap-1.5 text-sm text-slate-500">
@@ -264,11 +272,19 @@ export default function BlogPostClient({
 
           {/* Tags */}
           {(() => {
-            const tags = Array.isArray(post.tags)
-              ? post.tags
-              : typeof post.tags === "string"
-                ? JSON.parse(post.tags)
-                : [];
+            const tags = (() => {
+              try {
+                const rawTags = post.tags as any;
+                if (Array.isArray(rawTags)) return rawTags;
+                if (typeof rawTags === "string") {
+                  if (rawTags.startsWith("[")) return JSON.parse(rawTags);
+                  return rawTags.split(",").map((t) => t.trim()).filter(Boolean);
+                }
+              } catch (e) {
+                console.warn("Malformed tags:", post.tags);
+              }
+              return [];
+            })();
 
             return tags.length > 0 ? (
               <div className="mt-12 pt-8 border-t border-slate-100">

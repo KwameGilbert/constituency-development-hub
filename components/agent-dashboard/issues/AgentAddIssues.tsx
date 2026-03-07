@@ -272,7 +272,13 @@ export function AgentAddIssues() {
 
     setSubmitting(true);
     try {
-      const response = await agentService.submitIssue(formData);
+      // Ensure smaller_community is set if suburb is selected
+      const submissionData = {
+        ...formData,
+        smaller_community: formData.smaller_community || formData.suburb
+      };
+      
+      const response = await agentService.submitIssue(submissionData);
 
       if (response.success) {
         toast.success("Issue submitted successfully!");
@@ -292,22 +298,22 @@ export function AgentAddIssues() {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8 bg-slate-100">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[450px] mb-8 bg-slate-100 p-1 rounded-xl">
           <TabsTrigger
             value="constituent-details"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+            className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-600 data-[state=active]:shadow-sm transition-all"
           >
             Constituent Details
           </TabsTrigger>
           <TabsTrigger
             value="location"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+            className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-600 data-[state=active]:shadow-sm transition-all"
           >
             Location
           </TabsTrigger>
           <TabsTrigger
             value="issue-details"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
+            className="rounded-lg data-[state=active]:bg-white data-[state=active]:text-amber-600 data-[state=active]:shadow-sm transition-all"
           >
             Issue Details
           </TabsTrigger>
@@ -321,7 +327,7 @@ export function AgentAddIssues() {
                 placeholder="Enter a clear and concise title"
                 value={formData.title}
                 onChange={(e) => updateField("title", e.target.value)}
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
               />
             </FormItem>
             <FormItem label="Impact Type" required>
@@ -504,7 +510,7 @@ export function AgentAddIssues() {
                     e.target.value ? parseInt(e.target.value) : undefined,
                   )
                 }
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
               />
               <p className="text-xs text-slate-500 mt-1">
                 Approximate number of people affected by this issue
@@ -526,12 +532,12 @@ export function AgentAddIssues() {
               <Button
                 variant="secondary"
                 onClick={() => handleNext("location")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-lg"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-slate-900 hover:bg-slate-800 text-white"
+                className="bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-md shadow-amber-200/50 transition-all font-semibold"
                 onClick={handleSubmit}
                 disabled={submitting}
               >
@@ -556,7 +562,7 @@ export function AgentAddIssues() {
             <FormItem label="Constituent Name" required error={fieldErrors.reporter_name}>
               <Input
                 className={cn(
-                  "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
+                  "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
                   fieldErrors.reporter_name && "border-red-400 focus:border-red-500 focus:ring-red-500"
                 )}
                 value={formData.reporter_name || ""}
@@ -572,7 +578,7 @@ export function AgentAddIssues() {
                 inputMode="numeric"
                 maxLength={13}
                 className={cn(
-                  "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
+                  "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
                   fieldErrors.reporter_phone && "border-red-400 focus:border-red-500 focus:ring-red-500"
                 )}
                 placeholder="+233 ..."
@@ -592,7 +598,7 @@ export function AgentAddIssues() {
               <Input
                 type="email"
                 className={cn(
-                  "border-slate-200 focus:border-slate-500 focus:ring-slate-500",
+                  "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
                   fieldErrors.reporter_email && "border-red-400 focus:border-red-500 focus:ring-red-500"
                 )}
                 value={formData.reporter_email || ""}
@@ -621,7 +627,7 @@ export function AgentAddIssues() {
 
           <FormItem label="Home Address">
             <Input
-              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+              className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
               value={formData.reporter_address || ""}
               onChange={(e) => updateField("reporter_address", e.target.value)}
             />
@@ -631,7 +637,7 @@ export function AgentAddIssues() {
             <p className="text-sm text-red-500">* Required fields</p>
             <Button
               onClick={() => handleNext("location")}
-              className="bg-slate-900 hover:bg-slate-800 text-white"
+              className="bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-sm font-semibold px-6"
             >
               Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -680,7 +686,7 @@ export function AgentAddIssues() {
             <FormItem label="Specific Location Details">
               <Input
                 placeholder="e.g., 'Near the old market'"
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
                 value={formData.cottage || ""}
                 onChange={(e) => updateField("cottage", e.target.value)}
               />
@@ -693,13 +699,13 @@ export function AgentAddIssues() {
               <Button
                 variant="secondary"
                 onClick={() => handleNext("constituent-details")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
+                className="bg-slate-100 hover:bg-slate-200 text-slate-900 rounded-lg"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
                 onClick={() => handleNext("issue-details")}
-                className="bg-slate-900 hover:bg-slate-800 text-white"
+                className="bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow-sm font-semibold px-6"
               >
                 Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>

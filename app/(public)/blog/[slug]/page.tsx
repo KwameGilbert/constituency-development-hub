@@ -42,11 +42,20 @@ export async function generateMetadata(
           publishedTime: post.published_at,
           modifiedTime: post.published_at,
           authors: post.author ? [post.author] : ["Hon. Kofi Benteh Afful"],
-          tags: Array.isArray(post.tags)
-            ? post.tags
-            : typeof post.tags === "string"
-              ? JSON.parse(post.tags)
-              : [],
+          tags: (() => {
+            try {
+              const rawTags = post.tags as any;
+              if (Array.isArray(rawTags)) return rawTags;
+              if (typeof rawTags === "string") {
+                // Handle both JSON arrays and simple comma-separated strings
+                if (rawTags.startsWith("[")) return JSON.parse(rawTags);
+                return rawTags.split(",").map((t: string) => t.trim());
+              }
+            } catch (e) {
+              console.error("Failed to parse tags for metadata:", e);
+            }
+            return [];
+          })(),
           locale: "en_GH",
         },
         twitter: {

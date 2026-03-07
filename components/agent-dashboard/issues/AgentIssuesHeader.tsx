@@ -19,9 +19,9 @@ export function AgentIssuesHeader() {
       </div>
       <Link
         href="/agents-dashboard/issues/add"
-        className="bg-slate-900 hover:bg-slate-800 text-white font-medium flex gap-2 items-center px-4 py-2 rounded-lg shadow-sm transition-all hover:scale-[1.02] active:scale-95 text-sm"
+        className="bg-amber-600 hover:bg-amber-700 text-white font-semibold flex gap-2 items-center px-4 py-2.5 rounded-lg shadow-md shadow-amber-200/50 transition-all hover:scale-[1.02] active:scale-95 text-sm"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-4 w-4 stroke-[3px]" />
         <span className="hidden sm:inline">Submit New Issue</span>
         <span className="sm:hidden">New Issue</span>
       </Link>

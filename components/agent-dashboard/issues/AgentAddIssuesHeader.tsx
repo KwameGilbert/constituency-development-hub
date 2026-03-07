@@ -22,7 +22,7 @@ export function AgentAddIssuesHeader() {
       <Link href="/agents-dashboard/issues">
         <Button
           variant="outline"
-          className="gap-2 border-slate-200 hover:bg-slate-50 text-slate-600 font-medium rounded-lg transition-all"
+          className="gap-2 border-slate-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 text-slate-600 font-semibold rounded-lg px-4 transition-all text-sm"
         >
           <ArrowLeft className="h-4 w-4" />
           <span className="hidden sm:inline">Back to Issues</span>

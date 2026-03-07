@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { agentService, AgentReport } from "@/lib/services/agent-service";
 import Link from "next/link";
-import { FileX } from "lucide-react";
+import { FileX, Eye } from "lucide-react";
 
 // Helper to format status names
 const formatStatusLabel = (status: string) => {
@@ -60,7 +60,7 @@ const getStatusBadge = (status: string) => {
   };
 
   return (
-    <Badge variant="outline" className={`${config.className} border-none font-medium`}>
+    <Badge variant="outline" className={`${config.className} border-none font-medium text-[10px]`}>
       {config.label}
     </Badge>
   );
@@ -164,10 +164,10 @@ export function RecentTasks({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="whitespace-nowrap">ISSUE</TableHead>
-                  <TableHead className="whitespace-nowrap">STATUS</TableHead>
-                  <TableHead className="whitespace-nowrap">CATEGORY</TableHead>
-                  <TableHead className="whitespace-nowrap text-right">DATE</TableHead>
+                  <TableHead className="whitespace-nowrap">Issue</TableHead>
+                  <TableHead className="whitespace-nowrap">Status</TableHead>
+                  <TableHead className="whitespace-nowrap">Category</TableHead>
+                  <TableHead className="whitespace-nowrap text-right">Date</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -194,9 +194,10 @@ export function RecentTasks({
                     <TableCell className="text-right">
                       <Link
                         href={`/agents-dashboard/issues/${task.id}`}
-                        className="text-sm text-blue-600 hover:underline"
+                        className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                        title="View Details"
                       >
-                        View
+                        <Eye className="h-4 w-4" />
                       </Link>
                     </TableCell>
                   </TableRow>

@@ -4,17 +4,15 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
-  MapPin,
-  Calendar,
   User,
+  Clock,
+  Tag,
+  Calendar,
   Phone,
   Mail,
   Home,
-  AlertCircle,
-  FileText,
   Users,
-  Tag,
-  Clock,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,9 +20,17 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { agentService, IssueDetail } from "@/lib/services/agent-service";
-import { authService } from "@/lib/services/auth-service";
 import AgentDashboardHeader from "@/components/agent-dashboard/AgentDashboardHeader";
 import IssueDescription from "@/components/ui/IssueDescription";
+
+// Helper to format status names
+const formatStatusLabel = (status: string) => {
+  if (!status) return "";
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
 
 // Status badge styling
 const getStatusBadge = (status: string) => {
@@ -35,16 +41,16 @@ const getStatusBadge = (status: string) => {
     pending: { className: "bg-yellow-100 text-yellow-700", label: "Pending" },
     under_officer_review: {
       className: "bg-orange-100 text-orange-700",
-      label: "Under Review",
+      label: "Under Officer Review",
     },
     forwarded_to_admin: {
       className: "bg-indigo-100 text-indigo-700",
-      label: "Forwarded to Admin",
+      label: "Forwarded To Admin",
     },
     approved: { className: "bg-indigo-100 text-indigo-700", label: "Approved" },
     assigned_to_task_force: {
       className: "bg-purple-100 text-purple-700",
-      label: "Assigned to Task Force",
+      label: "Assigned To Task Force",
     },
     in_progress: {
       className: "bg-purple-100 text-purple-700",
@@ -57,13 +63,13 @@ const getStatusBadge = (status: string) => {
 
   const config = statusConfig[statusLower] || {
     className: "bg-gray-100 text-gray-700",
-    label: status || "Unknown",
+    label: formatStatusLabel(statusLower),
   };
 
   return (
     <Badge
       variant="secondary"
-      className={`${config.className} hover:${config.className}/80 border-0 px-3 py-1`}
+      className={`${config.className} hover:${config.className}/80 border-0 px-3 py-1 rounded-lg font-medium shadow-sm`}
     >
       {config.label}
     </Badge>
@@ -74,19 +80,20 @@ const getStatusBadge = (status: string) => {
 const getPriorityBadge = (priority: string) => {
   const priorityLower = priority?.toLowerCase() || "";
   const config: Record<string, { className: string; label: string }> = {
-    critical: { className: "bg-red-100 text-red-700", label: "Critical" },
-    high: { className: "bg-orange-100 text-orange-700", label: "High" },
-    medium: { className: "bg-yellow-100 text-yellow-700", label: "Medium" },
-    low: { className: "bg-green-100 text-green-700", label: "Low" },
+    critical: { className: "bg-red-100 text-red-700 font-semibold", label: "Critical" },
+    urgent: { className: "bg-red-100 text-red-700 font-semibold", label: "Urgent" },
+    high: { className: "bg-orange-100 text-orange-700 font-semibold", label: "High" },
+    medium: { className: "bg-amber-100 text-amber-700 font-semibold", label: "Medium" },
+    low: { className: "bg-green-100 text-green-700 font-semibold", label: "Low" },
   };
 
   const badge = config[priorityLower] || {
     className: "bg-gray-100 text-gray-700",
-    label: priority || "Unknown",
+    label: priority ? priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase() : "Unknown",
   };
 
   return (
-    <Badge variant="outline" className={`${badge.className} border-0`}>
+    <Badge variant="outline" className={`${badge.className} border-0 rounded-lg px-2.5 py-0.5`}>
       {badge.label}
     </Badge>
   );
@@ -180,36 +187,6 @@ export default function AgentIssueDetailPage({
 
   if (!issue) return null;
 
-  const currentUser = authService.getCurrentUser();
-
-  const parseLegacyField = (label: string): string | undefined => {
-    const text = issue.description || "";
-    const regex = new RegExp(`${label}\\s*:\\s*([^\\n\\r]+)`, "i");
-    const match = text.match(regex);
-    return match?.[1]?.trim();
-  };
-
-  const fallbackType = parseLegacyField("Issue Type");
-  const fallbackSector = parseLegacyField("Sector");
-  const fallbackSubsector = parseLegacyField("Subsector");
-  const fallbackGender = parseLegacyField("Gender");
-  const fallbackAddress = parseLegacyField("Address");
-
-  const issueTypeLabel =
-    issue.issue_type ||
-    issue.type ||
-    fallbackType ||
-    "community_based";
-
-  const sectorLabel = issue.sector || fallbackSector || "General";
-  const subsectorLabel = issue.subsector || fallbackSubsector || "Not specified";
-
-  const reporterNameLabel = issue.reporter_name || currentUser?.name || "Not provided";
-  const reporterPhoneLabel = issue.reporter_phone || currentUser?.phone || "Not provided";
-  const reporterEmailLabel = issue.reporter_email || currentUser?.email || "Not provided";
-  const reporterGenderLabel = issue.reporter_gender || fallbackGender || "Not specified";
-  const reporterAddressLabel = issue.reporter_address || fallbackAddress || "Not specified";
-
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
       <AgentDashboardHeader />
@@ -220,19 +197,21 @@ export default function AgentIssueDetailPage({
             <Button
               variant="outline"
               onClick={() => router.back()}
-              className="gap-2 border-slate-200 text-slate-600 font-medium"
+              className="gap-2 border-slate-200 text-slate-600 font-semibold rounded-lg hover:bg-amber-50 hover:text-amber-700 hover:border-amber-200 transition-all"
             >
               <ArrowLeft className="h-4 w-4" /> Back to List
             </Button>
             <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-xl font-semibold text-slate-900">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-xl font-semibold text-slate-900 tracking-tight">
                   {issue.case_id}
                 </h1>
-                {getStatusBadge(issue.status)}
-                {getPriorityBadge(issue.priority)}
+                <div className="flex gap-2">
+                  {getStatusBadge(issue.status)}
+                  {getPriorityBadge(issue.priority)}
+                </div>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1 font-medium">
                 Submitted on {formatDate(issue.created_at)}
               </p>
             </div>
@@ -243,117 +222,117 @@ export default function AgentIssueDetailPage({
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Issue Details Card */}
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-slate-600" />
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
+                <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900">
+                  <div className="h-6 w-1 bg-amber-500 rounded-sm" />
                   Issue Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="pt-6 space-y-6">
                 <div>
-                  <h3 className="font-semibold text-slate-900 text-lg">
+                  <h3 className="font-semibold text-slate-900 text-lg leading-snug">
                     {issue.title}
                   </h3>
                 </div>
 
-                <div>
-                  <label className="text-sm text-slate-500">Description</label>
-                  <IssueDescription
-                    description={issue.description}
-                    className="mt-1 text-slate-700 prose prose-sm max-w-none"
-                  />
-                </div>
+                <div className="space-y-6">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-500">Description</label>
+                    <div className="bg-slate-50/30 rounded-lg p-1">
+                      <IssueDescription
+                        description={issue.description}
+                        className="text-slate-700 prose prose-sm max-w-none"
+                      />
+                    </div>
+                  </div>
 
-                {issue.additional_notes && (
-                  <div>
-                    <label className="text-sm text-slate-500">
-                      Additional Notes
-                    </label>
-                    <p className="mt-1 text-slate-700 whitespace-pre-wrap">
-                      {issue.additional_notes}
-                    </p>
-                  </div>
-                )}
+                  {issue.additional_notes && (
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium text-slate-500">
+                        Additional Notes
+                      </label>
+                      <p className="text-sm text-slate-600 bg-amber-50/50 p-4 rounded-lg border border-amber-100/50 whitespace-pre-wrap">
+                        {issue.additional_notes}
+                      </p>
+                    </div>
+                  )}
 
-                <Separator />
+                  <Separator className="bg-slate-100" />
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-sm text-slate-500">Category</label>
-                    <p className="mt-1 font-medium text-slate-900">
-                      {issue.category}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-slate-500">Type</label>
-                    <p className="mt-1 font-medium text-slate-900">
-                      {issueTypeLabel.replace(/_/g, " ")}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-slate-500">Sector</label>
-                    <p className="mt-1 font-medium text-slate-900">
-                      {sectorLabel}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm text-slate-500">
-                      Subsector
-                    </label>
-                    <p className="mt-1 font-medium text-slate-900">
-                      {subsectorLabel}
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-500">Category</label>
+                      <p className="font-semibold text-slate-900 text-sm">
+                        {issue.category || "Not Specified"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-500">Impact Type</label>
+                      <p className="font-semibold text-slate-900 text-sm capitalize">
+                        {issue.issue_type?.replace(/_/g, ' ') || "Community Based"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-500">Sector</label>
+                      <p className="font-semibold text-slate-900 text-sm">
+                        {issue.sector || "Not Specified"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-slate-500">Subsector</label>
+                      <p className="font-semibold text-slate-900 text-sm">
+                        {issue.subsector || "Not Specified"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Location Card */}
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-slate-600" />
-                  Location
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
+                <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900">
+                  <div className="h-6 w-1 bg-amber-500 rounded-sm" />
+                  Location Details
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm text-slate-500">
-                      Main Community
+              <CardContent className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-slate-500">
+                    Main Community
+                  </label>
+                  <p className="font-semibold text-slate-900 text-sm">
+                    {issue.location}
+                  </p>
+                </div>
+                {issue.smaller_community && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-500">
+                      Smaller Community
                     </label>
-                    <p className="mt-1 font-medium text-slate-900">
-                      {issue.location}
+                    <p className="font-semibold text-slate-900 text-sm">
+                      {issue.smaller_community}
                     </p>
                   </div>
-                  {issue.smaller_community && (
-                    <div>
-                      <label className="text-sm text-slate-500">
-                        Smaller Community
-                      </label>
-                      <p className="mt-1 font-medium text-slate-900">
-                        {issue.smaller_community}
-                      </p>
-                    </div>
-                  )}
-                  {issue.suburb && (
-                    <div>
-                      <label className="text-sm text-slate-500">Suburb</label>
-                      <p className="mt-1 font-medium text-slate-900">
-                        {issue.suburb}
-                      </p>
-                    </div>
-                  )}
-                  {issue.cottage && (
-                    <div>
-                      <label className="text-sm text-slate-500">Cottage</label>
-                      <p className="mt-1 font-medium text-slate-900">
-                        {issue.cottage}
-                      </p>
-                    </div>
-                  )}
-                </div>
+                )}
+                {issue.suburb && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-500">Suburb</label>
+                    <p className="font-semibold text-slate-900 text-sm">
+                      {issue.suburb}
+                    </p>
+                  </div>
+                )}
+                {issue.cottage && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-slate-500">Specific Spot</label>
+                    <p className="font-semibold italic text-slate-600 text-sm">
+                      &quot;{issue.cottage}&quot;
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -361,43 +340,43 @@ export default function AgentIssueDetailPage({
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Info */}
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Info</CardTitle>
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
+                <CardTitle className="text-base font-semibold text-slate-900">Quick Info</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-5 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-slate-100">
+                  <div className="p-2 rounded-lg bg-slate-100/80">
                     <Clock className="h-4 w-4 text-slate-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Status</p>
-                    <p className="font-medium">
+                    <label className="text-[11px] font-medium text-slate-500">Status</label>
+                    <div className="mt-0.5">
                       {getStatusBadge(issue.status)}
-                    </p>
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-slate-100">
+                  <div className="p-2 rounded-lg bg-slate-100/80">
                     <Tag className="h-4 w-4 text-slate-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Priority</p>
-                    <p className="font-medium">
+                    <label className="text-[11px] font-medium text-slate-500">Priority</label>
+                    <div className="mt-0.5">
                       {getPriorityBadge(issue.priority)}
-                    </p>
+                    </div>
                   </div>
                 </div>
 
                 {issue.people_affected != null && (
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-slate-100">
+                    <div className="p-2 rounded-lg bg-slate-100/80">
                       <Users className="h-4 w-4 text-slate-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-500">People Affected</p>
-                      <p className="font-medium">
+                      <label className="text-[11px] font-medium text-slate-500">People Affected</label>
+                      <p className="font-semibold text-slate-900 text-sm">
                         {Number(issue.people_affected).toLocaleString()}
                       </p>
                     </div>
@@ -405,12 +384,12 @@ export default function AgentIssueDetailPage({
                 )}
 
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-slate-100">
+                  <div className="p-2 rounded-lg bg-slate-100/80">
                     <Calendar className="h-4 w-4 text-slate-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-500">Created</p>
-                    <p className="font-medium text-sm">
+                    <label className="text-[11px] font-medium text-slate-500">Created Date</label>
+                    <p className="font-semibold text-slate-900 text-sm">
                       {formatDate(issue.created_at)}
                     </p>
                   </div>
@@ -419,50 +398,56 @@ export default function AgentIssueDetailPage({
             </Card>
 
             {/* Reporter Info */}
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <User className="h-5 w-5 text-slate-600" />
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
+              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
+                <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900">
+                  <User className="h-4 w-4 text-slate-500" />
                   Constituent Info
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <label className="text-sm text-slate-500">Name</label>
-                  <p className="font-medium text-slate-900">
-                    {reporterNameLabel}
+              <CardContent className="p-5 space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium text-slate-500">Full Name</label>
+                  <p className="font-semibold text-slate-900 text-sm">
+                    {issue.reporter_name || "Name Not Provided"}
                   </p>
                 </div>
-                <div className="flex items-start gap-2">
-                  <Phone className="h-4 w-4 text-slate-500 mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-indigo-50">
+                    <Phone className="h-3.5 w-3.5 text-indigo-600" />
+                  </div>
                   <div>
-                    <label className="text-sm text-slate-500">Phone</label>
-                    <p className="font-medium text-slate-900">
-                      {reporterPhoneLabel}
+                    <label className="text-[11px] font-medium text-slate-500">Phone</label>
+                    <p className="font-semibold text-slate-900 text-sm">
+                      {issue.reporter_phone || "Phone Not Provided"}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2">
-                  <Mail className="h-4 w-4 text-slate-500 mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-blue-50">
+                    <Mail className="h-3.5 w-3.5 text-blue-600" />
+                  </div>
                   <div>
-                    <label className="text-sm text-slate-500">Email</label>
-                    <p className="font-medium text-slate-900">
-                      {reporterEmailLabel}
+                    <label className="text-[11px] font-medium text-slate-500">Email</label>
+                    <p className="font-semibold text-slate-900 text-sm">
+                      {issue.reporter_email || "Email Not Provided"}
                     </p>
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm text-slate-500">Gender</label>
-                  <p className="font-medium text-slate-900 capitalize">
-                    {reporterGenderLabel}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium text-slate-500">Gender</label>
+                  <p className="font-semibold text-slate-900 capitalize text-sm">
+                    {issue.reporter_gender || "Not Specified"}
                   </p>
                 </div>
-                <div className="flex items-start gap-2">
-                  <Home className="h-4 w-4 text-slate-500 mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-slate-100">
+                    <Home className="h-3.5 w-3.5 text-slate-600" />
+                  </div>
                   <div>
-                    <label className="text-sm text-slate-500">Address</label>
-                    <p className="font-medium text-slate-900">
-                      {reporterAddressLabel}
+                    <label className="text-[11px] font-medium text-slate-500">Home Address</label>
+                    <p className="font-semibold text-slate-900 text-sm">
+                      {issue.reporter_address || "Address Not Specified"}
                     </p>
                   </div>
                 </div>
@@ -471,9 +456,9 @@ export default function AgentIssueDetailPage({
 
             {/* Assigned Officer */}
             {issue.assigned_officer && (
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg">Assigned Officer</CardTitle>
+              <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
+                <CardHeader className="bg-slate-50/50 border-b border-slate-50">
+                  <CardTitle className="text-base font-semibold text-slate-900">Assigned Officer</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-3">
