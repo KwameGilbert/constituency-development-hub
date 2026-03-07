@@ -1,6 +1,7 @@
 import { blogPosts } from "@/data/data";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { cleanupHtml } from "@/lib/utils";
 
 function ArticlesGrid() {
@@ -25,6 +26,7 @@ function ArticlesGrid() {
               transition={{ delay: index * 0.1, duration: 0.6 }}
               className="overflow-hidden rounded-2xl bg-white shadow"
             >
+            <Link href={`/blog/${post.slug}`} className="text-sm font-semibold text-red-600">
               <div className="h-48 overflow-hidden">
                 <Image
                   width={400}
@@ -39,10 +41,9 @@ function ArticlesGrid() {
                   {post.title}
                 </h3>
                 <p className="text-sm text-slate-500">{cleanupHtml(post.excerpt || "")}</p>
-                <a href="/blog" className="text-sm font-semibold text-red-600">
                   Read story →
-                </a>
               </div>
+            </Link>
             </motion.article>
           ))}
         </div>

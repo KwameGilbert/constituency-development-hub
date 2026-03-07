@@ -2,7 +2,6 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   ArrowLeft,
   MapPin,
@@ -12,7 +11,6 @@ import {
   Mail,
   Home,
   AlertCircle,
-  Loader2,
   FileText,
   Users,
   Tag,
@@ -26,7 +24,6 @@ import { Separator } from "@/components/ui/separator";
 import { agentService, IssueDetail } from "@/lib/services/agent-service";
 import { authService } from "@/lib/services/auth-service";
 import AgentDashboardHeader from "@/components/agent-dashboard/AgentDashboardHeader";
-import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import IssueDescription from "@/components/ui/IssueDescription";
 
 // Status badge styling
@@ -214,28 +211,28 @@ export default function AgentIssueDetailPage({
   const reporterAddressLabel = issue.reporter_address || fallbackAddress || "Not specified";
 
   return (
-    <div className="flex flex-col h-full w-full bg-slate-50">
+    <div className="flex flex-col min-h-screen">
       <AgentDashboardHeader />
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 sm:p-6 space-y-6 overflow-y-auto custom-scrollbar">
         {/* Back Button & Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={() => router.back()}
-              className="gap-2"
+              className="gap-2 border-slate-200 text-slate-600 font-medium"
             >
-              <ArrowLeft className="h-4 w-4" /> Back
+              <ArrowLeft className="h-4 w-4" /> Back to List
             </Button>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl font-bold text-slate-900">
+                <h1 className="text-xl font-semibold text-slate-900">
                   {issue.case_id}
                 </h1>
                 {getStatusBadge(issue.status)}
                 {getPriorityBadge(issue.priority)}
               </div>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Submitted on {formatDate(issue.created_at)}
               </p>
             </div>

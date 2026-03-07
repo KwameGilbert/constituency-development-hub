@@ -132,14 +132,16 @@ export function RecentTasks({
   }
 
   return (
-    <Card className="shadow-sm border-none">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium">Recent Activity</CardTitle>
+    <Card className="shadow-md shadow-slate-200/50 border-none overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 bg-slate-50/50">
+        <CardTitle className="text-lg font-semibold text-slate-900 tracking-tight">
+          Recent Activity <span className="text-amber-600 text-xs ml-2">Operations Log</span>
+        </CardTitle>
         <Link
           href="/agents-dashboard/issues"
-          className="text-sm text-blue-600 hover:underline"
+          className="text-xs font-medium text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full transition-colors"
         >
-          View all →
+          View All
         </Link>
       </CardHeader>
       <CardContent>
@@ -149,48 +151,50 @@ export function RecentTasks({
             <p className="text-sm">No recent activity</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ISSUE</TableHead>
-                <TableHead>STATUS</TableHead>
-                <TableHead>CATEGORY</TableHead>
-                <TableHead className="text-right">DATE</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tasks.map((task) => (
-                <TableRow key={task.id}>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="font-medium text-slate-900">
-                        {task.title}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        {task.location}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(task.status)}</TableCell>
-                  <TableCell className="text-slate-500">
-                    {task.category}
-                  </TableCell>
-                  <TableCell className="text-right text-slate-500">
-                    {formatDate(task.created_at)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link
-                      href={`/agents-dashboard/issues/${task.id}`}
-                      className="text-sm text-blue-600 hover:underline"
-                    >
-                      View
-                    </Link>
-                  </TableCell>
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="whitespace-nowrap">ISSUE</TableHead>
+                  <TableHead className="whitespace-nowrap">STATUS</TableHead>
+                  <TableHead className="whitespace-nowrap">CATEGORY</TableHead>
+                  <TableHead className="whitespace-nowrap text-right">DATE</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {tasks.map((task) => (
+                  <TableRow key={task.id}>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-slate-900">
+                          {task.title}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          {task.location}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">{getStatusBadge(task.status)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-slate-500">
+                      {task.category}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right text-slate-500">
+                      {formatDate(task.created_at)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Link
+                        href={`/agents-dashboard/issues/${task.id}`}
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        View
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>

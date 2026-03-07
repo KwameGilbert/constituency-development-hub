@@ -72,42 +72,42 @@ export function MetricsCards({
       label: "Total Issues",
       value: stats.total,
       icon: FileText,
-      color: "text-slate-600",
-      bgColor: "bg-slate-100",
+      color: "text-slate-900",
+      bg: "from-slate-100 to-slate-200",
     },
     {
       label: "Pending",
       value: stats.pending,
       icon: Hourglass,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100",
+      color: "text-amber-900",
+      bg: "from-amber-100 to-amber-200",
     },
     {
       label: "Approved",
       value: stats.approved,
       icon: ThumbsUp,
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-100",
+      color: "text-blue-900",
+      bg: "from-blue-100 to-blue-200",
     },
     {
       label: "In Progress",
       value: stats.inProgress,
       icon: Loader2,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100",
+      color: "text-indigo-900",
+      bg: "from-indigo-100 to-indigo-200",
     },
     {
       label: "Resolved",
       value: stats.resolved,
       icon: CheckCircle,
-      color: "text-green-600",
-      bgColor: "bg-green-100",
+      color: "text-emerald-900",
+      bg: "from-emerald-100 to-emerald-200",
     },
   ];
 
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {[1, 2, 3, 4, 5].map((i) => (
           <Card key={i} className="border-none shadow-sm">
             <CardContent className="px-4 py-4 flex items-center gap-4">
@@ -133,18 +133,23 @@ export function MetricsCards({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
       {metrics.map((metric) => (
-        <Card key={metric.label} className="border-none shadow-sm">
-          <CardContent className="px-4 py-4 flex items-center gap-4">
-            <div className={`p-3 rounded-lg ${metric.bgColor}`}>
-              <metric.icon className={`w-5 h-5 ${metric.color}`} />
+        <Card key={metric.label} className="border-none shadow-md shadow-slate-200/50 overflow-hidden group hover:shadow-lg transition-all duration-300">
+          <CardContent className="px-5 py-6 flex items-center gap-4 relative">
+            <div className={`p-3 rounded-2xl bg-linear-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+              <metric.icon className="h-6 w-6 stroke-[2.5px]" />
             </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">
+            <div className="flex flex-col">
+              <span className="text-2xl font-semibold text-slate-900 leading-tight">
+                {loading ? <Skeleton className="h-8 w-16" /> : metric.value}
+              </span>
+              <p className="text-xs text-slate-500 mt-0.5">
                 {metric.label}
               </p>
-              <h3 className="text-xl font-bold">{metric.value}</h3>
+            </div>
+            <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
+               <metric.icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
             </div>
           </CardContent>
         </Card>

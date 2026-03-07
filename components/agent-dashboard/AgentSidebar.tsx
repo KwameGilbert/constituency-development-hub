@@ -56,32 +56,35 @@ export function AgentSidebar() {
   };
 
   return (
-    <Sidebar className="bg-white border-r border-slate-200 px-4">
-      <SidebarHeader className="h-16 border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-6 py-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white">
-            <User className="h-5 w-5" />
+    <Sidebar collapsible="icon" className="bg-slate-900 border-r-0 selection:bg-amber-500/30 z-40">
+      <SidebarHeader className="h-20 border-b border-slate-800/50 bg-slate-900 sticky top-0 z-10 px-2 overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-6">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-amber-400 to-amber-600 text-slate-900 shadow-lg shadow-amber-500/20">
+            <User className="h-6 w-6 stroke-[2.5px]" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-slate-900">Agent Portal</span>
-            <span className="text-xs text-slate-500">Welcome back</span>
+          <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+            <span className="font-semibold text-slate-100 tracking-tight text-lg">Agent Portal</span>
+            <span className="text-[10px] text-amber-500/80 font-medium mt-1">Sefwi Wiawso Hub</span>
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>MAIN NAVIGATION</SidebarGroupLabel>
+      
+      <SidebarContent className="bg-slate-900 px-3">
+        <SidebarGroup className="py-6">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 group-data-[collapsible=icon]:hidden">
+            Main Navigation
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1">
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === "/agents-dashboard"}
-                  className="data-[active=true]:bg-slate-900 data-[active=true]:text-white hover:bg-slate-100 hover:text-slate-900"
+                  className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                 >
                   <Link href="/agents-dashboard">
-                    <LayoutDashboard />
-                    <span>Dashboard</span>
+                    <LayoutDashboard className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                    <span className="text-sm group-data-[collapsible=icon]:hidden">Dashboard</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -89,30 +92,33 @@ export function AgentSidebar() {
                 <SidebarMenuButton
                   asChild
                   isActive={pathname.startsWith("/agents-dashboard/issues")}
-                  className="data-[active=true]:bg-slate-900 data-[active=true]:text-white hover:bg-slate-100 hover:text-slate-900"
+                  className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                 >
                   <Link href="/agents-dashboard/issues">
-                    <FileText />
-                    <span>Issues</span>
+                    <FileText className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                    <span className="text-sm group-data-[collapsible=icon]:hidden">Issues & Reports</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarGroup>
-          <SidebarGroupLabel>ACCOUNT</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 group-data-[collapsible=icon]:hidden">
+            System
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1">
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === "/agents-dashboard/settings"}
-                  className="data-[active=true]:bg-slate-900 data-[active=true]:text-white hover:bg-slate-100 hover:text-slate-900"
+                  className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                 >
                   <Link href="/agents-dashboard/settings">
-                    <Settings />
-                    <span>Settings</span>
+                    <Settings className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                    <span className="text-sm group-data-[collapsible=icon]:hidden">Profile Settings</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -120,41 +126,42 @@ export function AgentSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border p-4">
-        <div className="flex items-center justify-between gap-2">
+
+      <SidebarFooter className="border-t border-slate-800/50 bg-slate-900 p-4">
+        <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-slate-800/40 border border-slate-700/30">
           <div className="flex items-center gap-3 overflow-hidden">
-            <Avatar className="h-10 w-10 shrink-0">
+            <Avatar className="h-9 w-9 shrink-0 ring-2 ring-slate-700/50">
               <AvatarImage src="/placeholder-user.jpg" />
-              <AvatarFallback className="bg-slate-900 text-white">
-                {userName.slice(0, 2).toUpperCase()}
+              <AvatarFallback className="bg-amber-500 text-slate-950 font-semibold text-xs capitalize">
+                {userName.slice(0, 2).toLowerCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col overflow-hidden">
-              <span className="truncate text-sm font-medium text-slate-900">
+            <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+              <span className="truncate text-xs font-semibold text-slate-100 capitalize">
                 {userName}
               </span>
-              <span className="truncate text-xs text-slate-500">{userEmail}</span>
+              <span className="truncate text-[10px] text-slate-400">{userEmail}</span>
             </div>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="shrink-0 text-slate-500 transition-colors hover:text-red-600">
-                <LogOut className="h-5 w-5" />
+              <button className="shrink-0 p-2 text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400 rounded-lg group-data-[collapsible=icon]:hidden">
+                <LogOut className="h-4 w-4" />
               </button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-slate-900 border-slate-800 text-slate-100">
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-white">Confirm Logout</AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-400">
                   Are you sure you want to log out? You will need to sign in
                   again to access your dashboard.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-red-600 hover:bg-red-700 text-white"
                 >
                   Logout
                 </AlertDialogAction>

@@ -4,9 +4,9 @@ import React from "react";
 
 export default function IssuesPage() {
   return (
-    <div className="flex flex-col h-full w-full bg-slate-50">
+    <div className="flex flex-col min-h-screen">
       <AgentIssuesHeader />
-      <div className="p-6 space-y-8">
+      <div className="flex-1 p-4 sm:p-6 space-y-6 sm:space-y-8">
         <AgentAllIssues />
       </div>
     </div>

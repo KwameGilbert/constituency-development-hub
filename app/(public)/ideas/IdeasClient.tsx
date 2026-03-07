@@ -163,7 +163,7 @@ export default function IdeasClient() {
               <div className="mt-6">
                 <SubmitIdeaDialog
                   trigger={
-                    <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md">
+                    <Button className="bg-amber-500 hover:bg-amber-600 text-white shadow-md">
                       Be the first to submit an idea
                     </Button>
                   }

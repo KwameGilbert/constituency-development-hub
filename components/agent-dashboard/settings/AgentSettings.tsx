@@ -169,33 +169,33 @@ export function AgentSettings() {
       </div>
 
       {/* Profile Card */}
-      <div className="flex items-center gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="relative">
-          <Avatar className="h-24 w-24">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="relative shrink-0">
+          <Avatar className="h-20 w-20 md:h-24 md:w-24">
             <AvatarImage
               src={profile?.profile_image || "/placeholder-user.jpg"}
             />
-            <AvatarFallback className="text-2xl bg-slate-100 text-slate-500">
+            <AvatarFallback className="text-xl md:text-2xl bg-slate-100 text-slate-500">
               {profile ? getInitials(profile.user.name) : "AG"}
             </AvatarFallback>
           </Avatar>
-          <button className="absolute bottom-0 right-0 rounded-full bg-slate-900 p-2 text-white hover:bg-slate-800">
+          <button className="absolute bottom-0 right-0 rounded-full bg-slate-900 p-2 text-white hover:bg-slate-800 shadow-md">
             <Camera className="h-4 w-4" />
           </button>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1 text-center md:text-left">
           <h2 className="text-xl font-bold text-slate-900">
             {profile?.user.name}
           </h2>
-          <p className="text-slate-500">Field Agent • {profile?.agent_code}</p>
-          <div className="flex items-center gap-3 pt-1">
-            <div className="flex items-center gap-1 text-sm text-slate-500">
+          <p className="text-slate-500 font-medium">Field Agent • {profile?.agent_code}</p>
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-1">
+            <div className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-slate-500">
               <Mail className="h-3.5 w-3.5" />
               {profile?.user.email}
             </div>
             <Badge
               variant="secondary"
-              className={`gap-1 ${
+              className={`gap-1 w-fit mx-auto md:mx-0 ${
                 profile?.user.status === "active"
                   ? "bg-green-100 text-green-700 hover:bg-green-100"
                   : "bg-gray-100 text-gray-700"
@@ -209,12 +209,12 @@ export function AgentSettings() {
           </div>
         </div>
       </div>
-
+ 
       {/* Settings Tabs */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <Tabs defaultValue="profile" className="w-full">
-          <div className="border-b border-slate-200 px-6 pt-2">
-            <TabsList className="bg-transparent p-0 h-auto gap-6">
+          <div className="border-b border-slate-200 px-0 sm:px-6 w-full">
+            <TabsList className="bg-transparent p-0 h-auto gap-2 md:gap-6 flex flex-row overflow-x-auto no-scrollbar scroll-smooth w-full justify-start md:justify-start">
               <TabsTrigger
                 value="profile"
                 className="rounded-none border-b-2 border-transparent px-6 py-3 data-[state=active]:border-slate-900 data-[state=active]:bg-transparent data-[state=active]:text-slate-900 data-[state=active]:shadow-none"

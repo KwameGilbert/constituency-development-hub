@@ -231,7 +231,7 @@ export default function YouthClient() {
         <div className="absolute bottom-10 right-0 h-96 w-96 rounded-full bg-cyan-200/40 blur-[150px]" />
       </div>
 
-      <main className="relative mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
+      <main className="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
         <div className="w-full">
           <HeroPanel
             stats={highlightStats}
@@ -277,7 +277,7 @@ export default function YouthClient() {
             </div>
           </div>
 
-          <div className="relative h-2 w-full rounded-full bg-slate-100 my-58">
+          <div className="relative h-2 w-full rounded-full bg-slate-100 my-8">
             <span
               className="absolute inset-y-0 left-0 rounded-full bg-emerald-400"
               style={{ width: `${stepProgress}%` }}

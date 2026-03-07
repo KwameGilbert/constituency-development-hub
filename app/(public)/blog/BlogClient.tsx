@@ -310,7 +310,7 @@ export default function BlogClient() {
 
       {/* CTA Section */}
       <section className="bg-slate-900 text-white py-16">
-        <div className="mx-auto max-w-4xl px-4 text-center">
+        <div className="mx-auto max-w-6xl px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
           <p className="text-white/80 mb-8">
             Subscribe to our newsletter to receive the latest news and updates

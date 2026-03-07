@@ -19,8 +19,8 @@ export default function HomeClient() {
         <AnnouncementPopup />
         <HeroCarousel />
         <AnnouncementSection />
-        <ProjectsShowcase />
         <ArticlesGrid />
+        <ProjectsShowcase />
         <GalleryPreview />
         <EventsList />
         <MapPreview />

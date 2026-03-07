@@ -147,11 +147,11 @@ function AgentMainPage() {
   }, [reports]);
 
   return (
-    <div className="flex flex-col h-full w-full bg-slate-50">
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-y-auto custom-scrollbar">
       <AgentDashboardHeader />
-      <div className="flex-1 space-y-6 p-6 pt-6">
+      <div className="flex-1 space-y-4 sm:space-y-6 p-4 sm:p-6">
         <MetricsCards stats={stats} loading={loading} />
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
           <IssuesByStatus data={statusChartData} enableAutoFetch={false} />
           <IssueBreakdown data={breakdownChartData} enableAutoFetch={false} />
         </div>

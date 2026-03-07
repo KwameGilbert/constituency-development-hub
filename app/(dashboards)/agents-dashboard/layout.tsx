@@ -8,13 +8,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <SidebarProvider
         style={
           {
-            "--sidebar-width": "18rem",
+            "--sidebar-width": "20rem",
           } as React.CSSProperties
         }
       >
         <AgentSidebar />
-        <main className="w-full">
-          <section>{children}</section>
+        <main className="w-full bg-slate-50/50 min-h-screen">
+          <div className="max-w-[1600px] mx-auto w-full">
+            {children}
+          </div>
         </main>
       </SidebarProvider>
     </ProtectedRoute>

@@ -27,7 +27,7 @@ function HeroPanel({ stats, tracks, variants }: HeroPanelProps) {
 
       <div className="space-y-6">
         <motion.h1
-          className="text-4xl font-bold leading-tight text-slate-900 sm:text-5xl lg:text-6xl"
+          className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8 }}

@@ -107,7 +107,7 @@ export default function EventDetailClient({
       </div>
 
       {/* Content */}
-      <main className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <main className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

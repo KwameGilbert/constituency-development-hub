@@ -131,9 +131,9 @@
 /* Print styles */
 @media print {
   /* Hide sidebar and other navigation elements */
-  aside, 
-  nav, 
-  header, 
+  aside,
+  nav,
+  header,
   footer,
   .sidebar,
   [role="navigation"] {
@@ -141,7 +141,7 @@
   }
 
   /* Ensure main content takes full width */
-  main, 
+  main,
   .main-content,
   body > div > div {
     margin: 0 !important;
@@ -151,7 +151,7 @@
   }
 
   /* Hide buttons and interactive elements */
-  button, 
+  button,
   .btn,
   [role="button"],
   .no-print {
@@ -165,17 +165,42 @@
   }
 
   /* Ensure cards and containers don't break across pages awkwardly */
-  .card, 
+  .card,
   .rounded-lg {
     break-inside: avoid;
     border: 1px solid #ddd !important;
     box-shadow: none !important;
     margin-bottom: 20px !important;
   }
-  
+
   /* Force background graphics to print if needed (optional) */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-slate-200), transparent 50%);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-slate-300), transparent 20%);
   }
 }

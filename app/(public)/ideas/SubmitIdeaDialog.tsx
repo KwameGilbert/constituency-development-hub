@@ -120,8 +120,8 @@ export default function SubmitIdeaDialog({
           // Hint to backend that this is an ideas/document upload
           const uploadResponse = await uploadService.uploadFile(file, "ideas", "document");
           documentUrl = uploadResponse.data.url;
-        } catch (err: any) {
-          const message = err?.message || err?.toString() || "Could not upload the attached file. Please try again.";
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : String(err) || "Could not upload the attached file. Please try again.";
           toast.error("File upload failed", {
             description: message,
           });
@@ -173,7 +173,7 @@ export default function SubmitIdeaDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-md">
+          <Button className="bg-amber-500 hover:bg-amber-600 text-white shadow-md">
             <Send className="w-4 h-4 mr-2" />
             Submit Your Idea
           </Button>
@@ -366,7 +366,7 @@ export default function SubmitIdeaDialog({
             </Button>
             <Button
               type="submit"
-              className="bg-indigo-600 hover:bg-indigo-700"
+              className="bg-emerald-600 hover:bg-emerald-700"
               disabled={loading}
             >
               {loading ? (

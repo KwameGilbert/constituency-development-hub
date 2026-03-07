@@ -4,9 +4,9 @@ import React from "react";
 
 export default function SettingsPage() {
   return (
-    <div className="flex flex-col h-full w-full bg-slate-50">
+    <div className="flex flex-col min-h-screen">
       <AgentDashboardHeader />
-      <div className="p-6">
+      <div className="flex-1 p-4 sm:p-6">
         <AgentSettings />
       </div>
     </div>

@@ -28,11 +28,11 @@ const chartConfig = {
   },
   resolved: {
     label: "Resolved",
-    color: "#22c55e", // Green 500
+    color: "#10b981", // Emerald 500
   },
   closed: {
     label: "Closed",
-    color: "#6b7280", // Gray 500
+    color: "#64748b", // Slate 500
   },
   in_progress: {
     label: "In Progress",
@@ -70,18 +70,17 @@ export function IssuesByStatus({
         if (response.success && response.data) {
           const distribution = response.data.distribution || [];
 
-          // Map distribution items to chart data format
-          // Filter and map distribution items to chart data format
           const allowedStatuses = ["resolved", "closed", "resolution_in_progress", "in_progress"];
           const data: ChartDataItem[] = distribution
             .filter((item) => allowedStatuses.includes(item.status))
             .map((item) => {
-              // Map resolution_in_progress to in_progress to match chartConfig
               const statusKey = item.status === "resolution_in_progress" ? "in_progress" : item.status;
               return {
                 status: statusKey,
                 count: item.value,
-                fill: item.status === "resolution_in_progress" ? chartConfig.in_progress.color : item.color,
+                fill: item.status === "resolution_in_progress" ? chartConfig.in_progress.color : 
+                      item.status === "resolved" ? chartConfig.resolved.color :
+                      item.status === "closed" ? chartConfig.closed.color : item.color,
               };
             });
 
@@ -103,116 +102,93 @@ export function IssuesByStatus({
 
   if (loading) {
     return (
-      <Card className="flex flex-col border-none shadow-md">
+      <Card className="flex flex-col border-none shadow-md shadow-slate-200/50 overflow-hidden">
+        <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6">
+          <CardTitle className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">
+            Issues by Status <span className="text-amber-500 ml-1">. Distribution</span>
+          </CardTitle>
+        </CardHeader>
         <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[350px]">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
         </CardContent>
-        <CardHeader className="items-center pb-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Issues by Status
-          </CardTitle>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="flex flex-col border-none shadow-md">
-        <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[350px]">
-          <div className="text-center text-gray-500">
-            <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-            <p>Unable to load chart</p>
-          </div>
-        </CardContent>
-        <CardHeader className="items-center pb-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Issues by Status
-          </CardTitle>
-        </CardHeader>
-      </Card>
-    );
-  }
-
-  if (!chartData.length || totalIssues === 0) {
-    return (
-      <Card className="flex flex-col border-none shadow-md">
-        <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[300px]">
-          <div className="text-center text-gray-500">
-            <p className="text-sm">No status data available</p>
-          </div>
-        </CardContent>
-        <CardHeader className="items-center pb-0">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Issues by Status
-          </CardTitle>
-        </CardHeader>
       </Card>
     );
   }
 
   return (
-    <Card className="flex flex-col border-none shadow-md">
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto w-full min-h-[300px] max-h-[350px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="count"
-              nameKey="status"
-              innerRadius={80}
-              outerRadius={120}
-              strokeWidth={5}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
-                        >
-                          {totalIssues}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground text-sm"
-                        >
-                          Total
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </Pie>
-            <ChartLegend
-              content={<ChartLegendContent nameKey="status" />}
-              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-            />
-          </PieChart>
-        </ChartContainer>
-      </CardContent>
-      <CardHeader className="items-center pb-0">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          Issues by Status
+    <Card className="flex flex-col border-none shadow-md shadow-slate-200/50 overflow-hidden">
+      <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6">
+        <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight">
+          Issues by Status <span className="text-amber-600 text-[10px] ml-1">Distribution</span>
         </CardTitle>
       </CardHeader>
+      <CardContent className="flex-1 pb-4 pt-6">
+        {error ? (
+          <div className="flex flex-col items-center justify-center min-h-[300px] text-slate-400">
+            <AlertCircle className="h-8 w-8 mx-auto mb-2 text-red-400" />
+            <p className="text-sm font-medium">Unable to load chart</p>
+          </div>
+        ) : chartData.length === 0 || totalIssues === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-[300px] text-slate-400">
+            <p className="text-sm font-medium">No status data available</p>
+          </div>
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto w-full min-h-[300px]"
+          >
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={chartData}
+                dataKey="count"
+                nameKey="status"
+                innerRadius={70}
+                outerRadius={100}
+                paddingAngle={5}
+                strokeWidth={0}
+              >
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-slate-900 text-3xl font-semibold"
+                          >
+                            {totalIssues}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 24}
+                            className="fill-slate-500 text-[10px] font-medium tracking-wide"
+                          >
+                            Total
+                          </tspan>
+                        </text>
+                      );
+                    }
+                  }}
+                />
+              </Pie>
+              <ChartLegend
+                content={<ChartLegendContent nameKey="status" />}
+                className="flex-wrap gap-4 justify-center mt-4"
+              />
+            </PieChart>
+          </ChartContainer>
+        )}
+      </CardContent>
     </Card>
   );
 }
