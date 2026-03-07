@@ -4,7 +4,7 @@ import React from "react";
 
 export default function SettingsPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
       <AgentDashboardHeader />
       <div className="flex-1 p-4 sm:p-6">
         <AgentSettings />

@@ -13,7 +13,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Button } from "@/components/ui/button";
 
 interface ChartDataItem {
   label: string;
@@ -168,22 +167,18 @@ export function IssueBreakdown({
           Issues Breakdown <span className="text-amber-600 ml-1 capitalize">{activeTab}</span>
         </CardTitle>
         <div className="flex items-center shrink-0 space-x-1 bg-slate-200/50 p-1 rounded-full">
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => setActiveTab("category")}
             className={`h-7 px-4 text-xs font-medium rounded-full transition-all ${activeTab === "category" ? "bg-slate-900 text-white shadow-sm" : "hover:bg-slate-300/50 text-slate-600"}`}
           >
-            Status
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
+            Category
+          </button>
+          <button
             onClick={() => setActiveTab("priority")}
             className={`h-7 px-4 text-xs font-medium rounded-full transition-all ${activeTab === "priority" ? "bg-slate-900 text-white shadow-sm" : "hover:bg-slate-300/50 text-slate-600"}`}
           >
             Priority
-          </Button>
+          </button>
         </div>
       </CardHeader>
       <CardContent className="pt-8 px-6">

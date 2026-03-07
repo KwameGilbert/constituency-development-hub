@@ -211,9 +211,9 @@ export default function AgentIssueDetailPage({
   const reporterAddressLabel = issue.reporter_address || fallbackAddress || "Not specified";
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
       <AgentDashboardHeader />
-      <div className="flex-1 p-4 sm:p-6 space-y-6 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 p-4 sm:p-6 space-y-6">
         {/* Back Button & Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">

@@ -56,13 +56,13 @@ export function AgentSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="bg-slate-900 border-r-0 selection:bg-amber-500/30 z-40">
+    <Sidebar collapsible="offcanvas" className="bg-slate-900 border-r-0 selection:bg-amber-500/30 z-40">
       <SidebarHeader className="h-20 border-b border-slate-800/50 bg-slate-900 sticky top-0 z-10 px-2 overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-6">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-amber-400 to-amber-600 text-slate-900 shadow-lg shadow-amber-500/20">
             <User className="h-6 w-6 stroke-[2.5px]" />
           </div>
-          <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+          <div className="flex flex-col overflow-hidden">
             <span className="font-semibold text-slate-100 tracking-tight text-lg">Agent Portal</span>
             <span className="text-[10px] text-amber-500/80 font-medium mt-1">Sefwi Wiawso Hub</span>
           </div>
@@ -71,7 +71,7 @@ export function AgentSidebar() {
       
       <SidebarContent className="bg-slate-900 px-3">
         <SidebarGroup className="py-6">
-          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2">
             Main Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -84,7 +84,7 @@ export function AgentSidebar() {
                 >
                   <Link href="/agents-dashboard">
                     <LayoutDashboard className="h-5 w-5 group-data-[active=true]:text-slate-950" />
-                    <span className="text-sm group-data-[collapsible=icon]:hidden">Dashboard</span>
+                    <span className="text-sm">Dashboard</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -96,7 +96,7 @@ export function AgentSidebar() {
                 >
                   <Link href="/agents-dashboard/issues">
                     <FileText className="h-5 w-5 group-data-[active=true]:text-slate-950" />
-                    <span className="text-sm group-data-[collapsible=icon]:hidden">Issues & Reports</span>
+                    <span className="text-sm">Issues & Reports</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -105,7 +105,7 @@ export function AgentSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2">
             System
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -118,7 +118,7 @@ export function AgentSidebar() {
                 >
                   <Link href="/agents-dashboard/settings">
                     <Settings className="h-5 w-5 group-data-[active=true]:text-slate-950" />
-                    <span className="text-sm group-data-[collapsible=icon]:hidden">Profile Settings</span>
+                    <span className="text-sm">Profile Settings</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -136,7 +136,7 @@ export function AgentSidebar() {
                 {userName.slice(0, 2).toLowerCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col overflow-hidden group-data-[collapsible=icon]:hidden">
+            <div className="flex flex-col overflow-hidden">
               <span className="truncate text-xs font-semibold text-slate-100 capitalize">
                 {userName}
               </span>
@@ -145,7 +145,7 @@ export function AgentSidebar() {
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="shrink-0 p-2 text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400 rounded-lg group-data-[collapsible=icon]:hidden">
+              <button className="shrink-0 p-2 text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400 rounded-lg">
                 <LogOut className="h-4 w-4" />
               </button>
             </AlertDialogTrigger>
