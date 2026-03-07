@@ -143,6 +143,8 @@ export default function EditUserPage({
           fullName: user.name || "",
           email: user.email || "",
           phone: user.phone || "",
+          newPassword: "",
+          confirmPassword: "",
           department: user.role_profile?.department || "",
           role: user.role || "",
           status: user.status || "active",

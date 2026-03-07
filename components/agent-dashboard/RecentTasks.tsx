@@ -16,6 +16,15 @@ import { agentService, AgentReport } from "@/lib/services/agent-service";
 import Link from "next/link";
 import { FileX } from "lucide-react";
 
+// Helper to format status names
+const formatStatusLabel = (status: string) => {
+  if (!status) return "";
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 // Status badge styling
 const getStatusBadge = (status: string) => {
   const statusLower = status?.toLowerCase() || "";
@@ -25,16 +34,16 @@ const getStatusBadge = (status: string) => {
     pending: { className: "bg-yellow-100 text-yellow-700", label: "Pending" },
     under_officer_review: {
       className: "bg-orange-100 text-orange-700",
-      label: "Under Review",
+      label: "Under Officer Review",
     },
     forwarded_to_admin: {
       className: "bg-indigo-100 text-indigo-700",
-      label: "Forwarded",
+      label: "Forwarded To Admin",
     },
     approved: { className: "bg-indigo-100 text-indigo-700", label: "Approved" },
     assigned_to_task_force: {
       className: "bg-purple-100 text-purple-700",
-      label: "Assigned",
+      label: "Assigned To Task Force",
     },
     in_progress: {
       className: "bg-purple-100 text-purple-700",
@@ -47,11 +56,11 @@ const getStatusBadge = (status: string) => {
 
   const config = statusConfig[statusLower] || {
     className: "bg-gray-100 text-gray-700",
-    label: status || "Unknown",
+    label: formatStatusLabel(statusLower),
   };
 
   return (
-    <Badge variant="outline" className={`${config.className} border-none`}>
+    <Badge variant="outline" className={`${config.className} border-none font-medium`}>
       {config.label}
     </Badge>
   );
