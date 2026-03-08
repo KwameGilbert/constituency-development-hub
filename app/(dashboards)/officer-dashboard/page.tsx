@@ -17,7 +17,7 @@ function OfficerMainDashboardPage() {
     return user?.name || user?.email?.split("@")[0] || "Officer";
   }, []);
   return (
-    <div>
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-y-auto custom-scrollbar">
       <DashboardHeader title="Dashboard" subtitle={`Welcome back, ${userName}`}>
         <Button className="bg-indigo-700 hover:bg-indigo-800" asChild>
           <Link href="/officer-dashboard/issues">
@@ -32,9 +32,9 @@ function OfficerMainDashboardPage() {
           </Link>
         </Button>
       </DashboardHeader>
-      <div className="p-4 space-y-8 bg-gray-100">
+      <div className="flex-1 space-y-4 sm:space-y-6 p-4 sm:p-6 pb-20">
         <MetricsCards />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <IssuesByStatus />
           <IssueBreakdown />
         </div>

@@ -25,7 +25,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -97,25 +96,26 @@ export function OfficerSidebar({
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-3">
-          <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-indigo-700 text-sidebar-primary-foreground">
-            <ShieldUser className="size-6" />
+    <Sidebar collapsible="offcanvas" className="bg-slate-900 border-r-0 selection:bg-indigo-500/30 z-40" {...props}>
+      <SidebarHeader className="h-20 border-b border-slate-800/50 bg-slate-900 sticky top-0 z-10 px-2 overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-6">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-indigo-700 text-white shadow-lg shadow-indigo-500/20">
+            <ShieldUser className="h-6 w-6 stroke-[2.5px]" />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-            <h3 className="text-gray-800 font-semibold">Officer Portal</h3>
-            <p className="text-gray-500 text-xs">Welcome back</p>
+          <div className="flex flex-col overflow-hidden">
+            <span className="font-semibold text-slate-100 tracking-tight text-lg">Officer Portal</span>
+            <span className="text-[10px] text-indigo-400 font-medium mt-1">Sefwi Wiawso Hub</span>
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-500">
-            MAIN NAVIGATION
+
+      <SidebarContent className="bg-slate-900 px-3">
+        <SidebarGroup className="py-6">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2">
+            Main Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="gap-0">
+            <SidebarMenu className="gap-1">
               {items.map((item) => {
                 const isActive = pathname === item.url;
                 return (
@@ -124,15 +124,11 @@ export function OfficerSidebar({
                       asChild
                       isActive={isActive}
                       tooltip={item.title}
-                      className={
-                        isActive
-                          ? "!bg-indigo-700 !text-white !hover:bg-indigo-800 !hover:text-white h-11 py-3"
-                          : "h-11"
-                      }
+                      className="h-11 px-4 text-slate-400 data-[active=true]:bg-indigo-600 data-[active=true]:text-white data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                     >
                       <Link href={item.url} className="flex items-center gap-3">
-                        <item.icon className="size-6" />
-                        <span className="text-base">{item.title}</span>
+                        <item.icon className="h-5 w-5 group-data-[active=true]:text-white shrink-0" />
+                        <span className="text-sm">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -142,50 +138,49 @@ export function OfficerSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="p-2">
-          <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent/10 p-3">
-            <Avatar className="h-10 w-10 rounded-full bg-blue-100">
-              <AvatarImage src="" alt="Officer" />
-              <AvatarFallback className="text-blue-600">
-                {userName.slice(0, 2).toUpperCase()}
+      <SidebarFooter className="border-t border-slate-800/50 bg-slate-900 p-4">
+        <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-slate-800/40 border border-slate-700/30">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <Avatar className="h-9 w-9 shrink-0 ring-2 ring-slate-700/50">
+              <AvatarImage src="/placeholder-user.jpg" />
+              <AvatarFallback className="bg-indigo-600 text-white font-semibold text-xs capitalize">
+                {userName.slice(0, 2).toLowerCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-              <span className="truncate font-semibold">{userName}</span>
-              <span className="truncate text-xs text-muted-foreground">
-                {userEmail}
+            <div className="flex flex-col overflow-hidden">
+              <span className="truncate text-xs font-semibold text-slate-100 capitalize">
+                {userName}
               </span>
+              <span className="truncate text-[10px] text-slate-400">{userEmail}</span>
             </div>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="ml-auto">
-                  <LogOut className="size-4 text-muted-foreground hover:text-red-600 cursor-pointer transition-colors" />
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to log out? You will need to sign in
-                    again to access your dashboard.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    Logout
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
           </div>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="shrink-0 p-2 text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400 rounded-lg">
+                <LogOut className="h-4 w-4" />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-slate-900 border-slate-800 text-slate-100">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">Confirm Logout</AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-400">
+                  Are you sure you want to log out? You will need to sign in
+                  again to access your dashboard.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleLogout}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }
