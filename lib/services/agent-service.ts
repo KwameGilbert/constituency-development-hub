@@ -96,8 +96,8 @@ export interface IssueSubmission {
   type?: string; // Legacy field
   issue_type?: "community_based" | "individual_based"; // NEW: Impact type
   priority: string;
-  community: string;
-  community_id: number;
+  community?: string;
+  community_id?: number;
   suburb?: string;
   suburb_id?: number;
   specific_location?: string;
@@ -117,6 +117,18 @@ export interface IssueSubmission {
   constituent_email?: string;
   constituent_gender?: string;
   constituent_address?: string;
+  images?: File[];
+  // Mapping for components that use reporter_* instead of constituent_*
+  reporter_name?: string;
+  reporter_phone?: string;
+  reporter_email?: string;
+  reporter_gender?: string;
+  reporter_address?: string;
+  // Other potential fields used in UI
+  location?: string;
+  smaller_community?: string;
+  cottage?: string;
+  agent_id?: number;
 }
 
 export interface IssueDetail {
@@ -346,11 +358,13 @@ class AgentService {
    * POST /v1/agent/issues
    */
   async submitIssue(
-    data: IssueSubmission,
+    data: IssueSubmission | FormData,
   ): Promise<ApiResponse<{ issue: AgentReport }>> {
+    const isFormData = data instanceof FormData;
     return apiClient("/agent/issues", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
+      isFormData: isFormData,
       requiresAuth: true,
     });
   }

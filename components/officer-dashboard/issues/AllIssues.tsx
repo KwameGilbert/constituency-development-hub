@@ -5,7 +5,6 @@ import {
   ChevronUp,
   ChevronDown,
   RotateCcw,
-  Search,
   Eye,
   Loader2,
   Pencil,
@@ -39,7 +38,6 @@ import {
   IssueFilters,
 } from "@/lib/services/issues-service";
 import Link from "next/link";
-import { EditIssueDialog } from "./EditIssueDialog";
 import { toast } from "sonner";
 
 interface AllIssuesProps {
@@ -74,9 +72,6 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [selectedPriority, setSelectedPriority] = useState<string>("All Priorities");
 
-  // Edit Dialog State
-  const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   // Delete Action State
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -160,15 +155,6 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
     }
   };
 
-  const handleEdit = (issue: Issue) => {
-    setEditingIssue(issue);
-    setEditDialogOpen(true);
-  };
-
-  const handleEditSuccess = (updatedIssue: Issue) => {
-    setIssues(issues.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)));
-    setEditDialogOpen(false);
-  };
 
   function handleResetFilters() {
     setSearchQuery("");
@@ -277,14 +263,6 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
   return (
     <div className="space-y-6 w-full max-w-[1200px] mx-auto">
-      {editingIssue && (
-        <EditIssueDialog
-          issue={editingIssue}
-          open={editDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          onSuccess={handleEditSuccess}
-        />
-      )}
 
       {/* Filter Section */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
@@ -460,11 +438,13 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                           variant="outline"
                           size="sm"
                           className="flex-1 h-9 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
-                          onClick={() => handleEdit(issue)}
+                          asChild
                           disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status)}
                           title="Edit Issue"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Link href={`${basePath}/${issue.id}/edit`}>
+                             <Pencil className="h-4 w-4" />
+                          </Link>
                         </Button>
                         <Button
                           variant="outline"
@@ -546,11 +526,13 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                                 variant="outline"
                                 size="icon"
                                 className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 border-indigo-100"
-                                onClick={() => handleEdit(issue)}
+                                asChild
                                 disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status)}
                                 title="Edit Issue"
                               >
-                                <Pencil className="h-4 w-4" />
+                                <Link href={`${basePath}/${issue.id}/edit`}>
+                                   <Pencil className="h-4 w-4" />
+                                </Link>
                               </Button>
                               <Button
                                 variant="outline"

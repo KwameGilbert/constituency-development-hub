@@ -6,7 +6,7 @@ import Image from "next/image";
 import {
   ArrowLeft,
   ArrowRight,
-  Plus,
+  Save,
   Loader2,
   Check,
   ChevronsUpDown,
@@ -40,8 +40,7 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { issuesService } from "@/lib/services/issues-service";
-import { IssueSubmission } from "@/lib/services/agent-service"; // Reusing type
+import { issuesService, Issue } from "@/lib/services/issues-service";
 import { locationsService } from "@/lib/services/locations-service";
 import {
   sectorsService,
@@ -55,40 +54,71 @@ interface Location {
   name: string;
 }
 
-export function AddIssues() {
+interface FormData {
+  title: string;
+  description: string;
+  category: string;
+  category_id?: number;
+  issue_type: "community_based" | "individual_based";
+  priority: "low" | "medium" | "high" | "urgent";
+  location: string;
+  smaller_community?: string;
+  suburb?: string;
+  suburb_id?: number;
+  community_id?: number;
+  cottage?: string;
+  sector_id?: number;
+  sector?: string;
+  sub_sector_id?: number;
+  subsector?: string;
+  people_affected?: number;
+  additional_notes?: string;
+  reporter_name: string;
+  reporter_phone: string;
+  reporter_email?: string;
+  reporter_gender?: string;
+  reporter_address?: string;
+  agent_id?: number;
+  images?: string[];
+}
+
+interface EditIssueProps {
+  issueId: string;
+  onIssueLoad?: (caseId: string) => void;
+}
+
+export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("constituent-details");
   const [submitting, setSubmitting] = useState(false);
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  
+  // Data options
   const [locations, setLocations] = useState<Location[]>([]);
-
   const [suburbs, setSuburbs] = useState<Location[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [sectors, setSectors] = useState<Sector[]>([]);
   const [filteredSectors, setFilteredSectors] = useState<Sector[]>([]);
   const [subSectors, setSubSectors] = useState<SubSector[]>([]);
+  const [agents, setAgents] = useState<{ id: number; name: string; email: string }[]>([]);
+  
+  // Loading states
   const [loadingData, setLoadingData] = useState(true);
   const [loadingSubLocations, setLoadingSubLocations] = useState(false);
   const [loadingSectors, setLoadingSectors] = useState(false);
   const [loadingSubSectors, setLoadingSubSectors] = useState(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [agents, setAgents] = useState<{ id: number; name: string; email: string }[]>([]);
 
   // Form state
-  const [formData, setFormData] = useState<IssueSubmission>({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
     category: "",
     category_id: undefined,
-    type: "", // Legacy field for backward compatibility
     issue_type: "community_based",
     priority: "medium",
     location: "",
-    community: "",
-    community_id: undefined,
     smaller_community: "",
     suburb: "",
-    suburb_id: undefined,
     cottage: "",
     sector_id: undefined,
     sector: "",
@@ -104,12 +134,19 @@ export function AddIssues() {
     agent_id: undefined,
   });
 
-  // Fetch locations, sectors, and categories
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+
+  // Fetch initial issue data and general options
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoadingInitial(true);
         setLoadingData(true);
-        const [locRes, secRes, catRes, agentRes] = await Promise.all([
+        
+        const [issueRes, locRes, secRes, catRes, agentRes] = await Promise.all([
+          issuesService.getOfficerIssueById(parseInt(issueId)),
           locationsService.getLocations({
             type: "community",
             status: "active",
@@ -120,31 +157,74 @@ export function AddIssues() {
           issuesService.getAgentsForOfficer(),
         ]);
 
-        if (locRes.success && locRes.data?.locations) {
-          setLocations(locRes.data.locations);
+        if ((locRes as any).success && (locRes as any).data?.locations) {
+          setLocations((locRes as any).data.locations);
         }
-        if (secRes.success && secRes.data?.sectors) {
-          setSectors(secRes.data.sectors);
+        if ((secRes as any).success && (secRes as any).data?.sectors) {
+          setSectors((secRes as any).data.sectors);
         }
-        if (catRes.success && catRes.data?.categories) {
-          setCategories(catRes.data.categories);
+        if ((catRes as any).success && (catRes as any).data?.categories) {
+          setCategories((catRes as any).data.categories);
         }
-        if (agentRes.success && agentRes.data?.agents) {
-          setAgents(agentRes.data.agents);
+        if ((agentRes as any).success && (agentRes as any).data?.agents) {
+          setAgents((agentRes as any).data.agents);
+        }
+
+        if (issueRes.success && issueRes.data.report) {
+          const issue = issueRes.data.report as any;
+          
+          if (onIssueLoad && issue.case_id) {
+            onIssueLoad(issue.case_id);
+          } else if (onIssueLoad) {
+            onIssueLoad(`#${issue.id}`);
+          }
+
+          // Map backend issue to form data
+          setFormData({
+            title: issue.title || "",
+            description: issue.description || "",
+            category: issue.category || "",
+            category_id: issue.category_id ? Number(issue.category_id) : undefined,
+            issue_type: (issue.issue_type as "community_based" | "individual_based") || "community_based",
+            priority: (issue.priority as "low" | "medium" | "high" | "urgent") || "medium",
+            location: issue.community || issue.location || "",
+            community_id: issue.community_id ? Number(issue.community_id) : undefined,
+            suburb: issue.suburb || "",
+            suburb_id: issue.suburb_id ? Number(issue.suburb_id) : undefined,
+            cottage: issue.specific_location || issue.cottage || "",
+            sector_id: issue.sector_id ? Number(issue.sector_id) : undefined,
+            sector: issue.sector || "",
+            sub_sector_id: issue.sub_sector_id ? Number(issue.sub_sector_id) : undefined,
+            subsector: issue.subsector || "",
+            people_affected: issue.people_affected ? Number(issue.people_affected) : undefined,
+            additional_notes: issue.details || issue.additional_notes || "",
+            reporter_name: issue.reporter_name || issue.constituent?.name || "",
+            reporter_phone: issue.reporter_phone || issue.constituent?.phone_number || "",
+            reporter_email: issue.reporter_email || issue.constituent?.email || "",
+            reporter_gender: issue.reporter_gender || issue.constituent?.gender || "",
+            reporter_address: issue.reporter_address || issue.constituent?.home_address || "",
+            agent_id: issue.agent?.id || (issue.agent_id ? Number(issue.agent_id) : undefined),
+            images: Array.isArray(issue.images) ? issue.images : [],
+          });
+        } else {
+          toast.error("Failed to load issue details");
+          router.push("/officer-dashboard/issues");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+        toast.error("An error occurred while loading data");
       } finally {
+        setLoadingInitial(false);
         setLoadingData(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [issueId, router, onIssueLoad]);
 
   // Filter sectors when category changes
   useEffect(() => {
-    if (formData.category_id) {
+    if (formData.category_id && sectors.length > 0) {
       setLoadingSectors(true);
       const filtered = sectors.filter(
         (s) => s.category_id === formData.category_id
@@ -154,8 +234,6 @@ export function AddIssues() {
     } else {
       setFilteredSectors([]);
     }
-    // Reset sector and subsector when category changes
-    setSubSectors([]);
   }, [formData.category_id, sectors]);
 
   // Load subsectors when sector changes
@@ -182,13 +260,13 @@ export function AddIssues() {
     fetchSubSectors();
   }, [formData.sector_id]);
 
-  // Fetch smaller communities and suburbs when location changes
+  // Fetch suburbs when location changes
   useEffect(() => {
     const fetchSubLocations = async () => {
-      // Reset sub-locations when main location changes
-      setSuburbs([]);
-
-      if (!formData.location) return;
+      if (!formData.location || locations.length === 0) {
+        setSuburbs([]);
+        return;
+      }
 
       const selectedLocation = locations.find(
         (l) => l.name === formData.location
@@ -209,7 +287,6 @@ export function AddIssues() {
         }
       } catch (error) {
         console.error("Error fetching sub-locations:", error);
-        toast.error("Failed to load sub-locations");
       } finally {
         setLoadingSubLocations(false);
       }
@@ -223,14 +300,14 @@ export function AddIssues() {
   };
 
   const updateField = (
-    field: keyof IssueSubmission,
-    value: string | number | undefined | null | boolean
+    field: keyof FormData,
+    value: string | number | undefined | boolean | null
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateForm = (): boolean => {
-    const required = [
+    const required: (keyof FormData)[] = [
       "title",
       "description",
       "category",
@@ -238,8 +315,8 @@ export function AddIssues() {
       "location",
     ];
     for (const field of required) {
-      if (!formData[field as keyof IssueSubmission]) {
-        toast.error(`Please fill in the ${field.replace("_", " ")} field`);
+      if (!formData[field]) {
+        toast.error(`Please fill in the ${String(field).replace("_", " ")} field`);
         return false;
       }
     }
@@ -257,23 +334,30 @@ export function AddIssues() {
     const files = e.target.files;
     if (files) {
       const newFiles = Array.from(files);
-      setImageFiles((prev) => [...prev, ...newFiles]);
+      setNewImageFiles((prev) => [...prev, ...newFiles]);
 
       const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setImagePreviews((prev) => [...prev, ...newPreviews]);
+      setNewImagePreviews((prev) => [...prev, ...newPreviews]);
     }
   };
 
-  const removeImage = (index: number) => {
-    const newFiles = [...imageFiles];
+  const removeNewImage = (index: number) => {
+    const newFiles = [...newImageFiles];
     newFiles.splice(index, 1);
-    setImageFiles(newFiles);
+    setNewImageFiles(newFiles);
 
-    const newPreviews = [...imagePreviews];
-    // Revoke the URL to avoid memory leaks
+    const newPreviews = [...newImagePreviews];
     URL.revokeObjectURL(newPreviews[index]);
     newPreviews.splice(index, 1);
-    setImagePreviews(newPreviews);
+    setNewImagePreviews(newPreviews);
+  };
+
+  const removeExistingImage = (imageUrl: string) => {
+    setImagesToDelete((prev) => [...prev, imageUrl]);
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images?.filter((img) => img !== imageUrl),
+    }));
   };
 
   const handleSubmit = async () => {
@@ -281,42 +365,72 @@ export function AddIssues() {
 
     setSubmitting(true);
     try {
-      // Create FormData for officer submission
+      // Find IDs for community and suburb if not already set (for safety)
+      let finalCommunityId = formData.community_id;
+      if (!finalCommunityId && formData.location) {
+        finalCommunityId = locations.find((l) => l.name === formData.location)?.id;
+      }
+
+      let finalSuburbId = formData.suburb_id;
+      if (!finalSuburbId && formData.suburb) {
+        finalSuburbId = suburbs.find((l) => l.name === formData.suburb)?.id;
+      }
+
       const submitData = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          // Map to backend required field names if they differ
-          if (key === "reporter_name") submitData.append("constituent_name", value.toString());
-          else if (key === "reporter_phone") submitData.append("constituent_phone", value.toString());
-          else if (key === "reporter_email") submitData.append("constituent_email", value.toString());
-          else if (key === "reporter_gender") submitData.append("constituent_gender", value.toString());
-          else if (key === "reporter_address") submitData.append("constituent_address", value.toString());
-          else if (key === "cottage") submitData.append("specific_location", value.toString());
-          else if (key === "additional_notes") submitData.append("details", value.toString());
-          else submitData.append(key, value.toString());
+        if (value !== undefined && value !== null && (typeof value !== 'string' || value !== "") && key !== "images") {
+          submitData.append(key, value.toString());
         }
       });
-
-      // Add images
-      imageFiles.forEach((file) => {
+      
+      if (finalCommunityId) submitData.append("community_id", finalCommunityId.toString());
+      if (finalSuburbId) submitData.append("suburb_id", finalSuburbId.toString());
+      submitData.append("specific_location", formData.cottage || "");
+      submitData.append("details", formData.additional_notes || "");
+      
+      // Also send reporter fields for backend processing if needed (as constituent fields)
+      if (formData.reporter_name) submitData.append("constituent_name", formData.reporter_name);
+      if (formData.reporter_phone) submitData.append("constituent_phone", formData.reporter_phone);
+      if (formData.reporter_email) submitData.append("constituent_email", formData.reporter_email);
+      if (formData.reporter_gender) submitData.append("constituent_gender", formData.reporter_gender);
+      if (formData.reporter_address) submitData.append("constituent_address", formData.reporter_address);
+      
+      submitData.append("keep_existing_images", "true");
+      
+      // Add existing images to delete
+      imagesToDelete.forEach((img) => {
+        submitData.append("delete_images[]", img);
+      });
+      
+      // Add new images
+      newImageFiles.forEach((file) => {
         submitData.append("images[]", file);
       });
 
-      const response = await issuesService.submitOfficerIssue(submitData);
+      const response = await issuesService.updateOfficerIssue(parseInt(issueId), submitData);
 
       if (response.success) {
-        toast.success("Issue submitted successfully!");
-        router.push("/officer-dashboard/issues");
+        toast.success("Issue updated successfully!");
+        router.push(`/officer-dashboard/issues/${issueId}`);
       } else {
-        toast.error(response.message || "Failed to submit issue");
+        toast.error(response.message || "Failed to update issue");
       }
     } catch (error) {
-      console.error("Submit error:", error);
-      toast.error("An error occurred while submitting the issue");
+      console.error("Update error:", error);
+      toast.error("An error occurred while updating the issue");
     } finally {
       setSubmitting(false);
     }
   };
+
+  if (loadingInitial) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-indigo-500 mb-4" />
+        <p className="text-slate-500 font-medium">Loading issue details...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
@@ -412,16 +526,15 @@ export function AddIssues() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Main Community" required>
               <SearchableSelect
-                value={formData.location || ""}
+                value={formData.location}
                 onChange={(v) => {
-                  const loc = locations.find((l) => l.name === v);
+                  const loc = locations.find(l => l.name === v);
                   setFormData((prev) => ({
                     ...prev,
                     location: v,
-                    community: v,
                     community_id: loc?.id,
                     suburb: "",
-                    suburb_id: undefined,
+                    suburb_id: undefined
                   }));
                 }}
                 options={locations.map((loc) => ({
@@ -440,11 +553,11 @@ export function AddIssues() {
               <SearchableSelect
                 value={formData.suburb || ""}
                 onChange={(v) => {
-                  const loc = suburbs.find((l) => l.name === v);
+                  const loc = suburbs.find(l => l.name === v);
                   setFormData((prev) => ({
                     ...prev,
                     suburb: v,
-                    suburb_id: loc?.id,
+                    suburb_id: loc?.id
                   }));
                 }}
                 options={suburbs.map((loc) => ({
@@ -528,11 +641,6 @@ export function AddIssues() {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-slate-500 mt-1">
-                {formData.issue_type === "community_based"
-                  ? "Affects multiple people in the community"
-                  : "Affects a single person or household"}
-              </p>
             </FormItem>
           </div>
 
@@ -554,12 +662,15 @@ export function AddIssues() {
                   const selectedCat = categories.find(
                     (c) => c.id === categoryId
                   );
-                  updateField("category_id", categoryId);
-                  updateField("category", selectedCat?.name || "");
-                  updateField("sector_id", undefined);
-                  updateField("sector", "");
-                  updateField("sub_sector_id", undefined);
-                  updateField("subsector", "");
+                  setFormData((prev) => ({
+                    ...prev,
+                    category_id: categoryId,
+                    category: selectedCat?.name || "",
+                    sector_id: undefined,
+                    sector: "",
+                    sub_sector_id: undefined,
+                    subsector: ""
+                  }));
                 }}
                 disabled={loadingData}
               >
@@ -580,7 +691,7 @@ export function AddIssues() {
             <FormItem label="Priority" required>
               <Select
                 value={formData.priority}
-                onValueChange={(v: string) => updateField("priority", v)}
+                onValueChange={(v: "low" | "medium" | "high" | "urgent") => updateField("priority", v)}
               >
                 <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Priority" />
@@ -597,7 +708,7 @@ export function AddIssues() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Assign To Agent (Optional)">
-              <SearchableSelect
+               <SearchableSelect
                 value={formData.agent_id?.toString() || ""}
                 onChange={(v) => {
                   const id = v ? parseInt(v) : undefined;
@@ -625,10 +736,13 @@ export function AddIssues() {
                   const selectedSec = filteredSectors.find(
                     (s) => s.id === sectorId
                   );
-                  updateField("sector_id", sectorId);
-                  updateField("sector", selectedSec?.name || "");
-                  updateField("sub_sector_id", undefined);
-                  updateField("subsector", "");
+                  setFormData((prev) => ({
+                    ...prev,
+                    sector_id: sectorId,
+                    sector: selectedSec?.name || "",
+                    sub_sector_id: undefined,
+                    subsector: ""
+                  }));
                 }}
               >
                 <SelectTrigger className="border-slate-200">
@@ -713,9 +827,6 @@ export function AddIssues() {
                 }
                 className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
               />
-              <p className="text-xs text-slate-500 mt-1">
-                Approximate number of people affected by this issue
-              </p>
             </FormItem>
           )}
 
@@ -730,19 +841,36 @@ export function AddIssues() {
 
           <FormItem label="Issue Images">
             <div className="mt-2 flex flex-wrap gap-4">
-              {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
-                  <Image src={preview} alt="Preview" fill className="object-cover" unoptimized />
+              {/* Existing Images */}
+              {formData.images?.map((img, index) => (
+                <div key={`existing-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+                  <Image src={img} alt="Existing" fill className="object-cover" unoptimized />
                   <button
                     type="button"
-                    onClick={() => removeImage(index)}
+                    onClick={() => removeExistingImage(img)}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </div>
               ))}
-              <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 transition-all text-slate-400 hover:text-indigo-500">
+              
+              {/* New Previews */}
+              {newImagePreviews.map((preview, index) => (
+                <div key={`new-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-indigo-200 shadow-sm ring-2 ring-indigo-100">
+                  <Image src={preview} alt="New Preview" fill className="object-cover" unoptimized />
+                  <button
+                    type="button"
+                    onClick={() => removeNewImage(index)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                  <div className="absolute bottom-0 left-0 right-0 bg-indigo-500/80 text-[8px] text-white py-0.5 text-center font-bold">NEW</div>
+                </div>
+              ))}
+              
+              <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-slate-400 hover:bg-slate-50/30 transition-all text-slate-400 hover:text-slate-600">
                 <ImageIcon className="h-6 w-6 mb-1" />
                 <span className="text-[10px] font-medium">Add Image</span>
                 <input
@@ -767,18 +895,18 @@ export function AddIssues() {
                 <ArrowLeft className="mr-2 h-4 w-4" /> Previous
               </Button>
               <Button
-                className="bg-slate-900 hover:bg-slate-800 text-white"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white"
                 onClick={handleSubmit}
                 disabled={submitting}
               >
                 {submitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Submitting...
+                    Updating...
                   </>
                 ) : (
                   <>
-                    <Plus className="mr-2 h-4 w-4" /> Submit Issue
+                    <Save className="mr-2 h-4 w-4" /> Save Changes
                   </>
                 )}
               </Button>
@@ -801,7 +929,7 @@ function FormItem({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700">
+      <label className="text-sm font-medium text-slate-700">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}

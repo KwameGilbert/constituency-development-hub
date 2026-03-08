@@ -8,15 +8,24 @@ export interface Issue {
   title: string;
   description: string;
   category: string;
+  category_id?: number;
   sector?: string;
+  sector_id?: number;
   subsector?: string;
+  sub_sector_id?: number;
   issue_type?: "community_based" | "individual_based" | string;
-  location: string; // The API seems to return this as a string based on usage
-  smaller_community?: string;
+  location: string; 
+  community?: string;
+  community_id?: number;
   suburb?: string;
+  suburb_id?: number;
+  smaller_community?: string;
   cottage?: string;
   latitude?: number;
   longitude?: number;
+  people_affected?: number;
+  additional_notes?: string;
+  images?: string[];
   status:
     | "submitted"
     | "under_officer_review"
@@ -31,14 +40,11 @@ export interface Issue {
     | "resolved"
     | "closed";
   priority: "low" | "medium" | "high" | "urgent";
-  images: string[];
   reporter_name?: string;
   reporter_phone?: string;
   reporter_email?: string;
   reporter_gender?: string;
   reporter_address?: string;
-  people_affected?: number;
-  additional_notes?: string;
   created_at: string;
   updated_at?: string;
   assigned_task_force_id?: number;
@@ -216,7 +222,7 @@ class IssuesService {
   async submitAssessment(
     id: number | string,
     data: AssessmentData,
-  ): Promise<ApiResponse<{ assessment: any; report: Issue }>> {
+  ): Promise<ApiResponse<{ assessment: Record<string, unknown>; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/assessment`, {
       method: "POST",
       body: JSON.stringify(data),
@@ -260,7 +266,7 @@ class IssuesService {
     id: number | string,
     action: "approve" | "reject" | "revision",
     notes: string,
-  ): Promise<ApiResponse<{ resolution: any; report: Issue }>> {
+  ): Promise<ApiResponse<{ resolution: Record<string, unknown>; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/review-assessment`, {
       method: "PUT",
       body: JSON.stringify({ action, notes }),
@@ -271,7 +277,7 @@ class IssuesService {
     id: number | string,
     action: "approve" | "reject",
     notes: string,
-  ): Promise<ApiResponse<{ resolution: any; report: Issue }>> {
+  ): Promise<ApiResponse<{ resolution: Record<string, unknown>; report: Issue }>> {
     return apiClient(`/admin/issues/${id}/review-resolution`, {
       method: "PUT",
       body: JSON.stringify({ action, notes }),
@@ -288,6 +294,10 @@ class IssuesService {
     });
   }
 
+  async getAgentsForOfficer(): Promise<ApiResponse<{ agents: { id: number; name: string; email: string; phone: string | null }[] }>> {
+    return apiClient("/officer/agents");
+  }
+
   async submitOfficerIssue(
     data: FormData,
   ): Promise<ApiResponse<{ report: Issue }>> {
@@ -300,11 +310,14 @@ class IssuesService {
 
   async updateOfficerIssue(
     id: number | string,
-    data: any,
+    data: Record<string, unknown> | FormData,
   ): Promise<ApiResponse<{ report: Issue }>> {
+    const isFormData = data instanceof FormData;
     return apiClient(`/officer/issues/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
+      method: isFormData ? "POST" : "PUT", // Use POST for FormData updates
+      body: isFormData ? data : JSON.stringify(data),
+      isFormData: isFormData,
+      headers: isFormData ? {} : undefined, // Let browser set boundary for FormData
     });
   }
 

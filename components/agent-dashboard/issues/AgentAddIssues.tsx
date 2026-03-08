@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Plus, Loader2, Check, ChevronsUpDown } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, ArrowRight, Plus, Loader2, Check, ChevronsUpDown, Image as ImageIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,8 @@ export function AgentAddIssues() {
   const [loadingSubLocations, setLoadingSubLocations] = useState(false);
   const [loadingSectors, setLoadingSectors] = useState(false);
   const [loadingSubSectors, setLoadingSubSectors] = useState(false);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   // Form state
   const [formData, setFormData] = useState<IssueSubmission>({
@@ -276,12 +279,48 @@ export function AgentAddIssues() {
     return true;
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setImageFiles((prev) => [...prev, ...newFiles]);
+
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newFiles = [...imageFiles];
+    newFiles.splice(index, 1);
+    setImageFiles(newFiles);
+
+    const newPreviews = [...imagePreviews];
+    // Revoke the URL to avoid memory leaks
+    URL.revokeObjectURL(newPreviews[index]);
+    newPreviews.splice(index, 1);
+    setImagePreviews(newPreviews);
+  };
+
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
     setSubmitting(true);
     try {
-      const response = await agentService.submitIssue(formData);
+      // Create FormData to handle image uploads
+      const submitData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          submitData.append(key, value.toString());
+        }
+      });
+
+      // Add images
+      imageFiles.forEach((file) => {
+        submitData.append("images[]", file);
+      });
+
+      const response = await agentService.submitIssue(submitData);
 
       if (response.success) {
         toast.success("Issue submitted successfully!");
@@ -543,10 +582,39 @@ export function AgentAddIssues() {
 
           <FormItem label="Additional Notes">
             <Textarea
-              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500 min-h-[100px]"
               value={formData.additional_notes || ""}
               onChange={(e) => updateField("additional_notes", e.target.value)}
+              placeholder="Any other details that might be helpful..."
             />
+          </FormItem>
+
+          <FormItem label="Issue Images">
+            <div className="mt-2 flex flex-wrap gap-4">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+                  <Image src={preview} alt="Preview" fill className="object-cover" unoptimized />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-amber-400 hover:bg-amber-50/30 transition-all text-slate-400 hover:text-amber-500">
+                <ImageIcon className="h-6 w-6 mb-1" />
+                <span className="text-[10px] font-medium">Add Image</span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </FormItem>
 
           <div className="flex justify-between items-center pt-4">

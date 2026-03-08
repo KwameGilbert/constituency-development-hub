@@ -29,8 +29,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { issuesService, Issue } from "@/lib/services/issues-service";
 import { DashboardHeader } from "../../dashboard-header";
 import IssueDescription from "@/components/ui/IssueDescription";
-import { EditIssueDialog } from "@/components/officer-dashboard/issues/EditIssueDialog";
 import { toast } from "sonner";
+import Link from "next/link";
 
 // Helper to format status names
 const formatStatusLabel = (status: string) => {
@@ -134,8 +134,6 @@ export default function OfficerIssueDetailPage({
   const [updating, setUpdating] = useState(false);
   const [comment, setComment] = useState("");
   
-  // Edit logic
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
     async function fetchIssue() {
@@ -158,10 +156,6 @@ export default function OfficerIssueDetailPage({
     fetchIssue();
   }, [id]);
 
-  const handleEditSuccess = (updatedIssue: Issue) => {
-    setIssue(updatedIssue);
-    setEditDialogOpen(false);
-  };
 
   async function handleReviewAndForward() {
     if (!issue) return;
@@ -269,14 +263,6 @@ export default function OfficerIssueDetailPage({
       />
       <div className="flex-1 p-4 sm:p-6 space-y-6 pb-20">
         
-        {editDialogOpen && (
-          <EditIssueDialog
-            issue={issue}
-            open={editDialogOpen}
-            onOpenChange={setEditDialogOpen}
-            onSuccess={handleEditSuccess}
-          />
-        )}
 
         {/* Action Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -308,10 +294,12 @@ export default function OfficerIssueDetailPage({
             {isEditable && (
               <Button
                 variant="outline"
-                onClick={() => setEditDialogOpen(true)}
+                asChild
                 className="gap-2 font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border-indigo-200"
               >
-                <Pencil className="h-4 w-4" /> Edit Details
+                <Link href={`/officer-dashboard/issues/${issue.id}/edit`}>
+                  <Pencil className="h-4 w-4" /> Edit Details
+                </Link>
               </Button>
             )}
           </div>
