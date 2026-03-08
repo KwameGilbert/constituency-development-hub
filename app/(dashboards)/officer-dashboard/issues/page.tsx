@@ -4,10 +4,9 @@ import React from "react";
 
 export default function IssuesPage() {
   return (
-    <div>
+    <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
       <IssuesHeader />
-
-      <div className="p-4 space-y-8 bg-gray-100 min-h-screen">
+      <div className="flex-1 p-4 sm:p-6 space-y-6 sm:space-y-8 pb-20">
         <AllIssues />
       </div>
     </div>

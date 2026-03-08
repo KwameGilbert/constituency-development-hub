@@ -238,7 +238,7 @@ export function AgentAllIssues() {
           <div className="flex items-center gap-3">
             <div className="h-8 w-1 bg-amber-500 rounded-sm" />
             <h3 className="font-bold text-slate-900 tracking-tight">
-              Inventory Filters
+              Issues Filters
             </h3>
           </div>
           <div className="flex items-center gap-2">

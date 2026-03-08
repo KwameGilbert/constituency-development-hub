@@ -1,7 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { ChevronUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RotateCcw, Search, Eye, Loader2, ArrowRight } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import {
+  ChevronUp,
+  ChevronDown,
+  RotateCcw,
+  Search,
+  Eye,
+  Loader2,
+  Pencil,
+  Trash2,
+  AlertCircle,
+  FileX,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,9 +31,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn, cleanupHtml } from "@/lib/utils";
-import SanitizedHtml from "@/components/ui/SanitizedHtml";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cleanupHtml } from "@/lib/utils";
 import {
   issuesService,
   Issue,
@@ -30,6 +40,7 @@ import {
 } from "@/lib/services/issues-service";
 import Link from "next/link";
 import { EditIssueDialog } from "./EditIssueDialog";
+import { toast } from "sonner";
 
 interface AllIssuesProps {
   /**
@@ -38,9 +49,19 @@ interface AllIssuesProps {
   readOnly?: boolean;
 }
 
+// Helper to format status names
+const formatStatusLabel = (status: string) => {
+  if (!status) return "";
+  return status
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 export function AllIssues({ readOnly = false }: AllIssuesProps) {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(true);
 
   const basePath = readOnly
@@ -49,13 +70,9 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedPriority, setSelectedPriority] = useState<string>("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [selectedStatus, setSelectedStatus] = useState<string>("All Statuses");
+  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
+  const [selectedPriority, setSelectedPriority] = useState<string>("All Priorities");
 
   // Edit Dialog State
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
@@ -64,18 +81,30 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   // Delete Action State
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
+  // Dynamic filter options derived from data to ensure accuracy
+  const dynamicCategories = useMemo(() => {
+    const cats = new Set(issues.filter((i) => i.category).map((i) => i.category));
+    return ["All Categories", ...Array.from(cats)].sort();
+  }, [issues]);
+
+  const dynamicPriorities = useMemo(() => {
+    const p = new Set(issues.filter((i) => i.priority).map((i) => i.priority));
+    return ["All Priorities", ...Array.from(p)].sort();
+  }, [issues]);
+
+  const dynamicStatuses = useMemo(() => {
+    const stats = new Set(issues.filter((i) => i.status).map((i) => i.status));
+    return ["All Statuses", ...Array.from(stats)].sort();
+  }, [issues]);
+
   const fetchIssues = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const filters: IssueFilters = {
-        page: currentPage,
-        limit: itemsPerPage,
+        page: 1, // Let frontend filter the list for now
+        limit: 1000, 
       };
-
-      if (searchQuery) filters.search = searchQuery;
-      if (selectedStatus !== "all") filters.status = selectedStatus;
-      if (selectedCategory !== "all") filters.category = selectedCategory;
-      if (selectedPriority !== "all") filters.priority = selectedPriority;
 
       let response;
       if (readOnly) {
@@ -84,70 +113,48 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
         try {
           response = await issuesService.getOfficerIssues(filters);
         } catch (err) {
-          // Fallback: some deployments don't expose /officer/issues — use admin endpoint
-          // Log to console for debugging and continue with admin endpoint
-          // eslint-disable-next-line no-console
           console.warn("getOfficerIssues failed, falling back to getAllIssues:", err);
           response = await issuesService.getAllIssues(filters);
         }
       }
+
       if (response && response.success && response.data.reports) {
         setIssues(response.data.reports);
-        const total = response.data.total ?? response.data.reports.length;
-        const limit = response.data.limit ?? itemsPerPage;
-        setTotalItems(total);
-        setTotalPages(Math.max(1, Math.ceil(total / limit)));
       } else {
         setIssues([]);
+        if (!response.success) setError(response.message || "Failed to load issues");
       }
     } catch (error) {
       console.error("Failed to fetch issues:", error);
+      setError("An unexpected error occurred while loading issues.");
       setIssues([]);
     } finally {
       setLoading(false);
     }
-  }, [
-    currentPage,
-    searchQuery,
-    selectedStatus,
-    selectedCategory,
-    selectedPriority,
-    itemsPerPage,
-  ]);
+  }, [readOnly]);
 
   useEffect(() => {
     fetchIssues();
   }, [fetchIssues]);
 
-  function handleSearch() {
-    setCurrentPage(1);
-    fetchIssues();
-  }
-
-  function handleResetFilters() {
-    setSearchQuery("");
-    setSelectedStatus("all");
-    setSelectedCategory("all");
-    setSelectedPriority("all");
-    setCurrentPage(1);
-    fetchIssues();
-  }
-
+  // Handle delete
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this issue? This action cannot be undone.")) return;
-    
+    if (!confirm("Are you sure you want to delete this issue? This action cannot be undone.")) {
+      return;
+    }
+
     setDeletingId(id);
     try {
       const response = await issuesService.deleteOfficerIssue(id);
       if (response.success) {
-        // toast.success("Issue deleted successfully"); // Assuming toast is available or will be added
-        fetchIssues(); // Refresh list
+        toast.success("Issue deleted successfully");
+        setIssues(issues.filter((i) => i.id !== id));
       } else {
-        alert(response.message || "Failed to delete issue");
+        toast.error(response.message || "Failed to delete issue");
       }
     } catch (error) {
       console.error("Delete error:", error);
-      alert("An error occurred while deleting");
+      toast.error("An error occurred while deleting");
     } finally {
       setDeletingId(null);
     }
@@ -159,30 +166,66 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   };
 
   const handleEditSuccess = (updatedIssue: Issue) => {
-    setIssues(issues.map(i => i.id === updatedIssue.id ? updatedIssue : i));
+    setIssues(issues.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)));
+    setEditDialogOpen(false);
   };
 
+  function handleResetFilters() {
+    setSearchQuery("");
+    setSelectedStatus("All Statuses");
+    setSelectedCategory("All Categories");
+    setSelectedPriority("All Priorities");
+  }
 
-  function getStatusColor(status: string) {
+  // Frontend filter evaluations
+  const filteredIssues = useMemo(() => {
+    return issues.filter((issue) => {
+      // Search filter
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch =
+        !searchQuery ||
+        issue.title?.toLowerCase().includes(searchLower) ||
+        issue.description?.toLowerCase().includes(searchLower) ||
+        issue.community?.toLowerCase().includes(searchLower) ||
+        issue.case_id?.toLowerCase().includes(searchLower);
+
+      // Category filter
+      const matchesCategory =
+        selectedCategory === "All Categories" || issue.category === selectedCategory;
+
+      // Status filter
+      const matchesStatus =
+        selectedStatus === "All Statuses" || issue.status === selectedStatus;
+
+      // Priority Filter
+      const matchesPriority =
+        selectedPriority === "All Priorities" || issue.priority === selectedPriority;
+
+      return matchesSearch && matchesCategory && matchesStatus && matchesPriority;
+    });
+  }, [issues, searchQuery, selectedCategory, selectedStatus, selectedPriority]);
+
+  function getStatusBadge(status: string) {
     const statusColors: Record<string, string> = {
-      submitted: "bg-blue-100 text-blue-700 hover:bg-blue-100/80",
-      under_officer_review:
-        "bg-purple-100 text-purple-700 hover:bg-purple-100/80",
-      forwarded_to_admin:
-        "bg-indigo-100 text-indigo-700 hover:bg-indigo-100/80",
-      assigned_to_task_force: "bg-cyan-100 text-cyan-700 hover:bg-cyan-100/80",
-      assessment_in_progress:
-        "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/80",
-      assessment_submitted:
-        "bg-orange-100 text-orange-700 hover:bg-orange-100/80",
-      resources_allocated: "bg-teal-100 text-teal-700 hover:bg-teal-100/80",
-      resolution_in_progress: "bg-lime-100 text-lime-700 hover:bg-lime-100/80",
-      resolution_submitted:
-        "bg-emerald-100 text-emerald-700 hover:bg-emerald-100/80",
-      resolved: "bg-green-100 text-green-700 hover:bg-green-100/80",
-      closed: "bg-gray-100 text-green-700 hover:bg-green-100/80",
+      submitted: "bg-blue-100 text-blue-700 hover:bg-blue-100",
+      under_officer_review: "bg-purple-100 text-purple-700 hover:bg-purple-100",
+      forwarded_to_admin: "bg-indigo-100 text-indigo-700 hover:bg-indigo-100",
+      assigned_to_task_force: "bg-cyan-100 text-cyan-700 hover:bg-cyan-100",
+      assessment_in_progress: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100",
+      assessment_submitted: "bg-orange-100 text-orange-700 hover:bg-orange-100",
+      resources_allocated: "bg-teal-100 text-teal-700 hover:bg-teal-100",
+      resolution_in_progress: "bg-lime-100 text-lime-700 hover:bg-lime-100",
+      resolution_submitted: "bg-emerald-100 text-emerald-700 hover:bg-emerald-100",
+      resolved: "bg-green-100 text-green-700 hover:bg-green-100",
+      closed: "bg-gray-100 text-gray-700 hover:bg-gray-100",
     };
-    return statusColors[status] || "bg-gray-100 text-gray-700";
+    const colorClass = statusColors[status] || "bg-gray-100 text-gray-700";
+
+    return (
+      <Badge variant="secondary" className={`${colorClass} border-0 font-medium capitalize whitespace-nowrap`}>
+        {formatStatusLabel(status)}
+      </Badge>
+    );
   }
 
   function getPriorityColor(priority: string) {
@@ -192,128 +235,159 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       medium: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/80",
       low: "bg-gray-100 text-gray-700 hover:bg-gray-100/80",
     };
-    return priorityColors[priority] || "bg-gray-100 text-gray-700";
+    return (
+      <Badge variant="outline" className={`border-0 capitalize whitespace-nowrap ${priorityColors[priority] || "bg-gray-100 text-gray-700"}`}>
+        {priority}
+      </Badge>
+    );
   }
 
-  function formatStatus(status: string) {
-    return status
-      .split("_")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+  const formatDate = (dateString: string) => {
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-48 w-full rounded-lg" />
+        <Skeleton className="h-64 w-full rounded-lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-lg border bg-red-50 p-6 text-red-600 flex items-center gap-3">
+        <AlertCircle className="h-5 w-5" />
+        <div>
+          <p className="font-medium">Error loading issues</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <EditIssueDialog 
-        issue={editingIssue!} 
-        open={editDialogOpen} 
-        onOpenChange={setEditDialogOpen}
-        onSuccess={handleEditSuccess}
-      />
+    <div className="space-y-6 w-full max-w-[1200px] mx-auto">
+      {editingIssue && (
+        <EditIssueDialog
+          issue={editingIssue}
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          onSuccess={handleEditSuccess}
+        />
+      )}
 
       {/* Filter Section */}
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold leading-none tracking-tight">
-            Filter Issues
-          </h3>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <ChevronUp
-              className={`h-4 w-4 transition-transform ${
-                !showFilters ? "rotate-180" : ""
+      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 border-b border-slate-50">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-1 bg-indigo-500 rounded-sm" />
+            <h3 className="font-bold text-slate-900 tracking-tight">
+              Issues Filters
+            </h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetFilters}
+              className="text-xs font-semibold text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg px-4"
+            >
+              <RotateCcw className="h-3.5 w-3.5 mr-2" />
+              Reset
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className={`h-8 w-8 rounded-lg border-slate-200 ${
+                showFilters ? "bg-slate-100" : ""
               }`}
-            />
-          </Button>
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              {showFilters ? (
+                <ChevronUp className="h-4 w-4 text-slate-600" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-slate-600" />
+              )}
+            </Button>
+          </div>
         </div>
 
         {showFilters && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Search
+          <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-5 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="md:col-span-4 lg:col-span-3 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Search Keywords
               </label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Search by title, description, or location..."
-                  className="w-full"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                />
-                <Button onClick={handleSearch} className="gap-2">
-                  <Search className="h-4 w-4" />
-                  Search
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FilterSelect
-                label="Status"
-                value={selectedStatus}
-                onChange={setSelectedStatus}
-                options={[
-                  { value: "all", label: "All Statuses" },
-                  // Hide submitted/under_review for admins as backend blocks them
-                  ...(!readOnly
-                    ? [
-                        { value: "submitted", label: "Submitted" },
-                        {
-                          value: "under_officer_review",
-                          label: "Under Review",
-                        },
-                      ]
-                    : []),
-                  { value: "forwarded_to_admin", label: "Forwarded to Admin" },
-                  {
-                    value: "assigned_to_task_force",
-                    label: "Assigned to Task Force",
-                  },
-                  { value: "resolved", label: "Resolved" },
-                  { value: "closed", label: "Closed" },
-                ]}
-              />
-              <FilterSelect
-                label="Category"
-                value={selectedCategory}
-                onChange={setSelectedCategory}
-                options={[
-                  { value: "all", label: "All Categories" },
-                  { value: "infrastructure", label: "Infrastructure" },
-                  { value: "health", label: "Health" },
-                  { value: "education", label: "Education" },
-                  { value: "security", label: "Security" },
-                  { value: "environment", label: "Environment" },
-                ]}
-              />
-              <FilterSelect
-                label="Priority"
-                value={selectedPriority}
-                onChange={setSelectedPriority}
-                options={[
-                  { value: "all", label: "All Priorities" },
-                  { value: "urgent", label: "Urgent" },
-                  { value: "high", label: "High" },
-                  { value: "medium", label: "Medium" },
-                  { value: "low", label: "Low" },
-                ]}
+              <Input
+                placeholder="Title, description..."
+                className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-indigo-500 rounded-lg"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={handleResetFilters}
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset Filters
-              </Button>
+            <div className="md:col-span-4 lg:col-span-3 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Category
+              </label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  {dynamicCategories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="md:col-span-4 lg:col-span-3 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Status
+              </label>
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
+                  <SelectValue placeholder="All Statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  {dynamicStatuses.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status === "All Statuses" ? status : formatStatusLabel(status)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="md:col-span-4 lg:col-span-3 space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Priority
+              </label>
+              <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
+                  <SelectValue placeholder="All Priorities" />
+                </SelectTrigger>
+                <SelectContent>
+                  {dynamicPriorities.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p === "All Priorities" ? p : p.charAt(0).toUpperCase() + p.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         )}
@@ -321,109 +395,176 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
       {/* Table Section */}
       <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-            <p className="ml-3 text-gray-500">Loading issues...</p>
-          </div>
-        ) : issues.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No issues found</p>
+        {filteredIssues.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <FileX className="h-12 w-12 mb-4" />
+            <p className="text-lg font-medium">No issues found</p>
+            <p className="text-sm">
+              {issues.length === 0
+                ? "No issues have been submitted to your dashboard yet."
+                : "Try adjusting your filters to find what you're looking for."}
+            </p>
           </div>
         ) : (
           <>
-            {/* Desktop View: Table */}
-            <div className="hidden lg:block overflow-x-auto">
-              <Table className="w-full table-fixed">
+            {/* Mobile Card View */}
+            <div className="block md:hidden space-y-4">
+              {filteredIssues.map((issue) => (
+                <div
+                  key={issue.id}
+                  className="border rounded-lg p-4 bg-white space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {issue.case_id || `#${issue.id}`}
+                      </p>
+                      <h4 className="font-semibold text-sm truncate">
+                        {issue.title}
+                      </h4>
+                    </div>
+                    {getStatusBadge(issue.status)}
+                  </div>
+                  <p
+                    className="text-sm text-muted-foreground line-clamp-2"
+                    title={cleanupHtml(issue.description)}
+                  >
+                    {cleanupHtml(issue.description)}
+                  </p>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex flex-col gap-1 text-left">
+                       <span className="text-xs text-muted-foreground">Priority</span>
+                       {getPriorityColor(issue.priority)}
+                    </div>
+                    <div className="flex flex-col gap-1 text-right">
+                      <span className="text-xs text-muted-foreground">Submitted</span>
+                      <span>{formatDate(issue.created_at)}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 h-9"
+                      asChild
+                      title="View Details"
+                    >
+                      <Link href={`${basePath}/${issue.id}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    {!readOnly && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 h-9 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                          onClick={() => handleEdit(issue)}
+                          disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status)}
+                          title="Edit Issue"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 h-9 text-red-600 border-red-200 hover:bg-red-50"
+                          onClick={() => handleDelete(issue.id)}
+                          disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status) || deletingId === issue.id}
+                          title="Delete Issue"
+                        >
+                          {deletingId === issue.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table className="min-w-[700px] table-fixed">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">CASE ID</TableHead>
-                    <TableHead className="min-w-[250px]">TITLE & DESCRIPTION</TableHead>
-                    <TableHead className="w-[140px]">CATEGORY</TableHead>
-                    <TableHead className="w-[100px]">PRIORITY</TableHead>
-                    <TableHead className="w-[160px]">STATUS</TableHead>
-                    <TableHead className="w-[100px]">DATE</TableHead>
-                    <TableHead className="text-right w-[200px]">ACTIONS</TableHead>
+                    <TableHead className="w-[80px]">Id</TableHead>
+                    <TableHead className="min-w-[170px]">Issue</TableHead>
+                    <TableHead className="w-[120px]">Category</TableHead>
+                    <TableHead className="w-[100px]">Priority</TableHead>
+                    <TableHead className="w-[150px]">Status</TableHead>
+                    <TableHead className="w-[100px]">Date</TableHead>
+                    <TableHead className="text-right w-[160px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {issues.map((issue) => (
+                  {filteredIssues.map((issue) => (
                     <TableRow key={issue.id}>
-                      <TableCell className="font-medium text-sm text-gray-600 truncate max-w-[100px]" title={issue.case_id || `#${issue.id}`}>
+                      <TableCell
+                        className="font-medium text-xs truncate max-w-[80px]"
+                        title={issue.case_id || `#${issue.id}`}
+                      >
                         {issue.case_id || `#${issue.id}`}
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col max-w-[300px]">
-                          <span className="font-semibold text-gray-900 truncate" title={issue.title}>
+                        <div className="flex flex-col max-w-[170px]">
+                          <span className="font-semibold text-sm truncate" title={issue.title}>
                             {issue.title}
                           </span>
-                          <span className="text-muted-foreground text-sm truncate" title={cleanupHtml(issue.description)}>
+                          <span
+                            className="text-muted-foreground text-xs line-clamp-1"
+                            title={cleanupHtml(issue.description)}
+                          >
                             {cleanupHtml(issue.description)}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <span className="capitalize text-sm">
-                          {issue.category}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={`border-0 ${getPriorityColor(
-                            issue.priority
-                          )}`}
-                        >
-                          {issue.priority}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex">
-                           <Badge
-                            variant="outline"
-                            className={`border-0 whitespace-nowrap ${getStatusColor(issue.status)}`}
-                          >
-                            {formatStatus(issue.status)}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {new Date(issue.created_at).toLocaleDateString()}
-                      </TableCell>
+                      <TableCell className="text-sm capitalize">{issue.category}</TableCell>
+                      <TableCell>{getPriorityColor(issue.priority)}</TableCell>
+                      <TableCell>{getStatusBadge(issue.status)}</TableCell>
+                      <TableCell className="text-sm">{formatDate(issue.created_at)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                           <Button
+                          <Button
                             variant="outline"
-                            size="sm"
-                            className="h-8 px-2 text-indigo-600 hover:text-indigo-700"
+                            size="icon"
+                            className="h-8 w-8 text-slate-600 hover:text-indigo-700 hover:bg-indigo-50/50 border-slate-200"
                             asChild
+                            title="View Details"
                           >
                             <Link href={`${basePath}/${issue.id}`}>
-                              View
+                              <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
-                          
                           {!readOnly && (
                             <>
                               <Button
                                 variant="outline"
-                                size="sm"
-                                className="h-8 px-2 text-blue-600 hover:text-blue-700"
+                                size="icon"
+                                className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 border-indigo-100"
                                 onClick={() => handleEdit(issue)}
-                                // Show edit for more statuses, or always show but disable
-                                disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status)}
+                                disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status)}
+                                title="Edit Issue"
                               >
-                                Edit
+                                <Pencil className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="outline"
-                                size="sm"
-                                className="h-8 px-2 text-red-600 hover:text-red-700"
+                                size="icon"
+                                className="h-8 w-8 text-red-600 hover:text-red-700 bg-red-50/50 border-red-100"
                                 onClick={() => handleDelete(issue.id)}
-                                // Show delete for more statuses
-                                disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status) || deletingId === issue.id}
+                                disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status) || deletingId === issue.id}
+                                title="Delete Issue"
                               >
-                                {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin"/> : "Delete"}
+                                {deletingId === issue.id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4" />
+                                )}
                               </Button>
                             </>
                           )}
@@ -434,223 +575,9 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                 </TableBody>
               </Table>
             </div>
-
-            {/* Mobile View: Cards */}
-            <div className="lg:hidden space-y-4">
-              {issues.map((issue) => (
-                <Card key={issue.id} className="border border-slate-200">
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium text-xs text-slate-500">
-                          {issue.case_id || `#${issue.id}`}
-                        </p>
-                        <h4 className="font-semibold text-base text-slate-900 line-clamp-1">
-                          {issue.title}
-                        </h4>
-                      </div>
-                      <Badge
-                        variant="outline"
-                        className={`border-0 whitespace-nowrap ${getPriorityColor(
-                          issue.priority
-                        )}`}
-                      >
-                        {issue.priority}
-                      </Badge>
-                    </div>
-
-                    <SanitizedHtml
-                      html={issue.description}
-                      className="text-sm text-slate-600 line-clamp-2"
-                    />
-
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="px-2 py-1 bg-slate-100 rounded-md text-slate-600 font-medium">
-                        {issue.category}
-                      </span>
-                      <span className="px-2 py-1 bg-slate-100 rounded-md text-slate-600">
-                        {new Date(issue.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 mt-2">
-                       <Badge
-                        variant="outline"
-                        className={`border-0 ${getStatusColor(issue.status)}`}
-                      >
-                        {formatStatus(issue.status)}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 pt-2 justify-end">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 flex-1"
-                        asChild
-                      >
-                        <Link href={`${basePath}/${issue.id}`}>
-                          View
-                        </Link>
-                      </Button>
-                       {!readOnly && (
-                          <>
-                           <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 flex-1 text-blue-600 border-blue-200 hover:bg-blue-50"
-                              onClick={() => handleEdit(issue)}
-                              disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status)}
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 flex-1 text-red-600 border-red-200 hover:bg-red-50"
-                              onClick={() => handleDelete(issue.id)}
-                              disabled={!['submitted', 'rejected', 'under_officer_review'].includes(issue.status) || deletingId === issue.id}
-                            >
-                              {deletingId === issue.id ? <Loader2 className="h-3 w-3 animate-spin mx-auto"/> : "Delete"}
-                            </Button>
-                          </>
-                        )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages >= 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between mt-4 pt-4 border-t gap-4">
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span>
-                    Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}–{Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} issues
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">Per page:</span>
-                    <Select
-                      value={itemsPerPage.toString()}
-                      onValueChange={(v) => {
-                        setItemsPerPage(Number(v));
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="h-8 w-[70px] text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage(1)}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronsLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  {getPageNumbers(currentPage, totalPages).map((page, i) =>
-                    page === "..." ? (
-                      <span key={`ellipsis-${i}`} className="px-2 text-sm text-gray-400">…</span>
-                    ) : (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="icon"
-                        className={cn("h-8 w-8 text-xs", currentPage === page && "pointer-events-none")}
-                        onClick={() => setCurrentPage(page as number)}
-                      >
-                        {page}
-                      </Button>
-                    )
-                  )}
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                  >
-                    <ChevronsRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>
-    </div>
-  );
-}
-
-function getPageNumbers(current: number, total: number): (number | "...")[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const pages: (number | "...")[] = [];
-  pages.push(1);
-  if (current > 3) pages.push("...");
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
-  for (let i = start; i <= end; i++) pages.push(i);
-  if (current < total - 2) pages.push("...");
-  pages.push(total);
-  return pages;
-}
-
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: { value: string; label: string }[];
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-        {label}
-      </label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full border border-slate-200 rounded-md">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
     </div>
   );
 }
