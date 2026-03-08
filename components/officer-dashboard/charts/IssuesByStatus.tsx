@@ -38,6 +38,14 @@ const chartConfig = {
     label: "In Progress",
     color: "#f59e0b", // Amber 500
   },
+  submitted: {
+    label: "Submitted",
+    color: "#3b82f6", // Blue 500
+  },
+  pending: {
+    label: "Pending",
+    color: "#eab308", // Yellow 500
+  },
 } satisfies ChartConfig;
 
 export interface IssuesByStatusProps {

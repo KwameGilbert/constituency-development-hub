@@ -301,22 +301,12 @@ export default function AgentIssueDetailPage({
               <CardContent className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-1">
                   <label className="text-xs font-medium text-slate-500">
-                    Main Community
+                    Community
                   </label>
                   <p className="font-semibold text-slate-900 text-sm">
-                    {issue.location}
+                    {issue.community}
                   </p>
                 </div>
-                {issue.smaller_community && (
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500">
-                      Smaller Community
-                    </label>
-                    <p className="font-semibold text-slate-900 text-sm">
-                      {issue.smaller_community}
-                    </p>
-                  </div>
-                )}
                 {issue.suburb && (
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-slate-500">Suburb</label>
@@ -325,11 +315,11 @@ export default function AgentIssueDetailPage({
                     </p>
                   </div>
                 )}
-                {issue.cottage && (
+                {issue.specific_location && (
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500">Specific Spot</label>
+                    <label className="text-xs font-medium text-slate-500">Specific Location</label>
                     <p className="font-semibold italic text-slate-600 text-sm">
-                      &quot;{issue.cottage}&quot;
+                      &quot;{issue.specific_location}&quot;
                     </p>
                   </div>
                 )}

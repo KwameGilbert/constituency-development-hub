@@ -65,7 +65,9 @@ export interface AgentReport {
   title: string;
   description: string;
   category: string;
-  location: string;
+  community: string;
+  suburb?: string;
+  specific_location?: string;
   latitude?: number;
   longitude?: number;
   status: string;
@@ -94,10 +96,11 @@ export interface IssueSubmission {
   type?: string; // Legacy field
   issue_type?: "community_based" | "individual_based"; // NEW: Impact type
   priority: string;
-  location: string;
-  smaller_community?: string;
+  community: string;
+  community_id: number;
   suburb?: string;
-  cottage?: string;
+  suburb_id?: number;
+  specific_location?: string;
   latitude?: number;
   longitude?: number;
   sector_id?: number;
@@ -124,10 +127,9 @@ export interface IssueDetail {
   issue_type?: "community_based" | "individual_based" | string;
   priority: string;
   status: string;
-  location: string;
-  smaller_community?: string;
+  community: string;
   suburb?: string;
-  cottage?: string;
+  specific_location?: string;
   latitude?: number;
   longitude?: number;
   sector?: string;
@@ -316,6 +318,16 @@ class AgentService {
   }
 
   /**
+   * Get the agent's report statistics
+   * GET /v1/agent/stats
+   */
+  async getStats(): Promise<ApiResponse<AgentReportStats>> {
+    return apiClient("/agent/stats", {
+      requiresAuth: true,
+    });
+  }
+
+  /**
    * Get the agent's submitted reports
    * GET /v1/agent/my-reports
    */
@@ -357,7 +369,7 @@ class AgentService {
    */
   async updateIssue(
     id: number,
-    data: any,
+    data: Partial<IssueSubmission>,
   ): Promise<ApiResponse<{ report: AgentReport }>> {
     return apiClient(`/agent/issues/${id}`, {
       method: "PUT",

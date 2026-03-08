@@ -85,10 +85,11 @@ export function AgentAddIssues() {
     type: "", // Legacy field for backward compatibility
     issue_type: "community_based", // NEW: Community-based or individual-based
     priority: "medium",
-    location: "",
-    smaller_community: "",
+    community: "",
+    community_id: 0,
     suburb: "",
-    cottage: "",
+    suburb_id: undefined,
+    specific_location: "",
     sector_id: undefined,
     sector: "",
     sub_sector_id: undefined,
@@ -182,10 +183,10 @@ export function AgentAddIssues() {
       // Reset sub-locations when main location changes
       setSuburbs([]);
 
-      if (!formData.location) return;
+      if (!formData.community_id) return;
 
       const selectedLocation = locations.find(
-        (l) => l.name === formData.location,
+        (l) => l.id === formData.community_id,
       );
       if (!selectedLocation) return;
 
@@ -210,7 +211,7 @@ export function AgentAddIssues() {
     };
 
     fetchSubLocations();
-  }, [formData.location, locations]);
+  }, [formData.community_id, locations]);
 
   const handleNext = (nextTab: string) => {
     setActiveTab(nextTab);
@@ -249,7 +250,7 @@ export function AgentAddIssues() {
       "description",
       "category",
       "priority",
-      "location",
+      "community",
     ];
     for (const field of required) {
       if (!formData[field as keyof IssueSubmission]) {
@@ -272,13 +273,7 @@ export function AgentAddIssues() {
 
     setSubmitting(true);
     try {
-      // Ensure smaller_community is set if suburb is selected
-      const submissionData = {
-        ...formData,
-        smaller_community: formData.smaller_community || formData.suburb
-      };
-      
-      const response = await agentService.submitIssue(submissionData);
+      const response = await agentService.submitIssue(formData);
 
       if (response.success) {
         toast.success("Issue submitted successfully!");
@@ -647,48 +642,58 @@ export function AgentAddIssues() {
         {/* Tab 3: Location */}
         <TabsContent value="location" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Main Community" required>
+            <FormItem label="Community" required>
               <SearchableSelect
-                value={formData.location}
-                onChange={(v) => updateField("location", v)}
+                value={formData.community_id?.toString() || ""}
+                onChange={(v) => {
+                  const id = parseInt(v);
+                  const loc = locations.find((l) => l.id === id);
+                  updateField("community_id", id);
+                  updateField("community", loc?.name || "");
+                }}
                 options={locations.map((loc) => ({
                   label: loc.name,
-                  value: loc.name,
+                  value: loc.id.toString(),
                 }))}
-                placeholder={loadingData ? "Loading..." : "Select Main Community"}
+                placeholder={loadingData ? "Loading..." : "Select Community"}
                 searchPlaceholder="Search communities..."
                 loading={loadingData}
                 disabled={loadingData}
               />
             </FormItem>
-            <FormItem label="Smaller Community">
+            <FormItem label="Suburb">
               <SearchableSelect
-                value={formData.suburb || ""}
-                onChange={(v) => updateField("suburb", v)}
+                value={formData.suburb_id?.toString() || ""}
+                onChange={(v) => {
+                  const id = parseInt(v);
+                  const loc = suburbs.find((l) => l.id === id);
+                  updateField("suburb_id", id);
+                  updateField("suburb", loc?.name || "");
+                }}
                 options={suburbs.map((loc) => ({
                   label: loc.name,
-                  value: loc.name,
+                  value: loc.id.toString(),
                 }))}
                 placeholder={
-                  !formData.location
-                    ? "Select Main Community first"
-                    : "Select Smaller Community (Optional)"
+                  !formData.community_id
+                    ? "Select Community first"
+                    : "Select Suburb (Optional)"
                 }
-                searchPlaceholder="Search smaller communities..."
-                disabled={!formData.location || loadingSubLocations}
+                searchPlaceholder="Search suburbs..."
+                disabled={!formData.community_id || loadingSubLocations}
                 loading={loadingSubLocations}
-                emptyMessage="No smaller community found."
+                emptyMessage="No suburb found."
               />
             </FormItem>
           </div>
-
+ 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Specific Location Details">
+            <FormItem label="Specific Location">
               <Input
                 placeholder="e.g., 'Near the old market'"
                 className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
-                value={formData.cottage || ""}
-                onChange={(e) => updateField("cottage", e.target.value)}
+                value={formData.specific_location || ""}
+                onChange={(e) => updateField("specific_location", e.target.value)}
               />
             </FormItem>
           </div>

@@ -180,7 +180,7 @@ export function RecentTasks({
                           {task.title}
                         </span>
                         <span className="text-xs text-slate-500">
-                          {task.location}
+                          {task.community}
                         </span>
                       </div>
                     </TableCell>

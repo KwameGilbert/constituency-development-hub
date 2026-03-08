@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   FileText,
@@ -46,13 +45,10 @@ export function MetricsCards({
       try {
         setLoading(true);
         setError(null);
-        const response = await agentService.getMyReports();
+        const response = await agentService.getStats();
 
-        if (response.success && response.data?.reports) {
-          const calculatedStats = agentService.calculateReportStats(
-            response.data.reports,
-          );
-          setStats(calculatedStats);
+        if (response.success && response.data) {
+          setStats(response.data);
         } else {
           setError(response.message || "Failed to fetch statistics");
         }

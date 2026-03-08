@@ -52,13 +52,18 @@ function AgentMainPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await agentService.getMyReports();
-        if (response.success && response.data?.reports) {
-          setReports(response.data.reports);
-          const computedStats = agentService.calculateReportStats(
-            response.data.reports,
-          );
-          setStats(computedStats);
+        // Fetch stats and reports in parallel
+        const [statsRes, reportsRes] = await Promise.all([
+          agentService.getStats(),
+          agentService.getMyReports(),
+        ]);
+
+        if (statsRes.success) {
+          setStats(statsRes.data);
+        }
+
+        if (reportsRes.success && reportsRes.data?.reports) {
+          setReports(reportsRes.data.reports);
         }
       } catch (error) {
         console.error("Failed to fetch agent data:", error);
@@ -75,20 +80,22 @@ function AgentMainPage() {
     if (!stats) return undefined;
 
     const data: StatusChartDataItem[] = [];
-    const { resolved, pending, inProgress } = stats;
+    const { resolved, pending, inProgress, approved } = stats;
 
     // Map simplified stats to chart format
-    // Note: pending includes submitted, under review etc.
-    if (resolved > 0)
-      data.push({ status: "resolved", count: resolved, fill: "#22c55e" });
+    // Match keys with chartConfig in IssuesByStatus component
     if (pending > 0)
-      data.push({ status: "submitted", count: pending, fill: "#3b82f6" });
+      data.push({ status: "pending", count: pending, fill: "#eab308" });
+    if (approved > 0)
+      data.push({ status: "submitted", count: approved, fill: "#3b82f6" }); // Using submitted color for approved
     if (inProgress > 0)
       data.push({ status: "in_progress", count: inProgress, fill: "#f59e0b" });
+    if (resolved > 0)
+      data.push({ status: "resolved", count: resolved, fill: "#10b981" });
 
     // Default if empty
     if (data.length === 0)
-      data.push({ status: "submitted", count: 0, fill: "#3b82f6" });
+      data.push({ status: "pending", count: 0, fill: "#eab308" });
 
     return data;
   }, [stats]);

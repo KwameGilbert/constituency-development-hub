@@ -91,8 +91,8 @@ export function AdminSidebar() {
             </div>
           </div>
           <div className="overflow-hidden">
-            <h3 className="text-white font-semibold truncate">Admin Portal</h3>
-            <p className="text-red-100 text-xs truncate">Super Administrator</p>
+            <h3 className="text-white font-semibold truncate">MP Portal</h3>
+            <p className="text-red-100 text-xs truncate">Constituency Management</p>
           </div>
         </div>
       </SidebarHeader>

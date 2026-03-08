@@ -18,7 +18,7 @@ export interface User {
   name?: string;
   phone?: string;
   role: UserRole;
-  status: "active" | "inactive";
+  status: "active" | "suspended" | "pending";
 }
 
 export interface LoginCredentials {
@@ -55,8 +55,8 @@ export const ROLE_DASHBOARD_MAP: Record<UserRole, string> = {
 
 // Map roles to their display names
 export const ROLE_DISPLAY_NAMES: Record<UserRole, string> = {
-  [ROLES.ADMIN]: "Administrator",
-  [ROLES.WEB_ADMIN]: "Web Administrator",
+  [ROLES.ADMIN]: "MP Portal",
+  [ROLES.WEB_ADMIN]: "Web Admin",
   [ROLES.OFFICER]: "Officer",
   [ROLES.AGENT]: "Agent",
   [ROLES.TASK_FORCE]: "Task Force",
@@ -110,10 +110,7 @@ export const authService = {
     });
   },
 
-  verifyOTP: async (
-    email: string,
-    otp: string,
-  ): Promise<VerifyOTPResponse> => {
+  verifyOTP: async (email: string, otp: string): Promise<VerifyOTPResponse> => {
     return apiClient<VerifyOTPResponse>("/auth/password/verify-otp", {
       method: "POST",
       body: JSON.stringify({ email, otp }),
