@@ -110,7 +110,7 @@ export function RecentIssuesSummary() {
                   <TableCell>
                     <Badge
                       variant="secondary"
-                      className={`rounded-full px-3 py-0.5 font-normal ${getStatusColor(issue.status)}`}
+                      className={`rounded-full px-3 py-0.5 font-medium border-0 capitalize ${getStatusColor(issue.status)}`}
                     >
                       {issue.status.replace(/_/g, " ")}
                     </Badge>

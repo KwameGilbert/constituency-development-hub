@@ -78,24 +78,19 @@ export function IssuesByStatus({
         if (response.success && response.data) {
           const distribution = response.data.distribution || [];
 
-          const allowedStatuses = ["resolved", "closed", "resolution_in_progress", "in_progress"];
-          const data: ChartDataItem[] = distribution
-            .filter((item) => allowedStatuses.includes(item.status))
-            .map((item) => {
-              const statusKey = item.status === "resolution_in_progress" ? "in_progress" : item.status;
-              return {
-                status: statusKey,
-                count: item.value,
-                fill: item.status === "resolution_in_progress" ? chartConfig.in_progress.color : 
-                      item.status === "resolved" ? chartConfig.resolved.color :
-                      item.status === "closed" ? chartConfig.closed.color : item.color,
-              };
-            });
+          const data: ChartDataItem[] = distribution.map((item) => {
+            return {
+              status: item.name.length > 15 ? item.name.substring(0, 15) + "..." : item.name,
+              count: item.value,
+              fill: item.color,
+            };
+          });
 
           setChartData(data);
         }
       } catch (err) {
         console.error("Failed to fetch issue statistics:", err);
+
         setError(true);
       } finally {
         setLoading(false);
@@ -113,11 +108,11 @@ export function IssuesByStatus({
       <Card className="flex flex-col border-none shadow-md shadow-slate-200/50 overflow-hidden">
         <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6">
           <CardTitle className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">
-            Issues by Status <span className="text-amber-500 ml-1">. Distribution</span>
+            Issues by Status <span className="text-indigo-500 ml-1">. Distribution</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[350px]">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
         </CardContent>
       </Card>
     );
@@ -127,7 +122,7 @@ export function IssuesByStatus({
     <Card className="flex flex-col border-none shadow-md shadow-slate-200/50 overflow-hidden">
       <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6">
         <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight">
-          Issues by Status <span className="text-amber-600 text-[10px] ml-1">Distribution</span>
+          Issues by Status <span className="text-indigo-600 text-[10px] ml-1">Distribution</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-4 pt-6">

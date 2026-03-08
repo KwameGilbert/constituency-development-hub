@@ -146,11 +146,11 @@ export function IssueBreakdown({
       <Card className="border-none shadow-md shadow-slate-200/50 overflow-hidden">
         <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight">
-            Issues Breakdown <span className="text-amber-600 text-[10px] ml-1">Metrics</span>
+            Issues Breakdown <span className="text-indigo-600 text-[10px] ml-1">Metrics</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
         </CardContent>
       </Card>
     );
@@ -160,7 +160,7 @@ export function IssueBreakdown({
     <Card className="border-none shadow-md shadow-slate-200/50 overflow-hidden">
       <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6 flex flex-row items-center justify-between gap-4">
         <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight min-w-0">
-          Issues Breakdown <span className="text-amber-600 ml-1 capitalize">{activeTab}</span>
+          Issues Breakdown <span className="text-indigo-600 ml-1 capitalize">{activeTab}</span>
         </CardTitle>
         <div className="flex items-center shrink-0 space-x-1 bg-slate-200/50 p-1 rounded-full">
           <button
