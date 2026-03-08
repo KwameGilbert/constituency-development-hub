@@ -112,7 +112,7 @@ export function RecentIssuesSummary() {
                       variant="secondary"
                       className={`rounded-full px-3 py-0.5 font-medium border-0 capitalize ${getStatusColor(issue.status)}`}
                     >
-                      {issue.status.replace(/_/g, " ")}
+                      {issue.status.split("_").join(" ")}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">

@@ -186,6 +186,12 @@ class IssuesService {
     return apiClient(`/officer/issues?${params.toString()}`);
   }
 
+  async getOfficerIssueById(
+    id: number | string,
+  ): Promise<ApiResponse<{ report: Issue }>> {
+    return apiClient(`/officer/issues/${id}`);
+  }
+
   async getIssueById(
     id: number | string,
   ): Promise<ApiResponse<{ report: Issue }>> {
@@ -307,6 +313,17 @@ class IssuesService {
   ): Promise<ApiResponse<void>> {
     return apiClient(`/officer/issues/${id}`, {
       method: "DELETE",
+    });
+  }
+
+  async updateOfficerIssueStatus(
+    id: number | string,
+    status: string,
+    comment?: string,
+  ): Promise<ApiResponse<{ report: Issue }>> {
+    return apiClient(`/officer/issues/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status, comment }),
     });
   }
 }
