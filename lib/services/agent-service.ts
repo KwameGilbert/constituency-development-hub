@@ -206,6 +206,42 @@ class AgentService {
   }
 
   /**
+   * Officer: Get all agents for management
+   * GET /v1/officer/management/agents
+   */
+  async getManagementAgentsForOfficer(params?: {
+    status?: string;
+  }): Promise<ApiResponse<{ agents: AgentProfile[] }>> {
+    const queryParams = new URLSearchParams();
+    if (params?.status) queryParams.append("status", params.status);
+
+    const url = `/officer/management/agents${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+
+    return apiClient(url, {
+      method: "GET",
+      requiresAuth: true,
+    });
+  }
+
+  /**
+   * Officer: Get agent statistics
+   * GET /v1/officer/management/agents/stats
+   */
+  async getAgentStatsForOfficer(): Promise<
+    ApiResponse<{
+      total_agents: number;
+      active_agents: number;
+      inactive_agents: number;
+      issues_handled: number;
+    }>
+  > {
+    return apiClient("/officer/management/agents/stats", {
+      method: "GET",
+      requiresAuth: true,
+    });
+  }
+
+  /**
    * Admin: Get agent statistics
    * GET /v1/admin/agents/stats
    */

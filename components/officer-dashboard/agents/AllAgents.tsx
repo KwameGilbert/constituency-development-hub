@@ -10,6 +10,8 @@ import {
   Edit,
   Trash2,
   Loader2,
+  Users,
+  TrendingUp,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,19 +52,16 @@ export function AllAgents() {
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<string>("all");
-  const [selectedVerified, setSelectedVerified] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const fetchAgents = useCallback(async () => {
     setLoading(true);
     try {
-      const params: { location?: string; verified?: boolean } = {};
-      if (selectedLocation !== "all") params.location = selectedLocation;
-      if (selectedVerified !== "all")
-        params.verified = selectedVerified === "verified";
+      const params: { status?: string } = {};
+      if (selectedStatus !== "all") params.status = selectedStatus;
 
-      const response = await agentService.getAllAgents(params);
+      const response = await agentService.getManagementAgentsForOfficer(params);
       if (response.success && response.data.agents) {
         let filteredAgents = response.data.agents;
 
@@ -85,7 +84,7 @@ export function AllAgents() {
     } finally {
       setLoading(false);
     }
-  }, [selectedLocation, selectedVerified, searchQuery]);
+  }, [selectedStatus, searchQuery]);
 
   useEffect(() => {
     fetchAgents();
@@ -93,8 +92,7 @@ export function AllAgents() {
 
   function handleResetFilters() {
     setSearchQuery("");
-    setSelectedLocation("all");
-    setSelectedVerified("all");
+    setSelectedStatus("all");
   }
 
   async function handleDelete(id: number) {
@@ -115,246 +113,262 @@ export function AllAgents() {
     }
   }
 
-  function getStatusBadge(status: string) {
-    const colors: Record<string, string> = {
-      active: "bg-green-100 text-green-700 hover:bg-green-100",
-      pending: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100",
-      inactive: "bg-gray-100 text-gray-700 hover:bg-gray-100",
-      suspended: "bg-red-100 text-red-700 hover:bg-red-100",
-    };
-    return colors[status?.toLowerCase()] || colors.pending;
-  }
+  const getStatusBadge = (status: string) => {
+    const s = status?.toLowerCase();
+    if (s === "active") return "bg-emerald-50 text-emerald-700 border-emerald-200/50";
+    if (s === "suspended") return "bg-rose-50 text-rose-700 border-rose-200/50";
+    if (s === "inactive" || s === "pending") return "bg-amber-50 text-amber-700 border-amber-200/50";
+    return "bg-slate-50 text-slate-700 border-slate-200/50";
+  };
 
   return (
     <div className="space-y-6">
       {/* Filter Section */}
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold leading-none tracking-tight">
-            Filter Agents
-          </h3>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <ChevronUp
-              className={`h-4 w-4 transition-transform ${!showFilters ? "rotate-180" : ""}`}
-            />
-          </Button>
-        </div>
+      <Card className="border-slate-200/60 shadow-sm overflow-hidden">
+        <div className="p-4 sm:p-6 space-y-6 bg-slate-50/50">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2">
+              <Search className="h-4 w-4 text-indigo-500" />
+              Find Agents
+            </h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 text-slate-500 hover:text-indigo-600"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <span className="text-xs font-semibold uppercase tracking-wider mr-2">
+                {showFilters ? "Hide Filters" : "Show Filters"}
+              </span>
+              <ChevronUp
+                className={`h-4 w-4 transition-transform ${!showFilters ? "rotate-180" : ""}`}
+              />
+            </Button>
+          </div>
 
-        {showFilters && (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none">Search</label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Search by name, email, or agent code..."
-                  className="w-full"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && fetchAgents()}
-                />
-                <Button onClick={() => fetchAgents()} className="gap-2">
-                  <Search className="h-4 w-4" />
-                  Search
-                </Button>
+          {showFilters && (
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="lg:col-span-2 space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">
+                  Agent Search
+                </label>
+                <div className="relative group">
+                  <Input
+                    placeholder="Search by name, email, or agent code..."
+                    className="w-full bg-white border-slate-200 focus:ring-indigo-500 rounded-lg pl-10"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Location</label>
-                <Select
-                  value={selectedLocation}
-                  onValueChange={setSelectedLocation}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Locations" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Locations</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Verification Status
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">
+                  Agent Status
                 </label>
                 <Select
-                  value={selectedVerified}
-                  onValueChange={setSelectedVerified}
+                  value={selectedStatus}
+                  onValueChange={setSelectedStatus}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white border-slate-200 rounded-lg">
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="verified">Verified</SelectItem>
-                    <SelectItem value="unverified">Unverified</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="suspended">Suspended</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-            </div>
 
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={handleResetFilters}
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset Filters
-              </Button>
+              <div className="flex items-end justify-end space-x-2 pb-0.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-10 px-4 text-xs font-semibold text-slate-600 border-slate-200 hover:bg-slate-100 gap-2 rounded-lg"
+                  onClick={handleResetFilters}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Reset
+                </Button>
+                <Button
+                   size="sm"
+                   className="h-10 px-6 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm gap-2 rounded-lg"
+                   onClick={() => fetchAgents()}
+                >
+                   Filter Results
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </Card>
 
       {/* Table Section */}
-      <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-            <p className="ml-3 text-gray-500">Loading agents...</p>
+      <Card className="border-slate-200/60 shadow-sm overflow-hidden">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white">
+            <Loader2 className="h-10 w-10 animate-spin text-indigo-500 mb-4" />
+            <p className="text-slate-500 font-medium">Synchronizing agent data...</p>
           </div>
-        )}
-
-        {!loading && agents.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No agents found</p>
+        ) : agents.length === 0 ? (
+          <div className="text-center py-20 bg-white">
+            <div className="mx-auto w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+               <Users className="h-8 w-8 text-slate-300" />
+            </div>
+            <h3 className="text-slate-900 font-bold text-lg">No Agents Found</h3>
+            <p className="text-slate-500 text-sm max-w-[280px] mx-auto mt-2">
+              We couldn&apos;t find any field agents matching your current filter criteria.
+            </p>
+            <Button variant="link" className="text-indigo-600 mt-4" onClick={handleResetFilters}>
+              Clear all filters
+            </Button>
           </div>
-        )}
-
-        {!loading && agents.length > 0 && (
-          <div>
+        ) : (
+          <div className="bg-white">
             {/* Mobile: stacked cards */}
-            <div className="md:hidden space-y-3">
+            <div className="md:hidden divide-y divide-slate-100">
               {agents.map((agent) => (
-                <Card key={agent.id} className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8 bg-indigo-100 text-indigo-600">
-                          <AvatarImage src={agent.profile_image || undefined} />
-                          <AvatarFallback>
-                            {agent.user?.name?.charAt(0) || "A"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{agent.user?.name || "Unknown"}</p>
-                          <p className="text-sm text-muted-foreground">{agent.user?.email}</p>
-                        </div>
-                      </div>
-
-                      <div className="mt-3 flex items-center gap-3 text-sm text-slate-700">
-                        <span className="font-mono">{agent.agent_code}</span>
-                        <span className="text-muted-foreground">{agent.assigned_location || "Not Assigned"}</span>
-                        <span className="font-medium">{agent.reports_submitted || 0}</span>
+                <div key={agent.id} className="p-4 hover:bg-slate-50/50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 border-2 border-white shadow-sm ring-1 ring-slate-100">
+                        <AvatarImage src={agent.profile_image || undefined} />
+                        <AvatarFallback className="bg-indigo-50 text-indigo-600 text-xs font-bold">
+                          {agent.user?.name?.charAt(0) || "A"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-bold text-slate-900 leading-none mb-1">
+                          {agent.user?.name || "Unknown"}
+                        </p>
+                        <p className="text-[10px] text-slate-500 font-medium">
+                          {agent.agent_code}
+                        </p>
                       </div>
                     </div>
-
-                    <div className="flex flex-col items-end gap-2">
-                      <Badge className={`${getStatusBadge(agent.user?.status || "pending")} border-0`}>{agent.user?.status || "pending"}</Badge>
-                      <Badge className={agent.id_verified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}>
-                        {agent.id_verified ? "Verified" : "Pending"}
-                      </Badge>
-
-                      <div className="mt-2 flex items-center gap-2">
-                        <Link href={`/officer-dashboard/agents/${agent.id}`}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Link href={`/officer-dashboard/agents/${agent.id}/edit`}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                      </div>
+                    <Badge variant="outline" className={cn("text-[10px] uppercase tracking-wider font-bold h-5", getStatusBadge(agent.user?.status || ""))}>
+                      {agent.user?.status}
+                    </Badge>
+                  </div>
+                  
+                  <div className="mt-4 grid grid-cols-2 gap-y-3">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Contact</p>
+                      <p className="text-[11px] text-slate-700 font-medium truncate pr-2">{agent.user?.email}</p>
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Reports</p>
+                       <div className="flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                          <p className="text-[11px] text-slate-700 font-bold">{agent.reports_submitted || 0} Submitted</p>
+                       </div>
+                    </div>
+                    <div className="col-span-2">
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Assigned Location</p>
+                       <p className="text-[11px] text-slate-700 font-medium">{agent.assigned_location}</p>
                     </div>
                   </div>
-                </Card>
+
+                  <div className="mt-5 flex items-center justify-between pt-4 border-t border-slate-50">
+                     <Badge className={cn("text-[10px] font-bold", agent.id_verified ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700")}>
+                        {agent.id_verified ? "ID Verified" : "Verification Pending"}
+                     </Badge>
+                     <div className="flex items-center gap-1">
+                        <Link href={`/officer-dashboard/agents/${agent.id}`}>
+                           <Button variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-bold text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 gap-1.5 rounded-lg">
+                              <Eye className="h-3.5 w-3.5" />
+                              View
+                           </Button>
+                        </Link>
+                        <Link href={`/officer-dashboard/agents/${agent.id}/edit`}>
+                           <Button variant="ghost" size="sm" className="h-8 px-3 text-[10px] font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-100 gap-1.5 rounded-lg">
+                              <Edit className="h-3.5 w-3.5" />
+                              Edit
+                           </Button>
+                        </Link>
+                     </div>
+                  </div>
+                </div>
               ))}
             </div>
 
             {/* Desktop/tablet: show table on md+ */}
             <div className="hidden md:block overflow-x-auto">
-              <Table className="min-w-[900px]">
-                <TableHeader>
-                  <TableRow className="text-sm">
-                    <TableHead>AGENT</TableHead>
-                    <TableHead className="max-w-[160px]">CONTACT INFO</TableHead>
-                    <TableHead>AGENT CODE</TableHead>
-                    <TableHead>LOCATION</TableHead>
-                    <TableHead>REPORTS</TableHead>
-                    <TableHead>STATUS</TableHead>
-                    <TableHead>VERIFIED</TableHead>
-                    <TableHead className="text-right">ACTIONS</TableHead>
+              <Table>
+                <TableHeader className="bg-slate-50/80 border-b border-slate-100">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4 pl-6">Agent Details</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">Agent Code</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">Location</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">Reports</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">Status</TableHead>
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4 text-right pr-6">Management</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {agents.map((agent) => (
-                    <TableRow key={agent.id}>
-                      <TableCell>
+                    <TableRow key={agent.id} className="group hover:bg-slate-50/50 transition-colors">
+                      <TableCell className="py-4 pl-6">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-8 w-8 bg-indigo-100 text-indigo-600">
+                          <Avatar className="h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100 group-hover:scale-105 transition-transform">
                             <AvatarImage src={agent.profile_image || undefined} />
-                            <AvatarFallback>
+                            <AvatarFallback className="bg-indigo-50 text-indigo-600 text-xs font-bold">
                               {agent.user?.name?.charAt(0) || "A"}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="font-medium">
-                            {agent.user?.name || "Unknown"}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                              {agent.user?.name || "Unknown"}
+                            </span>
+                            <span className="text-[11px] text-slate-500 font-medium">
+                              {agent.user?.email}
+                            </span>
+                          </div>
                         </div>
-                      </TableCell>
-                      <TableCell className="max-w-40 overflow-hidden">
-                        <div className="flex flex-col text-sm">
-                          <span className="truncate">{agent.user?.email}</span>
-                          <span className="text-muted-foreground truncate">
-                            {agent.user?.phone || "No phone"}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-mono text-sm">
-                        {agent.agent_code}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {agent.assigned_location || "Not Assigned"}
                       </TableCell>
                       <TableCell>
-                        <span className="font-medium">
-                          {agent.reports_submitted || 0}
+                        <span className="text-xs font-mono font-bold text-slate-600 bg-slate-100/80 px-2 py-1 rounded">
+                          {agent.agent_code}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          className={`${getStatusBadge(agent.user?.status || "pending")} border-0`}
-                        >
-                          {agent.user?.status || "pending"}
-                        </Badge>
+                         <p className="text-xs text-slate-600 font-medium truncate max-w-[150px]">
+                           {agent.assigned_location}
+                         </p>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                           <div className="flex -space-x-1">
+                              {[1,2,3].map(i => (
+                                 <div key={i} className="h-5 w-5 rounded-full border border-white bg-indigo-50 flex items-center justify-center">
+                                    <TrendingUp className="h-2.5 w-2.5 text-indigo-400" />
+                                 </div>
+                              ))}
+                           </div>
+                           <span className="text-xs font-bold text-slate-700">
+                             {agent.reports_submitted || 0}
+                           </span>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Badge
-                          className={
-                            agent.id_verified
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
-                          }
+                          variant="outline"
+                          className={cn("text-[10px] uppercase tracking-wider font-bold border-0", getStatusBadge(agent.user?.status || ""))}
                         >
-                          {agent.id_verified ? "Verified" : "Pending"}
+                          {agent.user?.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                      <TableCell className="text-right pr-6">
+                        <div className="flex justify-end gap-1.5">
                           <Link href={`/officer-dashboard/agents/${agent.id}`}>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -365,7 +379,7 @@ export function AllAgents() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                              className="h-8 w-8 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -375,33 +389,36 @@ export function AllAgents() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Agent</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete{" "}
-                                  {agent.user?.name}? This action cannot be
-                                  undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(agent.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                  disabled={deletingId === agent.id}
-                                >
-                                  {deletingId === agent.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                  ) : null}
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
+                            <AlertDialogContent className="rounded-2xl border-slate-200">
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle className="text-slate-900 font-bold">Remove Field Agent</AlertDialogTitle>
+                                 <AlertDialogDescription className="text-slate-500 text-sm">
+                                   Are you sure you want to remove <span className="font-bold text-slate-900">{agent.user?.name}</span>? 
+                                   They will lose access to the field tools immediately.
+                                 </AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <div className="py-4 px-4 bg-rose-50 rounded-xl border border-rose-100">
+                                  <p className="text-[11px] text-rose-700 font-bold uppercase tracking-widest leading-none mb-1">Warning</p>
+                                  <p className="text-xs text-rose-600 font-medium">This action cannot be undone and will affect pending field reports.</p>
+                               </div>
+                               <AlertDialogFooter className="mt-4">
+                                 <AlertDialogCancel className="rounded-xl border-slate-200 font-bold text-slate-600 text-xs">Stay Back</AlertDialogCancel>
+                                 <AlertDialogAction
+                                   onClick={() => handleDelete(agent.id)}
+                                   className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold text-xs shadow-lg shadow-rose-200 transition-all border-0"
+                                   disabled={deletingId === agent.id}
+                                 >
+                                   {deletingId === agent.id ? (
+                                     <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" />
+                                   ) : null}
+                                   Remove Agent
+                                 </AlertDialogAction>
+                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
                         </div>
@@ -413,7 +430,7 @@ export function AllAgents() {
             </div>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

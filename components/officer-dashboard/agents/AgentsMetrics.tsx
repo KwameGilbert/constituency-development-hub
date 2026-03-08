@@ -16,7 +16,7 @@ export function AgentsMetrics() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const response = await agentService.getStatistics();
+        const response = await agentService.getAgentStatsForOfficer();
         if (response.success && response.data) {
           setStats(response.data);
         }
