@@ -24,7 +24,7 @@ export function RecentIssuesSummary() {
   useEffect(() => {
     async function fetchRecentIssues() {
       try {
-        const response = await issuesService.getAllIssues({ limit: 5 });
+        const response = await issuesService.getOfficerIssues({ limit: 5 });
         if (response.success && response.data.reports) {
           setRecentIssues(response.data.reports);
         }

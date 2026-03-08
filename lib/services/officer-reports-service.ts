@@ -18,6 +18,7 @@ export interface BreakdownItem {
 export interface ReportsBreakdown {
   issues_by_category: BreakdownItem[];
   issues_by_location: BreakdownItem[];
+  issues_by_priority?: Record<string, number>;
   total: number;
 }
 

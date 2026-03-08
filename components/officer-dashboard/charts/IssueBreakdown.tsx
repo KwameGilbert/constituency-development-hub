@@ -4,7 +4,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, Cell } from "recharts";
 import { Loader2, AlertCircle } from "lucide-react";
-import { issuesService } from "@/lib/services/issues-service";
+import { officerReportsService } from "@/lib/services/officer-reports-service";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -80,26 +80,22 @@ export function IssueBreakdown({
 
     async function fetchStats() {
       try {
-        const response = await issuesService.getStatistics();
+        const response = await officerReportsService.getBreakdown();
         if (response.success && response.data) {
           const stats = response.data;
 
           const catData: ChartDataItem[] = [];
-          const byStatus = stats.by_status || {};
-
-          if (stats.total > 0) {
-            Object.entries(byStatus).forEach(([status, count]) => {
-              if (count > 0) {
-                const label = status
+          
+          if (stats.issues_by_category && stats.issues_by_category.length > 0) {
+            stats.issues_by_category.forEach((categoryOption) => {
+              if (categoryOption.count > 0) {
+                const label = categoryOption.name
                   .replace(/_/g, " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase());
+                  .replace(/\b\w/g, (l: string) => l.toUpperCase());
                 catData.push({
-                  label:
-                    label.length > 12 ? label.substring(0, 12) + "..." : label,
-                  count: count as number,
-                  fill:
-                    categoryColors[status.toLowerCase()] ||
-                    categoryColors.other,
+                  label: label.length > 12 ? label.substring(0, 12) + "..." : label,
+                  count: categoryOption.count as number,
+                  fill: categoryColors[categoryOption.name.toLowerCase()] || categoryColors.other,
                 });
               }
             });
@@ -110,13 +106,13 @@ export function IssueBreakdown({
               : [{ label: "No Data", count: 0, fill: "#64748b" }],
           );
 
-          const byPriority = stats.by_priority || {};
+          const byPriority: Record<string, number> = stats.issues_by_priority || {};
           const priData: ChartDataItem[] = [];
           Object.entries(byPriority).forEach(([priority, count]) => {
-            if (count > 0) {
+            if (typeof count === 'number' && count > 0) {
               priData.push({
                 label: priority.charAt(0).toUpperCase() + priority.slice(1),
-                count: count as number,
+                count: count,
                 fill: priorityColors[priority.toLowerCase()] || "#64748b",
               });
             }
