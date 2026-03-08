@@ -55,15 +55,16 @@ export interface SectorResponse {
 
 export const sectorsService = {
   // Get all sectors (Public view)
-  getSectors: async (): Promise<SectorsListResponse> => {
-    return apiClient<SectorsListResponse>("/sectors", {
+  getSectors: async (categoryId?: number): Promise<SectorsListResponse> => {
+    const url = categoryId ? `/sectors?category_id=${categoryId}` : "/sectors";
+    return apiClient<SectorsListResponse>(url, {
       method: "GET",
     });
   },
 
   // Get single sector
   getSector: async (id: number): Promise<SectorResponse> => {
-    return apiClient<SectorResponse>(`/admin/sectors/${id}`, {
+    return apiClient<SectorResponse>(`/sectors/${id}`, {
       method: "GET",
       requiresAuth: true,
     });
@@ -71,7 +72,7 @@ export const sectorsService = {
 
   // Create new sector
   createSector: async (data: CreateSectorRequest): Promise<SectorResponse> => {
-    return apiClient<SectorResponse>("/admin/sectors", {
+    return apiClient<SectorResponse>("/sectors", {
       method: "POST",
       body: JSON.stringify(data),
       requiresAuth: true,
@@ -83,7 +84,7 @@ export const sectorsService = {
     id: number,
     data: UpdateSectorRequest,
   ): Promise<SectorResponse> => {
-    return apiClient<SectorResponse>(`/admin/sectors/${id}`, {
+    return apiClient<SectorResponse>(`/sectors/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
@@ -95,7 +96,7 @@ export const sectorsService = {
     id: number,
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      `/admin/sectors/${id}`,
+      `/sectors/${id}`,
       {
         method: "DELETE",
         requiresAuth: true,
@@ -108,7 +109,7 @@ export const sectorsService = {
     orderedIds: number[],
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      "/admin/sectors/reorder",
+      "/sectors/reorder",
       {
         method: "PUT",
         body: JSON.stringify({ order: orderedIds }),
@@ -131,7 +132,7 @@ export const sectorsService = {
     return apiClient<{
       success: boolean;
       data: { sub_sectors: SubSector[]; sector_name?: string };
-    }>(`/sectors/${sectorId}/sub-sectors`, {
+    }>(`/sub-sectors?sector_id=${sectorId}`, {
       method: "GET",
     });
   },
@@ -145,9 +146,9 @@ export const sectorsService = {
       success: boolean;
       message: string;
       data: { sub_sector: SubSector };
-    }>(`/admin/sectors/${sectorId}/sub-sectors`, {
+    }>("/sub-sectors", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, sector_id: sectorId }),
       requiresAuth: true,
     });
   },
@@ -161,7 +162,7 @@ export const sectorsService = {
       success: boolean;
       message: string;
       data: { sub_sector: SubSector };
-    }>(`/admin/sub-sectors/${id}`, {
+    }>(`/sub-sectors/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
@@ -173,7 +174,7 @@ export const sectorsService = {
     id: number,
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      `/admin/sub-sectors/${id}`,
+      `/sub-sectors/${id}`,
       {
         method: "DELETE",
         requiresAuth: true,
@@ -186,7 +187,7 @@ export const sectorsService = {
     orderedIds: number[],
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      "/admin/sub-sectors/reorder",
+      "/sub-sectors/reorder",
       {
         method: "PUT",
         body: JSON.stringify({ order: orderedIds }),

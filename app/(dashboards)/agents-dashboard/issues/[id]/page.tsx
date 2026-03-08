@@ -222,10 +222,10 @@ export default function AgentIssueDetailPage({
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Issue Details Card */}
-            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
-                <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900">
-                  <div className="h-6 w-1 bg-amber-500 rounded-sm" />
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-amber-50/50 to-transparent border-b border-slate-50">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                  <div className="h-6 w-1 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                   Issue Details
                 </CardTitle>
               </CardHeader>
@@ -291,10 +291,10 @@ export default function AgentIssueDetailPage({
             </Card>
 
             {/* Location Card */}
-            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
-                <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900">
-                  <div className="h-6 w-1 bg-amber-500 rounded-sm" />
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-indigo-50/50 to-transparent border-b border-slate-50">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                  <div className="h-6 w-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
                   Location Details
                 </CardTitle>
               </CardHeader>
@@ -330,9 +330,12 @@ export default function AgentIssueDetailPage({
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Info */}
-            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
-                <CardTitle className="text-base font-semibold text-slate-900">Quick Info</CardTitle>
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-blue-50/50 to-transparent border-b border-slate-50">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                   <div className="h-6 w-1 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                   Quick Info
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-center gap-3">
@@ -373,6 +376,20 @@ export default function AgentIssueDetailPage({
                   </div>
                 )}
 
+                {issue.estimated_budget != null && (
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-slate-100/80">
+                      <div className="h-4 w-4 flex items-center justify-center font-bold text-slate-600 text-[10px]">GH₵</div>
+                    </div>
+                    <div>
+                      <label className="text-[11px] font-medium text-slate-500">Estimated Budget</label>
+                      <p className="font-semibold text-slate-900 text-sm">
+                        GH₵ {Number(issue.estimated_budget).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-slate-100/80">
                     <Calendar className="h-4 w-4 text-slate-600" />
@@ -388,10 +405,10 @@ export default function AgentIssueDetailPage({
             </Card>
 
             {/* Reporter Info */}
-            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-50">
-                <CardTitle className="text-base font-semibold flex items-center gap-2 text-slate-900">
-                  <User className="h-4 w-4 text-slate-500" />
+            <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-emerald-50/50 to-transparent border-b border-slate-50">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                  <div className="h-6 w-1 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                   Constituent Info
                 </CardTitle>
               </CardHeader>
@@ -446,9 +463,12 @@ export default function AgentIssueDetailPage({
 
             {/* Assigned Officer */}
             {issue.assigned_officer && (
-              <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden">
-                <CardHeader className="bg-slate-50/50 border-b border-slate-50">
-                  <CardTitle className="text-base font-semibold text-slate-900">Assigned Officer</CardTitle>
+              <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+                <CardHeader className="bg-gradient-to-r from-purple-50/50 to-transparent border-b border-slate-50">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                    <div className="h-6 w-1 bg-purple-500 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
+                    Assigned Officer
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-3">

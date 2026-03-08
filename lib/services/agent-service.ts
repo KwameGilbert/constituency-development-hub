@@ -110,11 +110,13 @@ export interface IssueSubmission {
   people_affected?: number;
   estimated_budget?: number;
   additional_notes?: string;
-  reporter_name?: string;
-  reporter_phone?: string;
-  reporter_email?: string;
-  reporter_gender?: string;
-  reporter_address?: string;
+  id_number?: string;
+  id_type?: string;
+  constituent_name?: string;
+  constituent_phone?: string;
+  constituent_email?: string;
+  constituent_gender?: string;
+  constituent_address?: string;
 }
 
 export interface IssueDetail {
@@ -400,6 +402,21 @@ class AgentService {
       method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
+    });
+  }
+
+  /**
+   * Upload agent profile image
+   * POST /v1/agent/profile/image
+   */
+  async uploadProfileImage(
+    data: FormData,
+  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
+    return apiClient("/agent/profile/image", {
+      method: "POST",
+      body: data,
+      requiresAuth: true,
+      isFormData: true,
     });
   }
 

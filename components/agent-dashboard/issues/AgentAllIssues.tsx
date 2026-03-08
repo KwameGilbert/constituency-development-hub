@@ -90,32 +90,6 @@ const getStatusBadge = (status: string) => {
   );
 };
 
-// Categories for filter
-const CATEGORIES = [
-  "All Categories",
-  "Infrastructure",
-  "Health",
-  "Education",
-  "Economic Empowerment",
-  "Water & Sanitation",
-  "Security",
-  "Environment",
-  "Social Services",
-  "Other",
-];
-
-// Statuses for filter
-const STATUSES = [
-  "All Statuses",
-  "Submitted",
-  "Pending",
-  "Under Review",
-  "Approved",
-  "In Progress",
-  "Resolved",
-  "Rejected",
-];
-
 export function AgentAllIssues() {
   const [issues, setIssues] = useState<AgentReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,6 +104,17 @@ export function AgentAllIssues() {
   // Action states
   const [editingIssue, setEditingIssue] = useState<AgentReport | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  // Dynamic filter options derived from data to ensure accuracy
+  const dynamicCategories = useMemo(() => {
+    const cats = new Set(issues.filter(i => i.category).map(i => i.category));
+    return ["All Categories", ...Array.from(cats)].sort();
+  }, [issues]);
+
+  const dynamicStatuses = useMemo(() => {
+    const stats = new Set(issues.filter(i => i.status).map(i => i.status));
+    return ["All Statuses", ...Array.from(stats)].sort();
+  }, [issues]);
 
   // Handle delete
   const handleDelete = async (id: number) => {
@@ -191,19 +176,17 @@ export function AgentAllIssues() {
         !searchQuery ||
         issue.title?.toLowerCase().includes(searchLower) ||
         issue.description?.toLowerCase().includes(searchLower) ||
-        issue.location?.toLowerCase().includes(searchLower);
+        issue.community?.toLowerCase().includes(searchLower);
 
       // Category filter
       const matchesCategory =
         categoryFilter === "All Categories" ||
-        issue.category?.toLowerCase() === categoryFilter.toLowerCase();
+        issue.category === categoryFilter;
 
       // Status filter
       const matchesStatus =
         statusFilter === "All Statuses" ||
-        issue.status
-          ?.toLowerCase()
-          .includes(statusFilter.toLowerCase().replace(" ", "_"));
+        issue.status === statusFilter;
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -288,7 +271,7 @@ export function AgentAllIssues() {
             <div className="md:col-span-6 space-y-2">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Search Keywords</label>
               <Input
-                placeholder="Title, description, or location..."
+                placeholder="Title, description, or community..."
                 className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-amber-500 rounded-lg"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -302,7 +285,7 @@ export function AgentAllIssues() {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((cat) => (
+                  {dynamicCategories.map((cat) => (
                     <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                   ))}
                 </SelectContent>
@@ -312,12 +295,14 @@ export function AgentAllIssues() {
             <div className="md:col-span-3 space-y-2">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Status</label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg">
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  {STATUSES.map((status) => (
-                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                  {dynamicStatuses.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status === "All Statuses" ? status : formatStatusLabel(status)}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

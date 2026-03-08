@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { agentService, AgentProfile } from "@/lib/services/agent-service";
+import { useRef } from "react";
 
 export function AgentSettings() {
   const [profile, setProfile] = useState<AgentProfile | null>(null);
@@ -18,6 +19,8 @@ export function AgentSettings() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile form state
   const [name, setName] = useState("");
@@ -127,13 +130,53 @@ export function AgentSettings() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("profile_image", file);
+
+      const response = await agentService.uploadProfileImage(formData);
+
+      if (response.success) {
+        toast.success("Profile image updated");
+        if (response.data?.agent) {
+          setProfile(response.data.agent);
+        }
+      } else {
+        toast.error(response.message || "Failed to upload image");
+      }
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      toast.error("Failed to upload image");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const getInitials = (name: string) => {
-    return name
+    if (!name) return "AG";
+    const initials = name
       .split(" ")
+      .filter(Boolean)
       .map((n) => n[0])
       .join("")
-      .toUpperCase()
-      .slice(0, 2);
+      .toUpperCase();
+    return initials.slice(0, 2) || "AG";
   };
 
   if (loading) {
@@ -179,9 +222,24 @@ export function AgentSettings() {
               {profile ? getInitials(profile.user.name) : "AG"}
             </AvatarFallback>
           </Avatar>
-          <button className="absolute bottom-0 right-0 rounded-full bg-slate-900 p-2 text-white hover:bg-slate-800 shadow-md">
-            <Camera className="h-4 w-4" />
+          <button 
+            className="absolute bottom-0 right-0 rounded-full bg-slate-900 p-2 text-white hover:bg-slate-800 shadow-md disabled:opacity-50"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingImage}
+          >
+            {uploadingImage ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Camera className="h-4 w-4" />
+            )}
           </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageUpload}
+          />
         </div>
         <div className="space-y-1 text-center md:text-left">
           <h2 className="text-xl font-bold text-slate-900">

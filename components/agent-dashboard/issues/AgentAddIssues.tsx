@@ -38,15 +38,15 @@ import { categoriesService, Category } from "@/lib/services/categories-service";
 
 // Zod schema for constituent details validation
 const constituentSchema = z.object({
-  reporter_name: z
+  constituent_name: z
     .string()
     .min(2, "Name must be at least 2 characters")
     .regex(/^[a-zA-Z\s\-'.]+$/, "Name should only contain letters, spaces, hyphens, or apostrophes"),
-  reporter_phone: z
+  constituent_phone: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
     .regex(/^\+?[0-9]+$/, "Phone number should only contain digits (optionally starting with +)"),
-  reporter_email: z
+  constituent_email: z
     .string()
     .email("Please enter a valid email address")
     .or(z.literal("")),
@@ -68,7 +68,6 @@ export function AgentAddIssues() {
 
   const [suburbs, setSuburbs] = useState<Location[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [sectors, setSectors] = useState<Sector[]>([]);
   const [filteredSectors, setFilteredSectors] = useState<Sector[]>([]);
   const [subSectors, setSubSectors] = useState<SubSector[]>([]);
   const [loadingData, setLoadingData] = useState(true);
@@ -82,7 +81,6 @@ export function AgentAddIssues() {
     description: "",
     category: "",
     category_id: undefined,
-    type: "", // Legacy field for backward compatibility
     issue_type: "community_based", // NEW: Community-based or individual-based
     priority: "medium",
     community: "",
@@ -95,12 +93,13 @@ export function AgentAddIssues() {
     sub_sector_id: undefined,
     subsector: "",
     people_affected: undefined,
+    estimated_budget: undefined,
     additional_notes: "",
-    reporter_name: "",
-    reporter_phone: "",
-    reporter_email: "",
-    reporter_gender: "",
-    reporter_address: "",
+    constituent_name: "",
+    constituent_phone: "",
+    constituent_email: "",
+    constituent_gender: "",
+    constituent_address: "",
   });
 
   // Fetch locations, sectors, and categories
@@ -108,21 +107,17 @@ export function AgentAddIssues() {
     const fetchData = async () => {
       try {
         setLoadingData(true);
-        const [locRes, secRes, catRes] = await Promise.all([
+        const [locRes, catRes] = await Promise.all([
           locationsService.getLocations({
             type: "community",
             status: "active",
             limit: 10000,
           }),
-          sectorsService.getSectors(),
           categoriesService.getCategories(),
         ]);
 
         if (locRes.success && locRes.data?.locations) {
           setLocations(locRes.data.locations);
-        }
-        if (secRes.success && secRes.data?.sectors) {
-          setSectors(secRes.data.sectors);
         }
         if (catRes.success && catRes.data?.categories) {
           setCategories(catRes.data.categories);
@@ -137,21 +132,34 @@ export function AgentAddIssues() {
     fetchData();
   }, []);
 
-  // Filter sectors when category changes
+  // Fetch sectors when category changes
   useEffect(() => {
-    if (formData.category_id) {
+    const fetchSectors = async () => {
+      if (!formData.category_id) {
+        setFilteredSectors([]);
+        return;
+      }
+
       setLoadingSectors(true);
-      const filtered = sectors.filter(
-        (s) => s.category_id === formData.category_id
-      );
-      setFilteredSectors(filtered);
-      setLoadingSectors(false);
-    } else {
-      setFilteredSectors([]);
-    }
+      try {
+        const response = await sectorsService.getSectors(formData.category_id);
+        if (response.success && response.data?.sectors) {
+          setFilteredSectors(response.data.sectors);
+        } else {
+          setFilteredSectors([]);
+        }
+      } catch (error) {
+        console.error("Error fetching sectors:", error);
+        toast.error("Failed to load sectors");
+      } finally {
+        setLoadingSectors(false);
+      }
+    };
+
+    fetchSectors();
     // Reset sector and subsector when category changes
     setSubSectors([]);
-  }, [formData.category_id, sectors]);
+  }, [formData.category_id, setSubSectors]);
 
   // Load subsectors when sector changes
   useEffect(() => {
@@ -175,7 +183,7 @@ export function AgentAddIssues() {
     };
 
     fetchSubSectors();
-  }, [formData.sector_id]);
+  }, [formData.sector_id, setSubSectors]);
 
   // Fetch smaller communities and suburbs when location changes
   useEffect(() => {
@@ -259,7 +267,7 @@ export function AgentAddIssues() {
       }
     }
 
-    if (!formData.reporter_name || !formData.reporter_phone) {
+    if (!formData.constituent_name || !formData.constituent_phone) {
       toast.error("Please provide constituent name and phone number");
       setActiveTab("constituent-details");
       return false;
@@ -492,26 +500,46 @@ export function AgentAddIssues() {
             </FormItem>
           </div>
 
-          {/* Show People Affected only for community-based issues */}
-          {formData.issue_type === "community_based" && (
-            <FormItem label="People Affected (Approx.)" required>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Show People Affected only for community-based issues */}
+            {formData.issue_type === "community_based" && (
+              <FormItem label="People Affected (Approx.)" required>
+                <Input
+                  type="number"
+                  placeholder="e.g., 100"
+                  value={formData.people_affected || ""}
+                  onChange={(e) =>
+                    updateField(
+                      "people_affected",
+                      e.target.value ? parseInt(e.target.value) : undefined,
+                    )
+                  }
+                  className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  Approximate number of people affected by this issue
+                </p>
+              </FormItem>
+            )}
+
+            <FormItem label="Estimated Budget (GHS)">
               <Input
                 type="number"
-                placeholder="e.g., 100"
-                value={formData.people_affected || ""}
+                placeholder="e.g., 5000"
+                value={formData.estimated_budget || ""}
                 onChange={(e) =>
                   updateField(
-                    "people_affected",
-                    e.target.value ? parseInt(e.target.value) : undefined,
+                    "estimated_budget",
+                    e.target.value ? parseFloat(e.target.value) : undefined,
                   )
                 }
                 className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
               />
               <p className="text-xs text-slate-500 mt-1">
-                Approximate number of people affected by this issue
+                Optional estimated cost to resolve the issue
               </p>
             </FormItem>
-          )}
+          </div>
 
           <FormItem label="Additional Notes">
             <Textarea
@@ -554,59 +582,59 @@ export function AgentAddIssues() {
         {/* Tab 2: Constituent Details */}
         <TabsContent value="constituent-details" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Constituent Name" required error={fieldErrors.reporter_name}>
+            <FormItem label="Constituent Name" required error={fieldErrors.constituent_name}>
               <Input
                 className={cn(
                   "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
-                  fieldErrors.reporter_name && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                  fieldErrors.constituent_name && "border-red-400 focus:border-red-500 focus:ring-red-500"
                 )}
-                value={formData.reporter_name || ""}
+                value={formData.constituent_name || ""}
                 onChange={(e) => {
-                  updateField("reporter_name", e.target.value);
-                  validateConstituentField("reporter_name", e.target.value);
+                  updateField("constituent_name", e.target.value);
+                  validateConstituentField("constituent_name", e.target.value);
                 }}
               />
             </FormItem>
-            <FormItem label="Phone Number" required error={fieldErrors.reporter_phone}>
+            <FormItem label="Phone Number" required error={fieldErrors.constituent_phone}>
               <Input
                 type="tel"
                 inputMode="numeric"
                 maxLength={13}
                 className={cn(
                   "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
-                  fieldErrors.reporter_phone && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                  fieldErrors.constituent_phone && "border-red-400 focus:border-red-500 focus:ring-red-500"
                 )}
                 placeholder="+233 ..."
-                value={formData.reporter_phone || ""}
+                value={formData.constituent_phone || ""}
                 onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
                 onChange={(e) => {
                   const filtered = e.target.value.replace(/[^0-9+]/g, '');
-                  updateField("reporter_phone", filtered);
-                  validateConstituentField("reporter_phone", filtered);
+                  updateField("constituent_phone", filtered);
+                  validateConstituentField("constituent_phone", filtered);
                 }}
               />
             </FormItem>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Email Address" error={fieldErrors.reporter_email}>
+            <FormItem label="Email Address" error={fieldErrors.constituent_email}>
               <Input
                 type="email"
                 className={cn(
                   "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
-                  fieldErrors.reporter_email && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                  fieldErrors.constituent_email && "border-red-400 focus:border-red-500 focus:ring-red-500"
                 )}
-                value={formData.reporter_email || ""}
+                value={formData.constituent_email || ""}
                 onChange={(e) => {
-                  updateField("reporter_email", e.target.value);
-                  validateConstituentField("reporter_email", e.target.value);
+                  updateField("constituent_email", e.target.value);
+                  validateConstituentField("constituent_email", e.target.value);
                 }}
               />
             </FormItem>
             <FormItem label="Gender">
               <Select
-                value={formData.reporter_gender || ""}
-                onValueChange={(v) => updateField("reporter_gender", v)}
+                value={formData.constituent_gender || ""}
+                onValueChange={(v) => updateField("constituent_gender", v)}
               >
                 <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Gender" />
@@ -623,8 +651,8 @@ export function AgentAddIssues() {
           <FormItem label="Home Address">
             <Input
               className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
-              value={formData.reporter_address || ""}
-              onChange={(e) => updateField("reporter_address", e.target.value)}
+              value={formData.constituent_address || ""}
+              onChange={(e) => updateField("constituent_address", e.target.value)}
             />
           </FormItem>
 

@@ -154,7 +154,7 @@ export const locationsService = {
 
   // Get location by ID
   getLocationById: async (id: number): Promise<LocationResponse> => {
-    return apiClient<LocationResponse>(`/admin/locations/${id}`, {
+    return apiClient<LocationResponse>(`/locations/${id}`, {
       method: "GET",
       requiresAuth: true,
     });
@@ -162,7 +162,7 @@ export const locationsService = {
 
   // Get location statistics
   getLocationStats: async (id: number): Promise<LocationStatsResponse> => {
-    return apiClient<LocationStatsResponse>(`/admin/locations/${id}/stats`, {
+    return apiClient<LocationStatsResponse>(`/locations/${id}/stats`, {
       method: "GET",
       requiresAuth: true,
     });
@@ -170,7 +170,7 @@ export const locationsService = {
 
   // Get location types summary
   getLocationTypes: async (): Promise<LocationTypesResponse> => {
-    return apiClient<LocationTypesResponse>("/admin/locations/types", {
+    return apiClient<LocationTypesResponse>("/locations/types", {
       method: "GET",
       requiresAuth: true,
     });
@@ -179,7 +179,7 @@ export const locationsService = {
   // Get dashboard statistics
   getDashboardStats: async (): Promise<LocationDashboardStatsResponse> => {
     return apiClient<LocationDashboardStatsResponse>(
-      "/admin/locations/dashboard-stats",
+      "/locations/dashboard-stats",
       {
         method: "GET",
         requiresAuth: true,
@@ -191,7 +191,7 @@ export const locationsService = {
   createLocation: async (
     data: CreateLocationRequest,
   ): Promise<LocationResponse> => {
-    return apiClient<LocationResponse>("/admin/locations", {
+    return apiClient<LocationResponse>("/locations", {
       method: "POST",
       body: JSON.stringify(data),
       requiresAuth: true,
@@ -203,7 +203,7 @@ export const locationsService = {
     id: number,
     data: UpdateLocationRequest,
   ): Promise<LocationResponse> => {
-    return apiClient<LocationResponse>(`/admin/locations/${id}`, {
+    return apiClient<LocationResponse>(`/locations/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
@@ -214,7 +214,7 @@ export const locationsService = {
   deleteLocation: async (
     id: number,
   ): Promise<{ success: boolean; message: string }> => {
-    return apiClient(`/admin/locations/${id}`, {
+    return apiClient(`/locations/${id}`, {
       method: "DELETE",
       requiresAuth: true,
     });

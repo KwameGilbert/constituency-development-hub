@@ -82,13 +82,13 @@ export const categoriesService = {
     if (params?.status) queryParams.append("status", params.status);
     if (params?.search) queryParams.append("search", params.search);
 
-    const url = `/admin/categories${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+    const url = `/categories${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
     return apiClient<CategoriesListResponse>(url, { method: "GET" });
   },
 
   // Get single category by ID
   getCategoryById: async (id: number): Promise<CategoryResponse> => {
-    return apiClient<CategoryResponse>(`/admin/categories/${id}`, {
+    return apiClient<CategoryResponse>(`/categories/${id}`, {
       method: "GET",
     });
   },
@@ -106,7 +106,7 @@ export const categoriesService = {
   createCategory: async (
     data: CreateCategoryRequest
   ): Promise<CategoryResponse> => {
-    return apiClient<CategoryResponse>("/admin/categories", {
+    return apiClient<CategoryResponse>("/categories", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -117,7 +117,7 @@ export const categoriesService = {
     id: number,
     data: UpdateCategoryRequest
   ): Promise<CategoryResponse> => {
-    return apiClient<CategoryResponse>(`/admin/categories/${id}`, {
+    return apiClient<CategoryResponse>(`/categories/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
@@ -128,7 +128,7 @@ export const categoriesService = {
     id: number
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      `/admin/categories/${id}`,
+      `/categories/${id}`,
       { method: "DELETE" }
     );
   },
@@ -138,7 +138,7 @@ export const categoriesService = {
     orderedIds: number[]
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      "/admin/categories/reorder",
+      "/categories/reorder",
       {
         method: "PUT",
         body: JSON.stringify({ ordered_ids: orderedIds }),
