@@ -178,374 +178,338 @@ export function AddAgentForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Generated Password Alert */}
-      {generatedPassword && (
-        <Alert className="bg-green-50 border-green-200">
-          <Shield className="h-4 w-4 text-green-600" />
-          <AlertTitle className="text-green-800 font-semibold">
-            Agent Created Successfully!
-          </AlertTitle>
-          <AlertDescription className="text-green-700">
-            <p className="mt-2">
-              <strong>Generated Password:</strong>{" "}
-              <code className="bg-green-100 px-2 py-1 rounded">
-                {generatedPassword}
-              </code>
-            </p>
-            <p className="text-sm mt-2">
-              Please save this password and share it securely with the agent.
-            </p>
-            <Button
-              type="button"
-              className="mt-3 bg-green-600 hover:bg-green-700"
-              onClick={() => router.push("/officer-dashboard/agents")}
-            >
-              Go to Agents List
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <div className="space-y-1">
-            <CardTitle className="text-lg font-medium text-[#1e1b4b]">
-              Create New Agent
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Fill in the details to create a new field agent account
-            </p>
-          </div>
-          <Link href="/officer-dashboard/agents">
-            <Button type="button" variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent className="space-y-8">
-          {/* Personal Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <User className="h-4 w-4" />
-              <h3>Personal Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">
-                  Full Name <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="fullName"
-                  placeholder="Enter agent's full name"
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  Email Address <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="agent@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="+233 20 123 4567"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value.replace(/[^0-9+]/g, ''))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <Input
-                  id="address"
-                  placeholder="Enter home address"
-                  value={formData.address}
-                  onChange={(e) => handleChange("address", e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Assignment Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <MapPin className="h-4 w-4" />
-              <h3>Assignment Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Assigned Location</Label>
-                <Select
-                  value={formData.assigned_location}
-                  onValueChange={(value) =>
-                    handleChange("assigned_location", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {locations.map((loc) => (
-                      <SelectItem key={loc.id} value={loc.name}>
-                        {loc.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Assigned Communities</Label>
-                <Input
-                  placeholder="e.g., Community A, Community B"
-                  value={formData.assigned_communities}
-                  onChange={(e) =>
-                    handleChange("assigned_communities", e.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>ID Type</Label>
-                <Select
-                  value={formData.id_type}
-                  onValueChange={(value) => handleChange("id_type", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select ID Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ghana_card">
-                      National ID (Ghana Card)
-                    </SelectItem>
-                    <SelectItem value="passport">Passport</SelectItem>
-                    <SelectItem value="drivers_license">
-                      Driver&apos;s License
-                    </SelectItem>
-                    <SelectItem value="voter_id">Voter ID</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>ID Number</Label>
-                <Input
-                  placeholder="Enter ID number"
-                  value={formData.id_number}
-                  onChange={(e) => handleChange("id_number", e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Emergency Contact */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <User className="h-4 w-4" />
-              <h3>Emergency Contact</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Emergency Contact Name</Label>
-                <Input
-                  placeholder="Contact person name"
-                  value={formData.emergency_contact_name}
-                  onChange={(e) =>
-                    handleChange("emergency_contact_name", e.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Emergency Contact Phone</Label>
-                <Input
-                  placeholder="+233 20 123 4567"
-                  value={formData.emergency_contact_phone}
-                  onChange={(e) =>
-                    handleChange("emergency_contact_phone", e.target.value)
-                  }
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Permissions */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <Shield className="h-4 w-4" />
-              <h3>Permissions</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="canSubmitReports"
-                  checked={formData.can_submit_reports}
-                  onCheckedChange={(checked) =>
-                    handleChange("can_submit_reports", !!checked)
-                  }
-                />
-                <Label
-                  htmlFor="canSubmitReports"
-                  className="text-sm font-normal"
-                >
-                  Can Submit Reports
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="canCollectData"
-                  checked={formData.can_collect_data}
-                  onCheckedChange={(checked) =>
-                    handleChange("can_collect_data", !!checked)
-                  }
-                />
-                <Label htmlFor="canCollectData" className="text-sm font-normal">
-                  Can Collect Data
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="canRegisterResidents"
-                  checked={formData.can_register_residents}
-                  onCheckedChange={(checked) =>
-                    handleChange("can_register_residents", !!checked)
-                  }
-                />
-                <Label
-                  htmlFor="canRegisterResidents"
-                  className="text-sm font-normal"
-                >
-                  Can Register Residents
-                </Label>
-              </div>
-            </div>
-          </div>
-
-          {/* Security Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <Lock className="h-4 w-4" />
-              <h3>
-                Password{" "}
-                <span className="text-xs font-normal text-muted-foreground ml-2">
-                  (Leave blank to auto-generate)
-                </span>
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter password or leave blank"
-                    value={formData.password}
-                    onChange={(e) => handleChange("password", e.target.value)}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
+    <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Generated Password Alert */}
+        {generatedPassword && (
+          <Alert className="bg-emerald-50 border-emerald-200 shadow-sm border-2 rounded-2xl overflow-hidden animate-in zoom-in duration-300">
+            <Shield className="h-5 w-5 text-emerald-600" />
+            <div className="ml-2">
+              <AlertTitle className="text-emerald-900 font-bold text-lg">
+                Field Agent Account Secured
+              </AlertTitle>
+              <AlertDescription className="text-emerald-700 mt-2">
+                <div className="bg-white/50 border border-emerald-100 p-4 rounded-xl mt-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-1">Generated Access Key</p>
+                    <code className="text-xl font-mono font-bold tracking-wider text-emerald-900">
+                      {generatedPassword}
+                    </code>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 text-emerald-600 hover:bg-emerald-100"
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedPassword);
+                      toast.success("Password copied to clipboard");
+                    }}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                    <Save className="h-4 w-4" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Leave blank to auto-generate a secure password
+                <p className="text-xs mt-4 font-medium leading-relaxed">
+                  Important: This password is shown only once. Please securely transmit this to the agent for their first login.
+                </p>
+                <div className="mt-6 flex justify-end">
+                  <Button
+                    type="button"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl px-6 shadow-lg shadow-emerald-200 transition-all"
+                    onClick={() => router.push("/officer-dashboard/agents")}
+                  >
+                    Return to Management
+                  </Button>
+                </div>
+              </AlertDescription>
+            </div>
+          </Alert>
+        )}
+
+        <Card className="border-slate-200/60 shadow-xl shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 sm:px-10 py-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                   <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+                   <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Enrollment Module</span>
+                </div>
+                <CardTitle className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                  Onboard New Agent
+                </CardTitle>
+                <p className="text-sm text-slate-500 font-medium">
+                  Initialize a new field operative account for the constituency
                 </p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
+              <Link href="/officer-dashboard/agents">
+                <Button type="button" variant="outline" size="sm" className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold px-4 h-10 gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Cancel Setup
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="px-6 sm:px-10 py-10 space-y-12">
+            {/* Personal Information */}
+            <section className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                   <User className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Personal Credentials</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Official Full Name
+                  </Label>
                   <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleChange("confirmPassword", e.target.value)
-                    }
+                    id="fullName"
+                    placeholder="e.g. Samuel Kojo Benteh"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.name}
+                    onChange={(e) => handleChange("name", e.target.value)}
+                    required
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Work Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="agent.name@domain.com"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.email}
+                    onChange={(e) => handleChange("email", e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Contact Number
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="+233 XX XXX XXXX"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.phone}
+                    onChange={(e) => handleChange("phone", e.target.value.replace(/[^0-9+]/g, ''))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Residential Address
+                  </Label>
+                  <Input
+                    id="address"
+                    placeholder="House No, Street, Landmark"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.address}
+                    onChange={(e) => handleChange("address", e.target.value)}
+                  />
                 </div>
               </div>
+            </section>
+
+            {/* Assignment Information */}
+            <section className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                   <MapPin className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Territorial Assignment</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Operations Zone</Label>
+                  <Select
+                    value={formData.assigned_location}
+                    onValueChange={(value) =>
+                      handleChange("assigned_location", value)
+                    }
+                  >
+                    <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl px-4 font-medium">
+                      <SelectValue placeholder="Select Zone" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200">
+                      {locations.map((loc) => (
+                        <SelectItem key={loc.id} value={loc.name} className="focus:bg-indigo-50 font-medium">
+                          {loc.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Target Communities</Label>
+                  <Input
+                    placeholder="e.g. Blue Lagoon, North Ridge"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.assigned_communities}
+                    onChange={(e) =>
+                      handleChange("assigned_communities", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Recognition ID Type</Label>
+                  <Select
+                    value={formData.id_type}
+                    onValueChange={(value) => handleChange("id_type", value)}
+                  >
+                    <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl px-4 font-medium">
+                      <SelectValue placeholder="Select ID Specification" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200">
+                      <SelectItem value="ghana_card" className="font-medium">Ghana Card (NIA)</SelectItem>
+                      <SelectItem value="passport" className="font-medium">Passport</SelectItem>
+                      <SelectItem value="drivers_license" className="font-medium">Driver&apos;s License</SelectItem>
+                      <SelectItem value="voter_id" className="font-medium">Voter ID</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Universal ID Number</Label>
+                  <Input
+                    placeholder="Enter registration number"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.id_number}
+                    onChange={(e) => handleChange("id_number", e.target.value)}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Operational Privileges */}
+            <section className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                   <Shield className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">System Access Levels</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { id: "canSubmitReports", field: "can_submit_reports", label: "Incident Reporting" },
+                  { id: "canCollectData", field: "can_collect_data", label: "Field Intelligence" },
+                  { id: "canRegisterResidents", field: "can_register_residents", label: "Resident Enrollment" }
+                ].map((perm) => (
+                  <div key={perm.id} className="relative flex items-center gap-3 p-4 bg-slate-50/50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-white hover:border-indigo-100 transition-all group">
+                    <Checkbox
+                      id={perm.id}
+                      checked={formData[perm.field as keyof FormData] as boolean}
+                      onCheckedChange={(checked) =>
+                        handleChange(perm.field as keyof FormData, !!checked)
+                      }
+                      className="border-slate-300 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                    />
+                    <Label
+                      htmlFor={perm.id}
+                      className="text-xs font-bold text-slate-700 cursor-pointer group-hover:text-indigo-600 transition-colors"
+                    >
+                      {perm.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Security Protocol */}
+            <section className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-50 text-rose-600 rounded-lg">
+                   <Lock className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Security Credentials</h3>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded ml-auto">Optional</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Access Password</Label>
+                  <div className="relative group">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                      value={formData.password}
+                      onChange={(e) => handleChange("password", e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-medium pl-1">Leave blank to auto-generate a secure key</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Verify Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                      value={formData.confirmPassword}
+                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Submission Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-10 border-t border-slate-100">
+               <div className="flex items-center gap-3 text-slate-400">
+                  <AlertTriangle className="h-4 w-4" />
+                  <p className="text-[11px] font-medium leading-tight">
+                    By onboarding this agent, you grant them access to <br /> field operations in your jurisdiction.
+                  </p>
+               </div>
+               <div className="flex items-center gap-3 w-full sm:w-auto">
+                 <Link href="/officer-dashboard/agents" className="flex-1 sm:flex-none">
+                    <Button type="button" variant="outline" className="w-full h-12 px-6 rounded-xl border-slate-200 text-slate-600 font-bold hover:bg-slate-50">
+                       Safe Exit
+                    </Button>
+                 </Link>
+                 <Button
+                    type="submit"
+                    className="flex-1 sm:flex-none h-12 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all gap-2"
+                    disabled={loading}
+                 >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    Complete Onboarding
+                 </Button>
+               </div>
             </div>
-          </div>
-
-          {/* Important Notes */}
-          <Alert className="bg-blue-50 border-blue-200 text-blue-800">
-            <AlertTriangle className="h-4 w-4 text-blue-600" />
-            <AlertTitle className="text-blue-800 font-semibold">
-              Important Notes
-            </AlertTitle>
-            <AlertDescription className="text-blue-700 text-sm mt-2">
-              <ul className="list-disc list-inside space-y-1">
-                <li>
-                  The agent will receive login credentials via email (if
-                  configured)
-                </li>
-                <li>
-                  If password is left blank, a secure password will be generated
-                </li>
-                <li>Agent account will be pending until verified</li>
-                <li>
-                  Ensure correct location assignment for proper issue routing
-                </li>
-              </ul>
-            </AlertDescription>
-          </Alert>
-
-          {/* Actions */}
-          <div className="flex justify-between pt-4">
-            <Link href="/officer-dashboard/agents">
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </Link>
-            <Button
-              type="submit"
-              className="bg-[#312e81] hover:bg-[#312e81]/90 gap-2"
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4" />
-              )}
-              Create Agent
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+          </CardContent>
+        </Card>
+      </form>
+    </div>
   );
+}
 }

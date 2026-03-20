@@ -1,5 +1,4 @@
-import React from "react";
-import { EditAgentHeader } from "@/components/officer-dashboard/agents/EditAgentHeader";
+import { AgentsHeader } from "@/components/officer-dashboard/agents/AgentsHeader";
 import { EditAgentForm } from "@/components/officer-dashboard/agents/EditAgentForm";
 
 export default async function EditAgentPage({
@@ -9,11 +8,11 @@ export default async function EditAgentPage({
 }) {
   const { id } = await params;
   return (
-    <div className="space-y-6">
-      <EditAgentHeader agentId={id} />
-      <div className="p-6">
+    <div className="flex-1 flex flex-col min-h-screen bg-slate-50/50">
+      <AgentsHeader />
+      <main className="flex-1">
         <EditAgentForm agentId={id} />
-      </div>
+      </main>
     </div>
   );
 }

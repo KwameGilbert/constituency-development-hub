@@ -183,311 +183,322 @@ export function EditAgentForm({ agentId }: EditAgentFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <div className="space-y-1">
-            <CardTitle className="text-lg font-medium text-[#1e1b4b]">
-              Edit Agent: {originalAgent?.agent_code}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Update {formData.name}&apos;s details and permissions
-            </p>
-          </div>
-          <Link href="/officer-dashboard/agents">
-            <Button type="button" variant="outline" size="sm">
-              <Undo2 className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent className="space-y-8">
-          {/* Personal Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <User className="h-4 w-4" />
-              <h3>Personal Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <Card className="border-slate-200/60 shadow-xl shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 sm:px-10 py-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div className="space-y-2">
-                <Label htmlFor="fullName">
-                  Full Name <span className="text-red-500">*</span>
-                </Label>
-                <Input 
+                <div className="flex items-center gap-2">
+                   <div className="h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+                   <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Profile Configuration</span>
+                </div>
+                <CardTitle className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                  Edit Agent Profile
+                </CardTitle>
+                <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                  <span>Modifying operative</span>
+                  <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs font-bold">{originalAgent?.agent_code}</span>
+                </div>
+              </div>
+              <Link href="/officer-dashboard/agents">
+                <Button type="button" variant="outline" size="sm" className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold px-4 h-10 gap-2 transition-all">
+                  <Undo2 className="h-4 w-4" />
+                  Discard Changes
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="px-6 sm:px-10 py-10 space-y-12">
+            {/* Personal Information */}
+            <section className="space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                   <User className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Core Credentials</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Full Name
+                  </Label>
+                  <Input 
                     id="fullName" 
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
                     value={formData.name} 
                     onChange={(e) => handleChange("name", e.target.value)}
                     required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">
-                  Email Address <span className="text-red-500">*</span>
-                </Label>
-                <Input 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Official Email
+                  </Label>
+                  <Input 
                     id="email" 
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium text-slate-500"
                     value={formData.email} 
                     onChange={(e) => handleChange("email", e.target.value)}
                     required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Mobile Number
+                  </Label>
+                  <Input 
                     id="phone" 
                     type="tel"
                     inputMode="numeric"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
                     value={formData.phone} 
                     onChange={(e) => handleChange("phone", e.target.value.replace(/[^0-9+]/g, ''))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="status">Account Status</Label>
-                <Select
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">
+                    Account Lifecycle
+                  </Label>
+                  <Select
                     value={formData.status}
                     onValueChange={(value) => handleChange("status", value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="suspended">Suspended</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          {/* Assignment Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <MapPin className="h-4 w-4" />
-              <h3>Assignment Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label>Assigned Location</Label>
-                    <Select
-                        value={formData.assigned_location}
-                        onValueChange={(value) => handleChange("assigned_location", value)}
-                    >
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select Location" />
+                  >
+                    <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl px-4 font-medium">
+                      <SelectValue placeholder="Select Lifecycle State" />
                     </SelectTrigger>
-                    <SelectContent>
-                        {locations.map((loc) => (
-                        <SelectItem key={loc.id} value={loc.name}>
-                            {loc.name}
-                        </SelectItem>
-                        ))}
+                    <SelectContent className="rounded-xl border-slate-200">
+                      <SelectItem value="active" className="focus:bg-indigo-50 font-medium">Active - Fully Operational</SelectItem>
+                      <SelectItem value="inactive" className="focus:bg-indigo-50 font-medium">Inactive - Temporary Hold</SelectItem>
+                      <SelectItem value="suspended" className="focus:bg-indigo-50 font-medium text-rose-600">Suspended - Access Revoked</SelectItem>
+                      <SelectItem value="pending" className="focus:bg-indigo-50 font-medium text-amber-600">Pending - Verification Reqd</SelectItem>
                     </SelectContent>
-                    </Select>
+                  </Select>
+                </div>
+              </div>
+            </section>
+
+            {/* Assignment Information */}
+            <section className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                   <MapPin className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Geospatial Assignment</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Operations Zone</Label>
+                  <Select
+                    value={formData.assigned_location}
+                    onValueChange={(value) => handleChange("assigned_location", value)}
+                  >
+                    <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl px-4 font-medium">
+                      <SelectValue placeholder="Assign operational zone" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200">
+                      {locations.map((loc) => (
+                        <SelectItem key={loc.id} value={loc.name} className="focus:bg-indigo-50 font-medium">
+                          {loc.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
-                    <Label>Assigned Communities</Label>
-                    <Input
-                        placeholder="e.g., Community A, Community B"
-                        value={formData.assigned_communities}
-                        onChange={(e) => handleChange("assigned_communities", e.target.value)}
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Territorial Communities</Label>
+                  <Input
+                    placeholder="e.g. Area A, Sector B"
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.assigned_communities}
+                    onChange={(e) => handleChange("assigned_communities", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Verification ID Type</Label>
+                  <Select
+                    value={formData.id_type}
+                    onValueChange={(value) => handleChange("id_type", value)}
+                  >
+                    <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl px-4 font-medium">
+                      <SelectValue placeholder="ID Specification" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-slate-200">
+                      <SelectItem value="ghana_card" className="font-medium">Ghana Card (NIA)</SelectItem>
+                      <SelectItem value="passport" className="font-medium">Passport</SelectItem>
+                      <SelectItem value="drivers_license" className="font-medium">Driver&apos;s License</SelectItem>
+                      <SelectItem value="voter_id" className="font-medium">Voter ID</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Universal ID Number</Label>
+                  <Input
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.id_number}
+                    onChange={(e) => handleChange("id_number", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2 col-span-1 md:col-span-2">
+                  <Label className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Base Residency</Label>
+                  <Input
+                    className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                    value={formData.address}
+                    onChange={(e) => handleChange("address", e.target.value)}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* Operational Metrics & Info (Read Only) */}
+            <section className="p-6 bg-slate-50/50 border border-slate-200 rounded-3xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white text-slate-600 rounded-lg shadow-sm">
+                   <Info className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-bold text-slate-800 tracking-tight">System Telemetry</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                <div className="flex items-center justify-between p-3 bg-white/80 rounded-xl border border-slate-100">
+                  <span className="text-slate-500 font-medium">Account Activated</span>
+                  <span className="font-bold text-slate-900">
+                    {originalAgent?.created_at ? new Date(originalAgent.created_at).toLocaleDateString() : '-'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white/80 rounded-xl border border-slate-100">
+                  <span className="text-slate-500 font-medium">Latest Sync</span>
+                  <span className="font-bold text-slate-900">
+                    {originalAgent?.updated_at ? new Date(originalAgent.updated_at).toLocaleDateString() : '-'}
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            {/* Application Permissions */}
+            <section className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                   <Shield className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Operational Privileges</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { id: "canSubmitReports", field: "can_submit_reports", label: "Incident Logging" },
+                  { id: "canCollectData", field: "can_collect_data", label: "Intelligence Gathering" },
+                  { id: "canRegisterResidents", field: "can_register_residents", label: "Resident Indexing" }
+                ].map((perm) => (
+                  <div key={perm.id} className="relative flex items-center gap-3 p-4 bg-slate-50/50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-white hover:border-indigo-100 transition-all group">
+                    <Checkbox
+                      id={perm.id}
+                      checked={formData[perm.field as keyof typeof formData] as boolean}
+                      onCheckedChange={(checked) => handleChange(perm.field, !!checked)}
+                      className="border-slate-300 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
                     />
-                    <p className="text-xs text-muted-foreground">Comma separated</p>
-                </div>
-                <div className="space-y-2">
-                    <Label>ID Type</Label>
-                    <Select
-                        value={formData.id_type}
-                        onValueChange={(value) => handleChange("id_type", value)}
+                    <Label
+                      htmlFor={perm.id}
+                      className="text-xs font-bold text-slate-700 cursor-pointer group-hover:text-indigo-600 transition-colors"
                     >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select ID Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="ghana_card">National ID (Ghana Card)</SelectItem>
-                            <SelectItem value="passport">Passport</SelectItem>
-                            <SelectItem value="drivers_license">Driver&apos;s License</SelectItem>
-                            <SelectItem value="voter_id">Voter ID</SelectItem>
-                        </SelectContent>
-                    </Select>
+                      {perm.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Security Protocol */}
+            <section className="space-y-6 pt-6 border-t border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-50 text-rose-600 rounded-lg">
+                   <Lock className="h-5 w-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800 tracking-tight">Authentication Override</h3>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded ml-auto">Optional</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">New Access Key</Label>
+                  <div className="relative group">
+                    <Input
+                      id="newPassword"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                      value={formData.newPassword}
+                      onChange={(e) => handleChange("newPassword", e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
                 </div>
                 <div className="space-y-2">
-                    <Label>ID Number</Label>
+                  <Label htmlFor="confirmPassword" className="text-xs font-bold text-slate-600 uppercase tracking-wider pl-1 font-mono">Verify New Key</Label>
+                  <div className="relative">
                     <Input
-                        value={formData.id_number}
-                        onChange={(e) => handleChange("id_number", e.target.value)}
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      className="h-12 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 rounded-xl px-4 font-medium"
+                      value={formData.confirmPassword}
+                      onChange={(e) => handleChange("confirmPassword", e.target.value)}
                     />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1 h-10 w-10 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
                 </div>
-                <div className="space-y-2 col-span-2">
-                    <Label>Address</Label>
-                    <Input
-                        value={formData.address}
-                        onChange={(e) => handleChange("address", e.target.value)}
-                    />
-                </div>
-            </div>
-          </div>
+              </div>
+            </section>
 
-          {/* Emergency Contact */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <User className="h-4 w-4" />
-              <h3>Emergency Contact</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                    <Label>Name</Label>
-                    <Input
-                        value={formData.emergency_contact_name}
-                        onChange={(e) => handleChange("emergency_contact_name", e.target.value)}
-                    />
-                </div>
-                <div className="space-y-2">
-                    <Label>Phone</Label>
-                    <Input
-                        type="tel"
-                        inputMode="numeric"
-                        value={formData.emergency_contact_phone}
-                        onChange={(e) => handleChange("emergency_contact_phone", e.target.value.replace(/[^0-9+]/g, ''))}
-                    />
-                </div>
-            </div>
-          </div>
-
-          {/* Permissions */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <Shield className="h-4 w-4" />
-              <h3>Permissions</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2">
-                    <Checkbox
-                        id="canSubmitReports"
-                        checked={formData.can_submit_reports}
-                        onCheckedChange={(checked) => handleChange("can_submit_reports", !!checked)}
-                    />
-                    <Label htmlFor="canSubmitReports" className="text-sm font-normal">Can Submit Reports</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <Checkbox
-                        id="canCollectData"
-                        checked={formData.can_collect_data}
-                        onCheckedChange={(checked) => handleChange("can_collect_data", !!checked)}
-                    />
-                    <Label htmlFor="canCollectData" className="text-sm font-normal">Can Collect Data</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <Checkbox
-                        id="canRegisterResidents"
-                        checked={formData.can_register_residents}
-                        onCheckedChange={(checked) => handleChange("can_register_residents", !!checked)}
-                    />
-                    <Label htmlFor="canRegisterResidents" className="text-sm font-normal">Can Register Residents</Label>
-                </div>
-            </div>
-          </div>
-
-          {/* Security Information */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium pb-2 border-b">
-              <Lock className="h-4 w-4" />
-              <h3>
-                Security Information{" "}
-                <span className="text-xs font-normal text-muted-foreground ml-2">
-                  (Leave blank to keep current password)
-                </span>
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="newPassword"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter new password (optional)"
-                    value={formData.newPassword}
-                    onChange={(e) => handleChange("newPassword", e.target.value)}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+            {/* Submission Actions */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-10 border-t border-slate-100">
+               <div className="flex items-center gap-3 text-slate-400">
+                  <AlertTriangle className="h-4 w-4" />
+                  <p className="text-[11px] font-medium leading-tight">
+                    Review all configuration changes carefully <br /> before applying to the production profile.
+                  </p>
+               </div>
+               <div className="flex items-center gap-3 w-full sm:w-auto">
+                 <Link href="/officer-dashboard/agents" className="flex-1 sm:flex-none">
+                    <Button type="button" variant="outline" className="w-full h-12 px-6 rounded-xl border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-all">
+                       Abort Changes
+                    </Button>
+                 </Link>
+                 <Button
+                    type="submit"
+                    className="flex-1 sm:flex-none h-12 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all gap-2"
+                    disabled={submitting}
+                 >
+                    {submitting ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-white" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Save className="h-4 w-4" />
                     )}
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm new password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
-                  </Button>
-                </div>
-              </div>
+                    Commit Profile Updates
+                 </Button>
+               </div>
             </div>
-          </div>
-
-          {/* Account Information (Read Only) */}
-          <div className="bg-slate-50 p-4 rounded-lg border">
-            <div className="flex items-center gap-2 text-[#1e1b4b] font-medium mb-4">
-              <Info className="h-4 w-4" />
-              <h3>Account Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Created:</span>
-                <span className="font-medium">
-                    {originalAgent?.created_at ? new Date(originalAgent.created_at).toLocaleString() : '-'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Last Updated:</span>
-                <span className="font-medium">
-                    {originalAgent?.updated_at ? new Date(originalAgent.updated_at).toLocaleString() : '-'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-between pt-4">
-            <Link href="/officer-dashboard/agents">
-                <Button type="button" variant="outline">Cancel</Button>
-            </Link>
-            <Button className="bg-[#312e81] hover:bg-[#312e81]/90 gap-2" disabled={submitting}>
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Update Agent
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </form>
+          </CardContent>
+        </Card>
+      </form>
+    </div>
   );
+}
 }

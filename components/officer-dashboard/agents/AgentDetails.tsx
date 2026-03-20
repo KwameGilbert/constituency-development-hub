@@ -62,23 +62,38 @@ export function AgentDetails({ agentId = "1" }: { agentId?: string }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Left Column: Profile and Actions */}
-      <div className="space-y-6">
-        <AgentProfileCard agent={agent} />
-        <AgentQuickActions agentId={agentId} />
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-8">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] font-mono">Mission Profile</span>
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Operative Intelligence</h2>
+          <p className="text-sm text-slate-500 font-medium">Detailed performance telemetry and field credentials für <span className="text-indigo-600 font-bold">{agent.user.name}</span></p>
+        </div>
       </div>
 
-      {/* Right Column: Stats, Charts, Issues */}
-      <div className="lg:col-span-2 space-y-6">
-        <AgentStatsCards stats={{
-            total: agent.reports_submitted,
-            pending: stats?.pending || 0,
-            resolved: stats?.resolved || 0,
-            rejected: stats?.rejected || 0
-        }} />
-        <AgentStatusDistribution stats={stats} />
-        <AgentRecentIssues issues={recentIssues} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Profile and Actions */}
+        <div className="space-y-8">
+          <AgentProfileCard agent={agent} />
+          <AgentQuickActions agentId={agentId} />
+        </div>
+
+        {/* Right Column: Stats, Charts, Issues */}
+        <div className="lg:col-span-2 space-y-8">
+          <AgentStatsCards stats={{
+              total: agent.reports_submitted,
+              pending: stats?.pending || 0,
+              resolved: stats?.resolved || 0,
+              rejected: stats?.rejected || 0
+          }} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <AgentStatusDistribution stats={stats} />
+            <AgentRecentIssues issues={recentIssues} />
+          </div>
+        </div>
       </div>
     </div>
   );

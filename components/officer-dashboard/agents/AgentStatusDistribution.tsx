@@ -18,28 +18,23 @@ interface AgentStatusDistributionProps {
 
 export function AgentStatusDistribution({ stats }: AgentStatusDistributionProps) {
   const data = [
-    { name: "Pending", value: stats?.pending || 0, color: "#EAB308" }, // yellow-500
-    // Consolidated 'Reviewed' into Pending/In Progress or Approved depending on definition. 
-    // For now based on AgentController logic: pending = submitted/undef_review
-    { name: "Approved", value: stats?.approved || 0, color: "#22C55E" }, // green-500
-    { name: "Rejected", value: stats?.rejected || 0, color: "#EF4444" }, // red-500
-    { name: "Resolved", value: stats?.resolved || 0, color: "#3B82F6" }, // blue-500 (swapped color to blue for resolved to be distinct from approved green)
+    { name: "In Review", value: stats?.pending || 0, color: "#f59e0b" }, // amber-500
+    { name: "Validated", value: stats?.approved || 0, color: "#10b981" }, // emerald-500
+    { name: "Discarded", value: stats?.rejected || 0, color: "#f43f5e" }, // rose-500
+    { name: "Completed", value: stats?.resolved || 0, color: "#6366f1" }, // indigo-500
   ];
-
-  // Filter out zero values to avoid cluttered chart if needed, or keep them.
-  // Recharts handles 0 values fine (doesn't render slice).
 
   const hasData = data.some(d => d.value > 0);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm font-medium">
-          Issue Status Distribution
+    <Card className="border-slate-200/60 shadow-xl shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
+      <CardHeader className="border-b border-slate-50 bg-slate-50/30 pb-4">
+        <CardTitle className="text-sm font-bold text-slate-900 uppercase tracking-widest pl-1 font-mono">
+          Strategic Distribution
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-[250px] w-full">
+      <CardContent className="pt-8">
+        <div className="h-[300px] w-full">
             {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -47,22 +42,43 @@ export function AgentStatusDistribution({ stats }: AgentStatusDistributionProps)
                     data={data}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
+                    innerRadius={70}
+                    outerRadius={95}
+                    paddingAngle={8}
                     dataKey="value"
+                    strokeWidth={0}
                 >
                     {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.color}
+                      className="hover:opacity-80 transition-opacity cursor-pointer focus:outline-none"
+                    />
                     ))}
                 </Pie>
-                <Tooltip />
-                <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '16px', 
+                    border: 'none', 
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    padding: '12px'
+                  }}
+                  itemStyle={{ fontWeight: 'bold', fontSize: '12px' }}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36} 
+                  iconType="circle"
+                  formatter={(value) => <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">{value}</span>}
+                />
                 </PieChart>
             </ResponsiveContainer>
             ) : (
-                <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
-                    No data available
+                <div className="flex flex-col h-full items-center justify-center text-slate-400 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-full">
+                       <PieChart className="h-8 w-8 text-slate-200" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-widest font-mono">No Active Telemetry</span>
                 </div>
             )}
         </div>
