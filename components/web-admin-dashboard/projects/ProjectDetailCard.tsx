@@ -339,6 +339,36 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
         </div>
       </div>
 
+      {/* Project Gallery */}
+      {project.gallery && project.gallery.length > 0 && (
+        <Card className="border-slate-200/60 shadow-sm overflow-hidden">
+          <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-4">
+            <CardTitle className="text-md font-bold uppercase tracking-wider text-slate-500">Project Gallery</CardTitle>
+          </CardHeader>
+          <CardContent className="p-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {project.gallery.map((img, index) => (
+                <div 
+                  key={index} 
+                  className="relative aspect-square overflow-hidden rounded-xl border border-slate-200 shadow-sm group cursor-pointer"
+                >
+                  <Image
+                    src={getImageUrl(img)}
+                    alt={`Project Gallery ${index + 1}`}
+                    fill
+                    className="object-cover transition-transform group-hover:scale-110 duration-500"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-[10px] font-bold uppercase tracking-widest bg-slate-900/60 px-2 py-1 rounded">View Full</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Contractor Information */}
       {(project.contractor ||
         project.contact_person ||

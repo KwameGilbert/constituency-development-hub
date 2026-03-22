@@ -249,6 +249,38 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
           </CardContent>
         </Card>
 
+        {/* Project Gallery */}
+        {project.gallery && project.gallery.length > 0 && (
+          <Card className="lg:col-span-3">
+            <CardHeader>
+              <CardTitle>Project Gallery</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {project.gallery.map((img, index) => (
+                  <div
+                    key={index}
+                    className="relative aspect-square overflow-hidden rounded-lg border border-slate-200 group cursor-pointer"
+                  >
+                    <Image
+                      src={getImageUrl(img)}
+                      alt={`Project Gallery ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-110 duration-500"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-[10px] font-bold uppercase tracking-widest bg-slate-900/60 px-2 py-1 rounded">
+                        View Full
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Quick Info */}
         <Card>
           <CardHeader>

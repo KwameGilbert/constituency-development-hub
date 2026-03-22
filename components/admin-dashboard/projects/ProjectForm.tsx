@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Save, Upload, X, ChevronsUpDown, Check } from "lucide-react";
+import { Loader2, Save, X, ChevronsUpDown, Check, Plus, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   Popover,
@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import {
   projectsService,
   CreateProjectData,
+  UpdateProjectData,
   Project,
 } from "@/lib/services/projects-service";
 import { sectorsService, Sector } from "@/lib/services/sectors-service";
@@ -79,6 +80,10 @@ export function NewProjectForm({ project }: ProjectFormProps) {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [sectorOpen, setSectorOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
+  const [selectedGalleryImages, setSelectedGalleryImages] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(
+    project?.gallery || [],
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -146,6 +151,44 @@ export function NewProjectForm({ project }: ProjectFormProps) {
     setImagePreview(null);
   };
 
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setSelectedGalleryImages((prev) => [...prev, ...files]);
+
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setGalleryPreviews((prev) => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    const previewToRemove = galleryPreviews[index];
+    const isNewUpload =
+      previewToRemove.startsWith("data:") || previewToRemove.startsWith("blob:");
+
+    if (isNewUpload) {
+      let newUploadIndex = 0;
+      for (let i = 0; i < index; i++) {
+        if (
+          galleryPreviews[i].startsWith("data:") ||
+          galleryPreviews[i].startsWith("blob:")
+        ) {
+          newUploadIndex++;
+        }
+      }
+      setSelectedGalleryImages((prev) =>
+        prev.filter((_, i) => i !== newUploadIndex),
+      );
+    }
+
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   async function onSubmit(data: ProjectFormValues) {
     setIsSubmitting(true);
 
@@ -160,12 +203,34 @@ export function NewProjectForm({ project }: ProjectFormProps) {
             "projects",
           );
           imageUrl = uploadResponse.data.url;
-        } catch (uploadError: any) {
-          throw new Error("Failed to upload image: " + uploadError.message);
+        } catch (uploadError: unknown) {
+          const message = uploadError instanceof Error ? uploadError.message : "Unknown error";
+          throw new Error("Failed to upload image: " + message);
         }
       }
 
-      const projectData: CreateProjectData | any = {
+      // Handle gallery uploads
+      let galleryUrls: string[] = galleryPreviews.filter(
+        (url) => !url.startsWith("data:") && !url.startsWith("blob:"),
+      );
+
+      if (selectedGalleryImages.length > 0) {
+        try {
+          const uploadPromises = selectedGalleryImages.map((file) =>
+            uploadService.uploadFile(file, "projects/gallery"),
+          );
+          const uploadResponses = await Promise.all(uploadPromises);
+          const newUrls = uploadResponses.map((res) => res.data.url);
+          galleryUrls = [...galleryUrls, ...newUrls];
+        } catch (uploadError: unknown) {
+          const message = uploadError instanceof Error ? uploadError.message : "Unknown error";
+          throw new Error(
+            "Failed to upload gallery images: " + message,
+          );
+        }
+      }
+
+      const projectData = {
         title: data.title,
         description: data.description,
         sector_id: parseInt(data.sector_id),
@@ -178,8 +243,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
         contact_person: data.contact_person || undefined,
         contact_phone: data.contact_phone || undefined,
         is_featured: data.is_featured || false,
-        image: imageUrl, // Attach the image URL
-      };
+        image: imageUrl,
+        gallery: galleryUrls,
+      } as UpdateProjectData;
 
       // Add update-specific fields if editing
       if (isEditMode) {
@@ -195,7 +261,9 @@ export function NewProjectForm({ project }: ProjectFormProps) {
       if (isEditMode && project) {
         response = await projectsService.updateProject(project.id, projectData);
       } else {
-        response = await projectsService.createProject(projectData);
+        response = await projectsService.createProject(
+          projectData as CreateProjectData,
+        );
       }
 
       if (response.success) {
@@ -212,13 +280,14 @@ export function NewProjectForm({ project }: ProjectFormProps) {
             `Failed to ${isEditMode ? "update" : "create"} project`,
         );
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
       console.error(
         `Error ${isEditMode ? "updating" : "creating"} project:`,
         error,
       );
       toast.error(
-        error.message ||
+        message ||
           `An error occurred while ${isEditMode ? "updating" : "creating"} the project`,
       );
     } finally {
@@ -309,6 +378,72 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                     />
                     <p className="mt-1 text-xs text-slate-500">
                       Supported formats: JPG, PNG, WEBP. Max size: 2MB.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Gallery Upload */}
+              <div className="md:col-span-2">
+                <Label>Project Gallery (Multiple Images)</Label>
+                <div className="mt-4 space-y-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    {galleryPreviews.map((preview, index) => (
+                      <div
+                        key={index}
+                        className="relative aspect-square overflow-hidden rounded-lg border border-slate-200 group"
+                      >
+                        <Image
+                          src={preview}
+                          alt={`Gallery ${index + 1}`}
+                          fill
+                          className="object-cover transition-transform group-hover:scale-105"
+                          unoptimized
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryImage(index)}
+                          className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none"
+                          title="Remove image"
+                          disabled={isSubmitting}
+                        >
+                          <X size={12} />
+                        </button>
+                        {(preview.startsWith("data:") ||
+                          preview.startsWith("blob:")) && (
+                          <div className="absolute inset-x-0 bottom-0 bg-blue-600/80 p-0.5 text-[9px] font-bold text-white text-center">
+                            NEW
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    <label
+                      className={cn(
+                        "relative aspect-square flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-400 cursor-pointer hover:border-red-400 hover:bg-red-50/30 transition-all",
+                        isSubmitting && "opacity-50 cursor-not-allowed",
+                      )}
+                    >
+                      <Plus className="h-6 w-6 text-slate-300 mb-1" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">
+                        Add Image
+                      </span>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleGalleryChange}
+                        disabled={isSubmitting}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-slate-500 font-medium bg-slate-50 p-2 rounded border border-slate-200">
+                    <ImageIcon className="h-3.5 w-3.5 text-blue-600" />
+                    <p>
+                      You can select multiple images for the project gallery.
+                      Supported: JPG, PNG, WEBP.
                     </p>
                   </div>
                 </div>
@@ -452,7 +587,7 @@ export function NewProjectForm({ project }: ProjectFormProps) {
               <div>
                 <Label htmlFor="status">Status *</Label>
                 <Select
-                  onValueChange={(value: any) => form.setValue("status", value)}
+                  onValueChange={(value: "planning" | "ongoing" | "completed" | "on_hold") => form.setValue("status", value)}
                   defaultValue={form.getValues("status")}
                   disabled={isSubmitting}
                 >
