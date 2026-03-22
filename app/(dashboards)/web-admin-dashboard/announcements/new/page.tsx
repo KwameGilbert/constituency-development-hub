@@ -1,5 +1,5 @@
 import React from "react";
-import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
+import WebAdminHeader from "@/components/web-admin-dashboard/WebAdminHeader";
 import { NewAnnouncementForm } from "@/components/admin-dashboard/announcements/AnnouncementForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 
 export default function CreateAnnouncementPage() {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Create Announcement" />
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <WebAdminHeader title="Create Announcement" />
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/web-admin-dashboard/announcements">

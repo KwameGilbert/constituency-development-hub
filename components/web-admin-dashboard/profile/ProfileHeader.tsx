@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export function ProfileHeader() {
   return (
-    <div className="flex items-center justify-between p-4 shadow-md bg-white rounded-lg border border-violet-100">
+    <div className="flex items-center justify-between p-4 bg-slate-50/80 backdrop-blur-md rounded-xl border border-transparent data-stuck:border-slate-200/60 sticky top-16 z-10 -mx-4 transition-all">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-violet-950">
           Profile Settings

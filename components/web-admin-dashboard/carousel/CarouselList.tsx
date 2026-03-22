@@ -93,7 +93,7 @@ export function CarouselList() {
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+        <Loader2 className="h-8 w-8 text-amber-600 animate-spin" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export function CarouselList() {
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-slate-50/80 backdrop-blur-md p-6 rounded-xl shadow-sm border border-transparent data-stuck:border-slate-200/60 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sticky top-16 z-10 -mx-4">
         <div>
           <h2 className="text-lg font-bold text-slate-900">Hero Slides</h2>
           <p className="text-sm text-slate-500">
@@ -109,7 +109,7 @@ export function CarouselList() {
           </p>
         </div>
         <Link href="/web-admin-dashboard/carousel/new">
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+          <Button className="bg-amber-600 hover:bg-amber-700 text-white">
             <Plus className="mr-2 h-4 w-4" />
             Add Hero Slide
           </Button>
@@ -123,7 +123,7 @@ export function CarouselList() {
           <Input
             type="text"
             placeholder="Search slides by title, subtitle, or button text..."
-            className="pl-10 pr-10 border-slate-200 focus:border-purple-500 focus:ring-purple-500"
+            className="pl-10 pr-10 border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -147,8 +147,8 @@ export function CarouselList() {
 
       {slides.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[300px]">
-          <div className="h-16 w-16 bg-purple-50 rounded-full flex items-center justify-center">
-            <ImageIcon className="h-8 w-8 text-purple-600" />
+          <div className="h-16 w-16 bg-amber-50 rounded-full flex items-center justify-center">
+            <ImageIcon className="h-8 w-8 text-amber-600" />
           </div>
           <div className="space-y-2">
             <h3 className="text-xl font-semibold text-slate-900">
@@ -193,11 +193,11 @@ export function CarouselList() {
                   </div>
 
                   {/* Order Badge */}
-                  <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-sm font-bold">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">
                     {slide.display_order}
                   </div>
 
-                  <div className="h-16 w-24 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 relative">
+                  <div className="h-16 w-24 bg-slate-100 rounded-md overflow-hidden border border-slate-200 shrink-0 relative">
                     {slide.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -222,7 +222,7 @@ export function CarouselList() {
                       </p>
                     )}
                     {slide.cta_link && (
-                      <p className="text-xs text-purple-600 flex items-center gap-1 mt-1">
+                      <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
                         <ExternalLink className="h-3 w-3" />
                         {slide.cta_text || slide.cta_link}
                       </p>
@@ -248,7 +248,7 @@ export function CarouselList() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
+                        className="h-8 w-8 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

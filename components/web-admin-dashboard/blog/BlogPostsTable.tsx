@@ -88,7 +88,7 @@ export function BlogPostsTable({
           <Input
             type="text"
             placeholder="Search blog posts by title, category, or tags..."
-            className="pl-10 pr-10 border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            className="pl-10 pr-10 border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -146,7 +146,7 @@ export function BlogPostsTable({
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-4">
-                        <div className="h-12 w-12 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden flex items-center justify-center border border-slate-200">
+                        <div className="h-12 w-12 rounded-lg bg-slate-100 shrink-0 overflow-hidden flex items-center justify-center border border-slate-200">
                           {post.image ? (
                             <div className="relative w-full h-full">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -281,7 +281,7 @@ export function BlogPostsTable({
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 w-8 p-0 bg-violet-50 text-violet-600 border-violet-200"
+                className="h-8 w-8 p-0 bg-amber-50 text-amber-600 border-amber-200"
               >
                 {pagination.page}
               </Button>

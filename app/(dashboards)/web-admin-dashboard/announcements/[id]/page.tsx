@@ -1,5 +1,5 @@
 import React from "react";
-import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
+import WebAdminHeader from "@/components/web-admin-dashboard/WebAdminHeader";
 import { announcementsService } from "@/lib/services/announcements-service";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -31,8 +31,8 @@ export default async function AnnouncementDetailPage({
   if (!announcement) return notFound();
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Announcement Details" />
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <WebAdminHeader title="Announcement Details" />
       <div className="flex-1 p-8 space-y-6 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-4">
           <Link href="/web-admin-dashboard/announcements">
@@ -48,7 +48,7 @@ export default async function AnnouncementDetailPage({
           <Link
             href={`/web-admin-dashboard/announcements/${announcement.id}/edit`}
           >
-            <Button className="bg-blue-600 hover:bg-blue-700">Edit</Button>
+            <Button className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold">Edit</Button>
           </Link>
         </div>
         <Card>

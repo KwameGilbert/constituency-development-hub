@@ -187,7 +187,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           <Input
             id="title"
             placeholder="Community Town Hall Meeting"
-            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             {...form.register("title")}
             disabled={isLoading}
           />
@@ -204,7 +204,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
           <Input
             id="location"
             placeholder="Community Center, Main Street"
-            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             {...form.register("location")}
             disabled={isLoading}
           />
@@ -223,7 +223,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
               <Input
                 id="event_date"
                 type="date"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 pr-10"
                 {...form.register("event_date")}
                 disabled={isLoading}
               />
@@ -242,7 +242,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
                 id="start_time"
                 type="time"
                 placeholder="08:00"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 pr-10"
                 {...form.register("start_time")}
                 disabled={isLoading}
               />
@@ -256,7 +256,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
                 id="end_time"
                 type="time"
                 placeholder="16:00"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500 pr-10"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 pr-10"
                 {...form.register("end_time")}
                 disabled={isLoading}
               />
@@ -268,7 +268,7 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
         {/* Image Upload - File Only */}
         <div className="space-y-2">
           <Label>Event Image</Label>
-          <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 hover:border-violet-300 transition-colors">
+          <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 hover:border-amber-300 transition-colors">
             {imagePreview ? (
               <div className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -296,8 +296,8 @@ export function EventForm({ event, isEditing = false }: EventFormProps) {
                 className="flex flex-col items-center justify-center cursor-pointer py-6"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <div className="p-3 bg-violet-50 rounded-full mb-3">
-                  <ImageIcon className="h-6 w-6 text-violet-600" />
+                <div className="p-3 bg-amber-50 rounded-full mb-3">
+                  <ImageIcon className="h-6 w-6 text-amber-600" />
                 </div>
                 <p className="text-sm font-medium text-slate-700">
                   Click to select image

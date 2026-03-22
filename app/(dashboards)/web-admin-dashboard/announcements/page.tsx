@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
-import { AnnouncementsHeader } from "@/components/admin-dashboard/announcements/AnnouncementsHeader";
-import { AnnouncementsTable } from "@/components/admin-dashboard/announcements/AnnouncementsTable";
+import WebAdminHeader from "@/components/web-admin-dashboard/WebAdminHeader";
+import { AnnouncementsHeader } from "@/components/web-admin-dashboard/announcements/AnnouncementsHeader";
+import { AnnouncementsTable } from "@/components/web-admin-dashboard/announcements/AnnouncementsTable";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -51,8 +51,8 @@ export default function AnnouncementsListPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
-        <AdminHeader title="Announcements" />
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+        <WebAdminHeader title="Announcements" />
         <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -85,8 +85,8 @@ export default function AnnouncementsListPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
-        <AdminHeader title="Announcements" />
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+        <WebAdminHeader title="Announcements" />
         <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
           <AnnouncementsHeader basePath="/web-admin-dashboard/announcements" />
           <Card className="p-12 text-center">
@@ -101,8 +101,8 @@ export default function AnnouncementsListPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Announcements" />
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <WebAdminHeader title="Announcements" />
       <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
         <AnnouncementsHeader basePath="/web-admin-dashboard/announcements" />
         <AnnouncementsTable

@@ -91,7 +91,7 @@ export default function GalleryList() {
   if (loading) {
     return (
       <div className="h-64 flex flex-col items-center justify-center text-slate-500 gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
         <p>Loading gallery albums...</p>
       </div>
     );
@@ -141,7 +141,7 @@ export default function GalleryList() {
         </div>
 
         <Link href="/web-admin-dashboard/gallery/new">
-          <Button className="bg-emerald-600 hover:bg-emerald-700 h-11 px-6 shadow-sm shadow-emerald-100">
+          <Button className="bg-amber-600 hover:bg-emerald-700 h-11 px-6 shadow-sm shadow-emerald-100">
             <Plus className="mr-2 h-4 w-4" /> Create Album
           </Button>
         </Link>
@@ -193,7 +193,7 @@ export default function GalleryList() {
                     className="hover:bg-slate-50/50 transition-colors"
                   >
                     <td className="px-6 py-4">
-                      <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                      <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center">
                         {gallery.cover_image ? (
                           /* eslint-disable-next-line @next/next/no-img-element */
                           <img
@@ -250,7 +250,7 @@ export default function GalleryList() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-slate-400 hover:text-emerald-600"
+                            className="h-8 w-8 text-slate-400 hover:text-amber-600"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>

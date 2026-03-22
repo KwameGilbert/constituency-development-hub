@@ -167,7 +167,7 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
           <Input
             id="title"
             placeholder="Enter post title"
-            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             {...form.register("title")}
             disabled={isLoading}
           />
@@ -185,7 +185,7 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
             <Input
               id="slug"
               placeholder="my-post-url"
-              className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+              className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
               {...form.register("slug")}
               disabled={isLoading}
             />
@@ -261,7 +261,7 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
                   <Input
                     type="url"
                     placeholder="Or change to URL: https://example.com/image.jpg"
-                    className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+                    className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
                     value={!selectedFile ? imagePreview : ""}
                     onChange={(e) => {
                       setImagePreview(e.target.value);
@@ -281,7 +281,7 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
                     />
                     <label
                       htmlFor="featured-image"
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-violet-600 bg-violet-50 rounded-lg hover:bg-violet-100 cursor-pointer transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 cursor-pointer transition-colors"
                     >
                       <Upload className="h-4 w-4" />
                       Upload New Image

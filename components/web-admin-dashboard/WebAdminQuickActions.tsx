@@ -11,21 +11,20 @@ interface QuickActionProps {
 
 function QuickActionButton({ label, href, color }: QuickActionProps) {
   const colorStyles = {
-    blue: "bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100",
-    green: "bg-green-50 text-green-700 hover:bg-green-100 border-green-100",
-    purple:
-      "bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-100",
+    blue: "bg-white border-slate-200/60 text-slate-700 hover:border-amber-500/50 hover:bg-amber-50/50 hover:text-amber-700 shadow-sm",
+    green: "bg-white border-slate-200/60 text-slate-700 hover:border-emerald-500/50 hover:bg-emerald-50/50 hover:text-emerald-700 shadow-sm",
+    purple: "bg-white border-slate-200/60 text-slate-700 hover:border-amber-500/50 hover:bg-amber-50/50 hover:text-amber-700 shadow-sm",
   };
 
   return (
     <Link href={href} className="flex-1">
       <button
         className={cn(
-          "w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl border transition-colors font-medium",
+          "w-full flex items-center justify-center gap-3 py-4 px-6 rounded-2xl border transition-all duration-300 font-semibold group",
           colorStyles[color],
         )}
       >
-        <PlusCircle className="w-5 h-5" />
+        <PlusCircle className="w-5 h-5 text-amber-600 group-hover:scale-110 transition-transform" />
         {label}
       </button>
     </Link>

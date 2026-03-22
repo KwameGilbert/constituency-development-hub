@@ -46,10 +46,10 @@ export default function EditCarouselItemPage({
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
         <WebAdminHeader title="Edit Hero Slide" />
         <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-amber-600 animate-spin" />
         </div>
       </div>
     );
@@ -57,7 +57,7 @@ export default function EditCarouselItemPage({
 
   if (error || !slide) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
         <WebAdminHeader title="Edit Hero Slide" />
         <div className="flex-1 p-8 flex flex-col items-center justify-center text-center">
           <div className="bg-red-50 p-4 rounded-full mb-4">
@@ -81,10 +81,10 @@ export default function EditCarouselItemPage({
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <WebAdminHeader title="Edit Hero Slide" />
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 sticky top-16 z-10 bg-slate-50/80 backdrop-blur-md py-4 -mx-4 px-4 transition-all border-b border-transparent data-stuck:border-slate-200/60">
           <Link href="/web-admin-dashboard/carousel">
             <Button
               variant="ghost"

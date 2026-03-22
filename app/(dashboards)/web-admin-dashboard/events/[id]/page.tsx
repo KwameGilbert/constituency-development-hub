@@ -52,10 +52,10 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
         <WebAdminHeader title="View Event" />
         <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 text-violet-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-amber-600 animate-spin" />
         </div>
       </div>
     );
@@ -63,7 +63,7 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
 
   if (error || !event) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
         <WebAdminHeader title="View Event" />
         <div className="flex-1 p-8 flex flex-col items-center justify-center text-center">
           <div className="bg-red-50 p-4 rounded-full mb-4">
@@ -87,7 +87,7 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <WebAdminHeader title="View Event" />
       <div className="flex-1 p-8 space-y-8 max-w-5xl mx-auto w-full">
         <div className="flex items-center justify-between">
@@ -111,7 +111,7 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
             </div>
           </div>
           <Link href={`/web-admin-dashboard/events/${id}/edit`}>
-            <Button className="bg-violet-600 hover:bg-violet-700 text-white">
+            <Button className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold">
               <Edit className="mr-2 h-4 w-4" />
               Edit Event
             </Button>
@@ -138,7 +138,7 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium capitalize ${
                   event.status === "upcoming"
-                    ? "bg-violet-100 text-violet-700"
+                    ? "bg-amber-100 text-amber-700"
                     : event.status === "cancelled"
                       ? "bg-red-100 text-red-700"
                       : "bg-slate-100 text-slate-600"
@@ -162,8 +162,8 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
             {/* Event Info Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-6 border-y border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-violet-50 rounded-lg">
-                  <Calendar className="h-5 w-5 text-violet-600" />
+                <div className="p-2 bg-amber-50 rounded-lg">
+                  <Calendar className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 uppercase font-semibold">
@@ -175,8 +175,8 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-violet-50 rounded-lg">
-                  <Clock className="h-5 w-5 text-violet-600" />
+                <div className="p-2 bg-amber-50 rounded-lg">
+                  <Clock className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 uppercase font-semibold">
@@ -189,8 +189,8 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-violet-50 rounded-lg">
-                  <MapPin className="h-5 w-5 text-violet-600" />
+                <div className="p-2 bg-amber-50 rounded-lg">
+                  <MapPin className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 uppercase font-semibold">
@@ -203,16 +203,16 @@ export default function ViewEventPage({ params }: ViewEventPageProps) {
 
             {/* Registration Info (if applicable) */}
             {(event.registration_required || event.max_attendees) && (
-              <div className="flex items-center gap-4 p-4 bg-violet-50 rounded-lg">
-                <Users className="h-5 w-5 text-violet-600" />
+              <div className="flex items-center gap-4 p-4 bg-amber-50 rounded-lg">
+                <Users className="h-5 w-5 text-amber-600" />
                 <div>
                   {event.registration_required && (
-                    <span className="text-violet-700 font-medium">
+                    <span className="text-amber-700 font-medium">
                       Registration Required
                     </span>
                   )}
                   {event.max_attendees && (
-                    <span className="text-violet-600 ml-2">
+                    <span className="text-amber-600 ml-2">
                       • Max {event.max_attendees} attendees
                     </span>
                   )}

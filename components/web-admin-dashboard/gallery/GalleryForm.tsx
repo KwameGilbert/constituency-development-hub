@@ -201,15 +201,15 @@ export default function GalleryForm({ gallery }: GalleryFormProps) {
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
               <h3 className="font-semibold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
-                <ImageIcon className="h-4 w-4 text-emerald-500" /> Cover Photo
+                <ImageIcon className="h-4 w-4 text-amber-500" /> Cover Photo
               </h3>
 
               <div className="space-y-4">
                 <div
-                  className={`relative aspect-[4/3] rounded-xl border-2 border-dashed overflow-hidden flex items-center justify-center transition-all ${
+                  className={`relative aspect-4/3 rounded-xl border-2 border-dashed overflow-hidden flex items-center justify-center transition-all ${
                     coverPreview
-                      ? "border-solid border-emerald-100"
-                      : "border-slate-200 hover:border-emerald-300 bg-slate-50"
+                      ? "border-solid border-amber-100"
+                      : "border-slate-200 hover:border-amber-300 bg-slate-50"
                   }`}
                 >
                   {coverPreview ? (
@@ -417,7 +417,7 @@ export default function GalleryForm({ gallery }: GalleryFormProps) {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 h-9"
+                  className="border-amber-200 text-amber-600 hover:bg-amber-50 h-9"
                   onClick={() => append({ file: null, caption: "" })}
                 >
                   <Plus className="h-4 w-4 mr-1.5" /> Add Photo
@@ -434,7 +434,7 @@ export default function GalleryForm({ gallery }: GalleryFormProps) {
                     <Button
                       type="button"
                       variant="link"
-                      className="text-emerald-600 mt-1"
+                      className="text-amber-600 mt-1"
                       onClick={() => append({ file: null, caption: "" })}
                     >
                       Click here to add the first one
@@ -457,7 +457,7 @@ export default function GalleryForm({ gallery }: GalleryFormProps) {
 
                         <div className="space-y-3">
                           {/* Image Preview / Upload */}
-                          <div className="aspect-video bg-white rounded-lg border border-slate-200 overflow-hidden relative flex items-center justify-center group-hover:border-emerald-200 transition-colors">
+                          <div className="aspect-video bg-white rounded-lg border border-slate-200 overflow-hidden relative flex items-center justify-center group-hover:border-amber-200 transition-colors">
                             {form.watch(`gallery_items.${index}.file`) ? (
                               /* eslint-disable-next-line @next/next/no-img-element */
                               <img
@@ -526,7 +526,7 @@ export default function GalleryForm({ gallery }: GalleryFormProps) {
               </Button>
               <Button
                 type="submit"
-                className="bg-emerald-600 hover:bg-emerald-700 h-11 px-8 min-w-[140px] shadow-lg shadow-emerald-100"
+                className="bg-amber-600 hover:bg-amber-700 h-11 px-8 min-w-[140px] shadow-lg shadow-amber-100"
                 disabled={loading}
               >
                 {loading ? (

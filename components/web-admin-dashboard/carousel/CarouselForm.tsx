@@ -127,7 +127,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
           <Input
             id="title"
             placeholder="Welcome to Our Constituency"
-            className="border-slate-200 focus:border-purple-500 focus:ring-purple-500"
+            className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             {...form.register("title")}
             disabled={isLoading}
           />
@@ -171,7 +171,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
                 id="image"
                 type="file"
                 accept="image/*"
-                className="cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                className="cursor-pointer file:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
@@ -195,7 +195,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
 
             {/* Image Preview */}
             {imagePreview && (
-              <div className="relative w-full aspect-[21/9] bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group">
+              <div className="relative w-full aspect-21/9 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={imagePreview}
@@ -229,7 +229,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
             <Input
               id="cta_text"
               placeholder="Learn More"
-              className="border-slate-200 focus:border-purple-500 focus:ring-purple-500"
+              className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
               {...form.register("cta_text")}
               disabled={isLoading}
             />
@@ -242,7 +242,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
             <Input
               id="cta_link"
               placeholder="/about"
-              className="border-slate-200 focus:border-purple-500 focus:ring-purple-500"
+              className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
               {...form.register("cta_link")}
               disabled={isLoading}
             />
@@ -260,7 +260,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
               id="display_order"
               type="number"
               min="0"
-              className="border-slate-200 focus:border-purple-500 focus:ring-purple-500"
+              className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
               {...form.register("display_order", { valueAsNumber: true })}
               disabled={isLoading}
             />
@@ -301,7 +301,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
         </Link>
         <Button
           type="submit"
-          className="bg-purple-600 hover:bg-purple-700 text-white"
+          className="bg-amber-600 hover:bg-amber-700 text-white"
           disabled={isLoading}
         >
           {isLoading ? (

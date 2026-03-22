@@ -2,16 +2,23 @@ import React from "react";
 import WebAdminHeader from "@/components/web-admin-dashboard/WebAdminHeader";
 import { BlogPostsHeader } from "@/components/web-admin-dashboard/blog/BlogPostsHeader";
 import { BlogPostsTable } from "@/components/web-admin-dashboard/blog/BlogPostsTable";
-import { blogService } from "@/lib/services/blog-service";
+import { blogService, BlogPost } from "@/lib/services/blog-service";
+
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+}
 
 // Force dynamic rendering to always fetch fresh data
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function ManageBlogPostsPage() {
-  let posts: any[] = [];
-  let pagination: any = undefined;
-  let error = null;
+  let posts: BlogPost[] = [];
+  let pagination: Pagination | undefined = undefined;
+  let error: string | null = null;
 
   try {
     const response = await blogService.getAdminPosts();
@@ -23,13 +30,13 @@ export default async function ManageBlogPostsPage() {
         pagination = response.data.pagination;
       }
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Failed to fetch blog posts:", e);
-    error = e.message || "Failed to load blog posts";
+    error = e instanceof Error ? e.message : "Failed to load blog posts";
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <WebAdminHeader title="Blog Posts" />
       <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
         <BlogPostsHeader />

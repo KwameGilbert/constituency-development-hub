@@ -104,7 +104,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 text-violet-600 animate-spin" />
+        <Loader2 className="h-8 w-8 text-amber-600 animate-spin" />
       </div>
     );
   }
@@ -112,8 +112,8 @@ export function EventsList({ initialEvents }: EventsListProps) {
   if (events.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-12 flex flex-col items-center justify-center text-center space-y-6 min-h-[400px]">
-        <div className="h-16 w-16 bg-violet-50 rounded-full flex items-center justify-center">
-          <Calendar className="h-8 w-8 text-violet-600" />
+        <div className="h-16 w-16 bg-amber-50 rounded-full flex items-center justify-center">
+          <Calendar className="h-8 w-8 text-amber-600" />
         </div>
         <div className="space-y-2">
           <h3 className="text-xl font-semibold text-slate-900">
@@ -125,7 +125,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
           </p>
         </div>
         <Link href="/web-admin-dashboard/events/new">
-          <Button className="bg-violet-600 hover:bg-violet-700 text-white">
+          <Button className="bg-amber-600 hover:bg-amber-700 text-white">
             <Plus className="mr-2 h-4 w-4" />
             Create Event
           </Button>
@@ -143,7 +143,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
           <Input
             type="text"
             placeholder="Search events by title, location, or description..."
-            className="pl-10 pr-10 border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            className="pl-10 pr-10 border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -200,7 +200,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
                       className="hover:bg-slate-50/50 transition-colors"
                     >
                       <td className="px-6 py-4">
-                        <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 flex-shrink-0 flex items-center justify-center">
+                        <div className="h-12 w-16 bg-slate-100 rounded-md overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center">
                           {event.image ? (
                             /* eslint-disable-next-line @next/next/no-img-element */
                             <img
@@ -215,7 +215,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 rounded-lg bg-violet-50 flex-shrink-0 flex items-center justify-center border border-violet-100 text-violet-600 font-bold text-sm">
+                          <div className="h-10 w-10 rounded-lg bg-amber-50 shrink-0 flex items-center justify-center border border-amber-100 text-amber-600 font-bold text-sm">
                             {format(new Date(event.event_date), "dd")}
                           </div>
                           <span className="font-medium text-slate-900 line-clamp-1">
@@ -250,7 +250,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
                             status === "upcoming"
-                              ? "bg-violet-50 text-violet-700 border border-violet-100"
+                              ? "bg-amber-50 text-amber-700 border border-amber-100"
                               : "bg-slate-100 text-slate-600 border border-slate-200"
                           }`}
                         >
@@ -265,7 +265,7 @@ export function EventsList({ initialEvents }: EventsListProps) {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 text-slate-400 hover:text-violet-600"
+                              className="h-8 w-8 text-slate-400 hover:text-amber-600"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>

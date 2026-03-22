@@ -12,7 +12,7 @@ export function AnnouncementsHeader({
   basePath = "/admin-dashboard/announcements",
 }: AnnouncementsHeaderProps) {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sticky top-16 z-10 bg-slate-50/80 backdrop-blur-md py-4 -mx-4 px-4 border-b border-transparent data-stuck:border-slate-200/60 transition-all">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">Announcements</h1>
         <p className="text-slate-500 mt-1">

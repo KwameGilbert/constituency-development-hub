@@ -42,50 +42,60 @@ function MetricCard({
 }: MetricCardProps) {
   const colorStyles = {
     blue: {
-      bg: "bg-blue-50",
-      text: "text-blue-600",
-      iconBg: "bg-blue-100",
+      bg: "from-blue-100 to-blue-200",
+      text: "text-blue-900",
     },
     green: {
-      bg: "bg-green-50",
-      text: "text-green-600",
-      iconBg: "bg-green-100",
+      bg: "from-emerald-100 to-emerald-200",
+      text: "text-emerald-900",
     },
     purple: {
-      bg: "bg-purple-50",
-      text: "text-purple-600",
-      iconBg: "bg-purple-100",
+      bg: "from-violet-100 to-violet-200",
+      text: "text-violet-900",
     },
     orange: {
-      bg: "bg-orange-50",
-      text: "text-orange-600",
-      iconBg: "bg-orange-100",
+      bg: "from-amber-100 to-amber-200",
+      text: "text-amber-900",
     },
   };
 
   const styles = colorStyles[color];
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col justify-between h-full">
-      <div className="flex justify-between items-start mb-4">
+    <div className="bg-white p-5 rounded-2xl shadow-md shadow-slate-200/50 border-none flex flex-col justify-between h-full group hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+      <div className="flex justify-between items-start mb-4 relative z-10">
         <div>
-          <h3 className="text-sm font-medium text-slate-500 mb-1">{title}</h3>
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+            {title}
+          </h3>
           {loading ? (
             <div className="h-9 w-16 bg-slate-200 animate-pulse rounded" />
           ) : (
             <span className="text-3xl font-bold text-slate-900">{count}</span>
           )}
         </div>
-        <div className={cn("p-3 rounded-full", styles.iconBg)}>
-          <Icon className={cn("w-5 h-5", styles.text)} />
+        <div
+          className={cn(
+            "p-3 rounded-2xl bg-linear-to-br shadow-sm group-hover:scale-110 transition-transform duration-300",
+            styles.bg,
+            styles.text,
+          )}
+        >
+          <Icon className="w-5 h-5 stroke-[2.5px]" />
         </div>
       </div>
       <Link
         href={href}
-        className={cn("text-sm font-medium hover:underline", styles.text)}
+        className={cn(
+          "text-xs font-semibold hover:underline mt-2 relative z-10",
+          styles.text,
+        )}
       >
         {label}
       </Link>
+      <div className="absolute top-0 right-0 p-1 opacity-5 group-hover:opacity-10 transition-opacity">
+        <Icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
+      </div>
     </div>
   );
 }

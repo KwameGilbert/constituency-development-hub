@@ -153,7 +153,7 @@ export function NewBlogPostForm() {
           <Input
             id="title"
             placeholder="Enter post title"
-            className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+            className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
             {...form.register("title")}
             disabled={isLoading}
           />
@@ -176,7 +176,7 @@ export function NewBlogPostForm() {
             <Input
               id="slug"
               placeholder="my-post-url"
-              className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+              className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
               {...form.register("slug")}
               disabled={isLoading}
             />
@@ -227,7 +227,7 @@ export function NewBlogPostForm() {
               <Input
                 type="url"
                 placeholder="Or enter image URL: https://example.com/image.jpg"
-                className="border-slate-200 focus:border-violet-500 focus:ring-violet-500"
+                className="border-slate-200 focus:border-amber-500 focus:ring-amber-500"
                 value={imagePreview && !selectedFile ? imagePreview : ""}
                 onChange={(e) => {
                   setImagePreview(e.target.value);
@@ -242,7 +242,7 @@ export function NewBlogPostForm() {
 
             {/* File Input */}
             {!imagePreview ? (
-              <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-violet-400 transition-colors">
+              <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-amber-400 transition-colors">
                 <input
                   id="featured-image"
                   type="file"
@@ -257,7 +257,7 @@ export function NewBlogPostForm() {
                 >
                   <Upload className="h-10 w-10 text-slate-400" />
                   <div className="text-sm text-slate-600">
-                    <span className="font-semibold text-violet-600 hover:text-violet-700">
+                    <span className="font-semibold text-amber-600 hover:text-amber-700">
                       Click to upload
                     </span>
                     {" or drag and drop"}
