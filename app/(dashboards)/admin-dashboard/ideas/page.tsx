@@ -73,9 +73,7 @@ export default function IdeasListPage() {
         )}
 
         {/* Ideas Table */}
-        {!loading && !error && (
-          <IdeasTable ideas={ideas} />
-        )}
+        {!loading && !error && <IdeasTable ideas={ideas} />}
       </div>
     </div>
   );

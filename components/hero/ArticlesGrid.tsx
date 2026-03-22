@@ -123,7 +123,9 @@ function ArticlesGrid() {
                   <p className="text-sm text-slate-500 line-clamp-2">
                     {cleanupHtml(post.excerpt || "")}
                   </p>
-                  <span className="text-sm font-semibold text-red-600">Read story →</span>
+                  <span className="text-sm font-semibold text-red-600">
+                    Read story →
+                  </span>
                 </div>
               </motion.article>
             </Link>

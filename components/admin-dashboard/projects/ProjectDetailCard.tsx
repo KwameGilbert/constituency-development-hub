@@ -112,7 +112,6 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                 )}
               </div>
 
-
               <h2 className="text-2xl font-bold text-slate-900 mb-2">
                 {project.title}
               </h2>
@@ -153,8 +152,8 @@ export function ProjectDetailCard({ project }: ProjectDetailCardProps) {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete Project</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to delete &quot;{project.title}&quot;? This
-                      action cannot be undone.
+                      Are you sure you want to delete &quot;{project.title}
+                      &quot;? This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

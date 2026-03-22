@@ -115,7 +115,9 @@ const adaptIssueToUi = (apiIssue: ApiIssue): UiIssue => {
       economicImpact: "Not Assessed",
       socialImpact: "Not Assessed",
     },
-    review_notes: apiIssue.assessment?.review_notes || apiIssue.assessment_report?.review_notes, // Map from either source
+    review_notes:
+      apiIssue.assessment?.review_notes ||
+      apiIssue.assessment_report?.review_notes, // Map from either source
     attachments: (apiIssue.images || []).map((img, i) => ({
       id: i,
       name: `Image ${i + 1}`,
@@ -238,7 +240,11 @@ export default function AssessIssue() {
         if (assessment.decision === "approve" && !value) {
           return "Start date is required for approved issues";
         }
-        if (value && assessment.endDate && new Date(value) >= new Date(assessment.endDate)) {
+        if (
+          value &&
+          assessment.endDate &&
+          new Date(value) >= new Date(assessment.endDate)
+        ) {
           return "Start date must be before end date";
         }
         return "";
@@ -246,7 +252,11 @@ export default function AssessIssue() {
         if (assessment.decision === "approve" && !value) {
           return "End date is required for approved issues";
         }
-        if (value && assessment.startDate && new Date(value) <= new Date(assessment.startDate)) {
+        if (
+          value &&
+          assessment.startDate &&
+          new Date(value) <= new Date(assessment.startDate)
+        ) {
           return "End date must be after start date";
         }
         return "";
@@ -353,8 +363,7 @@ export default function AssessIssue() {
         );
       if (assessment.startDate)
         formData.append("start_date", assessment.startDate);
-      if (assessment.endDate)
-        formData.append("end_date", assessment.endDate);
+      if (assessment.endDate) formData.append("end_date", assessment.endDate);
 
       // Additional fields that might be needed/supported
       formData.append(
@@ -474,24 +483,25 @@ export default function AssessIssue() {
 
       {/* Admin Feedback Alert */}
       {issue.review_notes && (
-         <Card className="border-red-500 bg-red-50 shadow-sm">
-            <CardContent className="pt-6">
-                <div className="flex items-start gap-3">
-                   <AlertTriangle className="h-6 w-6 text-red-600 shrink-0" />
-                   <div>
-                      <h3 className="font-bold text-red-900 text-lg mb-1">
-                         Revision Requested
-                      </h3>
-                      <p className="text-red-800 font-medium whitespace-pre-wrap">
-                         &ldquo;{issue.review_notes}&rdquo;
-                      </p>
-                      <p className="text-sm text-red-600 mt-2">
-                        The admin has returned this assessment for the reasons above. Please update the necessary fields and submit again.
-                      </p>
-                   </div>
-                </div>
-            </CardContent>
-         </Card>
+        <Card className="border-red-500 bg-red-50 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-6 w-6 text-red-600 shrink-0" />
+              <div>
+                <h3 className="font-bold text-red-900 text-lg mb-1">
+                  Revision Requested
+                </h3>
+                <p className="text-red-800 font-medium whitespace-pre-wrap">
+                  &ldquo;{issue.review_notes}&rdquo;
+                </p>
+                <p className="text-sm text-red-600 mt-2">
+                  The admin has returned this assessment for the reasons above.
+                  Please update the necessary fields and submit again.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Progress Indicator */}
@@ -525,7 +535,9 @@ export default function AssessIssue() {
                 <h3 className="font-semibold text-gray-900 mb-2">
                   {issue.title}
                 </h3>
-                <p className="text-sm text-gray-600">{cleanupHtml(issue.description)}</p>
+                <p className="text-sm text-gray-600">
+                  {cleanupHtml(issue.description)}
+                </p>
               </div>
 
               <div className="space-y-3">
@@ -755,10 +767,16 @@ export default function AssessIssue() {
                             handleFieldChange("startDate", e.target.value)
                           }
                           onBlur={() => handleFieldBlur("startDate")}
-                          className={errors.startDate && touched.startDate ? "border-red-500" : ""}
+                          className={
+                            errors.startDate && touched.startDate
+                              ? "border-red-500"
+                              : ""
+                          }
                         />
                         {errors.startDate && touched.startDate && (
-                          <p className="text-sm text-red-600 mt-1">{errors.startDate}</p>
+                          <p className="text-sm text-red-600 mt-1">
+                            {errors.startDate}
+                          </p>
                         )}
                       </div>
 
@@ -778,10 +796,16 @@ export default function AssessIssue() {
                           }
                           onBlur={() => handleFieldBlur("endDate")}
                           min={assessment.startDate || undefined}
-                          className={errors.endDate && touched.endDate ? "border-red-500" : ""}
+                          className={
+                            errors.endDate && touched.endDate
+                              ? "border-red-500"
+                              : ""
+                          }
                         />
                         {errors.endDate && touched.endDate && (
-                          <p className="text-sm text-red-600 mt-1">{errors.endDate}</p>
+                          <p className="text-sm text-red-600 mt-1">
+                            {errors.endDate}
+                          </p>
                         )}
                       </div>
                     </div>

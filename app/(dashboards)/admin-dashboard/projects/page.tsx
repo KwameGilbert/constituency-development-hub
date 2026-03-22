@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { ProjectsHeader } from "@/components/admin-dashboard/projects/ProjectsHeader";
 import { ProjectsTable } from "@/components/admin-dashboard/projects/ProjectsTable";
-import { projectsService, Project, ProjectResponse } from "@/lib/services/projects-service";
+import {
+  projectsService,
+  Project,
+  ProjectResponse,
+} from "@/lib/services/projects-service";
 import { Loader2 } from "lucide-react";
 
 export default function ProjectsListPage() {
@@ -16,11 +20,13 @@ export default function ProjectsListPage() {
     async function fetchProjects() {
       try {
         setLoading(true);
-        const response = await projectsService.getAdminProjects({ limit: 1000 });
+        const response = await projectsService.getAdminProjects({
+          limit: 1000,
+        });
         if (response && response.success && response.data) {
           setProjects(response.data.projects || []);
         } else {
-            setError(response.message || "Failed to load projects");
+          setError(response.message || "Failed to load projects");
         }
       } catch (e) {
         console.error("Failed to fetch projects:", e);
@@ -41,7 +47,7 @@ export default function ProjectsListPage() {
 
         {loading ? (
           <div className="flex justify-center items-center h-64">
-             <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
           </div>
         ) : error ? (
           <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">

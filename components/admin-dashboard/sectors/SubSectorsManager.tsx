@@ -64,7 +64,11 @@ export function SubSectorsManager({
     } catch (error: unknown) {
       console.error("Failed to fetch sub-sectors:", error);
       // Check if it's a network/API unavailable error
-      if (error instanceof Error && (error.message.includes("Network error") || error.message.includes("Failed to fetch"))) {
+      if (
+        error instanceof Error &&
+        (error.message.includes("Network error") ||
+          error.message.includes("Failed to fetch"))
+      ) {
         setApiUnavailable(true);
       } else {
         toast.error("Failed to load sub-sectors");
@@ -111,7 +115,11 @@ export function SubSectorsManager({
       }
     } catch (error: unknown) {
       console.error(error);
-      if (error instanceof Error && (error.message.includes("Network error") || error.message.includes("Failed to fetch"))) {
+      if (
+        error instanceof Error &&
+        (error.message.includes("Network error") ||
+          error.message.includes("Failed to fetch"))
+      ) {
         toast.error("Feature not available - backend deployment required");
         setApiUnavailable(true);
       } else {
@@ -163,7 +171,11 @@ export function SubSectorsManager({
       }
     } catch (error: unknown) {
       console.error(error);
-      if (error instanceof Error && (error.message.includes("Network error") || error.message.includes("Failed to fetch"))) {
+      if (
+        error instanceof Error &&
+        (error.message.includes("Network error") ||
+          error.message.includes("Failed to fetch"))
+      ) {
         toast.error("Feature not available - backend deployment required");
         setApiUnavailable(true);
       } else {
@@ -259,7 +271,7 @@ export function SubSectorsManager({
                     </div>
                   </div>
                 ))}
-            </div>
+              </div>
             )}
           </div>
 

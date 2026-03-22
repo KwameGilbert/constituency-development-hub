@@ -75,9 +75,7 @@ export default function JobsListPage() {
         )}
 
         {/* Jobs Table */}
-        {!loading && !error && (
-          <JobsTable jobs={jobs} />
-        )}
+        {!loading && !error && <JobsTable jobs={jobs} />}
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ export interface Issue {
   subsector?: string;
   sub_sector_id?: number;
   issue_type?: "community_based" | "individual_based" | string;
-  location: string; 
+  location: string;
   community?: string;
   community_id?: number;
   suburb?: string;
@@ -222,7 +222,9 @@ class IssuesService {
   async submitAssessment(
     id: number | string,
     data: AssessmentData,
-  ): Promise<ApiResponse<{ assessment: Record<string, unknown>; report: Issue }>> {
+  ): Promise<
+    ApiResponse<{ assessment: Record<string, unknown>; report: Issue }>
+  > {
     return apiClient(`/admin/issues/${id}/assessment`, {
       method: "POST",
       body: JSON.stringify(data),
@@ -266,7 +268,9 @@ class IssuesService {
     id: number | string,
     action: "approve" | "reject" | "revision",
     notes: string,
-  ): Promise<ApiResponse<{ resolution: Record<string, unknown>; report: Issue }>> {
+  ): Promise<
+    ApiResponse<{ resolution: Record<string, unknown>; report: Issue }>
+  > {
     return apiClient(`/admin/issues/${id}/review-assessment`, {
       method: "PUT",
       body: JSON.stringify({ action, notes }),
@@ -277,7 +281,9 @@ class IssuesService {
     id: number | string,
     action: "approve" | "reject",
     notes: string,
-  ): Promise<ApiResponse<{ resolution: Record<string, unknown>; report: Issue }>> {
+  ): Promise<
+    ApiResponse<{ resolution: Record<string, unknown>; report: Issue }>
+  > {
     return apiClient(`/admin/issues/${id}/review-resolution`, {
       method: "PUT",
       body: JSON.stringify({ action, notes }),
@@ -294,7 +300,16 @@ class IssuesService {
     });
   }
 
-  async getAgentsForOfficer(): Promise<ApiResponse<{ agents: { id: number; name: string; email: string; phone: string | null }[] }>> {
+  async getAgentsForOfficer(): Promise<
+    ApiResponse<{
+      agents: {
+        id: number;
+        name: string;
+        email: string;
+        phone: string | null;
+      }[];
+    }>
+  > {
     return apiClient("/officer/agents");
   }
 
@@ -321,9 +336,7 @@ class IssuesService {
     });
   }
 
-  async deleteOfficerIssue(
-    id: number | string,
-  ): Promise<ApiResponse<void>> {
+  async deleteOfficerIssue(id: number | string): Promise<ApiResponse<void>> {
     return apiClient(`/officer/issues/${id}`, {
       method: "DELETE",
     });

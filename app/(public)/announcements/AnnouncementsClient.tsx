@@ -89,7 +89,8 @@ export default function AnnouncementsClient() {
               Latest Announcements
             </h1>
             <p className="text-lg text-white/80 max-w-2xl">
-              Stay informed about important updates, news, and events in our community.
+              Stay informed about important updates, news, and events in our
+              community.
             </p>
           </motion.div>
         </div>

@@ -12,7 +12,11 @@ export interface UploadResponse {
 export const uploadService = {
   // Upload a single file
   // now accepts optional `type` (e.g. 'document') and appends it to FormData
-  uploadFile: async (file: File, folder?: string, type?: string): Promise<UploadResponse> => {
+  uploadFile: async (
+    file: File,
+    folder?: string,
+    type?: string,
+  ): Promise<UploadResponse> => {
     const formData = new FormData();
     formData.append("file", file);
     if (folder) {

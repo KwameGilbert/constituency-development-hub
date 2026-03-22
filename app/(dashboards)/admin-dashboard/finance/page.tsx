@@ -34,7 +34,7 @@ export default function FinancePage() {
       } catch (e) {
         console.error("Failed to fetch finance data:", e);
         setError(
-          e instanceof Error ? e.message : "Failed to load finance data"
+          e instanceof Error ? e.message : "Failed to load finance data",
         );
       } finally {
         setLoading(false);
@@ -66,11 +66,7 @@ export default function FinancePage() {
             Error: {error}
           </div>
         ) : (
-          <FinanceTable
-            projects={projects}
-            issues={issues}
-            summary={summary}
-          />
+          <FinanceTable projects={projects} issues={issues} summary={summary} />
         )}
       </div>
     </div>

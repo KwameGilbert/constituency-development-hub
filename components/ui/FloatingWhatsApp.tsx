@@ -13,7 +13,7 @@ interface FloatingWhatsAppProps {
 const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
   phoneNumber,
   message = "Hello! I would like to get in touch.",
-  className, 
+  className,
 }) => {
   const handleClick = () => {
     // Format number: remove + and spaces, ensure it has country code if needed or just use as is if local format works for user
@@ -24,9 +24,9 @@ const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
     if (formattedNumber.startsWith("0")) {
       formattedNumber = "233" + formattedNumber.substring(1);
     }
-    
+
     const url = `https://wa.me/${formattedNumber}?text=${encodeURIComponent(
-      message
+      message,
     )}`;
     window.open(url, "_blank");
   };
@@ -36,7 +36,7 @@ const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
       onClick={handleClick}
       className={clsx(
         "fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2",
-        className
+        className,
       )}
       aria-label="Contact us on WhatsApp"
     >

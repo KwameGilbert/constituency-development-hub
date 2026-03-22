@@ -124,7 +124,8 @@ export default function IdeasClient() {
               Community Ideas
             </h1>
             <p className="text-lg text-white/80 max-w-2xl">
-              Discover approved projects and initiatives suggested by our constituents.
+              Discover approved projects and initiatives suggested by our
+              constituents.
             </p>
           </motion.div>
         </div>

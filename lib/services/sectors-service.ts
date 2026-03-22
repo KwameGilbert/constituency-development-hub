@@ -95,13 +95,10 @@ export const sectorsService = {
   deleteSector: async (
     id: number,
   ): Promise<{ success: boolean; message: string }> => {
-    return apiClient<{ success: boolean; message: string }>(
-      `/sectors/${id}`,
-      {
-        method: "DELETE",
-        requiresAuth: true,
-      },
-    );
+    return apiClient<{ success: boolean; message: string }>(`/sectors/${id}`, {
+      method: "DELETE",
+      requiresAuth: true,
+    });
   },
 
   // Reorder sectors
@@ -141,7 +138,11 @@ export const sectorsService = {
   createSubSector: async (
     sectorId: number,
     data: CreateSubSectorRequest,
-  ): Promise<{ success: boolean; message: string; data: { sub_sector: SubSector } }> => {
+  ): Promise<{
+    success: boolean;
+    message: string;
+    data: { sub_sector: SubSector };
+  }> => {
     return apiClient<{
       success: boolean;
       message: string;
@@ -157,7 +158,11 @@ export const sectorsService = {
   updateSubSector: async (
     id: number,
     data: UpdateSubSectorRequest,
-  ): Promise<{ success: boolean; message: string; data: { sub_sector: SubSector } }> => {
+  ): Promise<{
+    success: boolean;
+    message: string;
+    data: { sub_sector: SubSector };
+  }> => {
     return apiClient<{
       success: boolean;
       message: string;

@@ -122,10 +122,7 @@ function HeroCarousel() {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="mt-3 text-4xl sm:text-5xl lg:text-6xl font-bold"
               >
-                 <SanitizedHtml
-                  tag="span"
-                  html={currentSlide.title}
-                />
+                <SanitizedHtml tag="span" html={currentSlide.title} />
               </motion.h1>
               {currentSlide.subtitle && (
                 <motion.h2

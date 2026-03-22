@@ -278,7 +278,10 @@ export default function BlogPostClient({
                 if (Array.isArray(rawTags)) return rawTags;
                 if (typeof rawTags === "string") {
                   if (rawTags.startsWith("[")) return JSON.parse(rawTags);
-                  return rawTags.split(",").map((t) => t.trim()).filter(Boolean);
+                  return rawTags
+                    .split(",")
+                    .map((t) => t.trim())
+                    .filter(Boolean);
                 }
               } catch (e) {
                 console.warn("Malformed tags:", post.tags);

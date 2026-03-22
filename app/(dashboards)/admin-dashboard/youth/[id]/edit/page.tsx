@@ -350,7 +350,12 @@ export default function EditYouthPage({
                     inputMode="numeric"
                     className="bg-white"
                     value={formData.phone || ""}
-                    onChange={(e) => handleInputChange("phone", e.target.value.replace(/[^0-9+]/g, ''))}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "phone",
+                        e.target.value.replace(/[^0-9+]/g, ""),
+                      )
+                    }
                   />
                 </div>
                 <div className="space-y-2">

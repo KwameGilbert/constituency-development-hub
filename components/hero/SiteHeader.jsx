@@ -5,7 +5,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import Logo from "../../public/logo.png"
+import Logo from "../../public/logo.png";
 import Image from "next/image";
 
 const navLinks = [
@@ -18,7 +18,6 @@ const navLinks = [
   { label: "About Us", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
-
 
 function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -35,7 +34,13 @@ function SiteHeader() {
     <header className="bg-red-700 text-white sticky top-0 z-40 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <Image src={Logo} alt="" width={40} height={40} className="w-10 h-10 object-contain" />
+          <Image
+            src={Logo}
+            alt=""
+            width={40}
+            height={40}
+            className="w-10 h-10 object-contain"
+          />
           <div className="font-semibold text-sm sm:text-lg leading-tight">
             Hon. Kofi Benteh Afful
             <span className="block text-white/70 text-xs">

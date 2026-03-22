@@ -15,7 +15,9 @@ export function AgentAddIssuesHeader() {
           </h1>
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-            <p className="text-[10px] sm:text-xs text-slate-500 font-medium">Community Submission Portal</p>
+            <p className="text-[10px] sm:text-xs text-slate-500 font-medium">
+              Community Submission Portal
+            </p>
           </div>
         </div>
       </div>

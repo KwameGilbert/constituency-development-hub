@@ -14,9 +14,7 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
-import {
-  AdminChartsData,
-} from "@/lib/services/dashboard-service";
+import { AdminChartsData } from "@/lib/services/dashboard-service";
 
 interface AnalyticsChartsProps {
   chartsData: AdminChartsData | null;
@@ -24,8 +22,11 @@ interface AnalyticsChartsProps {
   error: string | null;
 }
 
-export function AnalyticsCharts({ chartsData, loading, error }: AnalyticsChartsProps) {
-
+export function AnalyticsCharts({
+  chartsData,
+  loading,
+  error,
+}: AnalyticsChartsProps) {
   if (loading) {
     return (
       <div className="space-y-6">

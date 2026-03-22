@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 // import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +29,7 @@ export default function DisabledPage() {
 // import { agentService, AgentProfile } from "@/lib/services/agent-service";
 // import { toast } from "sonner";
 // import Link from "next/link";
-// 
+//
 // export default function AgentDetailsPage({
 //   params,
 // }: {
@@ -39,7 +39,7 @@ export default function DisabledPage() {
 //   const [agent, setAgent] = useState<AgentProfile | null>(null);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState<string | null>(null);
-// 
+//
 //   const handleVerify = async () => {
 //     if (!agent) return;
 //     try {
@@ -56,7 +56,7 @@ export default function DisabledPage() {
 //       toast.error("An error occurred during verification");
 //     }
 //   };
-// 
+//
 //   useEffect(() => {
 //     const fetchAgent = async () => {
 //       try {
@@ -73,16 +73,16 @@ export default function DisabledPage() {
 //         setLoading(false);
 //       }
 //     };
-// 
+//
 //     if (id) {
 //       fetchAgent();
 //     }
 //   }, [id]);
-// 
+//
 //   if (loading) {
 //     return <div className="p-8">Loading agent details...</div>;
 //   }
-// 
+//
 //   if (error || !agent) {
 //     return (
 //       <div className="p-8 text-red-500">
@@ -90,7 +90,7 @@ export default function DisabledPage() {
 //       </div>
 //     );
 //   }
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -190,7 +190,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 //               </div>
-// 
+//
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 pt-8 border-t border-gray-100">
 //                 Contact Information
 //                 <div className="space-y-4">
@@ -222,7 +222,7 @@ export default function DisabledPage() {
 //                     </div>
 //                   </div>
 //                 </div>
-// 
+//
 //                 Location Assignment
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
@@ -249,13 +249,13 @@ export default function DisabledPage() {
 //                     </div>
 //                   </div>
 //                 </div>
-// 
+//
 //                 Activity Statistics
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
 //                     Activity Statistics
 //                   </h3>
-//                   {/* Assuming stats might come with agent data or separate call. 
+//                   {/* Assuming stats might come with agent data or separate call.
 //                                 For now displaying placeholder or real stats if added to AgentProfile interface */}
 //                   <div className="grid grid-cols-2 gap-4">
 //                     <div className="text-center p-3">
@@ -273,7 +273,7 @@ export default function DisabledPage() {
 //               </div>
 //             </CardContent>
 //           </Card>
-// 
+//
 //           Recent Issues Managed - Could be a separate component fetching issues by this agent
 //           <Card>
 //             <CardHeader>
@@ -292,5 +292,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

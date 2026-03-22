@@ -51,10 +51,22 @@ const contactHighlights = [
 ];
 
 const socialLinks = [
-  { label: "Facebook", href: "https://www.facebook.com/share/1EAdgQAa6S/?mibextid=wwXIfr" },
-  { label: "Twitter", href: "https://x.com/bentehkofi?s=21&t=_6-Z7x7LnaWkBxfsBO1rTQ" },
-  { label: "Instagram", href: "https://www.instagram.com/kofi_benteh_afful?igsh=MTA1ZnJ2djBxazk3cg%3D%3D&utm_source=qr" },
-  { label: "TikTok", href: "https://www.tiktok.com/@kofi_benteh_afful?_r=1&_t=ZS-93e3fn5CHXs" },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/share/1EAdgQAa6S/?mibextid=wwXIfr",
+  },
+  {
+    label: "Twitter",
+    href: "https://x.com/bentehkofi?s=21&t=_6-Z7x7LnaWkBxfsBO1rTQ",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/kofi_benteh_afful?igsh=MTA1ZnJ2djBxazk3cg%3D%3D&utm_source=qr",
+  },
+  {
+    label: "TikTok",
+    href: "https://www.tiktok.com/@kofi_benteh_afful?_r=1&_t=ZS-93e3fn5CHXs",
+  },
 ];
 
 const fadeIn = {
@@ -196,7 +208,12 @@ export default function ContactClient() {
                     inputMode="numeric"
                     placeholder="(+233)"
                     className="border-slate-200 focus-visible:border-emerald-400"
-                    onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
+                    onInput={(e) => {
+                      e.currentTarget.value = e.currentTarget.value.replace(
+                        /[^0-9+]/g,
+                        "",
+                      );
+                    }}
                   />
                 </div>
                 <div className="space-y-2">

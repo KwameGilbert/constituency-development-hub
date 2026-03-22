@@ -85,7 +85,10 @@ export function EditIssueDialog({
 
     setSubmitting(true);
     try {
-      const response = await issuesService.updateOfficerIssue(issue.id, formData);
+      const response = await issuesService.updateOfficerIssue(
+        issue.id,
+        formData,
+      );
 
       if (response.success && response.data?.report) {
         toast.success("Issue updated successfully");
@@ -124,7 +127,7 @@ export function EditIssueDialog({
                 placeholder="Issue title"
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Category</label>
@@ -144,9 +147,12 @@ export function EditIssueDialog({
                       </SelectItem>
                     ))}
                     {/* Fallback if current category is not in list */}
-                    {!categories.some(c => c.name === formData.category) && formData.category && (
-                         <SelectItem value={formData.category}>{formData.category}</SelectItem>
-                    )}
+                    {!categories.some((c) => c.name === formData.category) &&
+                      formData.category && (
+                        <SelectItem value={formData.category}>
+                          {formData.category}
+                        </SelectItem>
+                      )}
                   </SelectContent>
                 </Select>
               </div>

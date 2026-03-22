@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { useState, useEffect } from "react";
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 // import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ export default function DisabledPage() {
 //   AlertDialogTrigger,
 // } from "@/components/ui/alert-dialog";
 // import { toast } from "sonner";
-// 
+//
 // interface AgentsData {
 //   agents: AgentProfile[];
 //   summary: {
@@ -48,13 +48,13 @@ export default function DisabledPage() {
 //     inactive: number;
 //   };
 // }
-// 
+//
 // const getStatusColor = (status: string) => {
 //   return status?.toLowerCase() === "active"
 //     ? "bg-green-100 text-green-700 hover:bg-green-200"
 //     : "bg-red-100 text-red-700 hover:bg-red-200";
 // };
-// 
+//
 // export default function AgentsPage() {
 //   const [agentsData, setAgentsData] = useState<AgentsData | null>(null);
 //   const [loading, setLoading] = useState(true);
@@ -63,7 +63,7 @@ export default function DisabledPage() {
 //   const [statusFilter, setStatusFilter] = useState<
 //     "all" | "active" | "inactive"
 //   >("all");
-// 
+//
 //   const handleDelete = async (id: number) => {
 //     try {
 //       const response = await agentService.deleteAgent(id);
@@ -96,20 +96,20 @@ export default function DisabledPage() {
 //       });
 //     }
 //   };
-// 
+//
 //   useEffect(() => {
 //     const fetchAgents = async () => {
 //       try {
 //         const response = await agentService.getAllAgents();
 //         if (response.success && response.data.agents) {
 //           const agents = response.data.agents;
-// 
+//
 //           const summary = response.data.summary || {
 //             total: agents.length,
 //             active: agents.filter((a) => a.user?.status === "active").length,
 //             inactive: agents.filter((a) => a.user?.status !== "active").length,
 //           };
-// 
+//
 //           setAgentsData({
 //             agents,
 //             summary,
@@ -122,23 +122,23 @@ export default function DisabledPage() {
 //         setLoading(false);
 //       }
 //     };
-// 
+//
 //     fetchAgents();
 //   }, []);
-// 
+//
 //   const filteredAgents =
 //     agentsData?.agents.filter((agent) => {
 //       const matchesSearch =
 //         agent.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 //         agent.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
 //         (agent.user.phone && agent.user.phone.includes(searchTerm));
-// 
+//
 //       const matchesStatus =
 //         statusFilter === "all" || agent.user.status === statusFilter;
-// 
+//
 //       return matchesSearch && matchesStatus;
 //     }) || [];
-// 
+//
 //   if (loading) {
 //     return (
 //       <div className="flex flex-col h-full bg-slate-50">
@@ -179,7 +179,7 @@ export default function DisabledPage() {
 //             },
 //           ]}
 //         />
-// 
+//
 //         <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //           <div className="max-w-[1600px] mx-auto space-y-6">
 //             <Card className="p-4 bg-white">
@@ -203,7 +203,7 @@ export default function DisabledPage() {
 //       </div>
 //     );
 //   }
-// 
+//
 //   if (error || !agentsData) {
 //     return (
 //       <div className="flex flex-col h-full bg-slate-50">
@@ -244,7 +244,7 @@ export default function DisabledPage() {
 //             },
 //           ]}
 //         />
-// 
+//
 //         <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //           <div className="max-w-[1600px] mx-auto space-y-6">
 //             <Card className="p-4 bg-white">
@@ -257,7 +257,7 @@ export default function DisabledPage() {
 //       </div>
 //     );
 //   }
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -297,7 +297,7 @@ export default function DisabledPage() {
 //           },
 //         ]}
 //       />
-// 
+//
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
 //           Filters and Search
@@ -363,7 +363,7 @@ export default function DisabledPage() {
 //               </div>
 //             </div>
 //           </Card>
-// 
+//
 //           Agents Table
 //           <Card className="bg-white overflow-hidden">
 //             <div className="overflow-x-auto">
@@ -448,7 +448,7 @@ export default function DisabledPage() {
 //                               <Edit className="w-4 h-4" />
 //                             </Link>
 //                           </Button>
-// 
+//
 //                           <AlertDialog>
 //                             <AlertDialogTrigger asChild>
 //                               <Button
@@ -481,7 +481,7 @@ export default function DisabledPage() {
 //                               </AlertDialogFooter>
 //                             </AlertDialogContent>
 //                           </AlertDialog>
-// 
+//
 //                           <Button
 //                             variant="ghost"
 //                             size="icon"
@@ -502,5 +502,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

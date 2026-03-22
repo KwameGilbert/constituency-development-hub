@@ -42,7 +42,11 @@ const jobSchema = z.object({
   // Personal Info
   beneficiary_name: z.string().min(3, "Beneficiary Name is required"),
   contact_phone: z.string().min(10, "Phone number is required"),
-  application_email: z.string().email("Invalid email address").optional().or(z.literal("")),
+  application_email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("")),
   beneficiary_gender: z.enum(["male", "female", "other"]).optional(),
 });
 
@@ -65,22 +69,31 @@ export function NewJobForm({ job }: JobFormProps) {
       description: job?.description || "",
       company: job?.company || "",
       location: job?.location || "",
-      job_type: (job?.job_type as "full_time" | "part_time" | "contract" | "internship") || "full_time",
+      job_type:
+        (job?.job_type as
+          | "full_time"
+          | "part_time"
+          | "contract"
+          | "internship") || "full_time",
       salary_range: job?.salary_range || "",
       requirements: job?.requirements || "",
       responsibilities: job?.responsibilities || "",
       application_deadline: job?.application_deadline || "",
       status: (job?.status as any) || "published",
       category: job?.category || "",
-      sector: job?.description?.startsWith("Sector: ") 
-        ? job.description.replace("Sector: ", "") 
-        : (job?.sector || ""), // Fallback to sector column if available
+      sector: job?.description?.startsWith("Sector: ")
+        ? job.description.replace("Sector: ", "")
+        : job?.sector || "", // Fallback to sector column if available
       experience_level: job?.experience_level || "",
       // Personal Info Defaults
       beneficiary_name: job?.beneficiary_name || "",
       contact_phone: job?.contact_phone || "",
       application_email: job?.application_email || "",
-      beneficiary_gender: job?.beneficiary_gender as "male" | "female" | "other" | undefined,
+      beneficiary_gender: job?.beneficiary_gender as
+        | "male"
+        | "female"
+        | "other"
+        | undefined,
     },
   });
 
@@ -95,7 +108,7 @@ export function NewJobForm({ job }: JobFormProps) {
     try {
       // Store Category as just the name to avoid truncation
       const formattedCategory = data.category;
-      
+
       const jobData: CreateJobData = {
         title: data.title,
         description: `Sector: ${data.sector}`, // Store sector in description
@@ -111,7 +124,7 @@ export function NewJobForm({ job }: JobFormProps) {
             .toISOString()
             .split("T")[0], // Default 1 year from now
         status: data.status,
-        category: formattedCategory, 
+        category: formattedCategory,
         experience_level: data.experience_level || undefined,
         // Personal Info Mapping
         beneficiary_name: data.beneficiary_name,
@@ -164,7 +177,7 @@ export function NewJobForm({ job }: JobFormProps) {
         <CardContent className="pt-6 space-y-6">
           {/* Beneficiary Information */}
           <div className="space-y-4">
-             <h3 className="text-lg font-semibold text-slate-900 border-b pb-2">
+            <h3 className="text-lg font-semibold text-slate-900 border-b pb-2">
               Beneficiary Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -201,7 +214,7 @@ export function NewJobForm({ job }: JobFormProps) {
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-                 {form.formState.errors.beneficiary_gender && (
+                {form.formState.errors.beneficiary_gender && (
                   <p className="text-red-500 text-sm mt-1">
                     {form.formState.errors.beneficiary_gender.message}
                   </p>
@@ -216,7 +229,12 @@ export function NewJobForm({ job }: JobFormProps) {
                   inputMode="numeric"
                   placeholder="e.g., 024XXXXXXX"
                   {...form.register("contact_phone")}
-                  onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /[^0-9+]/g,
+                      "",
+                    );
+                  }}
                   disabled={isSubmitting}
                 />
                 {form.formState.errors.contact_phone && (
@@ -226,8 +244,10 @@ export function NewJobForm({ job }: JobFormProps) {
                 )}
               </div>
 
-               <div>
-                <Label htmlFor="application_email">Email Address (Optional)</Label>
+              <div>
+                <Label htmlFor="application_email">
+                  Email Address (Optional)
+                </Label>
                 <Input
                   id="application_email"
                   type="email"
@@ -352,9 +372,13 @@ export function NewJobForm({ job }: JobFormProps) {
               <div>
                 <Label htmlFor="job_type">Job Type *</Label>
                 <Select
-                  onValueChange={(value: "full_time" | "part_time" | "contract" | "internship") =>
-                    form.setValue("job_type", value)
-                  }
+                  onValueChange={(
+                    value:
+                      | "full_time"
+                      | "part_time"
+                      | "contract"
+                      | "internship",
+                  ) => form.setValue("job_type", value)}
                   defaultValue={form.getValues("job_type")}
                   disabled={isSubmitting}
                 >
@@ -376,7 +400,7 @@ export function NewJobForm({ job }: JobFormProps) {
               </div>
             </div>
           </div>
-          
+
           {/* Hidden fields or reduced detail */}
           {/* We are hiding Description, Responsibilities, Requirements, etc. based on request */}
         </CardContent>

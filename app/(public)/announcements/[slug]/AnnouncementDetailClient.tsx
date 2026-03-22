@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { announcementsService, Announcement } from "@/lib/services/announcements-service";
+import {
+  announcementsService,
+  Announcement,
+} from "@/lib/services/announcements-service";
 import { Button } from "@/components/ui/button";
 import SanitizedHtml from "@/components/ui/SanitizedHtml";
 import { ArrowLeft, Calendar, Loader2, Tag } from "lucide-react";
@@ -23,7 +26,9 @@ export default function AnnouncementDetailClient({
     initialAnnouncement || null,
   );
   const [loading, setLoading] = useState(!initialAnnouncement);
-  const [error, setError] = useState<string | null>(initialAnnouncement ? null : null);
+  const [error, setError] = useState<string | null>(
+    initialAnnouncement ? null : null,
+  );
 
   useEffect(() => {
     async function fetchAnnouncement() {
@@ -60,7 +65,9 @@ export default function AnnouncementDetailClient({
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
         <div className="text-center px-4">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">Announcement Not Found</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+            Announcement Not Found
+          </h1>
           <p className="text-slate-600 mb-8">
             {error || "The announcement you're looking for doesn't exist."}
           </p>

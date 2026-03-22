@@ -35,11 +35,15 @@ export default function RelatedPosts({
         const all = resp.data.posts;
 
         // Prefer same-category posts excluding current
-        let related = all.filter((p) => p.id !== currentId && p.category === category);
+        let related = all.filter(
+          (p) => p.id !== currentId && p.category === category,
+        );
 
         // If not enough related, fill with other posts
         if (related.length < limit) {
-          const others = all.filter((p) => p.id !== currentId && !related.find((r) => r.id === p.id));
+          const others = all.filter(
+            (p) => p.id !== currentId && !related.find((r) => r.id === p.id),
+          );
           related = [...related, ...others].slice(0, limit);
         } else {
           related = related.slice(0, limit);
@@ -65,7 +69,9 @@ export default function RelatedPosts({
 
   return (
     <section className="mt-16">
-      <h3 className="text-xl font-semibold text-slate-900 mb-6">Related articles</h3>
+      <h3 className="text-xl font-semibold text-slate-900 mb-6">
+        Related articles
+      </h3>
       <div className="grid gap-4 sm:grid-cols-3">
         {posts.map((p) => (
           <Link
@@ -83,12 +89,18 @@ export default function RelatedPosts({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-400">No image</div>
+                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                  No image
+                </div>
               )}
             </div>
             <div className="p-3">
-              <h4 className="text-sm font-semibold text-slate-900 line-clamp-2">{p.title}</h4>
-              <p className="text-xs text-slate-500 mt-1 line-clamp-2">{cleanupHtml(p.excerpt || "")}</p>
+              <h4 className="text-sm font-semibold text-slate-900 line-clamp-2">
+                {p.title}
+              </h4>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                {cleanupHtml(p.excerpt || "")}
+              </p>
             </div>
           </Link>
         ))}

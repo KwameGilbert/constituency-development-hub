@@ -242,7 +242,9 @@ function ResetPasswordForm() {
                 <div
                   className={`w-1.5 h-1.5 rounded-full ${check.met ? "bg-green-400" : "bg-white/20"}`}
                 />
-                <span className={check.met ? "text-green-400" : "text-white/40"}>
+                <span
+                  className={check.met ? "text-green-400" : "text-white/40"}
+                >
                   {check.label}
                 </span>
               </div>

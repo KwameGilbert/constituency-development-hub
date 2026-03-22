@@ -1,5 +1,3 @@
-
-
 export const faqItems = [
   {
     id: "reporting",

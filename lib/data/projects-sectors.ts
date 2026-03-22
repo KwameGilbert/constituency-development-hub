@@ -15,7 +15,7 @@ export const projectsSectors = [
         "Lorry Park Development",
         "Road Rehabilitation",
         "Road Safety Improvement",
-        "Street Naming"
+        "Street Naming",
       ],
       education: [
         "Classroom Block Construction",
@@ -27,7 +27,7 @@ export const projectsSectors = [
         "School Furniture Supply",
         "School Sanitation Facility",
         "Science Laboratory",
-        "Teachers’ Bungalow"
+        "Teachers’ Bungalow",
       ],
       health: [
         "Ambulance Support",
@@ -39,7 +39,7 @@ export const projectsSectors = [
         "Medical Equipment Supply",
         "Nurses’ Quarters",
         "Health Centre Upgrade",
-        "Health Outreach Program"
+        "Health Outreach Program",
       ],
       waterAndSanitation: [
         "Borehole Drilling",
@@ -51,7 +51,7 @@ export const projectsSectors = [
         "Sewerage System",
         "Small Town Water System",
         "Waste Management Support",
-        "Water Tank Installation"
+        "Water Tank Installation",
       ],
       energy: [
         "Community Electrification",
@@ -63,7 +63,7 @@ export const projectsSectors = [
         "Solar Street Lights",
         "Solar for Schools",
         "Street Light Installation",
-        "Transformer Installation"
+        "Transformer Installation",
       ],
       agriculture: [
         "Agro-Processing Support",
@@ -75,7 +75,7 @@ export const projectsSectors = [
         "Livestock Distribution",
         "Seed Distribution",
         "Tractor Support",
-        "Youth in Agriculture Program"
+        "Youth in Agriculture Program",
       ],
       youthAndSkills: [
         "Apprenticeship Support",
@@ -87,7 +87,7 @@ export const projectsSectors = [
         "Sports Field Construction",
         "Start-up Support",
         "Talent Development Program",
-        "Youth Empowerment Program"
+        "Youth Empowerment Program",
       ],
       socialSupport: [
         "Community Welfare Support",
@@ -99,7 +99,7 @@ export const projectsSectors = [
         "Medical Financial Assistance",
         "Support for Persons with Disability",
         "Women Empowerment Program",
-        "Elderly Support Program"
+        "Elderly Support Program",
       ],
       marketsAndBusiness: [
         "Artisan Workshop Construction",
@@ -111,8 +111,8 @@ export const projectsSectors = [
         "SME Support Program",
         "Small Business Support",
         "Stores Construction",
-        "Trading Shed Construction"
-      ]
+        "Trading Shed Construction",
+      ],
     },
     projectStatusOptions: [
       "Planning",
@@ -122,7 +122,7 @@ export const projectsSectors = [
       "Near Completion",
       "Completed",
       "Commissioned",
-      "On Hold"
-    ]
-  }
+      "On Hold",
+    ],
+  },
 ];

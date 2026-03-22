@@ -17,11 +17,15 @@ export function DashboardHeader({
       <div className="flex items-center gap-3 sm:gap-4">
         <SidebarTrigger className="text-slate-600 hover:text-indigo-600 hover:bg-indigo-50" />
         <div className="flex flex-col">
-          <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight">{title}</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight">
+            {title}
+          </h1>
           {subtitle && (
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse hidden sm:block" />
-              <p className="text-[10px] sm:text-xs text-slate-500 font-medium">{subtitle}</p>
+              <p className="text-[10px] sm:text-xs text-slate-500 font-medium">
+                {subtitle}
+              </p>
             </div>
           )}
         </div>

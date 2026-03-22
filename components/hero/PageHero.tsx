@@ -50,7 +50,9 @@ export default function PageHero({
           {description && (
             <p
               className="text-lg text-gray-200 max-w-2xl leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(description || "") }}
+              dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(description || ""),
+              }}
             />
           )}
         </motion.div>

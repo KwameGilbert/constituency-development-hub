@@ -80,7 +80,10 @@ export function IssuesByStatus({
 
           const data: ChartDataItem[] = distribution.map((item) => {
             return {
-              status: item.name.length > 15 ? item.name.substring(0, 15) + "..." : item.name,
+              status:
+                item.name.length > 15
+                  ? item.name.substring(0, 15) + "..."
+                  : item.name,
               count: item.value,
               fill: item.color,
             };
@@ -108,7 +111,8 @@ export function IssuesByStatus({
       <Card className="flex flex-col border-none shadow-md shadow-slate-200/50 overflow-hidden">
         <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6">
           <CardTitle className="text-sm font-extrabold text-slate-900 tracking-tight uppercase">
-            Issues by Status <span className="text-indigo-500 ml-1">. Distribution</span>
+            Issues by Status{" "}
+            <span className="text-indigo-500 ml-1">. Distribution</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 pb-0 flex items-center justify-center min-h-[350px]">
@@ -122,7 +126,8 @@ export function IssuesByStatus({
     <Card className="flex flex-col border-none shadow-md shadow-slate-200/50 overflow-hidden">
       <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6">
         <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight">
-          Issues by Status <span className="text-indigo-600 text-[10px] ml-1">Distribution</span>
+          Issues by Status{" "}
+          <span className="text-indigo-600 text-[10px] ml-1">Distribution</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-4 pt-6">

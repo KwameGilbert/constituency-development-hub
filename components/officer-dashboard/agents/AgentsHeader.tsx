@@ -17,7 +17,10 @@ export function AgentsHeader() {
             <h1 className="text-2xl font-black text-slate-900 tracking-tight">
               Agent Registry
             </h1>
-            <Badge variant="outline" className="hidden sm:flex bg-indigo-50/50 text-indigo-700 border-indigo-100 rounded-full text-[10px] font-bold uppercase tracking-widest py-0.5">
+            <Badge
+              variant="outline"
+              className="hidden sm:flex bg-indigo-50/50 text-indigo-700 border-indigo-100 rounded-full text-[10px] font-bold uppercase tracking-widest py-0.5"
+            >
               Secure
             </Badge>
           </div>

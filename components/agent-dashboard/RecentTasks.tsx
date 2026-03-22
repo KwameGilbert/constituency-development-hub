@@ -60,7 +60,10 @@ const getStatusBadge = (status: string) => {
   };
 
   return (
-    <Badge variant="outline" className={`${config.className} border-none font-medium text-[10px]`}>
+    <Badge
+      variant="outline"
+      className={`${config.className} border-none font-medium text-[10px]`}
+    >
       {config.label}
     </Badge>
   );
@@ -144,7 +147,8 @@ export function RecentTasks({
     <Card className="shadow-md shadow-slate-200/50 border-none overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 bg-slate-50/50">
         <CardTitle className="text-lg font-semibold text-slate-900 tracking-tight">
-          Recent Activity <span className="text-amber-600 text-xs ml-2">Operations Log</span>
+          Recent Activity{" "}
+          <span className="text-amber-600 text-xs ml-2">Operations Log</span>
         </CardTitle>
         <Link
           href="/agents-dashboard/issues"
@@ -167,7 +171,9 @@ export function RecentTasks({
                   <TableHead className="whitespace-nowrap">Issue</TableHead>
                   <TableHead className="whitespace-nowrap">Status</TableHead>
                   <TableHead className="whitespace-nowrap">Category</TableHead>
-                  <TableHead className="whitespace-nowrap text-right">Date</TableHead>
+                  <TableHead className="whitespace-nowrap text-right">
+                    Date
+                  </TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -184,7 +190,9 @@ export function RecentTasks({
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">{getStatusBadge(task.status)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {getStatusBadge(task.status)}
+                    </TableCell>
                     <TableCell className="whitespace-nowrap text-slate-500">
                       {task.category}
                     </TableCell>

@@ -92,7 +92,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
   const [activeTab, setActiveTab] = useState("constituent-details");
   const [submitting, setSubmitting] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
-  
+
   // Data options
   const [locations, setLocations] = useState<Location[]>([]);
   const [suburbs, setSuburbs] = useState<Location[]>([]);
@@ -100,8 +100,10 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
   const [sectors, setSectors] = useState<Sector[]>([]);
   const [filteredSectors, setFilteredSectors] = useState<Sector[]>([]);
   const [subSectors, setSubSectors] = useState<SubSector[]>([]);
-  const [agents, setAgents] = useState<{ id: number; name: string; email: string }[]>([]);
-  
+  const [agents, setAgents] = useState<
+    { id: number; name: string; email: string }[]
+  >([]);
+
   // Loading states
   const [loadingData, setLoadingData] = useState(true);
   const [loadingSubLocations, setLoadingSubLocations] = useState(false);
@@ -144,7 +146,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
       try {
         setLoadingInitial(true);
         setLoadingData(true);
-        
+
         const [issueRes, locRes, secRes, catRes, agentRes] = await Promise.all([
           issuesService.getOfficerIssueById(parseInt(issueId)),
           locationsService.getLocations({
@@ -172,7 +174,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
 
         if (issueRes.success && issueRes.data.report) {
           const issue = issueRes.data.report as any;
-          
+
           if (onIssueLoad && issue.case_id) {
             onIssueLoad(issue.case_id);
           } else if (onIssueLoad) {
@@ -184,26 +186,44 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
             title: issue.title || "",
             description: issue.description || "",
             category: issue.category || "",
-            category_id: issue.category_id ? Number(issue.category_id) : undefined,
-            issue_type: (issue.issue_type as "community_based" | "individual_based") || "community_based",
-            priority: (issue.priority as "low" | "medium" | "high" | "urgent") || "medium",
+            category_id: issue.category_id
+              ? Number(issue.category_id)
+              : undefined,
+            issue_type:
+              (issue.issue_type as "community_based" | "individual_based") ||
+              "community_based",
+            priority:
+              (issue.priority as "low" | "medium" | "high" | "urgent") ||
+              "medium",
             location: issue.community || issue.location || "",
-            community_id: issue.community_id ? Number(issue.community_id) : undefined,
+            community_id: issue.community_id
+              ? Number(issue.community_id)
+              : undefined,
             suburb: issue.suburb || "",
             suburb_id: issue.suburb_id ? Number(issue.suburb_id) : undefined,
             cottage: issue.specific_location || issue.cottage || "",
             sector_id: issue.sector_id ? Number(issue.sector_id) : undefined,
             sector: issue.sector || "",
-            sub_sector_id: issue.sub_sector_id ? Number(issue.sub_sector_id) : undefined,
+            sub_sector_id: issue.sub_sector_id
+              ? Number(issue.sub_sector_id)
+              : undefined,
             subsector: issue.subsector || "",
-            people_affected: issue.people_affected ? Number(issue.people_affected) : undefined,
+            people_affected: issue.people_affected
+              ? Number(issue.people_affected)
+              : undefined,
             additional_notes: issue.details || issue.additional_notes || "",
             reporter_name: issue.reporter_name || issue.constituent?.name || "",
-            reporter_phone: issue.reporter_phone || issue.constituent?.phone_number || "",
-            reporter_email: issue.reporter_email || issue.constituent?.email || "",
-            reporter_gender: issue.reporter_gender || issue.constituent?.gender || "",
-            reporter_address: issue.reporter_address || issue.constituent?.home_address || "",
-            agent_id: issue.agent?.id || (issue.agent_id ? Number(issue.agent_id) : undefined),
+            reporter_phone:
+              issue.reporter_phone || issue.constituent?.phone_number || "",
+            reporter_email:
+              issue.reporter_email || issue.constituent?.email || "",
+            reporter_gender:
+              issue.reporter_gender || issue.constituent?.gender || "",
+            reporter_address:
+              issue.reporter_address || issue.constituent?.home_address || "",
+            agent_id:
+              issue.agent?.id ||
+              (issue.agent_id ? Number(issue.agent_id) : undefined),
             images: Array.isArray(issue.images) ? issue.images : [],
           });
         } else {
@@ -227,7 +247,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
     if (formData.category_id && sectors.length > 0) {
       setLoadingSectors(true);
       const filtered = sectors.filter(
-        (s) => s.category_id === formData.category_id
+        (s) => s.category_id === formData.category_id,
       );
       setFilteredSectors(filtered);
       setLoadingSectors(false);
@@ -269,7 +289,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
       }
 
       const selectedLocation = locations.find(
-        (l) => l.name === formData.location
+        (l) => l.name === formData.location,
       );
       if (!selectedLocation) return;
 
@@ -301,7 +321,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
 
   const updateField = (
     field: keyof FormData,
-    value: string | number | undefined | boolean | null
+    value: string | number | undefined | boolean | null,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -316,7 +336,9 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
     ];
     for (const field of required) {
       if (!formData[field]) {
-        toast.error(`Please fill in the ${String(field).replace("_", " ")} field`);
+        toast.error(
+          `Please fill in the ${String(field).replace("_", " ")} field`,
+        );
         return false;
       }
     }
@@ -368,7 +390,9 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
       // Find IDs for community and suburb if not already set (for safety)
       let finalCommunityId = formData.community_id;
       if (!finalCommunityId && formData.location) {
-        finalCommunityId = locations.find((l) => l.name === formData.location)?.id;
+        finalCommunityId = locations.find(
+          (l) => l.name === formData.location,
+        )?.id;
       }
 
       let finalSuburbId = formData.suburb_id;
@@ -378,36 +402,51 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
 
       const submitData = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && (typeof value !== 'string' || value !== "") && key !== "images") {
+        if (
+          value !== undefined &&
+          value !== null &&
+          (typeof value !== "string" || value !== "") &&
+          key !== "images"
+        ) {
           submitData.append(key, value.toString());
         }
       });
-      
-      if (finalCommunityId) submitData.append("community_id", finalCommunityId.toString());
-      if (finalSuburbId) submitData.append("suburb_id", finalSuburbId.toString());
+
+      if (finalCommunityId)
+        submitData.append("community_id", finalCommunityId.toString());
+      if (finalSuburbId)
+        submitData.append("suburb_id", finalSuburbId.toString());
       submitData.append("specific_location", formData.cottage || "");
       submitData.append("details", formData.additional_notes || "");
-      
+
       // Also send reporter fields for backend processing if needed (as constituent fields)
-      if (formData.reporter_name) submitData.append("constituent_name", formData.reporter_name);
-      if (formData.reporter_phone) submitData.append("constituent_phone", formData.reporter_phone);
-      if (formData.reporter_email) submitData.append("constituent_email", formData.reporter_email);
-      if (formData.reporter_gender) submitData.append("constituent_gender", formData.reporter_gender);
-      if (formData.reporter_address) submitData.append("constituent_address", formData.reporter_address);
-      
+      if (formData.reporter_name)
+        submitData.append("constituent_name", formData.reporter_name);
+      if (formData.reporter_phone)
+        submitData.append("constituent_phone", formData.reporter_phone);
+      if (formData.reporter_email)
+        submitData.append("constituent_email", formData.reporter_email);
+      if (formData.reporter_gender)
+        submitData.append("constituent_gender", formData.reporter_gender);
+      if (formData.reporter_address)
+        submitData.append("constituent_address", formData.reporter_address);
+
       submitData.append("keep_existing_images", "true");
-      
+
       // Add existing images to delete
       imagesToDelete.forEach((img) => {
         submitData.append("delete_images[]", img);
       });
-      
+
       // Add new images
       newImageFiles.forEach((file) => {
         submitData.append("images[]", file);
       });
 
-      const response = await issuesService.updateOfficerIssue(parseInt(issueId), submitData);
+      const response = await issuesService.updateOfficerIssue(
+        parseInt(issueId),
+        submitData,
+      );
 
       if (response.success) {
         toast.success("Issue updated successfully!");
@@ -528,13 +567,13 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
               <SearchableSelect
                 value={formData.location}
                 onChange={(v) => {
-                  const loc = locations.find(l => l.name === v);
+                  const loc = locations.find((l) => l.name === v);
                   setFormData((prev) => ({
                     ...prev,
                     location: v,
                     community_id: loc?.id,
                     suburb: "",
-                    suburb_id: undefined
+                    suburb_id: undefined,
                   }));
                 }}
                 options={locations.map((loc) => ({
@@ -553,11 +592,11 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
               <SearchableSelect
                 value={formData.suburb || ""}
                 onChange={(v) => {
-                  const loc = suburbs.find(l => l.name === v);
+                  const loc = suburbs.find((l) => l.name === v);
                   setFormData((prev) => ({
                     ...prev,
                     suburb: v,
-                    suburb_id: loc?.id
+                    suburb_id: loc?.id,
                   }));
                 }}
                 options={suburbs.map((loc) => ({
@@ -660,7 +699,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                 onValueChange={(v) => {
                   const categoryId = parseInt(v);
                   const selectedCat = categories.find(
-                    (c) => c.id === categoryId
+                    (c) => c.id === categoryId,
                   );
                   setFormData((prev) => ({
                     ...prev,
@@ -669,7 +708,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                     sector_id: undefined,
                     sector: "",
                     sub_sector_id: undefined,
-                    subsector: ""
+                    subsector: "",
                   }));
                 }}
                 disabled={loadingData}
@@ -691,7 +730,9 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
             <FormItem label="Priority" required>
               <Select
                 value={formData.priority}
-                onValueChange={(v: "low" | "medium" | "high" | "urgent") => updateField("priority", v)}
+                onValueChange={(v: "low" | "medium" | "high" | "urgent") =>
+                  updateField("priority", v)
+                }
               >
                 <SelectTrigger className="border-slate-200">
                   <SelectValue placeholder="Select Priority" />
@@ -708,15 +749,15 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Assign To Agent (Optional)">
-               <SearchableSelect
+              <SearchableSelect
                 value={formData.agent_id?.toString() || ""}
                 onChange={(v) => {
                   const id = v ? parseInt(v) : undefined;
                   updateField("agent_id", id);
                 }}
-                options={agents.map(a => ({
+                options={agents.map((a) => ({
                   label: `${a.name} (${a.email})`,
-                  value: a.id.toString()
+                  value: a.id.toString(),
                 }))}
                 placeholder="Select Agent to handle this issue"
                 searchPlaceholder="Search agents..."
@@ -734,14 +775,14 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                     return;
                   const sectorId = parseInt(v);
                   const selectedSec = filteredSectors.find(
-                    (s) => s.id === sectorId
+                    (s) => s.id === sectorId,
                   );
                   setFormData((prev) => ({
                     ...prev,
                     sector_id: sectorId,
                     sector: selectedSec?.name || "",
                     sub_sector_id: undefined,
-                    subsector: ""
+                    subsector: "",
                   }));
                 }}
               >
@@ -779,7 +820,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                     return;
                   const subSectorId = parseInt(v);
                   const selectedSubSec = subSectors.find(
-                    (s) => s.id === subSectorId
+                    (s) => s.id === subSectorId,
                   );
                   updateField("sub_sector_id", subSectorId);
                   updateField("subsector", selectedSubSec?.name || "");
@@ -822,7 +863,7 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                 onChange={(e) =>
                   updateField(
                     "people_affected",
-                    e.target.value ? parseInt(e.target.value) : undefined
+                    e.target.value ? parseInt(e.target.value) : undefined,
                   )
                 }
                 className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
@@ -843,8 +884,17 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
             <div className="mt-2 flex flex-wrap gap-4">
               {/* Existing Images */}
               {formData.images?.map((img, index) => (
-                <div key={`existing-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
-                  <Image src={img} alt="Existing" fill className="object-cover" unoptimized />
+                <div
+                  key={`existing-${index}`}
+                  className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm"
+                >
+                  <Image
+                    src={img}
+                    alt="Existing"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
                   <button
                     type="button"
                     onClick={() => removeExistingImage(img)}
@@ -854,11 +904,20 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                   </button>
                 </div>
               ))}
-              
+
               {/* New Previews */}
               {newImagePreviews.map((preview, index) => (
-                <div key={`new-${index}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-indigo-200 shadow-sm ring-2 ring-indigo-100">
-                  <Image src={preview} alt="New Preview" fill className="object-cover" unoptimized />
+                <div
+                  key={`new-${index}`}
+                  className="relative w-24 h-24 rounded-lg overflow-hidden border border-indigo-200 shadow-sm ring-2 ring-indigo-100"
+                >
+                  <Image
+                    src={preview}
+                    alt="New Preview"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
                   <button
                     type="button"
                     onClick={() => removeNewImage(index)}
@@ -866,10 +925,12 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
                   >
                     <X className="h-3 w-3" />
                   </button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-indigo-500/80 text-[8px] text-white py-0.5 text-center font-bold">NEW</div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-indigo-500/80 text-[8px] text-white py-0.5 text-center font-bold">
+                    NEW
+                  </div>
                 </div>
               ))}
-              
+
               <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-slate-400 hover:bg-slate-50/30 transition-all text-slate-400 hover:text-slate-600">
                 <ImageIcon className="h-6 w-6 mb-1" />
                 <span className="text-[10px] font-medium">Add Image</span>
@@ -969,7 +1030,7 @@ function SearchableSelect({
             "w-full justify-between font-normal",
             !value && "text-muted-foreground",
             "border-slate-200 bg-transparent hover:bg-slate-50",
-            disabled && "opacity-50 cursor-not-allowed"
+            disabled && "opacity-50 cursor-not-allowed",
           )}
           disabled={disabled}
         >
@@ -1002,7 +1063,7 @@ function SearchableSelect({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {option.label}

@@ -31,10 +31,9 @@ interface BudgetChartProps {
 }
 
 export function BudgetChart({ chartsData, loading, error }: BudgetChartProps) {
-  const data: BudgetData | null =
-    chartsData?.charts?.budgetDistribution
-      ? { distribution: chartsData.charts.budgetDistribution }
-      : null;
+  const data: BudgetData | null = chartsData?.charts?.budgetDistribution
+    ? { distribution: chartsData.charts.budgetDistribution }
+    : null;
 
   if (loading) {
     return (
@@ -68,9 +67,7 @@ export function BudgetChart({ chartsData, loading, error }: BudgetChartProps) {
                   tickFormatter={(value) => `₵${(value / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  formatter={(value: number) =>
-                    `₵${value.toLocaleString()}`
-                  }
+                  formatter={(value: number) => `₵${value.toLocaleString()}`}
                 />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {data.distribution.map((entry, index) => (
@@ -106,9 +103,7 @@ export function BudgetChart({ chartsData, loading, error }: BudgetChartProps) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) =>
-                    `₵${value.toLocaleString()}`
-                  }
+                  formatter={(value: number) => `₵${value.toLocaleString()}`}
                 />
                 <Legend verticalAlign="bottom" height={36} />
               </PieChart>

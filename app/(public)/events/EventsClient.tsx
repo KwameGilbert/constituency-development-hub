@@ -131,7 +131,9 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       <div
         className="mt-2 text-sm text-slate-600 line-clamp-3 max-w-full"
         // Safe because we sanitize server-provided HTML
-        dangerouslySetInnerHTML={{ __html: sanitizeHtml(event.description || "") }}
+        dangerouslySetInnerHTML={{
+          __html: sanitizeHtml(event.description || ""),
+        }}
       />
 
       {/* Details */}
@@ -174,8 +176,8 @@ function EventCard({ event, index }: { event: Event; index: number }) {
 
 export default function EventsClient() {
   const [activeFilter, setActiveFilter] = useState("All");
-    const [events, setEvents] = useState<Event[]>([]);
-    const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -189,13 +191,13 @@ export default function EventsClient() {
           setEvents(response.data.events);
         } else {
           // Use fallback if no events from API
-            setEvents([]); // Set to empty array instead of fallback
-            // Removed usingFallback state
+          setEvents([]); // Set to empty array instead of fallback
+          // Removed usingFallback state
         }
       } catch {
         // API error - use fallback data silently
-          setEvents([]); // Set to empty array instead of fallback
-          // Removed usingFallback state
+        setEvents([]); // Set to empty array instead of fallback
+        // Removed usingFallback state
       } finally {
         setLoading(false);
       }

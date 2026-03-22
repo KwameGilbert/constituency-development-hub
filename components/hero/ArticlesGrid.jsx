@@ -26,24 +26,29 @@ function ArticlesGrid() {
               transition={{ delay: index * 0.1, duration: 0.6 }}
               className="overflow-hidden rounded-2xl bg-white shadow"
             >
-            <Link href={`/blog/${post.slug}`} className="text-sm font-semibold text-red-600">
-              <div className="h-48 overflow-hidden">
-                <Image
-                  width={400}
-                  height={192}
-                  src={post.image}
-                  alt={post.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="space-y-3 p-5">
-                <h3 className="text-xl font-semibold text-slate-900">
-                  {post.title}
-                </h3>
-                <p className="text-sm text-slate-500">{cleanupHtml(post.excerpt || "")}</p>
+              <Link
+                href={`/blog/${post.slug}`}
+                className="text-sm font-semibold text-red-600"
+              >
+                <div className="h-48 overflow-hidden">
+                  <Image
+                    width={400}
+                    height={192}
+                    src={post.image}
+                    alt={post.title}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="space-y-3 p-5">
+                  <h3 className="text-xl font-semibold text-slate-900">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    {cleanupHtml(post.excerpt || "")}
+                  </p>
                   Read story →
-              </div>
-            </Link>
+                </div>
+              </Link>
             </motion.article>
           ))}
         </div>

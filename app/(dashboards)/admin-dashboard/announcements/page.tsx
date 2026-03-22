@@ -20,7 +20,9 @@ export default function AnnouncementsListPage() {
     const fetchAnnouncements = async () => {
       try {
         setLoading(true);
-        const response = await announcementsService.getAdminAnnouncements({ limit: 1000 });
+        const response = await announcementsService.getAdminAnnouncements({
+          limit: 1000,
+        });
         if (response.success) {
           setAnnouncements(response.data.announcements);
           setError(null);
@@ -94,9 +96,7 @@ export default function AnnouncementsListPage() {
       <AdminHeader title="Announcements" />
       <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
         <AnnouncementsHeader />
-        <AnnouncementsTable
-          announcements={announcements}
-        />
+        <AnnouncementsTable announcements={announcements} />
       </div>
     </div>
   );

@@ -194,7 +194,7 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        phone: e.target.value.replace(/[^0-9+]/g, ''),
+                        phone: e.target.value.replace(/[^0-9+]/g, ""),
                       }))
                     }
                     disabled={!isEditing}
@@ -293,7 +293,11 @@ export default function ProfilePage() {
                     Receive notifications about new assignments
                   </p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => toast.info("Email configuration coming soon")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toast.info("Email configuration coming soon")}
+                >
                   Configure
                 </Button>
               </div>
@@ -302,7 +306,11 @@ export default function ProfilePage() {
                   <h4 className="font-medium">Password</h4>
                   <p className="text-sm text-gray-600">Update your password</p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => toast.info("Password change coming soon")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toast.info("Password change coming soon")}
+                >
                   Change
                 </Button>
               </div>
@@ -313,7 +321,11 @@ export default function ProfilePage() {
                     Add an extra layer of security
                   </p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => toast.info("2FA configuration coming soon")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toast.info("2FA configuration coming soon")}
+                >
                   Enable
                 </Button>
               </div>

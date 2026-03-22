@@ -38,14 +38,8 @@ import {
   CreateProjectData,
   Project,
 } from "@/lib/services/projects-service";
-import { 
-  sectorsService, 
-  Sector 
-} from "@/lib/services/sectors-service";
-import { 
-  locationsService, 
-  Location 
-} from "@/lib/services/locations-service";
+import { sectorsService, Sector } from "@/lib/services/sectors-service";
+import { locationsService, Location } from "@/lib/services/locations-service";
 import { uploadService } from "@/lib/services/upload-service";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
@@ -333,15 +327,18 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                     >
                       {form.watch("sector_id")
                         ? sectors.find(
-                            (s) => s.id.toString() === form.watch("sector_id")
+                            (s) => s.id.toString() === form.watch("sector_id"),
                           )?.name || "Select sector"
                         : isLoadingData
-                        ? "Loading sectors..."
-                        : "Select sector"}
+                          ? "Loading sectors..."
+                          : "Select sector"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0"
+                    align="start"
+                  >
                     <Command>
                       <CommandInput placeholder="Search sectors..." />
                       <CommandList>
@@ -352,16 +349,20 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                               key={sector.id}
                               value={sector.name}
                               onSelect={() => {
-                                form.setValue("sector_id", sector.id.toString());
+                                form.setValue(
+                                  "sector_id",
+                                  sector.id.toString(),
+                                );
                                 setSectorOpen(false);
                               }}
                             >
                               <Check
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  form.watch("sector_id") === sector.id.toString()
+                                  form.watch("sector_id") ===
+                                    sector.id.toString()
                                     ? "opacity-100"
-                                    : "opacity-0"
+                                    : "opacity-0",
                                 )}
                               />
                               {sector.name}
@@ -393,12 +394,15 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                       {form.watch("location")
                         ? form.watch("location")
                         : isLoadingData
-                        ? "Loading locations..."
-                        : "Select location"}
+                          ? "Loading locations..."
+                          : "Select location"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0"
+                    align="start"
+                  >
                     <Command>
                       <CommandInput placeholder="Search locations..." />
                       <CommandList>
@@ -418,7 +422,7 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                                   "mr-2 h-4 w-4",
                                   form.watch("location") === location.name
                                     ? "opacity-100"
-                                    : "opacity-0"
+                                    : "opacity-0",
                                 )}
                               />
                               {location.name}
@@ -598,7 +602,12 @@ export function NewProjectForm({ project }: ProjectFormProps) {
                   inputMode="numeric"
                   placeholder="e.g., +233249973054"
                   {...form.register("contact_phone")}
-                  onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(
+                      /[^0-9+]/g,
+                      "",
+                    );
+                  }}
                   disabled={isSubmitting}
                 />
               </div>

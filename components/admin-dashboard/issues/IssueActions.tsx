@@ -33,7 +33,7 @@ export function IssueActions({ issue }: IssueActionsProps) {
       const response = await issuesService.updateStatus(
         issue.id,
         "assigned_to_task_force",
-        "Assigned to Task Force Dashboard"
+        "Assigned to Task Force Dashboard",
       );
       if (response.success) {
         toast.success("Issue assigned to Task Force Dashboard");
@@ -51,23 +51,25 @@ export function IssueActions({ issue }: IssueActionsProps) {
 
   // Determine which actions are available based on status
   const canAssignTaskForce = issue.status === "forwarded_to_admin";
-  
+
   // Review Assessment: Only available if submitted and NOT yet approved
   const isAssessmentApproved = issue.assessment_report?.status === "approved";
-  const canReviewAssessment = 
-    (issue.status === "assessment_submitted" || issue.assessment_report?.status === "submitted") && 
+  const canReviewAssessment =
+    (issue.status === "assessment_submitted" ||
+      issue.assessment_report?.status === "submitted") &&
     !isAssessmentApproved;
-  
+
   // Allocate Resources: Available if assessment is APPROVED, regardless of exact issue status (unless already resolved/closed)
-  const canAllocateResources = 
-    isAssessmentApproved && 
-    issue.status !== "resolved" && 
+  const canAllocateResources =
+    isAssessmentApproved &&
+    issue.status !== "resolved" &&
     issue.status !== "closed" &&
     issue.status !== "resources_allocated"; // Optional: disable if already allocated? User might want to view/update?
-  
+
   // Review Resolution: Available if resolution exists and is submitted (or pending review)
-  const canReviewResolution = 
-    (issue.status === "resolution_submitted" || issue.resolution?.status === "submitted") &&
+  const canReviewResolution =
+    (issue.status === "resolution_submitted" ||
+      issue.resolution?.status === "submitted") &&
     issue.resolution?.status !== "approved";
 
   return (
@@ -103,7 +105,9 @@ export function IssueActions({ issue }: IssueActionsProps) {
               variant={canAllocateResources ? "default" : "secondary"}
               disabled={!canAllocateResources}
               className={
-                canAllocateResources ? "bg-green-600 hover:bg-green-700 shadow-md ring-2 ring-green-100" : ""
+                canAllocateResources
+                  ? "bg-green-600 hover:bg-green-700 shadow-md ring-2 ring-green-100"
+                  : ""
               }
               onClick={() => setActiveAction("allocate")}
             >
@@ -113,7 +117,7 @@ export function IssueActions({ issue }: IssueActionsProps) {
 
             {/* Review Assessment */}
             {isAssessmentApproved ? (
-               <Button
+              <Button
                 variant="outline"
                 className="bg-green-50 text-green-700 border-green-200 cursor-default"
                 disabled
@@ -184,7 +188,7 @@ export function IssueActions({ issue }: IssueActionsProps) {
                 </p>
               )}
               {canAllocateResources && (
-                 <p className="text-green-600 font-medium">
+                <p className="text-green-600 font-medium">
                   ✓ Assessment Approved. Ready to Allocate Resources.
                 </p>
               )}

@@ -107,18 +107,24 @@ export function AgentAllIssues() {
 
   // Dynamic filter options derived from data to ensure accuracy
   const dynamicCategories = useMemo(() => {
-    const cats = new Set(issues.filter(i => i.category).map(i => i.category));
+    const cats = new Set(
+      issues.filter((i) => i.category).map((i) => i.category),
+    );
     return ["All Categories", ...Array.from(cats)].sort();
   }, [issues]);
 
   const dynamicStatuses = useMemo(() => {
-    const stats = new Set(issues.filter(i => i.status).map(i => i.status));
+    const stats = new Set(issues.filter((i) => i.status).map((i) => i.status));
     return ["All Statuses", ...Array.from(stats)].sort();
   }, [issues]);
 
   // Handle delete
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this issue? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this issue? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
@@ -127,7 +133,7 @@ export function AgentAllIssues() {
       const response = await agentService.deleteIssue(id);
       if (response.success) {
         toast.success("Issue deleted successfully");
-        setIssues(issues.filter(i => i.id !== id));
+        setIssues(issues.filter((i) => i.id !== id));
       } else {
         toast.error(response.message || "Failed to delete issue");
       }
@@ -141,7 +147,7 @@ export function AgentAllIssues() {
 
   // Handle edit success
   const handleEditSuccess = (updatedIssue: AgentReport) => {
-    setIssues(issues.map(i => i.id === updatedIssue.id ? updatedIssue : i));
+    setIssues(issues.map((i) => (i.id === updatedIssue.id ? updatedIssue : i)));
   };
 
   useEffect(() => {
@@ -185,8 +191,7 @@ export function AgentAllIssues() {
 
       // Status filter
       const matchesStatus =
-        statusFilter === "All Statuses" ||
-        issue.status === statusFilter;
+        statusFilter === "All Statuses" || issue.status === statusFilter;
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
@@ -254,7 +259,7 @@ export function AgentAllIssues() {
             <Button
               variant="outline"
               size="sm"
-              className={`h-8 w-8 rounded-lg border-slate-200 ${showFilters ? 'bg-slate-100' : ''}`}
+              className={`h-8 w-8 rounded-lg border-slate-200 ${showFilters ? "bg-slate-100" : ""}`}
               onClick={() => setShowFilters(!showFilters)}
             >
               {showFilters ? (
@@ -269,7 +274,9 @@ export function AgentAllIssues() {
         {showFilters && (
           <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-5 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="md:col-span-6 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Search Keywords</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Search Keywords
+              </label>
               <Input
                 placeholder="Title, description, or community..."
                 className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-amber-500 rounded-lg"
@@ -279,21 +286,27 @@ export function AgentAllIssues() {
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Category</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Category
+              </label>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
                   {dynamicCategories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="md:col-span-3 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">Status</label>
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Status
+              </label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
                   <SelectValue placeholder="All Statuses" />
@@ -301,7 +314,9 @@ export function AgentAllIssues() {
                 <SelectContent>
                   {dynamicStatuses.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status === "All Statuses" ? status : formatStatusLabel(status)}
+                      {status === "All Statuses"
+                        ? status
+                        : formatStatusLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -348,7 +363,10 @@ export function AgentAllIssues() {
                     </div>
                     {getStatusBadge(issue.status)}
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2" title={cleanupHtml(issue.description)}>
+                  <p
+                    className="text-sm text-muted-foreground line-clamp-2"
+                    title={cleanupHtml(issue.description)}
+                  >
                     {cleanupHtml(issue.description)}
                   </p>
                   <div className="flex items-center justify-between text-sm">
@@ -365,33 +383,51 @@ export function AgentAllIssues() {
                       <span>{formatDate(issue.created_at)}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 h-9" asChild title="View Details">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 h-9"
+                      asChild
+                      title="View Details"
+                    >
                       <Link href={`/agents-dashboard/issues/${issue.id}`}>
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
-                     <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 h-9 text-blue-600 border-blue-200 hover:bg-blue-50"
-                        onClick={() => setEditingIssue(issue)}
-                        disabled={!['submitted', 'pending', 'rejected'].includes(issue.status)}
-                        title="Edit Issue"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 h-9 text-red-600 border-red-200 hover:bg-red-50"
-                        onClick={() => handleDelete(issue.id)}
-                        disabled={!['submitted', 'pending', 'rejected'].includes(issue.status) || deletingId === issue.id}
-                        title="Delete Issue"
-                      >
-                        {deletingId === issue.id ? <Loader2 className="h-4 w-4 animate-spin mx-auto"/> : <Trash2 className="h-4 w-4" />}
-                      </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 h-9 text-blue-600 border-blue-200 hover:bg-blue-50"
+                      onClick={() => setEditingIssue(issue)}
+                      disabled={
+                        !["submitted", "pending", "rejected"].includes(
+                          issue.status,
+                        )
+                      }
+                      title="Edit Issue"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 h-9 text-red-600 border-red-200 hover:bg-red-50"
+                      onClick={() => handleDelete(issue.id)}
+                      disabled={
+                        !["submitted", "pending", "rejected"].includes(
+                          issue.status,
+                        ) || deletingId === issue.id
+                      }
+                      title="Delete Issue"
+                    >
+                      {deletingId === issue.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -407,29 +443,46 @@ export function AgentAllIssues() {
                     <TableHead className="w-[160px]">Category</TableHead>
                     <TableHead className="w-[150px]">Status</TableHead>
                     <TableHead className="w-[120px]">Date</TableHead>
-                    <TableHead className="text-right w-[180px]">Actions</TableHead>
+                    <TableHead className="text-right w-[180px]">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredIssues.map((issue) => (
                     <TableRow key={issue.id}>
-                      <TableCell className="font-medium text-xs truncate max-w-[80px]" title={issue.case_id || `#${issue.id}`}>
+                      <TableCell
+                        className="font-medium text-xs truncate max-w-[80px]"
+                        title={issue.case_id || `#${issue.id}`}
+                      >
                         {issue.case_id || `#${issue.id}`}
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col max-w-[170px]">
-                          <span className="font-semibold text-sm truncate" title={issue.title}>{issue.title}</span>
-                          <span className="text-muted-foreground text-xs line-clamp-1" title={cleanupHtml(issue.description)}>
+                          <span
+                            className="font-semibold text-sm truncate"
+                            title={issue.title}
+                          >
+                            {issue.title}
+                          </span>
+                          <span
+                            className="text-muted-foreground text-xs line-clamp-1"
+                            title={cleanupHtml(issue.description)}
+                          >
                             {cleanupHtml(issue.description)}
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{issue.category}</TableCell>
+                      <TableCell className="text-sm">
+                        {issue.category}
+                      </TableCell>
                       <TableCell>{getStatusBadge(issue.status)}</TableCell>
-                      <TableCell className="text-sm">{formatDate(issue.created_at)}</TableCell>
+                      <TableCell className="text-sm">
+                        {formatDate(issue.created_at)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                           <Button
+                          <Button
                             variant="outline"
                             size="icon"
                             className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 border-indigo-100"
@@ -440,13 +493,17 @@ export function AgentAllIssues() {
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
-                          
+
                           <Button
                             variant="outline"
                             size="icon"
                             className="h-8 w-8 text-blue-600 hover:text-blue-700 bg-blue-50/50 border-blue-100"
                             onClick={() => setEditingIssue(issue)}
-                            disabled={!['submitted', 'pending', 'rejected'].includes(issue.status)}
+                            disabled={
+                              !["submitted", "pending", "rejected"].includes(
+                                issue.status,
+                              )
+                            }
                             title="Edit Issue"
                           >
                             <Pencil className="h-4 w-4" />
@@ -456,10 +513,18 @@ export function AgentAllIssues() {
                             size="icon"
                             className="h-8 w-8 text-red-600 hover:text-red-700 bg-red-50/50 border-red-100"
                             onClick={() => handleDelete(issue.id)}
-                            disabled={!['submitted', 'pending', 'rejected'].includes(issue.status) || deletingId === issue.id}
+                            disabled={
+                              !["submitted", "pending", "rejected"].includes(
+                                issue.status,
+                              ) || deletingId === issue.id
+                            }
                             title="Delete Issue"
                           >
-                            {deletingId === issue.id ? <Loader2 className="h-4 w-4 animate-spin"/> : <Trash2 className="h-4 w-4" />}
+                            {deletingId === issue.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                           </Button>
                         </div>
                       </TableCell>
@@ -471,7 +536,7 @@ export function AgentAllIssues() {
           </>
         )}
       </div>
-      
+
       {editingIssue && (
         <AgentEditIssueDialog
           issue={editingIssue}

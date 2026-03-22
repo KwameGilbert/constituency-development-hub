@@ -33,16 +33,48 @@ const teamData = {
 const metadataData = {
   statuses: [
     { value: "submitted", label: "Submitted", color: "blue" },
-    { value: "under_officer_review", label: "Under Officer Review", color: "yellow" },
-    { value: "forwarded_to_admin", label: "Forwarded To Admin", color: "purple" },
-    { value: "assigned_to_task_force", label: "Assigned To Task Force", color: "blue" },
+    {
+      value: "under_officer_review",
+      label: "Under Officer Review",
+      color: "yellow",
+    },
+    {
+      value: "forwarded_to_admin",
+      label: "Forwarded To Admin",
+      color: "purple",
+    },
+    {
+      value: "assigned_to_task_force",
+      label: "Assigned To Task Force",
+      color: "blue",
+    },
     { value: "pending_assessment", label: "Pending Assessment", color: "blue" },
-    { value: "assessment_in_progress", label: "Assessment In Progress", color: "orange" },
-    { value: "assessment_submitted", label: "Assessment Submitted", color: "indigo" },
+    {
+      value: "assessment_in_progress",
+      label: "Assessment In Progress",
+      color: "orange",
+    },
+    {
+      value: "assessment_submitted",
+      label: "Assessment Submitted",
+      color: "indigo",
+    },
     { value: "needs_revision", label: "Needs Revision", color: "orange" },
-    { value: "resources_allocated", label: "Resources Allocated", color: "cyan" },
-    { value: "resolution_in_progress", label: "Resolution In Progress", color: "orange" },
-    { value: "resolution_submitted", label: "Resolution Submitted", color: "indigo" },
+    {
+      value: "resources_allocated",
+      label: "Resources Allocated",
+      color: "cyan",
+    },
+    {
+      value: "resolution_in_progress",
+      label: "Resolution In Progress",
+      color: "orange",
+    },
+    {
+      value: "resolution_submitted",
+      label: "Resolution Submitted",
+      color: "indigo",
+    },
     { value: "resolved", label: "Resolved", color: "green" },
     { value: "closed", label: "Closed", color: "green" },
     { value: "rejected", label: "Rejected", color: "red" },

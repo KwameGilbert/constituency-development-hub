@@ -125,8 +125,7 @@ export default function LoginPage() {
             </Link>
 
             <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
-              Constituency
-              Development
+              Constituency Development
               <br />
               <span className="text-amber-400">Hub</span>
             </h1>

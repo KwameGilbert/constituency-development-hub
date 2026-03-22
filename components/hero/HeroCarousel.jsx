@@ -68,7 +68,9 @@ function HeroCarousel() {
                 <SanitizedHtml
                   tag="span"
                   className="text-white/80"
-                  html={stripOuterParagraph(sanitizeHtml(slides[activeIndex].subtitle || ""))}
+                  html={stripOuterParagraph(
+                    sanitizeHtml(slides[activeIndex].subtitle || ""),
+                  )}
                 />
               </motion.h2>
               <motion.p
@@ -80,7 +82,9 @@ function HeroCarousel() {
                 <SanitizedHtml
                   tag="span"
                   className="text-white/80"
-                  html={stripOuterParagraph(sanitizeHtml(slides[activeIndex].description || ""))}
+                  html={stripOuterParagraph(
+                    sanitizeHtml(slides[activeIndex].description || ""),
+                  )}
                 />
               </motion.p>
               <motion.div

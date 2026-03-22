@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { useState, useEffect, use } from "react";
 // import { useRouter } from "next/navigation";
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
@@ -35,7 +35,7 @@ export default function DisabledPage() {
 // import { agentService } from "@/lib/services/agent-service";
 // import { locationsService, Location } from "@/lib/services/locations-service";
 // import { toast } from "sonner";
-// 
+//
 // export default function EditAgentPage({
 //   params,
 // }: {
@@ -46,7 +46,7 @@ export default function DisabledPage() {
 //   const [loading, setLoading] = useState(true);
 //   const [saving, setSaving] = useState(false);
 //   const [locations, setLocations] = useState<Location[]>([]);
-// 
+//
 //   const [formData, setFormData] = useState({
 //     name: "",
 //     email: "",
@@ -57,7 +57,7 @@ export default function DisabledPage() {
 //     suburb: "",
 //     cottage: "",
 //   });
-// 
+//
 //   useEffect(() => {
 //     const fetchData = async () => {
 //       try {
@@ -66,11 +66,11 @@ export default function DisabledPage() {
 //           agentService.getAgentById(parseInt(id)),
 //           locationsService.getLocations({ limit: 100 }),
 //         ]);
-// 
+//
 //         if (locationsRes.success && locationsRes.data) {
 //           setLocations(locationsRes.data.locations);
 //         }
-// 
+//
 //         if (agentRes.success && agentRes.data.agent) {
 //           const agent = agentRes.data.agent;
 //           setFormData({
@@ -97,21 +97,21 @@ export default function DisabledPage() {
 //         setLoading(false);
 //       }
 //     };
-// 
+//
 //     if (id) {
 //       fetchData();
 //     }
 //   }, [id]);
-// 
+//
 //   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 //     const { id, value } = e.target;
 //     setFormData((prev) => ({ ...prev, [id]: value }));
 //   };
-// 
+//
 //   const handleSelectChange = (key: string, value: string) => {
 //     setFormData((prev) => ({ ...prev, [key]: value }));
 //   };
-// 
+//
 //   const handleSubmit = async () => {
 //     setSaving(true);
 //     try {
@@ -124,9 +124,9 @@ export default function DisabledPage() {
 //         assigned_location: formData.mainCommunity,
 //         assigned_communities: formData.smallerCommunity,
 //       };
-// 
+//
 //       const response = await agentService.updateAgent(parseInt(id), payload);
-// 
+//
 //       if (response.success) {
 //         toast.success("Success", { description: "Agent updated successfully" });
 //         router.push("/admin-dashboard/agents");
@@ -143,11 +143,11 @@ export default function DisabledPage() {
 //       setSaving(false);
 //     }
 //   };
-// 
+//
 //   if (loading) {
 //     return <div className="p-8">Loading...</div>;
 //   }
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -255,13 +255,13 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 //               </div>
-// 
+//
 //               Location Assignment
 //               <div className="space-y-4">
 //                 <h3 className="text-gray-900 font-semibold text-lg border-b border-gray-100 pb-2">
 //                   Location Assignment
 //                 </h3>
-// 
+//
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
 //                     <Label htmlFor="mainCommunity" className="text-gray-700">
@@ -287,7 +287,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 //               </div>
-// 
+//
 //               Footer Actions
 //               <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
 //                 <Button
@@ -312,5 +312,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

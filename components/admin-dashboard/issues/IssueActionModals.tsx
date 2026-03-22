@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { issuesService, ResourceItem, Issue } from "@/lib/services/issues-service";
+import {
+  issuesService,
+  ResourceItem,
+  Issue,
+} from "@/lib/services/issues-service";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +28,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Plus, Trash2, FileText, DollarSign, MapPin, CheckCircle } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  Trash2,
+  FileText,
+  DollarSign,
+  MapPin,
+  CheckCircle,
+} from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -67,7 +79,7 @@ export function IssueActionModals({
   // Update Status state
   const [newStatus, setNewStatus] = useState("");
   const [statusComment, setStatusComment] = useState("");
-  
+
   const issueId = issue.id;
 
   function addResource() {
@@ -384,7 +396,7 @@ export function IssueActionModals({
               Review the detailed assessment and approve or request changes
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="flex-1 overflow-y-auto px-6">
             <div className="space-y-6 pb-6">
               {/* Assessment Details View */}
@@ -393,22 +405,43 @@ export function IssueActionModals({
                   {/* Key Stats */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-lg border">
                     <div>
-                      <span className="text-xs text-slate-500 font-medium uppercase">Severity</span>
-                      <p className="font-semibold capitalize text-slate-900">{issue.assessment_report.severity}</p>
+                      <span className="text-xs text-slate-500 font-medium uppercase">
+                        Severity
+                      </span>
+                      <p className="font-semibold capitalize text-slate-900">
+                        {issue.assessment_report.severity}
+                      </p>
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 font-medium uppercase">Confirmed</span>
-                       <Badge variant={issue.assessment_report.issue_confirmed ? "default" : "destructive"} className="mt-1">
+                      <span className="text-xs text-slate-500 font-medium uppercase">
+                        Confirmed
+                      </span>
+                      <Badge
+                        variant={
+                          issue.assessment_report.issue_confirmed
+                            ? "default"
+                            : "destructive"
+                        }
+                        className="mt-1"
+                      >
                         {issue.assessment_report.issue_confirmed ? "Yes" : "No"}
-                       </Badge>
+                      </Badge>
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 font-medium uppercase">Est. Cost</span>
-                      <p className="font-semibold text-slate-900">{issue.assessment_report.estimated_cost || "N/A"}</p>
+                      <span className="text-xs text-slate-500 font-medium uppercase">
+                        Est. Cost
+                      </span>
+                      <p className="font-semibold text-slate-900">
+                        {issue.assessment_report.estimated_cost || "N/A"}
+                      </p>
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 font-medium uppercase">Duration</span>
-                      <p className="font-semibold text-slate-900">{issue.assessment_report.estimated_duration || "N/A"}</p>
+                      <span className="text-xs text-slate-500 font-medium uppercase">
+                        Duration
+                      </span>
+                      <p className="font-semibold text-slate-900">
+                        {issue.assessment_report.estimated_duration || "N/A"}
+                      </p>
                     </div>
                   </div>
 
@@ -416,7 +449,8 @@ export function IssueActionModals({
                   <div className="space-y-4">
                     <div>
                       <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
-                        <FileText className="h-4 w-4 text-blue-600" /> Assessment Summary
+                        <FileText className="h-4 w-4 text-blue-600" />{" "}
+                        Assessment Summary
                       </h4>
                       <div className="p-3 bg-white border rounded-md text-sm text-slate-700 whitespace-pre-wrap">
                         {issue.assessment_report.assessment_summary}
@@ -424,9 +458,10 @@ export function IssueActionModals({
                     </div>
 
                     {issue.assessment_report.findings && (
-                       <div>
+                      <div>
                         <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
-                          <MapPin className="h-4 w-4 text-orange-600" /> Findings & Observations
+                          <MapPin className="h-4 w-4 text-orange-600" />{" "}
+                          Findings & Observations
                         </h4>
                         <div className="p-3 bg-white border rounded-md text-sm text-slate-700 whitespace-pre-wrap">
                           {issue.assessment_report.findings}
@@ -435,9 +470,10 @@ export function IssueActionModals({
                     )}
 
                     {issue.assessment_report.recommendations && (
-                       <div>
+                      <div>
                         <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
-                          <CheckCircle className="h-4 w-4 text-green-600" /> Recommendations
+                          <CheckCircle className="h-4 w-4 text-green-600" />{" "}
+                          Recommendations
                         </h4>
                         <div className="p-3 bg-green-50 border border-green-100 rounded-md text-sm text-green-800 whitespace-pre-wrap">
                           {issue.assessment_report.recommendations}
@@ -447,26 +483,42 @@ export function IssueActionModals({
                   </div>
 
                   {/* Required Resources */}
-                  {issue.assessment_report.required_resources && issue.assessment_report.required_resources.length > 0 && (
-                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
-                        <DollarSign className="h-4 w-4 text-purple-600" /> Required Resources
-                      </h4>
-                      <div className="border rounded-md divide-y">
-                        {issue.assessment_report.required_resources.map((res: ResourceItem, idx: number) => (
-                           <div key={idx} className="flex justify-between p-2 text-sm">
-                             <span>{res.item} <span className="text-slate-500 text-xs capitalize">({res.type})</span></span>
-                             <span className="font-medium">Qty: {res.quantity}</span>
-                           </div>
-                        ))}
+                  {issue.assessment_report.required_resources &&
+                    issue.assessment_report.required_resources.length > 0 && (
+                      <div>
+                        <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-2">
+                          <DollarSign className="h-4 w-4 text-purple-600" />{" "}
+                          Required Resources
+                        </h4>
+                        <div className="border rounded-md divide-y">
+                          {issue.assessment_report.required_resources.map(
+                            (res: ResourceItem, idx: number) => (
+                              <div
+                                key={idx}
+                                className="flex justify-between p-2 text-sm"
+                              >
+                                <span>
+                                  {res.item}{" "}
+                                  <span className="text-slate-500 text-xs capitalize">
+                                    ({res.type})
+                                  </span>
+                                </span>
+                                <span className="font-medium">
+                                  Qty: {res.quantity}
+                                </span>
+                              </div>
+                            ),
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               ) : (
-                 <div className="p-8 text-center bg-gray-50 rounded-lg border border-dashed">
-                   <p className="text-gray-500 italic">No detailed assessment report found.</p>
-                 </div>
+                <div className="p-8 text-center bg-gray-50 rounded-lg border border-dashed">
+                  <p className="text-gray-500 italic">
+                    No detailed assessment report found.
+                  </p>
+                </div>
               )}
 
               <Separator className="my-4" />
@@ -478,29 +530,49 @@ export function IssueActionModals({
                   <RadioGroup
                     value={assessmentAction}
                     onValueChange={(v) =>
-                      setAssessmentAction(v as "approve" | "reject" | "revision")
+                      setAssessmentAction(
+                        v as "approve" | "reject" | "revision",
+                      )
                     }
                     className="grid grid-cols-1 md:grid-cols-3 gap-2"
                   >
                     <div className="flex items-center space-x-2 border p-3 rounded-md hover:bg-slate-50">
                       <RadioGroupItem value="approve" id="approve-assessment" />
-                      <Label htmlFor="approve-assessment" className="font-medium cursor-pointer flex-1">
+                      <Label
+                        htmlFor="approve-assessment"
+                        className="font-medium cursor-pointer flex-1"
+                      >
                         Approve
-                        <span className="block text-xs font-normal text-slate-500">Prcced to Allocation</span>
+                        <span className="block text-xs font-normal text-slate-500">
+                          Prcced to Allocation
+                        </span>
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2 border p-3 rounded-md hover:bg-slate-50">
-                      <RadioGroupItem value="revision" id="revision-assessment" />
-                      <Label htmlFor="revision-assessment" className="font-medium cursor-pointer flex-1">
+                      <RadioGroupItem
+                        value="revision"
+                        id="revision-assessment"
+                      />
+                      <Label
+                        htmlFor="revision-assessment"
+                        className="font-medium cursor-pointer flex-1"
+                      >
                         Request Revision
-                        <span className="block text-xs font-normal text-slate-500">Ask for changes</span>
+                        <span className="block text-xs font-normal text-slate-500">
+                          Ask for changes
+                        </span>
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2 border p-3 rounded-md hover:bg-slate-50">
                       <RadioGroupItem value="reject" id="reject-assessment" />
-                      <Label htmlFor="reject-assessment" className="font-medium cursor-pointer flex-1">
+                      <Label
+                        htmlFor="reject-assessment"
+                        className="font-medium cursor-pointer flex-1"
+                      >
                         Reject
-                        <span className="block text-xs font-normal text-slate-500">Decline Assessment</span>
+                        <span className="block text-xs font-normal text-slate-500">
+                          Decline Assessment
+                        </span>
                       </Label>
                     </div>
                   </RadioGroup>
@@ -524,12 +596,24 @@ export function IssueActionModals({
             <Button variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button onClick={handleReviewAssessment} disabled={loading} className={
-                assessmentAction === "approve" ? "bg-green-600 hover:bg-green-700" :
-                assessmentAction === "reject" ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
-            }>
+            <Button
+              onClick={handleReviewAssessment}
+              disabled={loading}
+              className={
+                assessmentAction === "approve"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : assessmentAction === "reject"
+                    ? "bg-red-600 hover:bg-red-700"
+                    : "bg-blue-600 hover:bg-blue-700"
+              }
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Confirm {assessmentAction === "revision" ? "Revision Request" : assessmentAction === "approve" ? "Approval" : "Rejection"}
+              Confirm{" "}
+              {assessmentAction === "revision"
+                ? "Revision Request"
+                : assessmentAction === "approve"
+                  ? "Approval"
+                  : "Rejection"}
             </Button>
           </DialogFooter>
         </DialogContent>

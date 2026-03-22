@@ -72,7 +72,9 @@ export function AddIssues() {
   const [loadingSubSectors, setLoadingSubSectors] = useState(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [agents, setAgents] = useState<{ id: number; name: string; email: string }[]>([]);
+  const [agents, setAgents] = useState<
+    { id: number; name: string; email: string }[]
+  >([]);
 
   // Form state
   const [formData, setFormData] = useState<IssueSubmission>({
@@ -147,7 +149,7 @@ export function AddIssues() {
     if (formData.category_id) {
       setLoadingSectors(true);
       const filtered = sectors.filter(
-        (s) => s.category_id === formData.category_id
+        (s) => s.category_id === formData.category_id,
       );
       setFilteredSectors(filtered);
       setLoadingSectors(false);
@@ -191,7 +193,7 @@ export function AddIssues() {
       if (!formData.location) return;
 
       const selectedLocation = locations.find(
-        (l) => l.name === formData.location
+        (l) => l.name === formData.location,
       );
       if (!selectedLocation) return;
 
@@ -224,7 +226,7 @@ export function AddIssues() {
 
   const updateField = (
     field: keyof IssueSubmission,
-    value: string | number | undefined | null | boolean
+    value: string | number | undefined | null | boolean,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -286,13 +288,20 @@ export function AddIssues() {
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== "") {
           // Map to backend required field names if they differ
-          if (key === "reporter_name") submitData.append("constituent_name", value.toString());
-          else if (key === "reporter_phone") submitData.append("constituent_phone", value.toString());
-          else if (key === "reporter_email") submitData.append("constituent_email", value.toString());
-          else if (key === "reporter_gender") submitData.append("constituent_gender", value.toString());
-          else if (key === "reporter_address") submitData.append("constituent_address", value.toString());
-          else if (key === "cottage") submitData.append("specific_location", value.toString());
-          else if (key === "additional_notes") submitData.append("details", value.toString());
+          if (key === "reporter_name")
+            submitData.append("constituent_name", value.toString());
+          else if (key === "reporter_phone")
+            submitData.append("constituent_phone", value.toString());
+          else if (key === "reporter_email")
+            submitData.append("constituent_email", value.toString());
+          else if (key === "reporter_gender")
+            submitData.append("constituent_gender", value.toString());
+          else if (key === "reporter_address")
+            submitData.append("constituent_address", value.toString());
+          else if (key === "cottage")
+            submitData.append("specific_location", value.toString());
+          else if (key === "additional_notes")
+            submitData.append("details", value.toString());
           else submitData.append(key, value.toString());
         }
       });
@@ -552,7 +561,7 @@ export function AddIssues() {
                 onValueChange={(v) => {
                   const categoryId = parseInt(v);
                   const selectedCat = categories.find(
-                    (c) => c.id === categoryId
+                    (c) => c.id === categoryId,
                   );
                   updateField("category_id", categoryId);
                   updateField("category", selectedCat?.name || "");
@@ -603,9 +612,9 @@ export function AddIssues() {
                   const id = v ? parseInt(v) : undefined;
                   updateField("agent_id", id);
                 }}
-                options={agents.map(a => ({
+                options={agents.map((a) => ({
                   label: `${a.name} (${a.email})`,
-                  value: a.id.toString()
+                  value: a.id.toString(),
                 }))}
                 placeholder="Select Agent to handle this issue"
                 searchPlaceholder="Search agents..."
@@ -623,7 +632,7 @@ export function AddIssues() {
                     return;
                   const sectorId = parseInt(v);
                   const selectedSec = filteredSectors.find(
-                    (s) => s.id === sectorId
+                    (s) => s.id === sectorId,
                   );
                   updateField("sector_id", sectorId);
                   updateField("sector", selectedSec?.name || "");
@@ -665,7 +674,7 @@ export function AddIssues() {
                     return;
                   const subSectorId = parseInt(v);
                   const selectedSubSec = subSectors.find(
-                    (s) => s.id === subSectorId
+                    (s) => s.id === subSectorId,
                   );
                   updateField("sub_sector_id", subSectorId);
                   updateField("subsector", selectedSubSec?.name || "");
@@ -708,7 +717,7 @@ export function AddIssues() {
                 onChange={(e) =>
                   updateField(
                     "people_affected",
-                    e.target.value ? parseInt(e.target.value) : undefined
+                    e.target.value ? parseInt(e.target.value) : undefined,
                   )
                 }
                 className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
@@ -731,8 +740,17 @@ export function AddIssues() {
           <FormItem label="Issue Images">
             <div className="mt-2 flex flex-wrap gap-4">
               {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
-                  <Image src={preview} alt="Preview" fill className="object-cover" unoptimized />
+                <div
+                  key={index}
+                  className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm"
+                >
+                  <Image
+                    src={preview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
@@ -841,7 +859,7 @@ function SearchableSelect({
             "w-full justify-between font-normal",
             !value && "text-muted-foreground",
             "border-slate-200 bg-transparent hover:bg-slate-50",
-            disabled && "opacity-50 cursor-not-allowed"
+            disabled && "opacity-50 cursor-not-allowed",
           )}
           disabled={disabled}
         >
@@ -874,7 +892,7 @@ function SearchableSelect({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {option.label}

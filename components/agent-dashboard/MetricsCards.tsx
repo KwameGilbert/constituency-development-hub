@@ -131,21 +131,24 @@ export function MetricsCards({
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
       {metrics.map((metric) => (
-        <Card key={metric.label} className="border-none shadow-md shadow-slate-200/50 overflow-hidden group hover:shadow-lg transition-all duration-300">
+        <Card
+          key={metric.label}
+          className="border-none shadow-md shadow-slate-200/50 overflow-hidden group hover:shadow-lg transition-all duration-300"
+        >
           <CardContent className="px-5 py-6 flex items-center gap-4 relative">
-            <div className={`p-3 rounded-2xl bg-linear-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+            <div
+              className={`p-3 rounded-2xl bg-linear-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}
+            >
               <metric.icon className="h-6 w-6 stroke-[2.5px]" />
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-semibold text-slate-900 leading-tight">
                 {loading ? <Skeleton className="h-8 w-16" /> : metric.value}
               </span>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {metric.label}
-              </p>
+              <p className="text-xs text-slate-500 mt-0.5">{metric.label}</p>
             </div>
             <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
-               <metric.icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
+              <metric.icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
             </div>
           </CardContent>
         </Card>

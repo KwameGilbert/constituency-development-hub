@@ -16,7 +16,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-
   Eye,
   EyeOff,
   Save,
@@ -500,5 +499,4 @@ export function EditAgentForm({ agentId }: EditAgentFormProps) {
       </form>
     </div>
   );
-}
 }

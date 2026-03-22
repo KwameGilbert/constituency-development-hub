@@ -3,7 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Plus, Loader2, Check, ChevronsUpDown, Image as ImageIcon, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Plus,
+  Loader2,
+  Check,
+  ChevronsUpDown,
+  Image as ImageIcon,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -34,7 +43,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { agentService, IssueSubmission } from "@/lib/services/agent-service";
 import { locationsService } from "@/lib/services/locations-service";
-import { sectorsService, Sector, SubSector } from "@/lib/services/sectors-service";
+import {
+  sectorsService,
+  Sector,
+  SubSector,
+} from "@/lib/services/sectors-service";
 import { categoriesService, Category } from "@/lib/services/categories-service";
 
 // Zod schema for constituent details validation
@@ -42,18 +55,26 @@ const constituentSchema = z.object({
   constituent_name: z
     .string()
     .min(2, "Name must be at least 2 characters")
-    .regex(/^[a-zA-Z\s\-'.]+$/, "Name should only contain letters, spaces, hyphens, or apostrophes"),
+    .regex(
+      /^[a-zA-Z\s\-'.]+$/,
+      "Name should only contain letters, spaces, hyphens, or apostrophes",
+    ),
   constituent_phone: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
-    .regex(/^\+?[0-9]+$/, "Phone number should only contain digits (optionally starting with +)"),
+    .regex(
+      /^\+?[0-9]+$/,
+      "Phone number should only contain digits (optionally starting with +)",
+    ),
   constituent_email: z
     .string()
     .email("Please enter a valid email address")
     .or(z.literal("")),
 });
 
-type ConstituentFieldErrors = Partial<Record<keyof z.infer<typeof constituentSchema>, string>>;
+type ConstituentFieldErrors = Partial<
+  Record<keyof z.infer<typeof constituentSchema>, string>
+>;
 
 interface Location {
   id: number;
@@ -336,7 +357,6 @@ export function AgentAddIssues() {
     }
   };
 
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -418,7 +438,9 @@ export function AgentAddIssues() {
                 value={formData.category_id?.toString() || ""}
                 onValueChange={(v) => {
                   const categoryId = parseInt(v);
-                  const selectedCat = categories.find((c) => c.id === categoryId);
+                  const selectedCat = categories.find(
+                    (c) => c.id === categoryId,
+                  );
                   updateField("category_id", categoryId);
                   updateField("category", selectedCat?.name || "");
                   // Reset sector and subsector when category changes
@@ -430,7 +452,9 @@ export function AgentAddIssues() {
                 disabled={loadingData}
               >
                 <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder={loadingData ? "Loading..." : "Select Category"} />
+                  <SelectValue
+                    placeholder={loadingData ? "Loading..." : "Select Category"}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
@@ -464,9 +488,12 @@ export function AgentAddIssues() {
               <Select
                 value={formData.sector_id?.toString() || ""}
                 onValueChange={(v) => {
-                  if (v === "placeholder" || v === "loading" || v === "empty") return;
+                  if (v === "placeholder" || v === "loading" || v === "empty")
+                    return;
                   const sectorId = parseInt(v);
-                  const selectedSec = filteredSectors.find((s) => s.id === sectorId);
+                  const selectedSec = filteredSectors.find(
+                    (s) => s.id === sectorId,
+                  );
                   updateField("sector_id", sectorId);
                   updateField("sector", selectedSec?.name || "");
                   // Reset subsector when sector changes
@@ -504,9 +531,12 @@ export function AgentAddIssues() {
               <Select
                 value={formData.sub_sector_id?.toString() || ""}
                 onValueChange={(v) => {
-                  if (v === "placeholder" || v === "loading" || v === "empty") return;
+                  if (v === "placeholder" || v === "loading" || v === "empty")
+                    return;
                   const subSectorId = parseInt(v);
-                  const selectedSubSec = subSectors.find((s) => s.id === subSectorId);
+                  const selectedSubSec = subSectors.find(
+                    (s) => s.id === subSectorId,
+                  );
                   updateField("sub_sector_id", subSectorId);
                   updateField("subsector", selectedSubSec?.name || "");
                 }}
@@ -592,8 +622,17 @@ export function AgentAddIssues() {
           <FormItem label="Issue Images">
             <div className="mt-2 flex flex-wrap gap-4">
               {imagePreviews.map((preview, index) => (
-                <div key={index} className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm">
-                  <Image src={preview} alt="Preview" fill className="object-cover" unoptimized />
+                <div
+                  key={index}
+                  className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm"
+                >
+                  <Image
+                    src={preview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
@@ -650,11 +689,16 @@ export function AgentAddIssues() {
         {/* Tab 2: Constituent Details */}
         <TabsContent value="constituent-details" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Constituent Name" required error={fieldErrors.constituent_name}>
+            <FormItem
+              label="Constituent Name"
+              required
+              error={fieldErrors.constituent_name}
+            >
               <Input
                 className={cn(
                   "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
-                  fieldErrors.constituent_name && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                  fieldErrors.constituent_name &&
+                    "border-red-400 focus:border-red-500 focus:ring-red-500",
                 )}
                 value={formData.constituent_name || ""}
                 onChange={(e) => {
@@ -663,20 +707,30 @@ export function AgentAddIssues() {
                 }}
               />
             </FormItem>
-            <FormItem label="Phone Number" required error={fieldErrors.constituent_phone}>
+            <FormItem
+              label="Phone Number"
+              required
+              error={fieldErrors.constituent_phone}
+            >
               <Input
                 type="tel"
                 inputMode="numeric"
                 maxLength={13}
                 className={cn(
                   "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
-                  fieldErrors.constituent_phone && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                  fieldErrors.constituent_phone &&
+                    "border-red-400 focus:border-red-500 focus:ring-red-500",
                 )}
                 placeholder="+233 ..."
                 value={formData.constituent_phone || ""}
-                onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9+]/g, ''); }}
+                onInput={(e) => {
+                  e.currentTarget.value = e.currentTarget.value.replace(
+                    /[^0-9+]/g,
+                    "",
+                  );
+                }}
                 onChange={(e) => {
-                  const filtered = e.target.value.replace(/[^0-9+]/g, '');
+                  const filtered = e.target.value.replace(/[^0-9+]/g, "");
                   updateField("constituent_phone", filtered);
                   validateConstituentField("constituent_phone", filtered);
                 }}
@@ -685,12 +739,16 @@ export function AgentAddIssues() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Email Address" error={fieldErrors.constituent_email}>
+            <FormItem
+              label="Email Address"
+              error={fieldErrors.constituent_email}
+            >
               <Input
                 type="email"
                 className={cn(
                   "border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg",
-                  fieldErrors.constituent_email && "border-red-400 focus:border-red-500 focus:ring-red-500"
+                  fieldErrors.constituent_email &&
+                    "border-red-400 focus:border-red-500 focus:ring-red-500",
                 )}
                 value={formData.constituent_email || ""}
                 onChange={(e) => {
@@ -720,7 +778,9 @@ export function AgentAddIssues() {
             <Input
               className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
               value={formData.constituent_address || ""}
-              onChange={(e) => updateField("constituent_address", e.target.value)}
+              onChange={(e) =>
+                updateField("constituent_address", e.target.value)
+              }
             />
           </FormItem>
 
@@ -782,14 +842,16 @@ export function AgentAddIssues() {
               />
             </FormItem>
           </div>
- 
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormItem label="Specific Location">
               <Input
                 placeholder="e.g., 'Near the old market'"
                 className="border-slate-200 focus:border-amber-500 focus:ring-amber-500 rounded-lg"
                 value={formData.specific_location || ""}
-                onChange={(e) => updateField("specific_location", e.target.value)}
+                onChange={(e) =>
+                  updateField("specific_location", e.target.value)
+                }
               />
             </FormItem>
           </div>
@@ -835,9 +897,7 @@ function FormItem({
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}
-      {error && (
-        <p className="text-xs text-red-500 mt-1">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   );
 }
@@ -874,21 +934,22 @@ function SearchableSelect({
             "w-full justify-between font-normal",
             !value && "text-muted-foreground",
             "border-slate-200 bg-transparent hover:bg-slate-50",
-            disabled && "opacity-50 cursor-not-allowed"
+            disabled && "opacity-50 cursor-not-allowed",
           )}
           disabled={disabled}
         >
-          {loading ? (
-            "Loading..."
-          ) : value ? (
-            options.find((option) => option.value === value)?.label || value
-          ) : (
-            placeholder
-          )}
+          {loading
+            ? "Loading..."
+            : value
+              ? options.find((option) => option.value === value)?.label || value
+              : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        align="start"
+      >
         <Command>
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
@@ -906,7 +967,7 @@ function SearchableSelect({
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                   {option.label}

@@ -168,7 +168,9 @@ export default function SectorsPage() {
     setIsSubmitting(true);
     try {
       const response = await sectorsService.createSector({
-        category_id: formData.category_id ? parseInt(formData.category_id) : undefined,
+        category_id: formData.category_id
+          ? parseInt(formData.category_id)
+          : undefined,
         name: formData.name.trim(),
         description: formData.description,
         color: formData.color,
@@ -217,7 +219,9 @@ export default function SectorsPage() {
     setIsSubmitting(true);
     try {
       const response = await sectorsService.updateSector(selectedSector.id, {
-        category_id: formData.category_id ? parseInt(formData.category_id) : null,
+        category_id: formData.category_id
+          ? parseInt(formData.category_id)
+          : null,
         name: formData.name.trim(),
         description: formData.description,
         color: formData.color,
@@ -322,7 +326,8 @@ export default function SectorsPage() {
             label: "Categories",
             icon: FolderTree,
             href: "/admin-dashboard/categories",
-            className: "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50",
+            className:
+              "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50",
           },
           {
             label: "Add Sector",
@@ -507,11 +512,17 @@ export default function SectorsPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm text-gray-600">
                 Showing{" "}
-                <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
-                {" "}to{" "}
-                <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredSectors.length)}</span>
-                {" "}of{" "}
-                <span className="font-medium text-gray-900">{filteredSectors.length}</span>{" "}
+                <span className="font-medium text-gray-900">
+                  {(currentPage - 1) * pageSize + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium text-gray-900">
+                  {Math.min(currentPage * pageSize, filteredSectors.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium text-gray-900">
+                  {filteredSectors.length}
+                </span>{" "}
                 sectors
               </p>
               <div className="flex items-center gap-2">
@@ -519,16 +530,42 @@ export default function SectorsPage() {
                   Page {currentPage} of {totalPages}
                 </span>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                  >
                     <ChevronsLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                  >
                     <ChevronsRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -549,7 +586,9 @@ export default function SectorsPage() {
               <Label htmlFor="category">Category</Label>
               <Select
                 value={formData.category_id}
-                onValueChange={(value) => handleFormChange("category_id", value)}
+                onValueChange={(value) =>
+                  handleFormChange("category_id", value)
+                }
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
@@ -657,7 +696,9 @@ export default function SectorsPage() {
               <Label htmlFor="edit-category">Category</Label>
               <Select
                 value={formData.category_id}
-                onValueChange={(value) => handleFormChange("category_id", value)}
+                onValueChange={(value) =>
+                  handleFormChange("category_id", value)
+                }
                 disabled={isSubmitting}
               >
                 <SelectTrigger>

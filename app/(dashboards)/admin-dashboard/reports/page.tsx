@@ -102,7 +102,7 @@ export default function ReportsPage() {
           loading={chartsLoading}
           error={chartsError}
         />
-        
+
         {/* Report Builder */}
         <ReportBuilder onPreview={handlePreview} />
 

@@ -147,7 +147,10 @@ export default function EventDetailClient({
             </div>
 
             <div className="prose prose-slate max-w-none text-slate-600">
-              <SanitizedHtml html={event.description} className="text-lg leading-relaxed" />
+              <SanitizedHtml
+                html={event.description}
+                className="text-lg leading-relaxed"
+              />
               {/* If there was rich text content, we would render it here. */}
             </div>
 

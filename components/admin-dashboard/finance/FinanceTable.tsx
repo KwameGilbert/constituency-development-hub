@@ -47,10 +47,8 @@ const getSpendRatio = (spent: number, budget: number) => {
 };
 
 const getSpendBadge = (ratio: number) => {
-  if (ratio > 100)
-    return "bg-red-100 text-red-800 border-red-200";
-  if (ratio > 80)
-    return "bg-yellow-100 text-yellow-800 border-yellow-200";
+  if (ratio > 100) return "bg-red-100 text-red-800 border-red-200";
+  if (ratio > 80) return "bg-yellow-100 text-yellow-800 border-yellow-200";
   return "bg-green-100 text-green-800 border-green-200";
 };
 
@@ -79,15 +77,16 @@ const getStatusColor = (status: string) => {
 function exportProjectsToExcel(projects: FinanceProject[]) {
   const data = projects.map((p, i) => ({
     "#": i + 1,
-    "Project": p.title,
-    "Location": p.location,
-    "Sector": p.sector?.name || "—",
-    "Status": p.status.replace(/_/g, " "),
-    "Contractor": p.contractor || "—",
+    Project: p.title,
+    Location: p.location,
+    Sector: p.sector?.name || "—",
+    Status: p.status.replace(/_/g, " "),
+    Contractor: p.contractor || "—",
     "Budget (₵)": p.budget || 0,
     "Spent (₵)": p.spent || 0,
     "Remaining (₵)": (p.budget || 0) - (p.spent || 0),
-    "Usage (%)": p.budget > 0 ? Number(((p.spent / p.budget) * 100).toFixed(1)) : 0,
+    "Usage (%)":
+      p.budget > 0 ? Number(((p.spent / p.budget) * 100).toFixed(1)) : 0,
     "Progress (%)": p.progress_percent ?? 0,
     "Start Date": p.start_date || "—",
     "End Date": p.end_date || "—",
@@ -96,64 +95,111 @@ function exportProjectsToExcel(projects: FinanceProject[]) {
   const ws = XLSX.utils.json_to_sheet(data);
   // Auto-size columns
   ws["!cols"] = Object.keys(data[0] || {}).map((key) => ({
-    wch: Math.max(key.length, ...data.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+    wch:
+      Math.max(
+        key.length,
+        ...data.map((r) => String(r[key as keyof typeof r] ?? "").length),
+      ) + 2,
   }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Projects Finance");
-  XLSX.writeFile(wb, `Projects_Finance_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  XLSX.writeFile(
+    wb,
+    `Projects_Finance_${new Date().toISOString().slice(0, 10)}.xlsx`,
+  );
 }
 
 function exportIssuesToExcel(issues: FinanceIssue[]) {
   const data = issues.map((issue, i) => ({
     "#": i + 1,
-    "Issue": issue.title,
+    Issue: issue.title,
     "Case ID": issue.case_id || `#${issue.id}`,
-    "Category": issue.category,
-    "Location": issue.location,
-    "Status": issue.status.replace(/_/g, " "),
-    "Priority": issue.priority,
+    Category: issue.category,
+    Location: issue.location,
+    Status: issue.status.replace(/_/g, " "),
+    Priority: issue.priority,
     "Allocated Budget (₵)": issue.allocated_budget || 0,
     "Estimated Cost (₵)": issue.estimated_cost || 0,
     "Actual Cost (₵)": issue.actual_cost || 0,
-    "Remaining (₵)": (issue.allocated_budget || issue.estimated_cost || 0) - (issue.actual_cost || 0),
+    "Remaining (₵)":
+      (issue.allocated_budget || issue.estimated_cost || 0) -
+      (issue.actual_cost || 0),
     "Usage (%)": (() => {
       const budget = issue.allocated_budget || issue.estimated_cost || 0;
-      return budget > 0 ? Number(((issue.actual_cost / budget) * 100).toFixed(1)) : 0;
+      return budget > 0
+        ? Number(((issue.actual_cost / budget) * 100).toFixed(1))
+        : 0;
     })(),
   }));
 
   const ws = XLSX.utils.json_to_sheet(data);
   ws["!cols"] = Object.keys(data[0] || {}).map((key) => ({
-    wch: Math.max(key.length, ...data.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+    wch:
+      Math.max(
+        key.length,
+        ...data.map((r) => String(r[key as keyof typeof r] ?? "").length),
+      ) + 2,
   }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Issues Finance");
-  XLSX.writeFile(wb, `Issues_Finance_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  XLSX.writeFile(
+    wb,
+    `Issues_Finance_${new Date().toISOString().slice(0, 10)}.xlsx`,
+  );
 }
 
 function exportAllToExcel(
   projects: FinanceProject[],
   issues: FinanceIssue[],
-  summary: FinanceSummary | null
+  summary: FinanceSummary | null,
 ) {
   const wb = XLSX.utils.book_new();
 
   // Summary sheet
   if (summary) {
     const summaryData = [
-      { "Category": "Projects - Total Budget", "Amount (₵)": summary.projects_total_budget },
-      { "Category": "Projects - Total Spent", "Amount (₵)": summary.projects_total_spent },
-      { "Category": "Projects - Remaining", "Amount (₵)": summary.projects_total_budget - summary.projects_total_spent },
-      { "Category": "Projects - Count", "Amount (₵)": summary.projects_count },
-      { "Category": "", "Amount (₵)": "" },
-      { "Category": "Issues - Total Allocated", "Amount (₵)": summary.issues_total_allocated },
-      { "Category": "Issues - Total Spent", "Amount (₵)": summary.issues_total_spent },
-      { "Category": "Issues - Remaining", "Amount (₵)": summary.issues_total_allocated - summary.issues_total_spent },
-      { "Category": "Issues - Count", "Amount (₵)": summary.issues_count },
-      { "Category": "", "Amount (₵)": "" },
-      { "Category": "Grand Total Budget", "Amount (₵)": summary.grand_total_budget },
-      { "Category": "Grand Total Spent", "Amount (₵)": summary.grand_total_spent },
-      { "Category": "Grand Total Remaining", "Amount (₵)": summary.grand_total_budget - summary.grand_total_spent },
+      {
+        Category: "Projects - Total Budget",
+        "Amount (₵)": summary.projects_total_budget,
+      },
+      {
+        Category: "Projects - Total Spent",
+        "Amount (₵)": summary.projects_total_spent,
+      },
+      {
+        Category: "Projects - Remaining",
+        "Amount (₵)":
+          summary.projects_total_budget - summary.projects_total_spent,
+      },
+      { Category: "Projects - Count", "Amount (₵)": summary.projects_count },
+      { Category: "", "Amount (₵)": "" },
+      {
+        Category: "Issues - Total Allocated",
+        "Amount (₵)": summary.issues_total_allocated,
+      },
+      {
+        Category: "Issues - Total Spent",
+        "Amount (₵)": summary.issues_total_spent,
+      },
+      {
+        Category: "Issues - Remaining",
+        "Amount (₵)":
+          summary.issues_total_allocated - summary.issues_total_spent,
+      },
+      { Category: "Issues - Count", "Amount (₵)": summary.issues_count },
+      { Category: "", "Amount (₵)": "" },
+      {
+        Category: "Grand Total Budget",
+        "Amount (₵)": summary.grand_total_budget,
+      },
+      {
+        Category: "Grand Total Spent",
+        "Amount (₵)": summary.grand_total_spent,
+      },
+      {
+        Category: "Grand Total Remaining",
+        "Amount (₵)": summary.grand_total_budget - summary.grand_total_spent,
+      },
     ];
     const summaryWs = XLSX.utils.json_to_sheet(summaryData);
     summaryWs["!cols"] = [{ wch: 30 }, { wch: 20 }];
@@ -163,15 +209,16 @@ function exportAllToExcel(
   // Projects sheet
   const projData = projects.map((p, i) => ({
     "#": i + 1,
-    "Project": p.title,
-    "Location": p.location,
-    "Sector": p.sector?.name || "—",
-    "Status": p.status.replace(/_/g, " "),
-    "Contractor": p.contractor || "—",
+    Project: p.title,
+    Location: p.location,
+    Sector: p.sector?.name || "—",
+    Status: p.status.replace(/_/g, " "),
+    Contractor: p.contractor || "—",
     "Budget (₵)": p.budget || 0,
     "Spent (₵)": p.spent || 0,
     "Remaining (₵)": (p.budget || 0) - (p.spent || 0),
-    "Usage (%)": p.budget > 0 ? Number(((p.spent / p.budget) * 100).toFixed(1)) : 0,
+    "Usage (%)":
+      p.budget > 0 ? Number(((p.spent / p.budget) * 100).toFixed(1)) : 0,
     "Progress (%)": p.progress_percent ?? 0,
     "Start Date": p.start_date || "—",
     "End Date": p.end_date || "—",
@@ -180,7 +227,11 @@ function exportAllToExcel(
   if (projData.length > 0) {
     const projWs = XLSX.utils.json_to_sheet(projData);
     projWs["!cols"] = Object.keys(projData[0]).map((key) => ({
-      wch: Math.max(key.length, ...projData.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+      wch:
+        Math.max(
+          key.length,
+          ...projData.map((r) => String(r[key as keyof typeof r] ?? "").length),
+        ) + 2,
     }));
     XLSX.utils.book_append_sheet(wb, projWs, "Projects");
   }
@@ -188,31 +239,44 @@ function exportAllToExcel(
   // Issues sheet
   const issueData = issues.map((issue, i) => ({
     "#": i + 1,
-    "Issue": issue.title,
+    Issue: issue.title,
     "Case ID": issue.case_id || `#${issue.id}`,
-    "Category": issue.category,
-    "Location": issue.location,
-    "Status": issue.status.replace(/_/g, " "),
-    "Priority": issue.priority,
+    Category: issue.category,
+    Location: issue.location,
+    Status: issue.status.replace(/_/g, " "),
+    Priority: issue.priority,
     "Allocated Budget (₵)": issue.allocated_budget || 0,
     "Estimated Cost (₵)": issue.estimated_cost || 0,
     "Actual Cost (₵)": issue.actual_cost || 0,
-    "Remaining (₵)": (issue.allocated_budget || issue.estimated_cost || 0) - (issue.actual_cost || 0),
+    "Remaining (₵)":
+      (issue.allocated_budget || issue.estimated_cost || 0) -
+      (issue.actual_cost || 0),
     "Usage (%)": (() => {
       const budget = issue.allocated_budget || issue.estimated_cost || 0;
-      return budget > 0 ? Number(((issue.actual_cost / budget) * 100).toFixed(1)) : 0;
+      return budget > 0
+        ? Number(((issue.actual_cost / budget) * 100).toFixed(1))
+        : 0;
     })(),
     "Created At": issue.created_at || "—",
   }));
   if (issueData.length > 0) {
     const issueWs = XLSX.utils.json_to_sheet(issueData);
     issueWs["!cols"] = Object.keys(issueData[0]).map((key) => ({
-      wch: Math.max(key.length, ...issueData.map((r) => String(r[key as keyof typeof r] ?? "").length)) + 2,
+      wch:
+        Math.max(
+          key.length,
+          ...issueData.map(
+            (r) => String(r[key as keyof typeof r] ?? "").length,
+          ),
+        ) + 2,
     }));
     XLSX.utils.book_append_sheet(wb, issueWs, "Issues");
   }
 
-  XLSX.writeFile(wb, `Finance_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  XLSX.writeFile(
+    wb,
+    `Finance_Report_${new Date().toISOString().slice(0, 10)}.xlsx`,
+  );
 }
 
 // ---- Pagination Hook ----
@@ -223,7 +287,7 @@ function usePagination<T>(items: T[], defaultPageSize = 10) {
   const totalPages = Math.ceil(items.length / pageSize);
   const paginated = items.slice(
     (currentPage - 1) * pageSize,
-    currentPage * pageSize
+    currentPage * pageSize,
   );
 
   const goFirst = () => setCurrentPage(1);
@@ -275,10 +339,7 @@ function PaginationControls({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
       <div className="flex items-center gap-2 text-sm text-gray-600">
         <span>Rows per page:</span>
-        <Select
-          value={pageSize.toString()}
-          onValueChange={onPageSizeChange}
-        >
+        <Select value={pageSize.toString()} onValueChange={onPageSizeChange}>
           <SelectTrigger className="w-[70px] h-8">
             <SelectValue />
           </SelectTrigger>
@@ -294,16 +355,40 @@ function PaginationControls({
         <span className="text-sm text-gray-600">
           Page {currentPage} of {totalPages} ({totalItems} items)
         </span>
-        <Button variant="outline" size="icon" className="h-8 w-8" onClick={onFirst} disabled={currentPage === 1}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onFirst}
+          disabled={currentPage === 1}
+        >
           <ChevronsLeft className="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon" className="h-8 w-8" onClick={onPrev} disabled={currentPage === 1}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onPrev}
+          disabled={currentPage === 1}
+        >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon" className="h-8 w-8" onClick={onNext} disabled={currentPage === totalPages || totalPages === 0}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onNext}
+          disabled={currentPage === totalPages || totalPages === 0}
+        >
           <ChevronRight className="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="icon" className="h-8 w-8" onClick={onLast} disabled={currentPage === totalPages || totalPages === 0}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onLast}
+          disabled={currentPage === totalPages || totalPages === 0}
+        >
           <ChevronsRight className="h-4 w-4" />
         </Button>
       </div>
@@ -335,7 +420,9 @@ function SummaryCards({
           </div>
           <div>
             <p className="text-xs text-gray-500">Total Budget</p>
-            <p className="text-lg font-semibold">{formatCurrency(totalBudget)}</p>
+            <p className="text-lg font-semibold">
+              {formatCurrency(totalBudget)}
+            </p>
           </div>
         </div>
       </Card>
@@ -346,18 +433,26 @@ function SummaryCards({
           </div>
           <div>
             <p className="text-xs text-gray-500">Total Spent</p>
-            <p className="text-lg font-semibold">{formatCurrency(totalSpent)}</p>
+            <p className="text-lg font-semibold">
+              {formatCurrency(totalSpent)}
+            </p>
           </div>
         </div>
       </Card>
       <Card className="p-4">
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${remaining >= 0 ? "bg-green-100" : "bg-red-100"}`}>
-            <AlertTriangle className={`h-5 w-5 ${remaining >= 0 ? "text-green-600" : "text-red-600"}`} />
+          <div
+            className={`p-2 rounded-lg ${remaining >= 0 ? "bg-green-100" : "bg-red-100"}`}
+          >
+            <AlertTriangle
+              className={`h-5 w-5 ${remaining >= 0 ? "text-green-600" : "text-red-600"}`}
+            />
           </div>
           <div>
             <p className="text-xs text-gray-500">Remaining</p>
-            <p className={`text-lg font-semibold ${remaining < 0 ? "text-red-600" : ""}`}>
+            <p
+              className={`text-lg font-semibold ${remaining < 0 ? "text-red-600" : ""}`}
+            >
               {formatCurrency(remaining)}
             </p>
           </div>
@@ -371,7 +466,9 @@ function SummaryCards({
           <div>
             <p className="text-xs text-gray-500">{label} Count</p>
             <p className="text-lg font-semibold">{itemCount}</p>
-            <p className="text-xs text-gray-400">{spendPercent.toFixed(1)}% spent</p>
+            <p className="text-xs text-gray-400">
+              {spendPercent.toFixed(1)}% spent
+            </p>
           </div>
         </div>
       </Card>
@@ -422,11 +519,15 @@ function ProjectsFinanceTab({ projects }: { projects: FinanceProject[] }) {
                   {project.status.replace(/_/g, " ")}
                 </Badge>
               </div>
-              <div className="text-xs text-gray-500">{project.sector?.name || "—"}</div>
+              <div className="text-xs text-gray-500">
+                {project.sector?.name || "—"}
+              </div>
               <div className="grid grid-cols-3 gap-2 text-sm">
                 <div>
                   <p className="text-xs text-gray-500">Budget</p>
-                  <p className="font-medium">{formatCurrency(project.budget)}</p>
+                  <p className="font-medium">
+                    {formatCurrency(project.budget)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Spent</p>
@@ -458,14 +559,30 @@ function ProjectsFinanceTab({ projects }: { projects: FinanceProject[] }) {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">#</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Project</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Sector</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-600">Budget</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-600">Spent</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-600">Remaining</th>
-                  <th className="text-center py-3 px-4 font-medium text-gray-600">Usage</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    #
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Project
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Sector
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Status
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-gray-600">
+                    Budget
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-gray-600">
+                    Spent
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-gray-600">
+                    Remaining
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-600">
+                    Usage
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -474,23 +591,40 @@ function ProjectsFinanceTab({ projects }: { projects: FinanceProject[] }) {
                   const remaining = project.budget - spent;
                   const ratio = getSpendRatio(spent, project.budget);
                   return (
-                    <tr key={project.id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={project.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="py-3 px-4 text-gray-500">
                         {(pg.currentPage - 1) * pg.pageSize + idx + 1}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-medium text-gray-800">{project.title}</div>
-                        <div className="text-xs text-gray-500">{project.location}</div>
+                        <div className="font-medium text-gray-800">
+                          {project.title}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {project.location}
+                        </div>
                       </td>
-                      <td className="py-3 px-4 text-gray-600">{project.sector?.name || "—"}</td>
+                      <td className="py-3 px-4 text-gray-600">
+                        {project.sector?.name || "—"}
+                      </td>
                       <td className="py-3 px-4">
-                        <Badge className={`text-xs ${getStatusColor(project.status)}`}>
+                        <Badge
+                          className={`text-xs ${getStatusColor(project.status)}`}
+                        >
                           {project.status.replace(/_/g, " ")}
                         </Badge>
                       </td>
-                      <td className="py-3 px-4 text-right font-medium">{formatCurrency(project.budget)}</td>
-                      <td className="py-3 px-4 text-right font-medium">{formatCurrency(spent)}</td>
-                      <td className={`py-3 px-4 text-right font-medium ${remaining < 0 ? "text-red-600" : ""}`}>
+                      <td className="py-3 px-4 text-right font-medium">
+                        {formatCurrency(project.budget)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-medium">
+                        {formatCurrency(spent)}
+                      </td>
+                      <td
+                        className={`py-3 px-4 text-right font-medium ${remaining < 0 ? "text-red-600" : ""}`}
+                      >
                         {formatCurrency(remaining)}
                       </td>
                       <td className="py-3 px-4">
@@ -501,7 +635,9 @@ function ProjectsFinanceTab({ projects }: { projects: FinanceProject[] }) {
                               style={{ width: `${Math.min(ratio, 100)}%` }}
                             />
                           </div>
-                          <span className="text-xs text-gray-500 w-12 text-right">{ratio.toFixed(1)}%</span>
+                          <span className="text-xs text-gray-500 w-12 text-right">
+                            {ratio.toFixed(1)}%
+                          </span>
                         </div>
                       </td>
                     </tr>
@@ -541,12 +677,9 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
 
   const totalBudget = issues.reduce(
     (sum, i) => sum + (i.allocated_budget || i.estimated_cost || 0),
-    0
+    0,
   );
-  const totalSpent = issues.reduce(
-    (sum, i) => sum + (i.actual_cost || 0),
-    0
-  );
+  const totalSpent = issues.reduce((sum, i) => sum + (i.actual_cost || 0), 0);
 
   return (
     <div>
@@ -585,7 +718,9 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
                   {issue.status.replace(/_/g, " ")}
                 </Badge>
               </div>
-              <div className="text-xs text-gray-500">{issue.case_id || `#${issue.id}`}</div>
+              <div className="text-xs text-gray-500">
+                {issue.case_id || `#${issue.id}`}
+              </div>
               <div className="grid grid-cols-3 gap-2 text-sm">
                 <div>
                   <p className="text-xs text-gray-500">Allocated</p>
@@ -622,38 +757,68 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">#</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Issue</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Case ID</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Category</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-600">Priority</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-600">Allocated</th>
-                  <th className="text-right py-3 px-4 font-medium text-gray-600">Spent</th>
-                  <th className="text-center py-3 px-4 font-medium text-gray-600">Usage</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    #
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Issue
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Case ID
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Category
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Status
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-600">
+                    Priority
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-gray-600">
+                    Allocated
+                  </th>
+                  <th className="text-right py-3 px-4 font-medium text-gray-600">
+                    Spent
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-600">
+                    Usage
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {pg.paginated.map((issue, idx) => {
-                  const budget = issue.allocated_budget || issue.estimated_cost || 0;
+                  const budget =
+                    issue.allocated_budget || issue.estimated_cost || 0;
                   const spent = issue.actual_cost || 0;
                   const remaining = budget - spent;
                   const ratio = getSpendRatio(spent, budget);
                   return (
-                    <tr key={issue.id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={issue.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="py-3 px-4 text-gray-500">
                         {(pg.currentPage - 1) * pg.pageSize + idx + 1}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-medium text-gray-800 max-w-[200px] truncate">{issue.title}</div>
-                        <div className="text-xs text-gray-500">{issue.location}</div>
+                        <div className="font-medium text-gray-800 max-w-[200px] truncate">
+                          {issue.title}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {issue.location}
+                        </div>
                       </td>
                       <td className="py-3 px-4 text-gray-600 font-mono text-xs">
                         {issue.case_id || `#${issue.id}`}
                       </td>
-                      <td className="py-3 px-4 text-gray-600">{issue.category}</td>
+                      <td className="py-3 px-4 text-gray-600">
+                        {issue.category}
+                      </td>
                       <td className="py-3 px-4">
-                        <Badge className={`text-xs ${getStatusColor(issue.status)}`}>
+                        <Badge
+                          className={`text-xs ${getStatusColor(issue.status)}`}
+                        >
                           {issue.status.replace(/_/g, " ")}
                         </Badge>
                       </td>
@@ -672,8 +837,12 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
                           {issue.priority}
                         </Badge>
                       </td>
-                      <td className="py-3 px-4 text-right font-medium">{formatCurrency(budget)}</td>
-                      <td className="py-3 px-4 text-right font-medium">{formatCurrency(spent)}</td>
+                      <td className="py-3 px-4 text-right font-medium">
+                        {formatCurrency(budget)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-medium">
+                        {formatCurrency(spent)}
+                      </td>
                       <td className="py-3 px-4">
                         {budget > 0 ? (
                           <div className="flex items-center justify-center gap-2">
@@ -683,10 +852,14 @@ function IssuesFinanceTab({ issues }: { issues: FinanceIssue[] }) {
                                 style={{ width: `${Math.min(ratio, 100)}%` }}
                               />
                             </div>
-                            <span className="text-xs text-gray-500 w-12 text-right">{ratio.toFixed(1)}%</span>
+                            <span className="text-xs text-gray-500 w-12 text-right">
+                              {ratio.toFixed(1)}%
+                            </span>
                           </div>
                         ) : (
-                          <span className="text-xs text-gray-400 text-center block">—</span>
+                          <span className="text-xs text-gray-400 text-center block">
+                            —
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -736,18 +909,20 @@ export function FinanceTable({ projects, issues, summary }: FinanceTableProps) {
           Export Full Report
         </Button>
       </div>
-    <Tabs defaultValue="projects" className="w-full">
-      <TabsList className="grid w-full max-w-md grid-cols-2">
-        <TabsTrigger value="projects">Projects ({projects.length})</TabsTrigger>
-        <TabsTrigger value="issues">Issues ({issues.length})</TabsTrigger>
-      </TabsList>
-      <TabsContent value="projects" className="mt-6">
-        <ProjectsFinanceTab projects={projects} />
-      </TabsContent>
-      <TabsContent value="issues" className="mt-6">
-        <IssuesFinanceTab issues={issues} />
-      </TabsContent>
-    </Tabs>
+      <Tabs defaultValue="projects" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="projects">
+            Projects ({projects.length})
+          </TabsTrigger>
+          <TabsTrigger value="issues">Issues ({issues.length})</TabsTrigger>
+        </TabsList>
+        <TabsContent value="projects" className="mt-6">
+          <ProjectsFinanceTab projects={projects} />
+        </TabsContent>
+        <TabsContent value="issues" className="mt-6">
+          <IssuesFinanceTab issues={issues} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

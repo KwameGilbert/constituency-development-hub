@@ -20,12 +20,25 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Eye, Edit, UserX, Search, Loader2, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import {
+  Eye,
+  Edit,
+  UserX,
+  Search,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import Link from "next/link";
 import { userService, User } from "@/lib/services/user-service";
 import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { dashboardService, AdminDashboardStats } from "@/lib/services/dashboard-service";
+import {
+  dashboardService,
+  AdminDashboardStats,
+} from "@/lib/services/dashboard-service";
 import Swal from "sweetalert2";
 
 export function UserList() {
@@ -100,12 +113,30 @@ export function UserList() {
 
   // Use stats for counts if available
   const tabs = [
-    { name: "All Users", value: "all", count: stats?.users_by_role ? Object.values(stats.users_by_role).reduce((a, b) => a + b, 0) : 0 },
+    {
+      name: "All Users",
+      value: "all",
+      count: stats?.users_by_role
+        ? Object.values(stats.users_by_role).reduce((a, b) => a + b, 0)
+        : 0,
+    },
     { name: "Admin", value: "admin", count: stats?.users_by_role.admin || 0 },
-    { name: "Web Admin", value: "web_admin", count: stats?.users_by_role.web_admin || 0 },
-    { name: "Officer", value: "officer", count: stats?.users_by_role.officer || 0 },
+    {
+      name: "Web Admin",
+      value: "web_admin",
+      count: stats?.users_by_role.web_admin || 0,
+    },
+    {
+      name: "Officer",
+      value: "officer",
+      count: stats?.users_by_role.officer || 0,
+    },
     { name: "Agent", value: "agent", count: stats?.users_by_role.agent || 0 },
-    { name: "Task Force", value: "task_force", count: stats?.users_by_role.task_force || 0 },
+    {
+      name: "Task Force",
+      value: "task_force",
+      count: stats?.users_by_role.task_force || 0,
+    },
   ];
 
   const getRoleBadgeColor = (roleType: string) => {
@@ -162,7 +193,8 @@ export function UserList() {
       await fetchData();
     } catch (err) {
       console.error("Error deleting user:", err);
-      const message = err instanceof Error ? err.message : "Failed to delete user";
+      const message =
+        err instanceof Error ? err.message : "Failed to delete user";
       await Swal.fire({
         title: "Delete failed",
         text: message,
@@ -382,13 +414,12 @@ export function UserList() {
             Showing{" "}
             <span className="font-medium text-gray-900">
               {(currentPage - 1) * pageSize + 1}
-            </span>
-            {" "}to{" "}
+            </span>{" "}
+            to{" "}
             <span className="font-medium text-gray-900">
               {Math.min(currentPage * pageSize, totalUsers)}
-            </span>
-            {" "}of{" "}
-            <span className="font-medium text-gray-900">{totalUsers}</span>{" "}
+            </span>{" "}
+            of <span className="font-medium text-gray-900">{totalUsers}</span>{" "}
             users
           </div>
 
@@ -441,7 +472,9 @@ export function UserList() {
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
                 disabled={currentPage === totalPages}
               >
                 <ChevronRight className="h-4 w-4" />

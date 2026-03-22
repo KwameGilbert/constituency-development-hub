@@ -88,12 +88,13 @@ function TaskForceMainDashboardPage() {
           let issues = filteredRes.data.issues;
           // Apply client-side search filtering since API does not support it yet
           if (searchTerm) {
-             const lower = searchTerm.toLowerCase();
-             issues = issues.filter(i => 
-               i.title.toLowerCase().includes(lower) || 
-               i.description.toLowerCase().includes(lower) ||
-               i.location.toLowerCase().includes(lower)
-             );
+            const lower = searchTerm.toLowerCase();
+            issues = issues.filter(
+              (i) =>
+                i.title.toLowerCase().includes(lower) ||
+                i.description.toLowerCase().includes(lower) ||
+                i.location.toLowerCase().includes(lower),
+            );
           }
           setFilteredIssues(issues);
         }
@@ -241,10 +242,10 @@ function TaskForceMainDashboardPage() {
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {(stats?.overview?.pending_assessment || 0) +
-                   (stats?.overview?.assessment_in_progress || 0) +
-                   (stats?.overview?.assessment_submitted || 0) +
-                   (stats?.overview?.resolution_in_progress || 0) +
-                   (stats?.overview?.resolved || 0)}
+                    (stats?.overview?.assessment_in_progress || 0) +
+                    (stats?.overview?.assessment_submitted || 0) +
+                    (stats?.overview?.resolution_in_progress || 0) +
+                    (stats?.overview?.resolved || 0)}
                 </p>
               </div>
             </div>
@@ -336,7 +337,15 @@ function TaskForceMainDashboardPage() {
                           >
                             {metadata.statuses.find(
                               (s) => s.value === issue.status,
-                            )?.label || issue.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            )?.label ||
+                              issue.status
+                                .split("_")
+                                .map(
+                                  (word) =>
+                                    word.charAt(0).toUpperCase() +
+                                    word.slice(1),
+                                )
+                                .join(" ")}
                           </Badge>
                           <Badge className={getPriorityColor(issue.priority)}>
                             {issue.priority}
@@ -369,7 +378,9 @@ function TaskForceMainDashboardPage() {
                           "assessment_in_progress",
                           "needs_revision",
                         ].includes(issue.status) && (
-                          <Link href={`/task-force-dashboard/assess/${issue.id}`}>
+                          <Link
+                            href={`/task-force-dashboard/assess/${issue.id}`}
+                          >
                             <Button
                               size="sm"
                               className="bg-purple-600 hover:bg-purple-700"
@@ -405,10 +416,10 @@ function TaskForceMainDashboardPage() {
                 <span className="text-sm text-gray-600">Total Issues</span>
                 <span className="font-semibold">
                   {(stats?.overview?.pending_assessment || 0) +
-                   (stats?.overview?.assessment_in_progress || 0) +
-                   (stats?.overview?.assessment_submitted || 0) +
-                   (stats?.overview?.resolution_in_progress || 0) +
-                   (stats?.overview?.resolved || 0)}
+                    (stats?.overview?.assessment_in_progress || 0) +
+                    (stats?.overview?.assessment_submitted || 0) +
+                    (stats?.overview?.resolution_in_progress || 0) +
+                    (stats?.overview?.resolved || 0)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -468,8 +479,7 @@ function TaskForceMainDashboardPage() {
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    {stats?.priority?.urgent || 0} urgent issues need
-                    attention
+                    {stats?.priority?.urgent || 0} urgent issues need attention
                   </AlertDescription>
                 </Alert>
                 <Link href="/task-force-dashboard/issues?status=assigned_to_task_force">

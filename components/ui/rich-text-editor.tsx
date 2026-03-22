@@ -5,7 +5,6 @@ import { Editor } from "@tinymce/tinymce-react";
 import { cn } from "@/lib/utils";
 import { uploadService } from "@/lib/services/upload-service";
 
-
 interface RichTextEditorProps {
   value?: string;
   onChange?: (content: string) => void;
@@ -15,7 +14,6 @@ interface RichTextEditorProps {
   height?: number;
   error?: boolean;
 }
-
 
 export function RichTextEditor({
   value = "",
@@ -37,7 +35,7 @@ export function RichTextEditor({
   const uploadEditorImage = async (file: File): Promise<string> => {
     const response = await uploadService.uploadFile(file, "editor", "image");
     const rawUrl = response.data.url;
-    
+
     // If the server returns a relative path, prepend the backend API URL
     if (rawUrl.startsWith("/")) {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
@@ -45,13 +43,14 @@ export function RichTextEditor({
       const cleanBaseUrl = baseUrl.replace(/\/+$/, "");
       return `${cleanBaseUrl}${rawUrl}`;
     }
-    
+
     return rawUrl;
   };
 
-  const handleTinyMceImageUpload = async (
-    blobInfo: { blob: () => Blob; filename: () => string },
-  ): Promise<string> => {
+  const handleTinyMceImageUpload = async (blobInfo: {
+    blob: () => Blob;
+    filename: () => string;
+  }): Promise<string> => {
     const file = new File([blobInfo.blob()], blobInfo.filename(), {
       type: blobInfo.blob().type || "image/png",
     });
@@ -145,9 +144,10 @@ export function RichTextEditor({
           promotion: false,
           automatic_uploads: true,
           file_picker_types: "image",
-          images_upload_handler: async (
-            blobInfo: { blob: () => Blob; filename: () => string }
-          ) => {
+          images_upload_handler: async (blobInfo: {
+            blob: () => Blob;
+            filename: () => string;
+          }) => {
             return handleTinyMceImageUpload(blobInfo);
           },
           file_picker_callback: (

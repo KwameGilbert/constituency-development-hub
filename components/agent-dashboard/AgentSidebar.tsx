@@ -56,19 +56,26 @@ export function AgentSidebar() {
   };
 
   return (
-    <Sidebar collapsible="offcanvas" className="bg-slate-900 border-r-0 selection:bg-amber-500/30 z-40">
+    <Sidebar
+      collapsible="offcanvas"
+      className="bg-slate-900 border-r-0 selection:bg-amber-500/30 z-40"
+    >
       <SidebarHeader className="h-20 border-b border-slate-800/50 bg-slate-900 sticky top-0 z-10 px-2 overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-6">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-amber-400 to-amber-600 text-slate-900 shadow-lg shadow-amber-500/20">
             <User className="h-6 w-6 stroke-[2.5px]" />
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="font-semibold text-slate-100 tracking-tight text-lg">Agent Portal</span>
-            <span className="text-[10px] text-amber-500/80 font-medium mt-1">Sefwi Wiawso Hub</span>
+            <span className="font-semibold text-slate-100 tracking-tight text-lg">
+              Agent Portal
+            </span>
+            <span className="text-[10px] text-amber-500/80 font-medium mt-1">
+              Sefwi Wiawso Hub
+            </span>
           </div>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent className="bg-slate-900 px-3">
         <SidebarGroup className="py-6">
           <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2">
@@ -140,7 +147,9 @@ export function AgentSidebar() {
               <span className="truncate text-xs font-semibold text-slate-100 capitalize">
                 {userName}
               </span>
-              <span className="truncate text-[10px] text-slate-400">{userEmail}</span>
+              <span className="truncate text-[10px] text-slate-400">
+                {userEmail}
+              </span>
             </div>
           </div>
           <AlertDialog>
@@ -151,14 +160,18 @@ export function AgentSidebar() {
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-slate-900 border-slate-800 text-slate-100">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-white">Confirm Logout</AlertDialogTitle>
+                <AlertDialogTitle className="text-white">
+                  Confirm Logout
+                </AlertDialogTitle>
                 <AlertDialogDescription className="text-slate-400">
                   Are you sure you want to log out? You will need to sign in
                   again to access your dashboard.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleLogout}
                   className="bg-red-600 hover:bg-red-700 text-white"

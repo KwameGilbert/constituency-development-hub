@@ -17,7 +17,7 @@ import {
   Send,
   CheckCircle,
   Pencil,
-  Briefcase
+  Briefcase,
 } from "lucide-react";
 import { Title } from "@radix-ui/react-toast"; // unused
 import { Button } from "@/components/ui/button";
@@ -68,8 +68,8 @@ const getStatusBadge = (status: string) => {
       label: "Assessment Submitted",
     },
     resources_allocated: {
-       className: "bg-teal-100 text-teal-700",
-       label: "Resources Allocated",
+      className: "bg-teal-100 text-teal-700",
+      label: "Resources Allocated",
     },
     resolution_in_progress: {
       className: "bg-lime-100 text-lime-700",
@@ -102,20 +102,37 @@ const getStatusBadge = (status: string) => {
 const getPriorityBadge = (priority: string) => {
   const priorityLower = priority?.toLowerCase() || "";
   const config: Record<string, { className: string; label: string }> = {
-    critical: { className: "bg-red-100 text-red-700 font-semibold", label: "Critical" },
-    urgent: { className: "bg-red-100 text-red-700 font-semibold", label: "Urgent" },
-    high: { className: "bg-orange-100 text-orange-700 font-semibold", label: "High" },
-    medium: { className: "bg-yellow-100 text-yellow-700 font-semibold", label: "Medium" },
+    critical: {
+      className: "bg-red-100 text-red-700 font-semibold",
+      label: "Critical",
+    },
+    urgent: {
+      className: "bg-red-100 text-red-700 font-semibold",
+      label: "Urgent",
+    },
+    high: {
+      className: "bg-orange-100 text-orange-700 font-semibold",
+      label: "High",
+    },
+    medium: {
+      className: "bg-yellow-100 text-yellow-700 font-semibold",
+      label: "Medium",
+    },
     low: { className: "bg-gray-100 text-gray-700 font-semibold", label: "Low" },
   };
 
   const badge = config[priorityLower] || {
     className: "bg-gray-100 text-gray-700",
-    label: priority ? priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase() : "Unknown",
+    label: priority
+      ? priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase()
+      : "Unknown",
   };
 
   return (
-    <Badge variant="outline" className={`${badge.className} border-0 rounded-lg px-2.5 py-0.5`}>
+    <Badge
+      variant="outline"
+      className={`${badge.className} border-0 rounded-lg px-2.5 py-0.5`}
+    >
       {badge.label}
     </Badge>
   );
@@ -133,7 +150,6 @@ export default function OfficerIssueDetailPage({
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [comment, setComment] = useState("");
-  
 
   useEffect(() => {
     async function fetchIssue() {
@@ -156,16 +172,19 @@ export default function OfficerIssueDetailPage({
     fetchIssue();
   }, [id]);
 
-
   async function handleReviewAndForward() {
     if (!issue) return;
     setUpdating(true);
     try {
-      await issuesService.updateOfficerIssueStatus(issue.id, "under_officer_review", "Issue taken under officer review");
+      await issuesService.updateOfficerIssueStatus(
+        issue.id,
+        "under_officer_review",
+        "Issue taken under officer review",
+      );
       const response = await issuesService.updateOfficerIssueStatus(
         issue.id,
         "forwarded_to_admin",
-        comment || "Forwarded to admin for further action"
+        comment || "Forwarded to admin for further action",
       );
       if (response.success) {
         toast.success("Issue reviewed and forwarded to admin");
@@ -186,7 +205,7 @@ export default function OfficerIssueDetailPage({
       const response = await issuesService.updateOfficerIssueStatus(
         issue.id,
         "under_officer_review",
-        comment || "Issue is now under officer review"
+        comment || "Issue is now under officer review",
       );
       if (response.success) {
         toast.success("Issue marked as under review");
@@ -216,7 +235,9 @@ export default function OfficerIssueDetailPage({
     }
   };
 
-  const isEditable = issue && ["submitted", "rejected", "under_officer_review"].includes(issue.status);
+  const isEditable =
+    issue &&
+    ["submitted", "rejected", "under_officer_review"].includes(issue.status);
 
   if (loading) {
     return (
@@ -236,7 +257,11 @@ export default function OfficerIssueDetailPage({
       <div className="flex flex-col h-full w-full bg-slate-50">
         <DashboardHeader title="Issue Details" subtitle="Not Found" />
         <div className="flex-1 p-6">
-          <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="mb-4"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <div className="rounded-lg border bg-red-50 p-6 text-red-600 flex items-center gap-3">
@@ -253,7 +278,7 @@ export default function OfficerIssueDetailPage({
 
   // Check if system provided an agent or it's from current user
   const agentObject = issue.agent || issue.user;
-  const isAgentSubmitted = issue.origin === 'agent' || !!agentObject;
+  const isAgentSubmitted = issue.origin === "agent" || !!agentObject;
 
   return (
     <div className="flex flex-col h-full overflow-y-auto custom-scrollbar bg-slate-50/50">
@@ -262,8 +287,6 @@ export default function OfficerIssueDetailPage({
         subtitle={`Case ID: ${issue.case_id || `#${issue.id}`}`}
       />
       <div className="flex-1 p-4 sm:p-6 space-y-6 pb-20">
-        
-
         {/* Action Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -289,7 +312,7 @@ export default function OfficerIssueDetailPage({
               </p>
             </div>
           </div>
-          
+
           <div className="flex gap-2">
             {isEditable && (
               <Button
@@ -308,7 +331,6 @@ export default function OfficerIssueDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            
             <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
               <CardHeader className="bg-gradient-to-r from-indigo-50/50 to-transparent border-b border-slate-50">
                 <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
@@ -325,7 +347,9 @@ export default function OfficerIssueDetailPage({
 
                 <div className="space-y-6">
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500">Description</label>
+                    <label className="text-xs font-medium text-slate-500">
+                      Description
+                    </label>
                     <div className="bg-slate-50/30 rounded-lg p-1">
                       <IssueDescription
                         description={issue.description}
@@ -349,25 +373,34 @@ export default function OfficerIssueDetailPage({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Category</label>
+                      <label className="text-xs font-medium text-slate-500">
+                        Category
+                      </label>
                       <p className="font-semibold text-slate-900 text-sm capitalize">
                         {issue.category || "Not Specified"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Impact Type</label>
+                      <label className="text-xs font-medium text-slate-500">
+                        Impact Type
+                      </label>
                       <p className="font-semibold text-slate-900 text-sm capitalize">
-                        {issue.issue_type?.replace(/_/g, " ") || "Community Based"}
+                        {issue.issue_type?.replace(/_/g, " ") ||
+                          "Community Based"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Sector</label>
+                      <label className="text-xs font-medium text-slate-500">
+                        Sector
+                      </label>
                       <p className="font-semibold text-slate-900 text-sm">
                         {issue.sector || "Not Specified"}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <label className="text-xs font-medium text-slate-500">Subsector</label>
+                      <label className="text-xs font-medium text-slate-500">
+                        Subsector
+                      </label>
                       <p className="font-semibold text-slate-900 text-sm">
                         {issue.subsector || "Not Specified"}
                       </p>
@@ -395,7 +428,9 @@ export default function OfficerIssueDetailPage({
                 </div>
                 {issue.suburb && (
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500">Suburb</label>
+                    <label className="text-xs font-medium text-slate-500">
+                      Suburb
+                    </label>
                     <p className="font-semibold text-slate-900 text-sm">
                       {issue.suburb}
                     </p>
@@ -403,7 +438,9 @@ export default function OfficerIssueDetailPage({
                 )}
                 {issue.specific_location && (
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500">Specific Location</label>
+                    <label className="text-xs font-medium text-slate-500">
+                      Specific Location
+                    </label>
                     <p className="font-semibold italic text-slate-600 text-sm">
                       &quot;{issue.specific_location}&quot;
                     </p>
@@ -411,7 +448,9 @@ export default function OfficerIssueDetailPage({
                 )}
                 {issue.latitude && issue.longitude && (
                   <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500">Coordinates</label>
+                    <label className="text-xs font-medium text-slate-500">
+                      Coordinates
+                    </label>
                     <p className="font-semibold text-slate-600 text-sm font-mono">
                       {issue.latitude}, {issue.longitude}
                     </p>
@@ -421,7 +460,8 @@ export default function OfficerIssueDetailPage({
             </Card>
 
             {/* Officer Actions Form */}
-            {(issue.status === "submitted" || issue.status === "under_officer_review") && (
+            {(issue.status === "submitted" ||
+              issue.status === "under_officer_review") && (
               <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
                 <CardHeader className="bg-gradient-to-r from-rose-50/50 to-transparent border-b border-slate-50">
                   <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
@@ -481,7 +521,8 @@ export default function OfficerIssueDetailPage({
                   <div className="flex items-center gap-3">
                     <CheckCircle className="h-5 w-5 text-indigo-600 shrink-0" />
                     <p className="text-indigo-800 font-medium text-sm">
-                      This issue has been forwarded to the administration unit and is awaiting further assignment and processing.
+                      This issue has been forwarded to the administration unit
+                      and is awaiting further assignment and processing.
                     </p>
                   </div>
                 </CardContent>
@@ -519,12 +560,11 @@ export default function OfficerIssueDetailPage({
 
           {/* Sidebar */}
           <div className="space-y-6">
-            
             <Card className="shadow-sm border-slate-100 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
               <CardHeader className="bg-gradient-to-r from-blue-50/50 to-transparent border-b border-slate-50">
                 <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
-                   <div className="h-6 w-1 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                   Quick Info
+                  <div className="h-6 w-1 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                  Quick Info
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-5 space-y-4">
@@ -533,10 +573,10 @@ export default function OfficerIssueDetailPage({
                     <Clock className="h-4 w-4 text-slate-600" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-500">Status</label>
-                    <div className="mt-0.5">
-                      {getStatusBadge(issue.status)}
-                    </div>
+                    <label className="text-[11px] font-medium text-slate-500">
+                      Status
+                    </label>
+                    <div className="mt-0.5">{getStatusBadge(issue.status)}</div>
                   </div>
                 </div>
 
@@ -545,7 +585,9 @@ export default function OfficerIssueDetailPage({
                     <Tag className="h-4 w-4 text-slate-600" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-500">Priority</label>
+                    <label className="text-[11px] font-medium text-slate-500">
+                      Priority
+                    </label>
                     <div className="mt-0.5">
                       {getPriorityBadge(issue.priority)}
                     </div>
@@ -558,7 +600,9 @@ export default function OfficerIssueDetailPage({
                       <Users className="h-4 w-4 text-slate-600" />
                     </div>
                     <div>
-                      <label className="text-[11px] font-medium text-slate-500">People Affected</label>
+                      <label className="text-[11px] font-medium text-slate-500">
+                        People Affected
+                      </label>
                       <p className="font-semibold text-slate-900 text-sm">
                         {Number(issue.people_affected).toLocaleString()}
                       </p>
@@ -569,10 +613,14 @@ export default function OfficerIssueDetailPage({
                 {issue.estimated_budget != null && (
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-slate-100/80">
-                      <div className="h-4 w-4 flex items-center justify-center font-bold text-slate-600 text-[10px]">GH₵</div>
+                      <div className="h-4 w-4 flex items-center justify-center font-bold text-slate-600 text-[10px]">
+                        GH₵
+                      </div>
                     </div>
                     <div>
-                      <label className="text-[11px] font-medium text-slate-500">Estimated Budget</label>
+                      <label className="text-[11px] font-medium text-slate-500">
+                        Estimated Budget
+                      </label>
                       <p className="font-semibold text-slate-900 text-sm">
                         GH₵ {Number(issue.estimated_budget).toLocaleString()}
                       </p>
@@ -585,7 +633,9 @@ export default function OfficerIssueDetailPage({
                     <Calendar className="h-4 w-4 text-slate-600" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-500">Created Date</label>
+                    <label className="text-[11px] font-medium text-slate-500">
+                      Created Date
+                    </label>
                     <p className="font-semibold text-slate-900 text-sm">
                       {formatDate(issue.created_at)}
                     </p>
@@ -610,17 +660,23 @@ export default function OfficerIssueDetailPage({
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-slate-900 text-sm truncate">
-                        {agentObject.name || agentObject.user?.name || "Agent Name"}
+                        {agentObject.name ||
+                          agentObject.user?.name ||
+                          "Agent Name"}
                       </p>
                       <p className="text-xs text-slate-500 truncate">
-                        {agentObject.email || agentObject.user?.email || "Agent"}
+                        {agentObject.email ||
+                          agentObject.user?.email ||
+                          "Agent"}
                       </p>
                     </div>
                   </div>
                   <div className="pt-2">
                     <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
                       <Phone className="h-3 w-3" />
-                      {agentObject.phone || agentObject.user?.phone || "No Phone"}
+                      {agentObject.phone ||
+                        agentObject.user?.phone ||
+                        "No Phone"}
                     </div>
                   </div>
                 </CardContent>
@@ -637,7 +693,9 @@ export default function OfficerIssueDetailPage({
               </CardHeader>
               <CardContent className="p-5 space-y-4">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-slate-500">Full Name</label>
+                  <label className="text-[11px] font-medium text-slate-500">
+                    Full Name
+                  </label>
                   <p className="font-semibold text-slate-900 text-sm">
                     {issue.reporter_name || "Name Not Provided"}
                   </p>
@@ -647,7 +705,9 @@ export default function OfficerIssueDetailPage({
                     <Phone className="h-3.5 w-3.5 text-indigo-600" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-500">Phone</label>
+                    <label className="text-[11px] font-medium text-slate-500">
+                      Phone
+                    </label>
                     <p className="font-semibold text-slate-900 text-sm">
                       {issue.reporter_phone || "Phone Not Provided"}
                     </p>
@@ -658,14 +718,18 @@ export default function OfficerIssueDetailPage({
                     <Mail className="h-3.5 w-3.5 text-blue-600" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-500">Email</label>
+                    <label className="text-[11px] font-medium text-slate-500">
+                      Email
+                    </label>
                     <p className="font-semibold text-slate-900 text-sm">
                       {issue.reporter_email || "Email Not Provided"}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-slate-500">Gender</label>
+                  <label className="text-[11px] font-medium text-slate-500">
+                    Gender
+                  </label>
                   <p className="font-semibold text-slate-900 capitalize text-sm">
                     {issue.reporter_gender || "Not Specified"}
                   </p>
@@ -675,7 +739,9 @@ export default function OfficerIssueDetailPage({
                     <Home className="h-3.5 w-3.5 text-slate-600" />
                   </div>
                   <div>
-                    <label className="text-[11px] font-medium text-slate-500">Home Address</label>
+                    <label className="text-[11px] font-medium text-slate-500">
+                      Home Address
+                    </label>
                     <p className="font-semibold text-slate-900 text-sm">
                       {issue.reporter_address || "Address Not Specified"}
                     </p>

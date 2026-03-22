@@ -612,98 +612,145 @@ export default function CottagesPage() {
           ) : (
             <>
               <div className="bg-white rounded-lg border border-gray-100 overflow-hidden shadow-sm">
-              <Table>
-                <TableHeader className="bg-gray-50/50">
-                  <TableRow className="hover:bg-transparent border-gray-100">
-                    <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Name
-                    </TableHead>
-                    <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Suburb
-                    </TableHead>
-                    <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Smaller Community
-                    </TableHead>
-                    <TableHead className="text-right font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedCottages.map((cottage) => {
-                    const { suburbName, smallerCommunityName } =
-                      getCottageContext(cottage);
-                    return (
-                      <TableRow
-                        key={cottage.id}
-                        className="hover:bg-gray-50/50 border-gray-100 transition-colors"
-                      >
-                        <TableCell className="font-medium text-gray-900">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
-                              <Home className="w-4 h-4" />
+                <Table>
+                  <TableHeader className="bg-gray-50/50">
+                    <TableRow className="hover:bg-transparent border-gray-100">
+                      <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
+                        Name
+                      </TableHead>
+                      <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
+                        Suburb
+                      </TableHead>
+                      <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
+                        Smaller Community
+                      </TableHead>
+                      <TableHead className="text-right font-medium text-gray-500 text-xs uppercase tracking-wider">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedCottages.map((cottage) => {
+                      const { suburbName, smallerCommunityName } =
+                        getCottageContext(cottage);
+                      return (
+                        <TableRow
+                          key={cottage.id}
+                          className="hover:bg-gray-50/50 border-gray-100 transition-colors"
+                        >
+                          <TableCell className="font-medium text-gray-900">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
+                                <Home className="w-4 h-4" />
+                              </div>
+                              {cottage.name}
                             </div>
-                            {cottage.name}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-gray-500">
-                          {suburbName}
-                        </TableCell>
-                        <TableCell className="text-gray-500">
-                          {smallerCommunityName}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                              onClick={() => handleEditClick(cottage)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
-                              onClick={() => handleDeleteClick(cottage)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-            
-            {/* Pagination */}
-            {!loading && totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                <p className="text-sm text-gray-600">
-                  Showing{" "}
-                  <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
-                  {" "}to{" "}
-                  <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredCottages.length)}</span>
-                  {" "}of{" "}
-                  <span className="font-medium text-gray-900">{filteredCottages.length}</span>{" "}
-                  cottages
-                </p>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">Page {currentPage} of {totalPages}</span>
-                  <div className="flex items-center gap-1">
-                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
-                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}><ChevronLeft className="h-4 w-4" /></Button>
-                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}><ChevronRight className="h-4 w-4" /></Button>
-                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}><ChevronsRight className="h-4 w-4" /></Button>
+                          </TableCell>
+                          <TableCell className="text-gray-500">
+                            {suburbName}
+                          </TableCell>
+                          <TableCell className="text-gray-500">
+                            {smallerCommunityName}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                                onClick={() => handleEditClick(cottage)}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
+                                onClick={() => handleDeleteClick(cottage)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Pagination */}
+              {!loading && totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                  <p className="text-sm text-gray-600">
+                    Showing{" "}
+                    <span className="font-medium text-gray-900">
+                      {(currentPage - 1) * pageSize + 1}
+                    </span>{" "}
+                    to{" "}
+                    <span className="font-medium text-gray-900">
+                      {Math.min(
+                        currentPage * pageSize,
+                        filteredCottages.length,
+                      )}
+                    </span>{" "}
+                    of{" "}
+                    <span className="font-medium text-gray-900">
+                      {filteredCottages.length}
+                    </span>{" "}
+                    cottages
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronsLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() =>
+                          setCurrentPage((p) => Math.max(1, p - 1))
+                        }
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() =>
+                          setCurrentPage((p) => Math.min(totalPages, p + 1))
+                        }
+                        disabled={currentPage === totalPages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                      >
+                        <ChevronsRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
         </div>
       </div>
 

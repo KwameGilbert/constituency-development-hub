@@ -81,9 +81,7 @@ export function UserProfile() {
   };
 
   const formatLabel = (key: string) =>
-    key
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+    key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
   const formatValue = (value: unknown): string => {
     if (value === null || value === undefined || value === "") return "—";
@@ -168,7 +166,7 @@ export function UserProfile() {
 
       const sortedLogs = Array.from(uniqueLogs.values()).sort(
         (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
 
       setActivityLogs(sortedLogs);
@@ -229,13 +227,13 @@ export function UserProfile() {
     : activityLogs.slice(0, 8);
 
   const successCount = activityLogs.filter(
-    (entry) => entry.status === "success"
+    (entry) => entry.status === "success",
   ).length;
   const failedCount = activityLogs.filter(
-    (entry) => entry.status === "failed"
+    (entry) => entry.status === "failed",
   ).length;
   const warningCount = activityLogs.filter(
-    (entry) => entry.status === "warning"
+    (entry) => entry.status === "warning",
   ).length;
 
   const roleProfileEntries = Object.entries(user.role_profile || {});
@@ -254,8 +252,13 @@ export function UserProfile() {
 
             <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
-                <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {user.name}
+                </h2>
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-50 text-blue-700 hover:bg-blue-50"
+                >
                   {roleDisplayNames[user.role]}
                 </Badge>
                 <Badge
@@ -291,7 +294,8 @@ export function UserProfile() {
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-gray-400" />
                   <span>
-                    Last Login: {formatDateTime(user.last_login_at || user.last_login)}
+                    Last Login:{" "}
+                    {formatDateTime(user.last_login_at || user.last_login)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -319,19 +323,27 @@ export function UserProfile() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div className="rounded-lg border bg-gray-50 p-3">
                   <p className="text-xs text-gray-500">Total</p>
-                  <p className="text-xl font-semibold text-gray-900">{activityLogs.length}</p>
+                  <p className="text-xl font-semibold text-gray-900">
+                    {activityLogs.length}
+                  </p>
                 </div>
                 <div className="rounded-lg border bg-green-50 p-3">
                   <p className="text-xs text-green-700">Success</p>
-                  <p className="text-xl font-semibold text-green-800">{successCount}</p>
+                  <p className="text-xl font-semibold text-green-800">
+                    {successCount}
+                  </p>
                 </div>
                 <div className="rounded-lg border bg-red-50 p-3">
                   <p className="text-xs text-red-700">Failed</p>
-                  <p className="text-xl font-semibold text-red-800">{failedCount}</p>
+                  <p className="text-xl font-semibold text-red-800">
+                    {failedCount}
+                  </p>
                 </div>
                 <div className="rounded-lg border bg-amber-50 p-3">
                   <p className="text-xs text-amber-700">Warning</p>
-                  <p className="text-xl font-semibold text-amber-800">{warningCount}</p>
+                  <p className="text-xl font-semibold text-amber-800">
+                    {warningCount}
+                  </p>
                 </div>
               </div>
 
@@ -348,35 +360,45 @@ export function UserProfile() {
                 </div>
               )}
 
-              {!activityLoading && !activityError && activityToDisplay.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  <Activity className="w-10 h-10 mx-auto mb-3 text-gray-300" />
-                  <p>No activity history available for this user.</p>
-                </div>
-              )}
+              {!activityLoading &&
+                !activityError &&
+                activityToDisplay.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    <Activity className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+                    <p>No activity history available for this user.</p>
+                  </div>
+                )}
 
-              {!activityLoading && !activityError && activityToDisplay.length > 0 && (
-                <div className="space-y-3">
-                  {activityToDisplay.map((log) => (
-                    <div
-                      key={log.id}
-                      className="rounded-lg border border-gray-200 p-4 bg-white"
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                        <div>
-                          <p className="font-medium text-gray-900">{log.action}</p>
-                          <p className="text-sm text-gray-500">{log.resource || "-"}</p>
+              {!activityLoading &&
+                !activityError &&
+                activityToDisplay.length > 0 && (
+                  <div className="space-y-3">
+                    {activityToDisplay.map((log) => (
+                      <div
+                        key={log.id}
+                        className="rounded-lg border border-gray-200 p-4 bg-white"
+                      >
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {log.action}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {log.resource || "-"}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(log.status)}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">{getStatusBadge(log.status)}</div>
+                        <div className="mt-2 text-xs text-gray-500 flex flex-wrap gap-4">
+                          <span>IP: {log.ip || "-"}</span>
+                          <span>{formatDateTime(log.timestamp)}</span>
+                        </div>
                       </div>
-                      <div className="mt-2 text-xs text-gray-500 flex flex-wrap gap-4">
-                        <span>IP: {log.ip || "-"}</span>
-                        <span>{formatDateTime(log.timestamp)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                )}
 
               {activityLogs.length > 8 && (
                 <div className="pt-2 flex justify-center">
@@ -436,15 +458,21 @@ export function UserProfile() {
             <CardContent className="space-y-3 text-sm">
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-500">Created</span>
-                <span className="font-medium text-gray-900">{formatDateTime(user.created_at)}</span>
+                <span className="font-medium text-gray-900">
+                  {formatDateTime(user.created_at)}
+                </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-500">Updated</span>
-                <span className="font-medium text-gray-900">{formatDateTime(user.updated_at)}</span>
+                <span className="font-medium text-gray-900">
+                  {formatDateTime(user.updated_at)}
+                </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="text-gray-500">Email Verified At</span>
-                <span className="font-medium text-gray-900">{formatDateTime(user.email_verified_at)}</span>
+                <span className="font-medium text-gray-900">
+                  {formatDateTime(user.email_verified_at)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">First Login Pending</span>
@@ -473,7 +501,9 @@ export function UserProfile() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-500">No permissions available.</p>
+                <p className="text-sm text-gray-500">
+                  No permissions available.
+                </p>
               )}
             </CardContent>
           </Card>
@@ -489,12 +519,16 @@ export function UserProfile() {
         </CardHeader>
         <CardContent>
           {roleProfileEntries.length === 0 ? (
-            <p className="text-sm text-gray-500">No role-specific profile data available.</p>
+            <p className="text-sm text-gray-500">
+              No role-specific profile data available.
+            </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {roleProfileEntries.map(([key, value]) => (
                 <div key={key} className="rounded-lg border p-3 bg-white">
-                  <p className="text-xs text-gray-500 mb-1">{formatLabel(key)}</p>
+                  <p className="text-xs text-gray-500 mb-1">
+                    {formatLabel(key)}
+                  </p>
                   <p className="text-sm font-medium text-gray-900 wrap-break-word">
                     {formatValue(value)}
                   </p>

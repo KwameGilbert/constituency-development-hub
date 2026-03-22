@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 // import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
@@ -39,14 +39,14 @@ export default function DisabledPage() {
 //   AlertDialogHeader,
 //   AlertDialogTitle,
 // } from "@/components/ui/alert-dialog";
-// 
+//
 // export default function OfficersPage() {
 //   const [officers, setOfficers] = useState<Officer[]>([]);
 //   const [loading, setLoading] = useState(true);
 //   const [searchQuery, setSearchQuery] = useState("");
 //   const [officerToDelete, setOfficerToDelete] = useState<Officer | null>(null);
 //   const [isDeleting, setIsDeleting] = useState(false);
-// 
+//
 //   const fetchOfficers = useCallback(async () => {
 //     try {
 //       setLoading(true);
@@ -61,14 +61,14 @@ export default function DisabledPage() {
 //       setLoading(false);
 //     }
 //   }, []);
-// 
+//
 //   useEffect(() => {
 //     fetchOfficers();
 //   }, [fetchOfficers]);
-// 
+//
 //   const handleDelete = async () => {
 //     if (!officerToDelete) return;
-// 
+//
 //     setIsDeleting(true);
 //     try {
 //       const response = await officersService.deleteOfficer(officerToDelete.id);
@@ -88,7 +88,7 @@ export default function DisabledPage() {
 //       setIsDeleting(false);
 //     }
 //   };
-// 
+//
 //   const filteredOfficers = officers.filter((officer) => {
 //     const searchLower = searchQuery.toLowerCase();
 //     return (
@@ -97,14 +97,14 @@ export default function DisabledPage() {
 //       (officer.user?.phone || "").toLowerCase().includes(searchLower)
 //     );
 //   });
-// 
+//
 //   const activeOfficers = filteredOfficers.filter(
 //     (o) => o.user?.status === "active",
 //   );
 //   const inactiveOfficers = filteredOfficers.filter(
 //     (o) => o.user?.status !== "active",
 //   );
-// 
+//
 //   const formatDate = (dateString: string) => {
 //     try {
 //       return new Date(dateString).toLocaleDateString("en-US", {
@@ -116,7 +116,7 @@ export default function DisabledPage() {
 //       return dateString;
 //     }
 //   };
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -156,7 +156,7 @@ export default function DisabledPage() {
 //           },
 //         ]}
 //       />
-// 
+//
 //       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
 //         <div className="max-w-[1600px] mx-auto space-y-6">
 //           Filters and Search
@@ -204,7 +204,7 @@ export default function DisabledPage() {
 //               </div>
 //             </div>
 //           </Card>
-// 
+//
 //           Officers Table
 //           <Card className="bg-white overflow-hidden">
 //             <div className="overflow-x-auto">
@@ -357,7 +357,7 @@ export default function DisabledPage() {
 //           </Card>
 //         </div>
 //       </div>
-// 
+//
 //       <AlertDialog
 //         open={!!officerToDelete}
 //         onOpenChange={(open) => !open && setOfficerToDelete(null)}
@@ -391,5 +391,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

@@ -84,7 +84,9 @@ export default function SubmitIdeaDialog({
       ];
 
       if (!allowedMime.includes(selected.type)) {
-        toast.error("Invalid file format. Allowed: PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG, GIF, WEBP");
+        toast.error(
+          "Invalid file format. Allowed: PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG, GIF, WEBP",
+        );
         return;
       }
 
@@ -118,10 +120,18 @@ export default function SubmitIdeaDialog({
       if (file) {
         try {
           // Hint to backend that this is an ideas/document upload
-          const uploadResponse = await uploadService.uploadFile(file, "ideas", "document");
+          const uploadResponse = await uploadService.uploadFile(
+            file,
+            "ideas",
+            "document",
+          );
           documentUrl = uploadResponse.data.url;
         } catch (err: unknown) {
-          const message = err instanceof Error ? err.message : String(err) || "Could not upload the attached file. Please try again.";
+          const message =
+            err instanceof Error
+              ? err.message
+              : String(err) ||
+                "Could not upload the attached file. Please try again.";
           toast.error("File upload failed", {
             description: message,
           });
@@ -282,7 +292,7 @@ export default function SubmitIdeaDialog({
                       className="w-full border-dashed"
                     >
                       <Upload className="mr-2 h-4 w-4" />
-                        Upload Document (PDF, DOCX, XLSX, TXT) or Image
+                      Upload Document (PDF, DOCX, XLSX, TXT) or Image
                     </Button>
                   ) : (
                     <div className="flex items-center justify-between w-full p-2 border rounded-md bg-gray-50">

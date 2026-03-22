@@ -13,12 +13,14 @@ export function ReportsHeader() {
     setIsExporting(true);
     try {
       // 1. Fetch all necessary data
-      const [summary, trends, distribution, recentActivity] = await Promise.all([
-        officerReportsService.getSummary(),
-        officerReportsService.getTrends(12),
-        officerReportsService.getStatusDistribution(),
-        officerReportsService.getRecentActivity(20), // Get more for export
-      ]);
+      const [summary, trends, distribution, recentActivity] = await Promise.all(
+        [
+          officerReportsService.getSummary(),
+          officerReportsService.getTrends(12),
+          officerReportsService.getStatusDistribution(),
+          officerReportsService.getRecentActivity(20), // Get more for export
+        ],
+      );
 
       // 2. Construct CSV content
       const csvRows = [];
@@ -35,7 +37,10 @@ export function ReportsHeader() {
         csvRows.push(["Total Issues", summary.data.total_issues]);
         csvRows.push(["Pending Issues", summary.data.pending_issues]);
         csvRows.push(["Resolved Issues", summary.data.resolved_issues]);
-        csvRows.push(["Avg Resolution Time (hrs)", summary.data.avg_resolution_time]);
+        csvRows.push([
+          "Avg Resolution Time (hrs)",
+          summary.data.avg_resolution_time,
+        ]);
         csvRows.push([]);
       }
 
@@ -59,8 +64,8 @@ export function ReportsHeader() {
         csvRows.push([]);
       }
 
-       // Recent Activity Section
-       if (recentActivity.success) {
+      // Recent Activity Section
+      if (recentActivity.success) {
         csvRows.push(["Recent Activity"]);
         csvRows.push(["ID", "Title", "Status", "Category", "Date"]);
         recentActivity.data.activities.forEach((a) => {
@@ -79,7 +84,10 @@ export function ReportsHeader() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `officer_report_${new Date().toISOString().split("T")[0]}.csv`);
+      link.setAttribute(
+        "download",
+        `officer_report_${new Date().toISOString().split("T")[0]}.csv`,
+      );
       link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
@@ -109,7 +117,7 @@ export function ReportsHeader() {
         </p>
       </div>
       <div className="flex items-center gap-3 print:hidden">
-        <Button 
+        <Button
           className="bg-[#312e81] hover:bg-[#312e81]/90 gap-2"
           onClick={handleExport}
           disabled={isExporting}

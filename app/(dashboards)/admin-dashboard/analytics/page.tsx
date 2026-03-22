@@ -72,14 +72,46 @@ export default function AnalyticsPage() {
       const overviewData: (string | number)[][] = [
         ["SUMMARY METRICS"],
         ["Metric", "Value", "Trend"],
-        ["Total Issues", metrics.metrics.totalIssues, `${metrics.trends.issuesChange}%`],
-        ["Active Staff", metrics.metrics.activeStaff, `${metrics.trends.staffChange}%`],
-        ["Total Projects", metrics.metrics.totalProjects, `${metrics.trends.projectsChange}%`],
-        ["Active Budget", metrics.metrics.activeBudget, `${metrics.trends.budgetChange}%`],
-        ["New Issues (Week)", metrics.metrics.newIssuesThisWeek, `${metrics.trends.newIssuesChange}%`],
-        ["Resolved (Week)", metrics.metrics.resolvedThisWeek, `${metrics.trends.resolvedChange}%`],
-        ["Active Users (7d)", metrics.metrics.activeUsers7Days, `${metrics.trends.activeUsersChange}%`],
-        ["Ongoing Projects", metrics.metrics.ongoingProjects, `${metrics.trends.ongoingProjectsChange}%`],
+        [
+          "Total Issues",
+          metrics.metrics.totalIssues,
+          `${metrics.trends.issuesChange}%`,
+        ],
+        [
+          "Active Staff",
+          metrics.metrics.activeStaff,
+          `${metrics.trends.staffChange}%`,
+        ],
+        [
+          "Total Projects",
+          metrics.metrics.totalProjects,
+          `${metrics.trends.projectsChange}%`,
+        ],
+        [
+          "Active Budget",
+          metrics.metrics.activeBudget,
+          `${metrics.trends.budgetChange}%`,
+        ],
+        [
+          "New Issues (Week)",
+          metrics.metrics.newIssuesThisWeek,
+          `${metrics.trends.newIssuesChange}%`,
+        ],
+        [
+          "Resolved (Week)",
+          metrics.metrics.resolvedThisWeek,
+          `${metrics.trends.resolvedChange}%`,
+        ],
+        [
+          "Active Users (7d)",
+          metrics.metrics.activeUsers7Days,
+          `${metrics.trends.activeUsersChange}%`,
+        ],
+        [
+          "Ongoing Projects",
+          metrics.metrics.ongoingProjects,
+          `${metrics.trends.ongoingProjectsChange}%`,
+        ],
         [], // Empty row
         ["MONTHLY TRENDS"],
         ["Month", "Issues Reported", "Issues Resolved"],
@@ -106,7 +138,11 @@ export default function AnalyticsPage() {
         });
       }
 
-      distributionsData.push([], ["ISSUES BY CATEGORY / SEVERITY"], ["Category", "Count"]);
+      distributionsData.push(
+        [],
+        ["ISSUES BY CATEGORY / SEVERITY"],
+        ["Category", "Count"],
+      );
 
       if (charts.charts.categoryDistribution) {
         charts.charts.categoryDistribution.forEach((item) => {
@@ -135,7 +171,14 @@ export default function AnalyticsPage() {
       // --- Sheet 4: Insights (Performers + Community) ---
       const insightsData: (string | number)[][] = [
         ["TOP PERFORMERS"],
-        ["Rank", "Name", "Role", "Resolved Count", "Total Assigned", "Resolution Rate"],
+        [
+          "Rank",
+          "Name",
+          "Role",
+          "Resolved Count",
+          "Total Assigned",
+          "Resolution Rate",
+        ],
       ];
 
       if (insights.insights.topPerformers) {
@@ -151,7 +194,16 @@ export default function AnalyticsPage() {
         });
       }
 
-      insightsData.push([], ["COMMUNITY INSIGHTS"], ["Location", "Issues Reported", "Avg Resolution Time", "Resolution Rate"]);
+      insightsData.push(
+        [],
+        ["COMMUNITY INSIGHTS"],
+        [
+          "Location",
+          "Issues Reported",
+          "Avg Resolution Time",
+          "Resolution Rate",
+        ],
+      );
 
       if (insights.insights.communityInsights) {
         insights.insights.communityInsights.forEach((c) => {
@@ -194,7 +246,8 @@ export default function AnalyticsPage() {
             label: isExporting ? "Exporting..." : "Export Report",
             onClick: handleExport,
             icon: Download,
-            className: "bg-red-900 text-white hover:bg-red-800 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed",
+            className:
+              "bg-red-900 text-white hover:bg-red-800 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed",
           },
         ]}
       />

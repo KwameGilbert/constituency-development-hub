@@ -54,7 +54,10 @@ export async function apiClient<T>(
   let response;
   try {
     // Debug: log request details to help diagnose network/CORS issues
-    if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+    if (
+      typeof window !== "undefined" &&
+      process.env.NODE_ENV === "development"
+    ) {
       try {
         // Clone headers for safe logging
         const headersObj: Record<string, string> = {};

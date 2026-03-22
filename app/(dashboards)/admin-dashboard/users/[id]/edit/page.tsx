@@ -175,7 +175,10 @@ export default function EditUserPage({
     fetchUser();
   }, [id]);
 
-  const fetchSuburbs = async (parentId: number, suburbNameToPrefill?: string) => {
+  const fetchSuburbs = async (
+    parentId: number,
+    suburbNameToPrefill?: string,
+  ) => {
     try {
       setLoadingSuburbs(true);
       const response = await locationsService.getLocations({
@@ -190,7 +193,8 @@ export default function EditUserPage({
 
         if (suburbNameToPrefill) {
           const matchedSuburb = response.data.locations.find(
-            (suburb) => suburb.name.toLowerCase() === suburbNameToPrefill.toLowerCase()
+            (suburb) =>
+              suburb.name.toLowerCase() === suburbNameToPrefill.toLowerCase(),
           );
           if (matchedSuburb) {
             setSelectedSuburb(matchedSuburb.id.toString());
@@ -220,7 +224,7 @@ export default function EditUserPage({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
@@ -259,12 +263,14 @@ export default function EditUserPage({
     const locations: string[] = [];
     if (selectedCommunity) {
       const community = communities.find(
-        (item) => item.id.toString() === selectedCommunity
+        (item) => item.id.toString() === selectedCommunity,
       );
       if (community) locations.push(community.name);
     }
     if (selectedSuburb) {
-      const suburb = suburbs.find((item) => item.id.toString() === selectedSuburb);
+      const suburb = suburbs.find(
+        (item) => item.id.toString() === selectedSuburb,
+      );
       if (suburb) locations.push(suburb.name);
     }
 
@@ -307,12 +313,17 @@ export default function EditUserPage({
   };
 
   useEffect(() => {
-    if (!prefillCommunityName || communities.length === 0 || selectedCommunity) {
+    if (
+      !prefillCommunityName ||
+      communities.length === 0 ||
+      selectedCommunity
+    ) {
       return;
     }
 
     const matchedCommunity = communities.find(
-      (community) => community.name.toLowerCase() === prefillCommunityName.toLowerCase()
+      (community) =>
+        community.name.toLowerCase() === prefillCommunityName.toLowerCase(),
     );
 
     if (!matchedCommunity) {
@@ -373,298 +384,350 @@ export default function EditUserPage({
         <div className="max-w-4xl mx-auto">
           <Card className="border-t-4 border-t-red-900">
             <CardHeader>
-              <CardTitle className="text-lg text-gray-900">User Information</CardTitle>
+              <CardTitle className="text-lg text-gray-900">
+                User Information
+              </CardTitle>
               <CardDescription>
                 Update user profile, role assignment, and location details.
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
-                  <User className="w-4 h-4" />
-                  <h3>Personal Information</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-gray-700">
-                    Full Name <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="fullName"
-                    placeholder="Enter full name"
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700">
-                    Email Address <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter email address"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-gray-700">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    placeholder="e.g. +233 20 123 4567"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="department" className="text-gray-700">Department</Label>
-                  <Input
-                    id="department"
-                    value={formData.department}
-                    readOnly
-                    className="bg-gray-50 text-gray-500"
-                    placeholder="No department"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role" className="text-gray-700">
-                    User Role <span className="text-red-500">*</span>
-                  </Label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) => handleSelectChange("role", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="web_admin">Web Admin</SelectItem>
-                      <SelectItem value="task_force">Task Force</SelectItem>
-                      <SelectItem value="agent">Agent</SelectItem>
-                      <SelectItem value="officer">Officer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="status" className="text-gray-700">Account Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) => handleSelectChange("status", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="suspended">Suspended</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
-                  <Lock className="w-4 h-4" />
-                  <h3>Password Reset</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword" className="text-gray-700">
-                      New Password
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="newPassword"
-                        type={showNewPassword ? "text" : "password"}
-                        placeholder="Leave blank to keep current password"
-                        value={formData.newPassword}
-                        onChange={handleInputChange}
-                        className="pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNewPassword((prev) => !prev)}
-                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
-                        aria-label={showNewPassword ? "Hide password" : "Show password"}
-                      >
-                        {showNewPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-gray-400">
-                      Minimum 8 characters
-                    </p>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                    <User className="w-4 h-4" />
+                    <h3>Personal Information</h3>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-gray-700">
-                      Confirm New Password
-                    </Label>
-                    <div className="relative">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName" className="text-gray-700">
+                        Full Name <span className="text-red-500">*</span>
+                      </Label>
                       <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirm new password"
-                        value={formData.confirmPassword}
+                        id="fullName"
+                        placeholder="Enter full name"
+                        value={formData.fullName}
                         onChange={handleInputChange}
-                        className="pr-10"
+                        required
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
-                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-gray-700">
+                        Email Address <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter email address"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-gray-700">
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="phone"
+                        placeholder="e.g. +233 20 123 4567"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="department" className="text-gray-700">
+                        Department
+                      </Label>
+                      <Input
+                        id="department"
+                        value={formData.department}
+                        readOnly
+                        className="bg-gray-50 text-gray-500"
+                        placeholder="No department"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role" className="text-gray-700">
+                        User Role <span className="text-red-500">*</span>
+                      </Label>
+                      <Select
+                        value={formData.role}
+                        onValueChange={(value) =>
+                          handleSelectChange("role", value)
+                        }
                       >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </button>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="web_admin">Web Admin</SelectItem>
+                          <SelectItem value="task_force">Task Force</SelectItem>
+                          <SelectItem value="agent">Agent</SelectItem>
+                          <SelectItem value="officer">Officer</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="status" className="text-gray-700">
+                        Account Status
+                      </Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) =>
+                          handleSelectChange("status", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                          <SelectItem value="suspended">Suspended</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
-                  <MapPin className="w-4 h-4" />
-                  <h3>Location Assignment</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                    <Lock className="w-4 h-4" />
+                    <h3>Password Reset</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="newPassword" className="text-gray-700">
+                        New Password
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="newPassword"
+                          type={showNewPassword ? "text" : "password"}
+                          placeholder="Leave blank to keep current password"
+                          value={formData.newPassword}
+                          onChange={handleInputChange}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword((prev) => !prev)}
+                          className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+                          aria-label={
+                            showNewPassword ? "Hide password" : "Show password"
+                          }
+                        >
+                          {showNewPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-gray-400">
+                        Minimum 8 characters
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="confirmPassword"
+                        className="text-gray-700"
+                      >
+                        Confirm New Password
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm new password"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowConfirmPassword((prev) => !prev)
+                          }
+                          className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+                          aria-label={
+                            showConfirmPassword
+                              ? "Hide password"
+                              : "Show password"
+                          }
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                <Label htmlFor="mainCommunity" className="text-gray-700">Main Community</Label>
-                <Popover open={communityOpen} onOpenChange={setCommunityOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={communityOpen}
-                      className="w-full justify-between font-normal"
-                      disabled={loadingCommunities}
-                    >
-                      {selectedCommunity
-                        ? communities.find((community) => community.id.toString() === selectedCommunity)?.name
-                        : loadingCommunities
-                          ? "Loading..."
-                          : "Select Main Community"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Search main community..." />
-                      <CommandList>
-                        <CommandEmpty>No community found.</CommandEmpty>
-                        <CommandGroup>
-                          {communities.map((community) => (
-                            <CommandItem
-                              key={community.id}
-                              value={community.name}
-                              onSelect={() => {
-                                handleCommunityChange(community.id.toString());
-                                setCommunityOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  selectedCommunity === community.id.toString() ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {community.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="suburb" className="text-gray-700">Suburb</Label>
-                <Popover open={suburbOpen} onOpenChange={setSuburbOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={suburbOpen}
-                      className="w-full justify-between font-normal"
-                      disabled={!selectedCommunity || loadingSuburbs || suburbs.length === 0}
-                    >
-                      {selectedSuburb
-                        ? suburbs.find((suburb) => suburb.id.toString() === selectedSuburb)?.name
-                        : !selectedCommunity
-                          ? "Select main community first"
-                          : loadingSuburbs
-                            ? "Loading..."
-                            : suburbs.length === 0
-                              ? "No suburbs"
-                              : "Select Suburb"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Search suburbs..." />
-                      <CommandList>
-                        <CommandEmpty>No suburb found.</CommandEmpty>
-                        <CommandGroup>
-                          {suburbs.map((suburb) => (
-                            <CommandItem
-                              key={suburb.id}
-                              value={suburb.name}
-                              onSelect={() => {
-                                handleSuburbChange(suburb.id.toString());
-                                setSuburbOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  selectedSuburb === suburb.id.toString() ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {suburb.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-              </div>
-              </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                    <MapPin className="w-4 h-4" />
+                    <h3>Location Assignment</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="mainCommunity" className="text-gray-700">
+                        Main Community
+                      </Label>
+                      <Popover
+                        open={communityOpen}
+                        onOpenChange={setCommunityOpen}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={communityOpen}
+                            className="w-full justify-between font-normal"
+                            disabled={loadingCommunities}
+                          >
+                            {selectedCommunity
+                              ? communities.find(
+                                  (community) =>
+                                    community.id.toString() ===
+                                    selectedCommunity,
+                                )?.name
+                              : loadingCommunities
+                                ? "Loading..."
+                                : "Select Main Community"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-[--radix-popover-trigger-width] p-0"
+                          align="start"
+                        >
+                          <Command>
+                            <CommandInput placeholder="Search main community..." />
+                            <CommandList>
+                              <CommandEmpty>No community found.</CommandEmpty>
+                              <CommandGroup>
+                                {communities.map((community) => (
+                                  <CommandItem
+                                    key={community.id}
+                                    value={community.name}
+                                    onSelect={() => {
+                                      handleCommunityChange(
+                                        community.id.toString(),
+                                      );
+                                      setCommunityOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        selectedCommunity ===
+                                          community.id.toString()
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {community.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
-                <Button variant="outline" asChild>
-                  <Link href={`/admin-dashboard/users/${id}`}>
-                    Cancel
-                  </Link>
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
-                >
-                  <Save className="w-4 h-4" />
-                  {submitting ? "Saving..." : "Save Changes"}
-                </Button>
-              </div>
-            </CardContent>
+                    <div className="space-y-2">
+                      <Label htmlFor="suburb" className="text-gray-700">
+                        Suburb
+                      </Label>
+                      <Popover open={suburbOpen} onOpenChange={setSuburbOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={suburbOpen}
+                            className="w-full justify-between font-normal"
+                            disabled={
+                              !selectedCommunity ||
+                              loadingSuburbs ||
+                              suburbs.length === 0
+                            }
+                          >
+                            {selectedSuburb
+                              ? suburbs.find(
+                                  (suburb) =>
+                                    suburb.id.toString() === selectedSuburb,
+                                )?.name
+                              : !selectedCommunity
+                                ? "Select main community first"
+                                : loadingSuburbs
+                                  ? "Loading..."
+                                  : suburbs.length === 0
+                                    ? "No suburbs"
+                                    : "Select Suburb"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-[--radix-popover-trigger-width] p-0"
+                          align="start"
+                        >
+                          <Command>
+                            <CommandInput placeholder="Search suburbs..." />
+                            <CommandList>
+                              <CommandEmpty>No suburb found.</CommandEmpty>
+                              <CommandGroup>
+                                {suburbs.map((suburb) => (
+                                  <CommandItem
+                                    key={suburb.id}
+                                    value={suburb.name}
+                                    onSelect={() => {
+                                      handleSuburbChange(suburb.id.toString());
+                                      setSuburbOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        selectedSuburb === suburb.id.toString()
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {suburb.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
+                  <Button variant="outline" asChild>
+                    <Link href={`/admin-dashboard/users/${id}`}>Cancel</Link>
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    {submitting ? "Saving..." : "Save Changes"}
+                  </Button>
+                </div>
+              </CardContent>
             </form>
           </Card>
         </div>

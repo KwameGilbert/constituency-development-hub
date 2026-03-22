@@ -59,7 +59,10 @@ export default async function AnnouncementDetailPage({
                 <Badge>{announcement.priority}</Badge>
                 <Badge variant="outline">{announcement.category}</Badge>
               </div>
-              <SanitizedHtml html={announcement.content} className="text-slate-700 whitespace-pre-wrap" />
+              <SanitizedHtml
+                html={announcement.content}
+                className="text-slate-700 whitespace-pre-wrap"
+              />
             </div>
           </CardContent>
         </Card>

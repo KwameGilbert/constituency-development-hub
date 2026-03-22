@@ -29,9 +29,9 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
     try {
       setLoading(true);
       if (!agentId) return;
-      
+
       const response = await agentService.deactivateAgent(parseInt(agentId));
-      
+
       if (response.success) {
         toast.success("Agent deactivated successfully");
         setOpen(false);
@@ -56,14 +56,17 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
       </CardHeader>
       <CardContent className="pt-6 space-y-3">
         <Link href={`/officer-dashboard/agents/${agentId}/edit`}>
-          <Button variant="outline" className="w-full justify-start gap-3 h-12 rounded-2xl border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-12 rounded-2xl border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold"
+          >
             <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100">
               <Edit className="h-4 w-4" />
             </div>
             Update Agent Credentials
           </Button>
         </Link>
-        
+
         <AlertDialog open={open} onOpenChange={setOpen}>
           <AlertDialogTrigger asChild>
             <Button
@@ -78,13 +81,22 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-3xl border-slate-200">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl font-bold text-slate-900">Security Authorization Required</AlertDialogTitle>
+              <AlertDialogTitle className="text-xl font-bold text-slate-900">
+                Security Authorization Required
+              </AlertDialogTitle>
               <AlertDialogDescription className="text-slate-500 font-medium">
-                This action will decommission the agent&apos;s operative status. They will lose all access to the constituency infrastructure immediately.
+                This action will decommission the agent&apos;s operative status.
+                They will lose all access to the constituency infrastructure
+                immediately.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="gap-3">
-              <AlertDialogCancel disabled={loading} className="rounded-xl font-bold border-slate-200">Cancel</AlertDialogCancel>
+              <AlertDialogCancel
+                disabled={loading}
+                className="rounded-xl font-bold border-slate-200"
+              >
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={(e) => {
                   e.preventDefault();
@@ -94,28 +106,30 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
                 className="bg-rose-600 hover:bg-rose-700 focus:ring-rose-600 text-white font-bold rounded-xl px-6"
               >
                 {loading ? (
-                    <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processing...
-                    </>
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
                 ) : (
-                    "Confirm Deactivation"
+                  "Confirm Deactivation"
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
 
-        <Link href={`/officer-dashboard/issues?submitted_by_agent_id=${agentId}`}>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-3 h-12 rounded-2xl border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-100 transition-all font-bold"
-            >
-              <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-100">
-                <List className="h-4 w-4" />
-              </div>
-              Mission Intelligence
-            </Button>
+        <Link
+          href={`/officer-dashboard/issues?submitted_by_agent_id=${agentId}`}
+        >
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-12 rounded-2xl border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-100 transition-all font-bold"
+          >
+            <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-100">
+              <List className="h-4 w-4" />
+            </div>
+            Mission Intelligence
+          </Button>
         </Link>
       </CardContent>
     </Card>

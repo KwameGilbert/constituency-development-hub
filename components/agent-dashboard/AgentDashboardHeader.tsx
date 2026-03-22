@@ -12,7 +12,9 @@ export default function AgentDashboardHeader() {
           </h1>
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <p className="text-[10px] sm:text-xs text-slate-500 font-medium">Field Operations Center</p>
+            <p className="text-[10px] sm:text-xs text-slate-500 font-medium">
+              Field Operations Center
+            </p>
           </div>
         </div>
       </div>

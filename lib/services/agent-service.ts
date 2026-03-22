@@ -189,7 +189,12 @@ class AgentService {
     location?: string;
     verified?: boolean;
     supervisor?: number;
-  }): Promise<ApiResponse<{ agents: AgentProfile[]; summary: { total: number; active: number; inactive: number } }>> {
+  }): Promise<
+    ApiResponse<{
+      agents: AgentProfile[];
+      summary: { total: number; active: number; inactive: number };
+    }>
+  > {
     const queryParams = new URLSearchParams();
     if (params?.location) queryParams.append("location", params.location);
     if (params?.verified !== undefined)
@@ -280,13 +285,13 @@ class AgentService {
    * Admin: Get single agent by ID
    * GET /v1/admin/agents/{id}
    */
-  async getAgentById(
-    id: number,
-  ): Promise<ApiResponse<{ 
-    agent: AgentProfile;
-    issue_stats?: AgentStatistics;
-    recent_issues?: RecentIssue[];
-  }>> {
+  async getAgentById(id: number): Promise<
+    ApiResponse<{
+      agent: AgentProfile;
+      issue_stats?: AgentStatistics;
+      recent_issues?: RecentIssue[];
+    }>
+  > {
     return apiClient(`/admin/agents/${id}`, {
       method: "GET",
       requiresAuth: true,
@@ -311,7 +316,9 @@ class AgentService {
   /**
    * Admin: Deactivate agent (set status to inactive)
    */
-  async deactivateAgent(id: number): Promise<ApiResponse<{ agent: AgentProfile }>> {
+  async deactivateAgent(
+    id: number,
+  ): Promise<ApiResponse<{ agent: AgentProfile }>> {
     return this.updateAgent(id, { status: "suspended" });
   }
 

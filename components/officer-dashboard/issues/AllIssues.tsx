@@ -69,16 +69,19 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
   // Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("All Statuses");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
-  const [selectedPriority, setSelectedPriority] = useState<string>("All Priorities");
-
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>("All Categories");
+  const [selectedPriority, setSelectedPriority] =
+    useState<string>("All Priorities");
 
   // Delete Action State
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Dynamic filter options derived from data to ensure accuracy
   const dynamicCategories = useMemo(() => {
-    const cats = new Set(issues.filter((i) => i.category).map((i) => i.category));
+    const cats = new Set(
+      issues.filter((i) => i.category).map((i) => i.category),
+    );
     return ["All Categories", ...Array.from(cats)].sort();
   }, [issues]);
 
@@ -98,7 +101,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
     try {
       const filters: IssueFilters = {
         page: 1, // Let frontend filter the list for now
-        limit: 1000, 
+        limit: 1000,
       };
 
       let response;
@@ -108,7 +111,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
         try {
           response = await issuesService.getOfficerIssues(filters);
         } catch (err) {
-          console.warn("getOfficerIssues failed, falling back to getAllIssues:", err);
+          console.warn(
+            "getOfficerIssues failed, falling back to getAllIssues:",
+            err,
+          );
           response = await issuesService.getAllIssues(filters);
         }
       }
@@ -117,7 +123,8 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
         setIssues(response.data.reports);
       } else {
         setIssues([]);
-        if (!response.success) setError(response.message || "Failed to load issues");
+        if (!response.success)
+          setError(response.message || "Failed to load issues");
       }
     } catch (error) {
       console.error("Failed to fetch issues:", error);
@@ -134,7 +141,11 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
   // Handle delete
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this issue? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this issue? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
@@ -154,7 +165,6 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       setDeletingId(null);
     }
   };
-
 
   function handleResetFilters() {
     setSearchQuery("");
@@ -177,7 +187,8 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
       // Category filter
       const matchesCategory =
-        selectedCategory === "All Categories" || issue.category === selectedCategory;
+        selectedCategory === "All Categories" ||
+        issue.category === selectedCategory;
 
       // Status filter
       const matchesStatus =
@@ -185,9 +196,12 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
       // Priority Filter
       const matchesPriority =
-        selectedPriority === "All Priorities" || issue.priority === selectedPriority;
+        selectedPriority === "All Priorities" ||
+        issue.priority === selectedPriority;
 
-      return matchesSearch && matchesCategory && matchesStatus && matchesPriority;
+      return (
+        matchesSearch && matchesCategory && matchesStatus && matchesPriority
+      );
     });
   }, [issues, searchQuery, selectedCategory, selectedStatus, selectedPriority]);
 
@@ -197,18 +211,23 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       under_officer_review: "bg-purple-100 text-purple-700 hover:bg-purple-100",
       forwarded_to_admin: "bg-indigo-100 text-indigo-700 hover:bg-indigo-100",
       assigned_to_task_force: "bg-cyan-100 text-cyan-700 hover:bg-cyan-100",
-      assessment_in_progress: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100",
+      assessment_in_progress:
+        "bg-yellow-100 text-yellow-700 hover:bg-yellow-100",
       assessment_submitted: "bg-orange-100 text-orange-700 hover:bg-orange-100",
       resources_allocated: "bg-teal-100 text-teal-700 hover:bg-teal-100",
       resolution_in_progress: "bg-lime-100 text-lime-700 hover:bg-lime-100",
-      resolution_submitted: "bg-emerald-100 text-emerald-700 hover:bg-emerald-100",
+      resolution_submitted:
+        "bg-emerald-100 text-emerald-700 hover:bg-emerald-100",
       resolved: "bg-green-100 text-green-700 hover:bg-green-100",
       closed: "bg-gray-100 text-gray-700 hover:bg-gray-100",
     };
     const colorClass = statusColors[status] || "bg-gray-100 text-gray-700";
 
     return (
-      <Badge variant="secondary" className={`${colorClass} border-0 font-medium capitalize whitespace-nowrap`}>
+      <Badge
+        variant="secondary"
+        className={`${colorClass} border-0 font-medium capitalize whitespace-nowrap`}
+      >
         {formatStatusLabel(status)}
       </Badge>
     );
@@ -222,7 +241,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
       low: "bg-gray-100 text-gray-700 hover:bg-gray-100/80",
     };
     return (
-      <Badge variant="outline" className={`border-0 capitalize whitespace-nowrap ${priorityColors[priority] || "bg-gray-100 text-gray-700"}`}>
+      <Badge
+        variant="outline"
+        className={`border-0 capitalize whitespace-nowrap ${priorityColors[priority] || "bg-gray-100 text-gray-700"}`}
+      >
         {priority}
       </Badge>
     );
@@ -263,7 +285,6 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
 
   return (
     <div className="space-y-6 w-full max-w-[1200px] mx-auto">
-
       {/* Filter Section */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 border-b border-slate-50">
@@ -318,7 +339,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
                 Category
               </label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
@@ -343,7 +367,9 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                 <SelectContent>
                   {dynamicStatuses.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status === "All Statuses" ? status : formatStatusLabel(status)}
+                      {status === "All Statuses"
+                        ? status
+                        : formatStatusLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -354,14 +380,19 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
                 Priority
               </label>
-              <Select value={selectedPriority} onValueChange={setSelectedPriority}>
+              <Select
+                value={selectedPriority}
+                onValueChange={setSelectedPriority}
+              >
                 <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
                   <SelectValue placeholder="All Priorities" />
                 </SelectTrigger>
                 <SelectContent>
                   {dynamicPriorities.map((p) => (
                     <SelectItem key={p} value={p}>
-                      {p === "All Priorities" ? p : p.charAt(0).toUpperCase() + p.slice(1)}
+                      {p === "All Priorities"
+                        ? p
+                        : p.charAt(0).toUpperCase() + p.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -411,11 +442,15 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                   </p>
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex flex-col gap-1 text-left">
-                       <span className="text-xs text-muted-foreground">Priority</span>
-                       {getPriorityColor(issue.priority)}
+                      <span className="text-xs text-muted-foreground">
+                        Priority
+                      </span>
+                      {getPriorityColor(issue.priority)}
                     </div>
                     <div className="flex flex-col gap-1 text-right">
-                      <span className="text-xs text-muted-foreground">Submitted</span>
+                      <span className="text-xs text-muted-foreground">
+                        Submitted
+                      </span>
                       <span>{formatDate(issue.created_at)}</span>
                     </div>
                   </div>
@@ -439,11 +474,17 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                           size="sm"
                           className="flex-1 h-9 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
                           asChild
-                          disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status)}
+                          disabled={
+                            ![
+                              "submitted",
+                              "rejected",
+                              "under_officer_review",
+                            ].includes(issue.status)
+                          }
                           title="Edit Issue"
                         >
                           <Link href={`${basePath}/${issue.id}/edit`}>
-                             <Pencil className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" />
                           </Link>
                         </Button>
                         <Button
@@ -451,7 +492,13 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                           size="sm"
                           className="flex-1 h-9 text-red-600 border-red-200 hover:bg-red-50"
                           onClick={() => handleDelete(issue.id)}
-                          disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status) || deletingId === issue.id}
+                          disabled={
+                            ![
+                              "submitted",
+                              "rejected",
+                              "under_officer_review",
+                            ].includes(issue.status) || deletingId === issue.id
+                          }
                           title="Delete Issue"
                         >
                           {deletingId === issue.id ? (
@@ -478,7 +525,9 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                     <TableHead className="w-[100px]">Priority</TableHead>
                     <TableHead className="w-[150px]">Status</TableHead>
                     <TableHead className="w-[100px]">Date</TableHead>
-                    <TableHead className="text-right w-[160px]">Actions</TableHead>
+                    <TableHead className="text-right w-[160px]">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -492,7 +541,10 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col max-w-[170px]">
-                          <span className="font-semibold text-sm truncate" title={issue.title}>
+                          <span
+                            className="font-semibold text-sm truncate"
+                            title={issue.title}
+                          >
                             {issue.title}
                           </span>
                           <span
@@ -503,10 +555,14 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm capitalize">{issue.category}</TableCell>
+                      <TableCell className="text-sm capitalize">
+                        {issue.category}
+                      </TableCell>
                       <TableCell>{getPriorityColor(issue.priority)}</TableCell>
                       <TableCell>{getStatusBadge(issue.status)}</TableCell>
-                      <TableCell className="text-sm">{formatDate(issue.created_at)}</TableCell>
+                      <TableCell className="text-sm">
+                        {formatDate(issue.created_at)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
@@ -527,11 +583,17 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                                 size="icon"
                                 className="h-8 w-8 text-indigo-600 hover:text-indigo-700 bg-indigo-50/50 border-indigo-100"
                                 asChild
-                                disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status)}
+                                disabled={
+                                  ![
+                                    "submitted",
+                                    "rejected",
+                                    "under_officer_review",
+                                  ].includes(issue.status)
+                                }
                                 title="Edit Issue"
                               >
                                 <Link href={`${basePath}/${issue.id}/edit`}>
-                                   <Pencil className="h-4 w-4" />
+                                  <Pencil className="h-4 w-4" />
                                 </Link>
                               </Button>
                               <Button
@@ -539,7 +601,14 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
                                 size="icon"
                                 className="h-8 w-8 text-red-600 hover:text-red-700 bg-red-50/50 border-red-100"
                                 onClick={() => handleDelete(issue.id)}
-                                disabled={!["submitted", "rejected", "under_officer_review"].includes(issue.status) || deletingId === issue.id}
+                                disabled={
+                                  ![
+                                    "submitted",
+                                    "rejected",
+                                    "under_officer_review",
+                                  ].includes(issue.status) ||
+                                  deletingId === issue.id
+                                }
                                 title="Delete Issue"
                               >
                                 {deletingId === issue.id ? (

@@ -85,7 +85,7 @@ export function IssueBreakdown({
           const stats = response.data;
 
           const catData: ChartDataItem[] = [];
-          
+
           if (stats.issues_by_category && stats.issues_by_category.length > 0) {
             stats.issues_by_category.forEach((categoryOption) => {
               if (categoryOption.count > 0) {
@@ -93,9 +93,12 @@ export function IssueBreakdown({
                   .replace(/_/g, " ")
                   .replace(/\b\w/g, (l: string) => l.toUpperCase());
                 catData.push({
-                  label: label.length > 12 ? label.substring(0, 12) + "..." : label,
+                  label:
+                    label.length > 12 ? label.substring(0, 12) + "..." : label,
                   count: categoryOption.count as number,
-                  fill: categoryColors[categoryOption.name.toLowerCase()] || categoryColors.other,
+                  fill:
+                    categoryColors[categoryOption.name.toLowerCase()] ||
+                    categoryColors.other,
                 });
               }
             });
@@ -106,10 +109,11 @@ export function IssueBreakdown({
               : [{ label: "No Data", count: 0, fill: "#64748b" }],
           );
 
-          const byPriority: Record<string, number> = stats.issues_by_priority || {};
+          const byPriority: Record<string, number> =
+            stats.issues_by_priority || {};
           const priData: ChartDataItem[] = [];
           Object.entries(byPriority).forEach(([priority, count]) => {
-            if (typeof count === 'number' && count > 0) {
+            if (typeof count === "number" && count > 0) {
               priData.push({
                 label: priority.charAt(0).toUpperCase() + priority.slice(1),
                 count: count,
@@ -146,7 +150,8 @@ export function IssueBreakdown({
       <Card className="border-none shadow-md shadow-slate-200/50 overflow-hidden">
         <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight">
-            Issues Breakdown <span className="text-indigo-600 text-[10px] ml-1">Metrics</span>
+            Issues Breakdown{" "}
+            <span className="text-indigo-600 text-[10px] ml-1">Metrics</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[300px]">
@@ -160,7 +165,8 @@ export function IssueBreakdown({
     <Card className="border-none shadow-md shadow-slate-200/50 overflow-hidden">
       <CardHeader className="border-b border-slate-100 bg-slate-50/50 py-4 px-6 flex flex-row items-center justify-between gap-4">
         <CardTitle className="text-sm font-semibold text-slate-900 tracking-tight min-w-0">
-          Issues Breakdown <span className="text-indigo-600 ml-1 capitalize">{activeTab}</span>
+          Issues Breakdown{" "}
+          <span className="text-indigo-600 ml-1 capitalize">{activeTab}</span>
         </CardTitle>
         <div className="flex items-center shrink-0 space-x-1 bg-slate-200/50 p-1 rounded-full">
           <button
@@ -180,23 +186,27 @@ export function IssueBreakdown({
       <CardContent className="pt-8 px-6">
         {error ? (
           <div className="flex flex-col items-center justify-center min-h-[250px] text-slate-400">
-             <AlertCircle className="h-8 w-8 mx-auto mb-2 text-red-400" />
-             <p className="text-sm font-medium">Unable to load data</p>
+            <AlertCircle className="h-8 w-8 mx-auto mb-2 text-red-400" />
+            <p className="text-sm font-medium">Unable to load data</p>
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
             <BarChart accessibilityLayer data={data} margin={{ top: 20 }}>
-              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid
+                vertical={false}
+                strokeDasharray="3 3"
+                stroke="#e2e8f0"
+              />
               <XAxis
                 dataKey="label"
                 tickLine={false}
                 tickMargin={12}
                 axisLine={false}
-                tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }}
+                tick={{ fill: "#64748b", fontSize: 10, fontWeight: 500 }}
                 tickFormatter={(value) => value}
               />
               <ChartTooltip
-                cursor={{ fill: 'rgba(226, 232, 240, 0.4)' }}
+                cursor={{ fill: "rgba(226, 232, 240, 0.4)" }}
                 content={<ChartTooltipContent />}
               />
               <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={40}>

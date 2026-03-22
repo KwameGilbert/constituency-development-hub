@@ -90,7 +90,9 @@ export default function IssuesPage() {
       setLoading(true);
       try {
         // Fetch a reasonable limit of issues to allow client-side filtering/counting
-        const response = await taskForceService.getAllTaskForceIssues({ limit: 100 });
+        const response = await taskForceService.getAllTaskForceIssues({
+          limit: 100,
+        });
         if (response.success) {
           setAllIssues(response.data.issues);
         }
@@ -323,123 +325,134 @@ export default function IssuesPage() {
               </div>
             ) : (
               filteredIssues.map((issue) => {
-                const isRejected = issue.status === 'rejected';
-                const isRevision = issue.status === 'needs_revision';
-                const isPendingAssessment = issue.status === 'assigned_to_task_force';
-                
+                const isRejected = issue.status === "rejected";
+                const isRevision = issue.status === "needs_revision";
+                const isPendingAssessment =
+                  issue.status === "assigned_to_task_force";
+
                 return (
-                <Card
-                  key={issue.id}
-                  className={`
+                  <Card
+                    key={issue.id}
+                    className={`
                     hover:shadow-lg transition-all duration-300
-                    ${isRejected ? 'border-red-500 border-2 shadow-red-100 bg-red-50/10' : ''}
-                    ${isRevision ? 'border-orange-500 border-2 shadow-orange-100 bg-orange-50/10' : ''}
-                    ${isPendingAssessment ? 'border-blue-500 border-2 shadow-blue-100 bg-blue-50/10' : ''}
+                    ${isRejected ? "border-red-500 border-2 shadow-red-100 bg-red-50/10" : ""}
+                    ${isRevision ? "border-orange-500 border-2 shadow-orange-100 bg-orange-50/10" : ""}
+                    ${isPendingAssessment ? "border-blue-500 border-2 shadow-blue-100 bg-blue-50/10" : ""}
                   `}
-                >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        {isRejected && (
-                          <div className="flex items-center gap-1 text-red-600 text-xs font-bold uppercase tracking-wider mb-1">
-                            <AlertTriangle className="h-3 w-3" />
-                            Assessment Rejected
-                          </div>
-                        )}
-                        {isRevision && (
-                          <div className="flex items-center gap-1 text-orange-600 text-xs font-bold uppercase tracking-wider mb-1">
-                            <AlertTriangle className="h-3 w-3" />
-                            Revision Requested
-                          </div>
-                        )}
-                        {isPendingAssessment && (
-                          <div className="flex items-center gap-1 text-blue-600 text-xs font-bold uppercase tracking-wider mb-1">
-                            <Clock className="h-3 w-3" />
-                            Ready for Assessment
-                          </div>
-                        )}
-                        <CardTitle className="text-lg leading-tight mb-1">
-                          {issue.title}
-                        </CardTitle>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge
-                            variant="outline"
-                            className={getStatusColor(issue.status)}
-                          >
-                            <div className="flex items-center gap-1">
-                              {getStatusIcon(issue.status)}
-                              {metadata.statuses.find(
-                                (s) => s.value === issue.status,
-                              )?.label || issue.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          {isRejected && (
+                            <div className="flex items-center gap-1 text-red-600 text-xs font-bold uppercase tracking-wider mb-1">
+                              <AlertTriangle className="h-3 w-3" />
+                              Assessment Rejected
                             </div>
-                          </Badge>
-                          <Badge className={getPriorityColor(issue.priority)}>
-                            <div className="flex items-center gap-1">
-                              {getPriorityIcon(issue.priority)}
-                              {issue.priority}
+                          )}
+                          {isRevision && (
+                            <div className="flex items-center gap-1 text-orange-600 text-xs font-bold uppercase tracking-wider mb-1">
+                              <AlertTriangle className="h-3 w-3" />
+                              Revision Requested
                             </div>
-                          </Badge>
+                          )}
+                          {isPendingAssessment && (
+                            <div className="flex items-center gap-1 text-blue-600 text-xs font-bold uppercase tracking-wider mb-1">
+                              <Clock className="h-3 w-3" />
+                              Ready for Assessment
+                            </div>
+                          )}
+                          <CardTitle className="text-lg leading-tight mb-1">
+                            {issue.title}
+                          </CardTitle>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge
+                              variant="outline"
+                              className={getStatusColor(issue.status)}
+                            >
+                              <div className="flex items-center gap-1">
+                                {getStatusIcon(issue.status)}
+                                {metadata.statuses.find(
+                                  (s) => s.value === issue.status,
+                                )?.label ||
+                                  issue.status
+                                    .split("_")
+                                    .map(
+                                      (word) =>
+                                        word.charAt(0).toUpperCase() +
+                                        word.slice(1),
+                                    )
+                                    .join(" ")}
+                              </div>
+                            </Badge>
+                            <Badge className={getPriorityColor(issue.priority)}>
+                              <div className="flex items-center gap-1">
+                                {getPriorityIcon(issue.priority)}
+                                {issue.priority}
+                              </div>
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="mb-4 line-clamp-3">
-                      {cleanupHtml(issue.description)}
-                    </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="mb-4 line-clamp-3">
+                        {cleanupHtml(issue.description)}
+                      </CardDescription>
 
-                    <div className="space-y-2 text-sm text-gray-600 mb-4">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-gray-400" />
-                        <span>{issue.location}</span>
+                      <div className="space-y-2 text-sm text-gray-600 mb-4">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span>{issue.location}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-400" />
+                          <span>{issue.reporter_name || "Anonymous"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-gray-400" />
+                          <span>{formatDate(issue.created_at)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-gray-400" />
+                          <span>{issue.category}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-400" />
-                        <span>{issue.reporter_name || "Anonymous"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-gray-400" />
-                        <span>{formatDate(issue.created_at)}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-gray-400" />
-                        <span>{issue.category}</span>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                      <div className="flex items-center gap-2">
-                        {/* Budget display removed as it is not part of TaskForceIssue */}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Link href={`/task-force-dashboard/issues/${issue.id}`}>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Button>
-                        </Link>
-                        {[
-                          "submitted",
-                          "pending_assessment",
-                          "assigned_to_task_force",
-                          "assessment_in_progress",
-                          "under_review",
-                        ].includes(issue.status) && (
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                        <div className="flex items-center gap-2">
+                          {/* Budget display removed as it is not part of TaskForceIssue */}
+                        </div>
+                        <div className="flex items-center gap-1">
                           <Link
-                            href={`/task-force-dashboard/assess/${issue.id}`}
+                            href={`/task-force-dashboard/issues/${issue.id}`}
                           >
-                            <Button variant="outline" size="sm">
-                              Assess
+                            <Button variant="ghost" size="sm">
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
                             </Button>
                           </Link>
-                        )}
-                        <ArrowUpRight className="h-4 w-4 text-gray-400" />
+                          {[
+                            "submitted",
+                            "pending_assessment",
+                            "assigned_to_task_force",
+                            "assessment_in_progress",
+                            "under_review",
+                          ].includes(issue.status) && (
+                            <Link
+                              href={`/task-force-dashboard/assess/${issue.id}`}
+                            >
+                              <Button variant="outline" size="sm">
+                                Assess
+                              </Button>
+                            </Link>
+                          )}
+                          <ArrowUpRight className="h-4 w-4 text-gray-400" />
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })
+                    </CardContent>
+                  </Card>
+                );
+              })
             )}
           </div>
         </TabsContent>

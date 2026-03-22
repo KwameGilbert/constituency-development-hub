@@ -415,11 +415,7 @@ export default function ForgotPasswordPage() {
           {step === "otp" && (
             <div className="space-y-6">
               <div className="space-y-4">
-                <OTPInput
-                  value={otp}
-                  onChange={setOtp}
-                  disabled={isLoading}
-                />
+                <OTPInput value={otp} onChange={setOtp} disabled={isLoading} />
 
                 {isLoading && (
                   <div className="flex items-center justify-center gap-2 text-amber-400 text-sm">
@@ -580,9 +576,7 @@ export default function ForgotPasswordPage() {
                   />
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors"
                   >
                     {showConfirmPassword ? (

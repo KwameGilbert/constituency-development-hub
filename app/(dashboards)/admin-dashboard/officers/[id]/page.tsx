@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 // import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +33,7 @@ export default function DisabledPage() {
 // import { officersService, Officer } from "@/lib/services/officers-service";
 // import { toast } from "sonner";
 // import { useRouter } from "next/navigation";
-// 
+//
 // export default function OfficerDetailsPage({
 //   params,
 // }: {
@@ -43,7 +43,7 @@ export default function DisabledPage() {
 //   const router = useRouter();
 //   const [officer, setOfficer] = useState<Officer | null>(null);
 //   const [loading, setLoading] = useState(true);
-// 
+//
 //   useEffect(() => {
 //     const fetchOfficer = async () => {
 //       try {
@@ -65,7 +65,7 @@ export default function DisabledPage() {
 //     };
 //     fetchOfficer();
 //   }, [id, router]);
-// 
+//
 //   if (loading) {
 //     return (
 //       <div className="flex h-screen items-center justify-center bg-slate-50">
@@ -73,9 +73,9 @@ export default function DisabledPage() {
 //       </div>
 //     );
 //   }
-// 
+//
 //   if (!officer) return null;
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -168,7 +168,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 //               </div>
-// 
+//
 //               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 pt-8 border-t border-gray-100">
 //                 Contact Information
 //                 <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function DisabledPage() {
 //                     </div>
 //                   </div>
 //                 </div>
-// 
+//
 //                 Location Assignment
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
@@ -245,7 +245,7 @@ export default function DisabledPage() {
 //                       </>
 //                     )}
 //                 </div>
-// 
+//
 //                 Activity Statistics
 //                 <div className="space-y-4">
 //                   <h3 className="font-semibold text-gray-900">
@@ -279,7 +279,7 @@ export default function DisabledPage() {
 //               </div>
 //             </CardContent>
 //           </Card>
-// 
+//
 //           Recent Issues Managed
 //           <Card>
 //             <CardHeader>
@@ -299,5 +299,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

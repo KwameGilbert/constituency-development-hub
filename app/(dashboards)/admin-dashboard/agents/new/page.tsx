@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { useState, useEffect } from "react";
 // import { useRouter } from "next/navigation";
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
@@ -33,13 +33,13 @@ export default function DisabledPage() {
 // import { agentService } from "@/lib/services/agent-service";
 // import { locationsService, Location } from "@/lib/services/locations-service";
 // import { toast } from "sonner";
-// 
+//
 // export default function AddAgentPage() {
 //   const router = useRouter();
 //   // const { toast } = useToast(); // Removed
 //   const [loading, setLoading] = useState(false);
 //   const [locations, setLocations] = useState<Location[]>([]);
-// 
+//
 //   const [formData, setFormData] = useState({
 //     name: "",
 //     email: "",
@@ -49,7 +49,7 @@ export default function DisabledPage() {
 //     suburb: "",
 //     cottage: "",
 //   });
-// 
+//
 //   useEffect(() => {
 //     const fetchLocations = async () => {
 //       try {
@@ -63,16 +63,16 @@ export default function DisabledPage() {
 //     };
 //     fetchLocations();
 //   }, []);
-// 
+//
 //   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 //     const { id, value } = e.target;
 //     setFormData((prev) => ({ ...prev, [id]: value }));
 //   };
-// 
+//
 //   const handleSelectChange = (key: string, value: string) => {
 //     setFormData((prev) => ({ ...prev, [key]: value }));
 //   };
-// 
+//
 //   const handleSubmit = async () => {
 //     setLoading(true);
 //     try {
@@ -81,15 +81,15 @@ export default function DisabledPage() {
 //       data.append("name", formData.name);
 //       data.append("email", formData.email);
 //       data.append("phone", formData.phone);
-// 
+//
 //       // Assign location - prioritization logic could go here
 //       // For now sending the main selection as 'assigned_location'
 //       data.append("assigned_location", formData.mainCommunity);
 //       if (formData.smallerCommunity)
 //         data.append("assigned_communities", formData.smallerCommunity);
-// 
+//
 //       const response = await agentService.createAgent(data);
-// 
+//
 //       if (response.success) {
 //         toast.success("Success", {
 //           description: "Agent created successfully",
@@ -110,7 +110,7 @@ export default function DisabledPage() {
 //       setLoading(false);
 //     }
 //   };
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -201,13 +201,13 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 //               </div>
-// 
+//
 //               Location Assignment
 //               <div className="space-y-4">
 //                 <h3 className="text-gray-900 font-semibold text-lg">
 //                   Location Assignment
 //                 </h3>
-// 
+//
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
 //                     <Label htmlFor="mainCommunity" className="text-gray-700">
@@ -232,7 +232,7 @@ export default function DisabledPage() {
 //                   </div>
 //                 </div>
 //               </div>
-// 
+//
 //               Footer Actions
 //               <div className="pt-4 flex items-center justify-end gap-3 mt-6">
 //                 <Button
@@ -257,5 +257,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

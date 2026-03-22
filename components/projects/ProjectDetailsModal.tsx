@@ -175,7 +175,9 @@ export default function ProjectDetailsModal({
                       className="text-slate-600 leading-relaxed whitespace-pre-wrap"
                     />
                   ) : (
-                    <p className="text-slate-600 leading-relaxed">No description available.</p>
+                    <p className="text-slate-600 leading-relaxed">
+                      No description available.
+                    </p>
                   )}
                 </div>
 

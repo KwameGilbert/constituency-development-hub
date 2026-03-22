@@ -7,7 +7,7 @@ export default function DisabledPage() {
 
 //  ===== ORIGINAL CODE (commented out) =====
 // "use client";
-// 
+//
 // import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 // import { Button } from "@/components/ui/button";
 // import {
@@ -48,7 +48,7 @@ export default function DisabledPage() {
 // import { toast } from "sonner";
 // import { Checkbox } from "@/components/ui/checkbox";
 // import { Textarea } from "@/components/ui/textarea";
-// 
+//
 // export default function EditOfficerPage({
 //   params,
 // }: {
@@ -61,7 +61,7 @@ export default function DisabledPage() {
 //   const [sectors, setSectors] = useState<Sector[]>([]);
 //   const [locations, setLocations] = useState<Location[]>([]);
 //   const [officer, setOfficer] = useState<Officer | null>(null);
-// 
+//
 //   const [formData, setFormData] = useState<UpdateOfficerRequest>({
 //     name: "",
 //     phone: "",
@@ -77,7 +77,7 @@ export default function DisabledPage() {
 //     bio: "",
 //     office_location: "",
 //   });
-// 
+//
 //   useEffect(() => {
 //     const fetchData = async () => {
 //       try {
@@ -87,10 +87,10 @@ export default function DisabledPage() {
 //           sectorsService.getSectors(),
 //           locationsService.getLocations(),
 //         ]);
-// 
+//
 //         if (sectorsRes.success) setSectors(sectorsRes.data.sectors);
 //         if (locationsRes.success) setLocations(locationsRes.data.locations);
-// 
+//
 //         if (officerRes.success) {
 //           const officerData = officerRes.data.officer;
 //           setOfficer(officerData);
@@ -119,21 +119,21 @@ export default function DisabledPage() {
 //     };
 //     fetchData();
 //   }, [id]);
-// 
+//
 //   const handleChange = (
 //     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 //   ) => {
 //     const { id, value } = e.target;
 //     setFormData((prev) => ({ ...prev, [id]: value }));
 //   };
-// 
+//
 //   const handleSelectChange = (
 //     key: keyof UpdateOfficerRequest,
 //     value: string,
 //   ) => {
 //     setFormData((prev) => ({ ...prev, [key]: value }));
 //   };
-// 
+//
 //   const handleSectorChange = (sectorId: string, checked: boolean) => {
 //     setFormData((prev) => {
 //       const current = prev.assigned_sectors || [];
@@ -143,7 +143,7 @@ export default function DisabledPage() {
 //       return { ...prev, assigned_sectors: updated };
 //     });
 //   };
-// 
+//
 //   const handleLocationChange = (locationName: string, checked: boolean) => {
 //     setFormData((prev) => {
 //       const current = prev.assigned_locations || [];
@@ -153,18 +153,18 @@ export default function DisabledPage() {
 //       return { ...prev, assigned_locations: updated };
 //     });
 //   };
-// 
+//
 //   const handleCheckboxChange = (
 //     key: keyof UpdateOfficerRequest,
 //     checked: boolean,
 //   ) => {
 //     setFormData((prev) => ({ ...prev, [key]: checked }));
 //   };
-// 
+//
 //   const handleSubmit = async (e: React.FormEvent) => {
 //     e.preventDefault();
 //     setSubmitting(true);
-// 
+//
 //     try {
 //       const response = await officersService.updateOfficer(id, formData);
 //       if (response.success) {
@@ -182,7 +182,7 @@ export default function DisabledPage() {
 //       setSubmitting(false);
 //     }
 //   };
-// 
+//
 //   if (loading) {
 //     return (
 //       <div className="flex h-screen items-center justify-center bg-slate-50">
@@ -190,7 +190,7 @@ export default function DisabledPage() {
 //       </div>
 //     );
 //   }
-// 
+//
 //   return (
 //     <div className="flex flex-col h-full bg-slate-50">
 //       <AdminHeader
@@ -252,7 +252,7 @@ export default function DisabledPage() {
 //                   </h3>
 //                   <User className="w-5 h-5 text-indigo-400" />
 //                 </div>
-// 
+//
 //                 Personal Information
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
@@ -312,7 +312,7 @@ export default function DisabledPage() {
 //                     </Select>
 //                   </div>
 //                 </div>
-// 
+//
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div className="space-y-2">
 //                     <Label htmlFor="title">Job Title</Label>
@@ -347,7 +347,7 @@ export default function DisabledPage() {
 //                     </Select>
 //                   </div>
 //                 </div>
-// 
+//
 //                 Checkboxes for Permissions
 //                 <div className="space-y-4 pt-4 border-t border-gray-100">
 //                   <h3 className="font-semibold text-gray-900">Permissions</h3>
@@ -414,7 +414,7 @@ export default function DisabledPage() {
 //                     </div>
 //                   </div>
 //                 </div>
-// 
+//
 //                 Sectors Assignment
 //                 <div className="space-y-4 pt-4 border-t border-gray-100">
 //                   <h3 className="font-semibold text-gray-900">
@@ -450,7 +450,7 @@ export default function DisabledPage() {
 //                     )}
 //                   </div>
 //                 </div>
-// 
+//
 //                 Locations Assignment
 //                 <div className="space-y-4 pt-4 border-t border-gray-100">
 //                   <h3 className="font-semibold text-gray-900">
@@ -490,7 +490,7 @@ export default function DisabledPage() {
 //                     )}
 //                   </div>
 //                 </div>
-// 
+//
 //                 <div className="space-y-2 pt-4 border-t border-gray-100">
 //                   <Label htmlFor="bio">Bio / Notes</Label>
 //                   <Textarea
@@ -500,7 +500,7 @@ export default function DisabledPage() {
 //                     onChange={handleChange}
 //                   />
 //                 </div>
-// 
+//
 //                 Footer Actions
 //                 <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
 //                   <Button
@@ -530,5 +530,5 @@ export default function DisabledPage() {
 //     </div>
 //   );
 // }
-// 
+//
 // ===== END ORIGINAL CODE =====

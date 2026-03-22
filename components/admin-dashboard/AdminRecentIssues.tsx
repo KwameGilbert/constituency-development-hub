@@ -75,7 +75,10 @@ export function AdminRecentIssues() {
           <CardTitle className="text-lg font-semibold text-gray-800">
             Recent Issues
           </CardTitle>
-          <Link href="/admin-dashboard/issues" className="text-sm text-blue-600 hover:underline">
+          <Link
+            href="/admin-dashboard/issues"
+            className="text-sm text-blue-600 hover:underline"
+          >
             View All Issues →
           </Link>
         </CardHeader>
@@ -110,7 +113,10 @@ export function AdminRecentIssues() {
           <CardTitle className="text-lg font-semibold text-gray-800">
             Recent Issues
           </CardTitle>
-          <Link href="/admin-dashboard/issues" className="text-sm text-blue-600 hover:underline">
+          <Link
+            href="/admin-dashboard/issues"
+            className="text-sm text-blue-600 hover:underline"
+          >
             View All Issues →
           </Link>
         </CardHeader>
@@ -146,7 +152,10 @@ export function AdminRecentIssues() {
         <CardTitle className="text-lg font-semibold text-gray-800">
           Recent Issues
         </CardTitle>
-        <Link href="/admin-dashboard/issues" className="text-sm text-blue-600 hover:underline">
+        <Link
+          href="/admin-dashboard/issues"
+          className="text-sm text-blue-600 hover:underline"
+        >
           View All Issues →
         </Link>
       </CardHeader>
@@ -183,7 +192,9 @@ export function AdminRecentIssues() {
                         </span>
                         {/* Mobile Status Badge */}
                         <div className="md:hidden">
-                           <Badge className={`text-xs ${getStatusColor(issue.status)}`}>
+                          <Badge
+                            className={`text-xs ${getStatusColor(issue.status)}`}
+                          >
                             {issue.status}
                           </Badge>
                         </div>
@@ -198,7 +209,9 @@ export function AdminRecentIssues() {
 
                     {/* Desktop: Agent */}
                     <div className="hidden md:flex items-center">
-                      <span className="text-sm text-gray-900">{issue.agent}</span>
+                      <span className="text-sm text-gray-900">
+                        {issue.agent}
+                      </span>
                     </div>
 
                     {/* Desktop: Status */}
@@ -214,7 +227,7 @@ export function AdminRecentIssues() {
                     <div className="hidden md:grid grid-cols-2 gap-2">
                       <Badge
                         className={`text-xs justify-center ${getSeverityColor(
-                          issue.severity
+                          issue.severity,
                         )}`}
                       >
                         {issue.severity}
@@ -230,9 +243,15 @@ export function AdminRecentIssues() {
                     {/* Mobile Details Row */}
                     <div className="flex md:hidden items-center justify-between mt-2 text-xs text-gray-500">
                       <div className="flex items-center gap-2">
-                         <span className="font-medium text-gray-700">{issue.agent}</span>
-                         <span>•</span>
-                         <span className={`${getSeverityColor(issue.severity).replace("bg-", "text-").replace("text-", "bg-transparent ")} font-medium`}>{issue.severity}</span>
+                        <span className="font-medium text-gray-700">
+                          {issue.agent}
+                        </span>
+                        <span>•</span>
+                        <span
+                          className={`${getSeverityColor(issue.severity).replace("bg-", "text-").replace("text-", "bg-transparent ")} font-medium`}
+                        >
+                          {issue.severity}
+                        </span>
                       </div>
                       <span>
                         {new Date(issue.date).toLocaleDateString("en-GB", {

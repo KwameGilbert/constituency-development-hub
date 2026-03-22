@@ -78,8 +78,6 @@ export default function SettingsPage() {
     },
   });
 
-
-
   const handleSettingChange = (
     category: keyof SettingsState,
     key: string,
@@ -105,8 +103,6 @@ export default function SettingsPage() {
   const handleImport = () => {
     toast.info("Data import is not yet available.");
   };
-
-
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
@@ -410,15 +406,25 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <Label>Version</Label>
-                <p className="text-gray-600">{process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0"}</p>
+                <p className="text-gray-600">
+                  {process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0"}
+                </p>
               </div>
               <div>
                 <Label>Last Updated</Label>
-                <p className="text-gray-600">{new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+                <p className="text-gray-600">
+                  {new Date().toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
               </div>
               <div>
                 <Label>Environment</Label>
-                <p className="text-gray-600">{process.env.NODE_ENV || "development"}</p>
+                <p className="text-gray-600">
+                  {process.env.NODE_ENV || "development"}
+                </p>
               </div>
             </div>
           </CardContent>

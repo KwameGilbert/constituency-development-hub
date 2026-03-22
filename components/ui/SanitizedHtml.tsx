@@ -20,7 +20,8 @@ export default function SanitizedHtml({
       className,
       dangerouslySetInnerHTML: { __html: sanitized },
     });
-  } catch (err) { // eslint-disable-line @typescript-eslint/no-unused-vars
+  } catch (err) {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     return React.createElement(tag, { className }, html);
   }
 }

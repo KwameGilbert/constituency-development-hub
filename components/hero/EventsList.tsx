@@ -26,7 +26,11 @@ function EventsList() {
         const pages: Event[] = first.data.events || [];
 
         const pagination = first.data.pagination;
-        if (pagination && pagination.total_pages && pagination.total_pages > 1) {
+        if (
+          pagination &&
+          pagination.total_pages &&
+          pagination.total_pages > 1
+        ) {
           const totalPages = pagination.total_pages;
           // Fetch remaining pages in sequence (small number expected)
           for (let p = 2; p <= totalPages; p++) {

@@ -78,9 +78,8 @@ export function HelpSections() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                 This system helps you
-                efficiently manage issues, oversee agents, and generate
-                comprehensive reports.
+                This system helps you efficiently manage issues, oversee agents,
+                and generate comprehensive reports.
               </p>
               <div>
                 <h4 className="font-semibold mb-2">System Overview</h4>

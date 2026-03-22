@@ -95,7 +95,7 @@ export const categoriesService = {
 
   // Get category by slug with sectors
   getCategoryBySlug: async (
-    slug: string
+    slug: string,
   ): Promise<CategoryWithSectorsResponse> => {
     return apiClient<CategoryWithSectorsResponse>(`/categories/${slug}`, {
       method: "GET",
@@ -104,7 +104,7 @@ export const categoriesService = {
 
   // Create new category
   createCategory: async (
-    data: CreateCategoryRequest
+    data: CreateCategoryRequest,
   ): Promise<CategoryResponse> => {
     return apiClient<CategoryResponse>("/categories", {
       method: "POST",
@@ -115,7 +115,7 @@ export const categoriesService = {
   // Update category
   updateCategory: async (
     id: number,
-    data: UpdateCategoryRequest
+    data: UpdateCategoryRequest,
   ): Promise<CategoryResponse> => {
     return apiClient<CategoryResponse>(`/categories/${id}`, {
       method: "PUT",
@@ -125,24 +125,24 @@ export const categoriesService = {
 
   // Delete category
   deleteCategory: async (
-    id: number
+    id: number,
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
       `/categories/${id}`,
-      { method: "DELETE" }
+      { method: "DELETE" },
     );
   },
 
   // Reorder categories
   reorderCategories: async (
-    orderedIds: number[]
+    orderedIds: number[],
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
       "/categories/reorder",
       {
         method: "PUT",
         body: JSON.stringify({ ordered_ids: orderedIds }),
-      }
+      },
     );
   },
 };

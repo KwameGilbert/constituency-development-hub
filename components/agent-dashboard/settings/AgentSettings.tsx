@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Camera, Mail, CheckCircle2, Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
+import {
+  Camera,
+  Mail,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -222,7 +230,7 @@ export function AgentSettings() {
               {profile ? getInitials(profile.user.name) : "AG"}
             </AvatarFallback>
           </Avatar>
-          <button 
+          <button
             className="absolute bottom-0 right-0 rounded-full bg-slate-900 p-2 text-white hover:bg-slate-800 shadow-md disabled:opacity-50"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingImage}
@@ -245,7 +253,9 @@ export function AgentSettings() {
           <h2 className="text-xl font-bold text-slate-900">
             {profile?.user.name}
           </h2>
-          <p className="text-slate-500 font-medium">Field Agent • {profile?.agent_code}</p>
+          <p className="text-slate-500 font-medium">
+            Field Agent • {profile?.agent_code}
+          </p>
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 pt-1">
             <div className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-slate-500">
               <Mail className="h-3.5 w-3.5" />
@@ -267,7 +277,7 @@ export function AgentSettings() {
           </div>
         </div>
       </div>
- 
+
       {/* Settings Tabs */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <Tabs defaultValue="profile" className="w-full">
@@ -324,7 +334,9 @@ export function AgentSettings() {
                   type="tel"
                   inputMode="numeric"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ''))}
+                  onChange={(e) =>
+                    setPhone(e.target.value.replace(/[^0-9+]/g, ""))
+                  }
                   placeholder="e.g., +233 20 123 4567"
                   className="border-slate-200 focus:border-slate-900 focus:ring-slate-900"
                 />

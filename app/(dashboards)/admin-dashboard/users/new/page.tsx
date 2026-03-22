@@ -55,13 +55,13 @@ import { cn } from "@/lib/utils";
 
 export default function AddUserPage() {
   const router = useRouter();
-  
+
   // Location state
   const [communities, setCommunities] = useState<Location[]>([]);
   const [suburbs, setSuburbs] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [selectedCommunity, setSelectedCommunity] = useState<string>("");
   const [selectedSuburb, setSelectedSuburb] = useState<string>("");
   const [communityOpen, setCommunityOpen] = useState(false);
@@ -92,7 +92,7 @@ export default function AddUserPage() {
         status: "active",
         limit: 100,
       });
-      
+
       if (response.success) {
         setCommunities(response.data.locations);
       }
@@ -112,7 +112,7 @@ export default function AddUserPage() {
         status: "active",
         limit: 100,
       });
-      
+
       if (response.success) {
         setSuburbs(response.data.locations);
       }
@@ -126,7 +126,7 @@ export default function AddUserPage() {
     setSelectedCommunity(value);
     setSelectedSuburb("");
     setSuburbs([]);
-    
+
     if (value) {
       fetchSuburbs(parseInt(value));
     }
@@ -138,18 +138,23 @@ export default function AddUserPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSelectChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validation
-    if (!formData.fullName || !formData.email || !formData.role || !formData.password) {
+    if (
+      !formData.fullName ||
+      !formData.email ||
+      !formData.role ||
+      !formData.password
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -167,17 +172,19 @@ export default function AddUserPage() {
     // Build location string from selected locations
     const locations = [];
     if (selectedCommunity) {
-      const community = communities.find(c => c.id.toString() === selectedCommunity);
+      const community = communities.find(
+        (c) => c.id.toString() === selectedCommunity,
+      );
       if (community) locations.push(community.name);
     }
     if (selectedSuburb) {
-      const suburb = suburbs.find(s => s.id.toString() === selectedSuburb);
+      const suburb = suburbs.find((s) => s.id.toString() === selectedSuburb);
       if (suburb) locations.push(suburb.name);
     }
 
     try {
       setSubmitting(true);
-      
+
       const userData = {
         name: formData.fullName,
         email: formData.email,
@@ -199,7 +206,8 @@ export default function AddUserPage() {
       }
     } catch (error: unknown) {
       console.error("Error creating user:", error);
-      const errorMessage = error instanceof Error ? error.message : "Failed to create user";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create user";
       toast.error(errorMessage);
     } finally {
       setSubmitting(false);
@@ -258,292 +266,324 @@ export default function AddUserPage() {
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-8">
-              {/* Personal Information */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
-                  <User className="w-4 h-4" />
-                  <h3>Personal Information</h3>
+              <CardContent className="space-y-8">
+                {/* Personal Information */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                    <User className="w-4 h-4" />
+                    <h3>Personal Information</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName" className="text-gray-700">
+                        Full Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="fullName"
+                        placeholder="Enter full name"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-gray-700">
+                        Email Address <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter email address"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-gray-700">
+                        Phone Number
+                      </Label>
+                      <Input
+                        id="phone"
+                        placeholder="e.g. +233 20 123 4567"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="department" className="text-gray-700">
+                        Department
+                      </Label>
+                      <Input
+                        id="department"
+                        placeholder="e.g. Community Relations"
+                        value={formData.department}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role" className="text-gray-700">
+                        User Role <span className="text-red-500">*</span>
+                      </Label>
+                      <Select
+                        value={formData.role}
+                        onValueChange={(value) =>
+                          handleSelectChange("role", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="web_admin">Web Admin</SelectItem>
+                          <SelectItem value="task_force">Task Force</SelectItem>
+                          <SelectItem value="agent">Agent</SelectItem>
+                          <SelectItem value="officer">Officer</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="status" className="text-gray-700">
+                        Account Status
+                      </Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) =>
+                          handleSelectChange("status", value)
+                        }
+                        defaultValue="active"
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-gray-700">
-                      Full Name <span className="text-red-500">*</span>
-                    </Label>
-                    <Input 
-                      id="fullName" 
-                      placeholder="Enter full name" 
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700">
-                      Email Address <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter email address"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-gray-700">
-                      Phone Number
-                    </Label>
-                    <Input 
-                      id="phone" 
-                      placeholder="e.g. +233 20 123 4567"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="department" className="text-gray-700">
-                      Department
-                    </Label>
-                    <Input
-                      id="department"
-                      placeholder="e.g. Community Relations"
-                      value={formData.department}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role" className="text-gray-700">
-                      User Role <span className="text-red-500">*</span>
-                    </Label>
-                    <Select 
-                      value={formData.role}
-                      onValueChange={(value) => handleSelectChange("role", value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="web_admin">Web Admin</SelectItem>
-                        <SelectItem value="task_force">Task Force</SelectItem>
-                        <SelectItem value="agent">Agent</SelectItem>
-                        <SelectItem value="officer">Officer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status" className="text-gray-700">
-                      Account Status
-                    </Label>
-                    <Select 
-                      value={formData.status}
-                      onValueChange={(value) => handleSelectChange("status", value)}
-                      defaultValue="active"
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
 
-              {/* Location Assignment */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
-                  <MapPin className="w-4 h-4" />
-                  <h3>Location Assignment</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="mainCommunity" className="text-gray-700">
-                      Main Community
-                    </Label>
-                    <Popover open={communityOpen} onOpenChange={setCommunityOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={communityOpen}
-                          className="w-full justify-between font-normal"
-                          disabled={loading}
+                {/* Location Assignment */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                    <MapPin className="w-4 h-4" />
+                    <h3>Location Assignment</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="mainCommunity" className="text-gray-700">
+                        Main Community
+                      </Label>
+                      <Popover
+                        open={communityOpen}
+                        onOpenChange={setCommunityOpen}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={communityOpen}
+                            className="w-full justify-between font-normal"
+                            disabled={loading}
+                          >
+                            {selectedCommunity
+                              ? communities.find(
+                                  (community) =>
+                                    community.id.toString() ===
+                                    selectedCommunity,
+                                )?.name
+                              : loading
+                                ? "Loading..."
+                                : "Select Main Community"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-[--radix-popover-trigger-width] p-0"
+                          align="start"
                         >
-                          {selectedCommunity
-                            ? communities.find((community) => community.id.toString() === selectedCommunity)?.name
-                            : loading
-                              ? "Loading..."
-                              : "Select Main Community"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search main community..." />
-                          <CommandList>
-                            <CommandEmpty>No community found.</CommandEmpty>
-                            <CommandGroup>
-                              {communities.map((community) => (
-                                <CommandItem
-                                  key={community.id}
-                                  value={community.name}
-                                  onSelect={() => {
-                                    handleCommunityChange(community.id.toString());
-                                    setCommunityOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      selectedCommunity === community.id.toString() ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {community.name}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="suburb" className="text-gray-700">
-                      Suburb
-                    </Label>
-                    <Popover open={suburbOpen} onOpenChange={setSuburbOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={suburbOpen}
-                          className="w-full justify-between font-normal"
-                          disabled={!selectedCommunity || suburbs.length === 0}
+                          <Command>
+                            <CommandInput placeholder="Search main community..." />
+                            <CommandList>
+                              <CommandEmpty>No community found.</CommandEmpty>
+                              <CommandGroup>
+                                {communities.map((community) => (
+                                  <CommandItem
+                                    key={community.id}
+                                    value={community.name}
+                                    onSelect={() => {
+                                      handleCommunityChange(
+                                        community.id.toString(),
+                                      );
+                                      setCommunityOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        selectedCommunity ===
+                                          community.id.toString()
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {community.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="suburb" className="text-gray-700">
+                        Suburb
+                      </Label>
+                      <Popover open={suburbOpen} onOpenChange={setSuburbOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={suburbOpen}
+                            className="w-full justify-between font-normal"
+                            disabled={
+                              !selectedCommunity || suburbs.length === 0
+                            }
+                          >
+                            {selectedSuburb
+                              ? suburbs.find(
+                                  (suburb) =>
+                                    suburb.id.toString() === selectedSuburb,
+                                )?.name
+                              : !selectedCommunity
+                                ? "Select main community first"
+                                : suburbs.length === 0
+                                  ? "No suburbs"
+                                  : "Select Suburb"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-[--radix-popover-trigger-width] p-0"
+                          align="start"
                         >
-                          {selectedSuburb
-                            ? suburbs.find((suburb) => suburb.id.toString() === selectedSuburb)?.name
-                            : !selectedCommunity
-                              ? "Select main community first"
-                              : suburbs.length === 0
-                                ? "No suburbs"
-                                : "Select Suburb"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                        <Command>
-                          <CommandInput placeholder="Search suburbs..." />
-                          <CommandList>
-                            <CommandEmpty>No suburb found.</CommandEmpty>
-                            <CommandGroup>
-                              {suburbs.map((suburb) => (
-                                <CommandItem
-                                  key={suburb.id}
-                                  value={suburb.name}
-                                  onSelect={() => {
-                                    handleSuburbChange(suburb.id.toString());
-                                    setSuburbOpen(false);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      selectedSuburb === suburb.id.toString() ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {suburb.name}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                          <Command>
+                            <CommandInput placeholder="Search suburbs..." />
+                            <CommandList>
+                              <CommandEmpty>No suburb found.</CommandEmpty>
+                              <CommandGroup>
+                                {suburbs.map((suburb) => (
+                                  <CommandItem
+                                    key={suburb.id}
+                                    value={suburb.name}
+                                    onSelect={() => {
+                                      handleSuburbChange(suburb.id.toString());
+                                      setSuburbOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        selectedSuburb === suburb.id.toString()
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                    {suburb.name}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Security Information */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
-                  <Lock className="w-4 h-4" />
-                  <h3>Security Information</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-gray-700">
-                      Password <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Enter password (min. 8 characters)"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                    />
-                    <p className="text-[10px] text-gray-400">
-                      Password must be at least 8 characters long
-                    </p>
+                {/* Security Information */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-900 font-semibold border-b border-gray-100 pb-2">
+                    <Lock className="w-4 h-4" />
+                    <h3>Security Information</h3>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-gray-700">
-                      Confirm Password <span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="Confirm password"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      required
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="password" className="text-gray-700">
+                        Password <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Enter password (min. 8 characters)"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                      />
+                      <p className="text-[10px] text-gray-400">
+                        Password must be at least 8 characters long
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="confirmPassword"
+                        className="text-gray-700"
+                      >
+                        Confirm Password <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm password"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Info Alert */}
-              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex gap-3">
-                <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <h4 className="text-sm font-semibold text-blue-900">
-                    Important Information
-                  </h4>
-                  <ul className="text-xs text-blue-700 list-disc list-inside space-y-1">
-                    <li>The user will receive login credentials via email</li>
-                    <li>They can change their password after first login</li>
-                    <li>Make sure the role assignment is correct</li>
-                    <li>You can modify these details later if needed</li>
-                  </ul>
+                {/* Info Alert */}
+                <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex gap-3">
+                  <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold text-blue-900">
+                      Important Information
+                    </h4>
+                    <ul className="text-xs text-blue-700 list-disc list-inside space-y-1">
+                      <li>The user will receive login credentials via email</li>
+                      <li>They can change their password after first login</li>
+                      <li>Make sure the role assignment is correct</li>
+                      <li>You can modify these details later if needed</li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
 
-              {/* Footer Actions */}
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
-                <Button
-                  variant="outline"
-                  asChild
-                  className="bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-700"
-                >
-                  <Link href="/admin-dashboard/users">Cancel</Link>
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-indigo-900 hover:bg-indigo-800 text-white gap-2"
-                  disabled={submitting}
-                >
-                  <UserPlus className="w-4 h-4" />
-                  {submitting ? "Creating..." : "Create User"}
-                </Button>
-              </div>
-            </CardContent>
+                {/* Footer Actions */}
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100 mt-6">
+                  <Button
+                    variant="outline"
+                    asChild
+                    className="bg-gray-50 hover:bg-gray-100 border-gray-200 text-gray-700"
+                  >
+                    <Link href="/admin-dashboard/users">Cancel</Link>
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-indigo-900 hover:bg-indigo-800 text-white gap-2"
+                    disabled={submitting}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    {submitting ? "Creating..." : "Create User"}
+                  </Button>
+                </div>
+              </CardContent>
             </form>
           </Card>
         </div>

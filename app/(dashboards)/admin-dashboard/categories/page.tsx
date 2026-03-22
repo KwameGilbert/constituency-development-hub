@@ -50,10 +50,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import {
-  categoriesService,
-  Category,
-} from "@/lib/services/categories-service";
+import { categoriesService, Category } from "@/lib/services/categories-service";
 import Link from "next/link";
 
 export default function CategoriesPage() {
@@ -79,7 +76,7 @@ export default function CategoriesPage() {
 
   // Edit/Delete State
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null
+    null,
   );
 
   // Fetch categories from API
@@ -105,7 +102,7 @@ export default function CategoriesPage() {
 
   // Filter categories based on search query
   const filteredCategories = categories.filter((c) =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase())
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Client-side pagination
@@ -192,7 +189,7 @@ export default function CategoriesPage() {
           description: formData.description.trim() || null,
           icon: formData.icon.trim() || null,
           color: formData.color || null,
-        }
+        },
       );
 
       if (response.success) {
@@ -225,7 +222,7 @@ export default function CategoriesPage() {
     setIsSubmitting(true);
     try {
       const response = await categoriesService.deleteCategory(
-        selectedCategory.id
+        selectedCategory.id,
       );
 
       if (response.success) {
@@ -238,9 +235,7 @@ export default function CategoriesPage() {
       }
     } catch (error) {
       console.error("Failed to delete category:", error);
-      toast.error(
-        "Failed to delete category. It may have associated sectors."
-      );
+      toast.error("Failed to delete category. It may have associated sectors.");
     } finally {
       setIsSubmitting(false);
     }
@@ -416,9 +411,7 @@ export default function CategoriesPage() {
                               size="icon"
                               className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50"
                               onClick={() => handleDeleteClick(category)}
-                              disabled={
-                                (category.sectors_count || 0) > 0
-                              }
+                              disabled={(category.sectors_count || 0) > 0}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -437,11 +430,17 @@ export default function CategoriesPage() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm text-gray-600">
                 Showing{" "}
-                <span className="font-medium text-gray-900">{(currentPage - 1) * pageSize + 1}</span>
-                {" "}to{" "}
-                <span className="font-medium text-gray-900">{Math.min(currentPage * pageSize, filteredCategories.length)}</span>
-                {" "}of{" "}
-                <span className="font-medium text-gray-900">{filteredCategories.length}</span>{" "}
+                <span className="font-medium text-gray-900">
+                  {(currentPage - 1) * pageSize + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium text-gray-900">
+                  {Math.min(currentPage * pageSize, filteredCategories.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium text-gray-900">
+                  {filteredCategories.length}
+                </span>{" "}
                 categories
               </p>
               <div className="flex items-center gap-2">
@@ -449,16 +448,42 @@ export default function CategoriesPage() {
                   Page {currentPage} of {totalPages}
                 </span>
                 <div className="flex items-center gap-1">
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                  >
                     <ChevronsLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                  >
                     <ChevronsRight className="h-4 w-4" />
                   </Button>
                 </div>

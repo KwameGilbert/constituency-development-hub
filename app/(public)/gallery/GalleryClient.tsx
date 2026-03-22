@@ -310,7 +310,9 @@ export default function GalleryClient() {
                 {/* Caption */}
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                   <p className="text-white text-center text-sm">
-                    {cleanupHtml(selectedItem.images[currentImageIndex].caption || "")}
+                    {cleanupHtml(
+                      selectedItem.images[currentImageIndex].caption || "",
+                    )}
                   </p>
                 </div>
 

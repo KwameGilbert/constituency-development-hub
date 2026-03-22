@@ -105,12 +105,16 @@ export default function IssueDescription({
                   <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                     {pair.label}
                   </span>
-                  <span className="text-sm text-gray-800 mt-0.5">{pair.value}</span>
+                  <span className="text-sm text-gray-800 mt-0.5">
+                    {pair.value}
+                  </span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-600 whitespace-pre-wrap">{additionalRaw}</p>
+            <p className="text-sm text-gray-600 whitespace-pre-wrap">
+              {additionalRaw}
+            </p>
           )}
         </div>
       )}

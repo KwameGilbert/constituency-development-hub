@@ -15,7 +15,8 @@ export async function generateMetadata(
   const { slug } = await params;
 
   const defaultTitle = "Announcement | Constituency Development Hub";
-  const defaultDesc = "Read important updates and notices from the constituency.";
+  const defaultDesc =
+    "Read important updates and notices from the constituency.";
 
   try {
     const response = await announcementsService.getAnnouncementBySlug(slug);
