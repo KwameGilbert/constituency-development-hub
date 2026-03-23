@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kofibenteh.com/v1';
 
 interface FetchOptions extends RequestInit {
   requiresAuth?: boolean;
