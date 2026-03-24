@@ -45,6 +45,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { agentService, AgentProfile } from "@/lib/services/agent-service";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export function AllAgents() {

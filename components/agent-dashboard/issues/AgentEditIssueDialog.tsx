@@ -55,7 +55,7 @@ export function AgentEditIssueDialog({
         description: issue.description || "",
         category: issue.category || "",
         priority: issue.priority || "medium",
-        location: issue.location || "",
+        location: issue.community || "",
       });
     }
   }, [issue]);
