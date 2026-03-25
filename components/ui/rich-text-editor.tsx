@@ -1,9 +1,24 @@
 "use client";
 
-import React from "react";
-import { Editor } from "@tinymce/tinymce-react";
+import React, { useMemo, useRef } from "react";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
 import { cn } from "@/lib/utils";
 import { uploadService } from "@/lib/services/upload-service";
+
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(
+  async () => {
+    const { default: RQ } = await import("react-quill");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Component = ({ forwardedRef, ...props }: any) => (
+      <RQ ref={forwardedRef} {...props} />
+    );
+    Component.displayName = "ReactQuill";
+    return Component;
+  },
+  { ssr: false },
+);
 
 interface RichTextEditorProps {
   value?: string;
@@ -24,13 +39,8 @@ export function RichTextEditor({
   height = 400,
   error = false,
 }: RichTextEditorProps) {
-  const envTinyMceApiKey = process.env.NEXT_PUBLIC_TINYMCE_API_KEY?.trim();
-  const tinyMceApiKey =
-    envTinyMceApiKey &&
-    envTinyMceApiKey !== "YOUR_TINYMCE_API_KEY" &&
-    envTinyMceApiKey !== "YOUR_API_KEY"
-      ? envTinyMceApiKey
-      : "no-api-key";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const quillRef = useRef<any>(null);
 
   const uploadEditorImage = async (file: File): Promise<string> => {
     const response = await uploadService.uploadFile(file, "editor", "image");
@@ -47,127 +57,112 @@ export function RichTextEditor({
     return rawUrl;
   };
 
-  const handleTinyMceImageUpload = async (blobInfo: {
-    blob: () => Blob;
-    filename: () => string;
-  }): Promise<string> => {
-    const file = new File([blobInfo.blob()], blobInfo.filename(), {
-      type: blobInfo.blob().type || "image/png",
-    });
-    return uploadEditorImage(file);
-  };
-
-  const handleTinyMceFilePicker = (
-    callback: (url: string, meta?: { title?: string }) => void,
-  ): void => {
+  const imageHandler = React.useCallback(() => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+    input.click();
 
     input.onchange = async () => {
       const file = input.files?.[0];
-      if (!file) {
-        return;
-      }
-
-      try {
-        const imageUrl = await uploadEditorImage(file);
-        callback(imageUrl, { title: file.name });
-      } catch {
-        callback("");
+      if (file) {
+        const quill = quillRef.current?.getEditor();
+        if (quill) {
+          const range = quill.getSelection();
+          try {
+            const url = await uploadEditorImage(file);
+            quill.insertEmbed(range?.index || 0, "image", url);
+          } catch (error) {
+            console.error("Image upload failed", error);
+          }
+        }
       }
     };
+  }, []);
 
-    input.click();
-  };
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, 4, false] }],
+          ["bold", "italic", "underline", "strike", "blockquote"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ align: [] }],
+          ["link", "image", "video"],
+          ["clean"],
+        ],
+        handlers: {
+          image: imageHandler,
+        },
+      },
+      clipboard: {
+        matchVisual: false,
+      },
+    }),
+    [imageHandler],
+  );
 
-  // Detect if dark mode is active (client-side)
-  const isDarkMode =
-    typeof window !== "undefined" &&
-    document.documentElement.classList.contains("dark");
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+    "align",
+  ];
 
   return (
     <div
       className={cn(
-        "rounded-md border border-input",
+        "rounded-md border border-input rich-text-wrapper bg-white dark:bg-slate-950",
         error && "border-destructive ring-destructive/20",
         className,
       )}
+      style={{ minHeight: height }}
     >
-      <Editor
-        apiKey={tinyMceApiKey}
+      <style jsx global>{`
+        .rich-text-wrapper .ql-toolbar.ql-snow {
+          border: none;
+          border-bottom: 1px solid hsl(var(--input));
+          border-top-left-radius: 0.375rem;
+          border-top-right-radius: 0.375rem;
+        }
+        .rich-text-wrapper .ql-container.ql-snow {
+          border: none;
+          font-family: inherit;
+          font-size: 0.875rem;
+          min-height: ${height - 42}px;
+        }
+        .dark .rich-text-wrapper .ql-snow .ql-stroke {
+          stroke: #94a3b8;
+        }
+        .dark .rich-text-wrapper .ql-snow .ql-fill {
+          fill: #94a3b8;
+        }
+        .dark .rich-text-wrapper .ql-snow .ql-picker {
+          color: #94a3b8;
+        }
+        .dark .rich-text-wrapper .ql-snow .ql-picker-options {
+          background-color: #020617;
+          border-color: #1e293b;
+        }
+      `}</style>
+      <ReactQuill
+        forwardedRef={quillRef}
+        theme="snow"
         value={value}
-        onEditorChange={(content) => {
-          if (onChange) onChange(content);
-        }}
-        disabled={disabled}
-        init={{
-          height,
-          menubar: false,
-          plugins: [
-            "advlist",
-            "autolink",
-            "lists",
-            "link",
-            "image",
-            "media",
-            "table",
-            "code",
-            "help",
-            "quickbars",
-            "wordcount",
-          ],
-          toolbar:
-            "undo redo | blocks | " +
-            "bold italic underline | alignleft aligncenter alignright | " +
-            "bullist numlist outdent indent | link image media | removeformat | code",
-          /* Ensure Enter creates paragraphs */
-          forced_root_block: "p",
-          paste_as_text: false,
-          paste_data_images: true,
-          list_indent_on_tab: true,
-          content_style: `
-            body { 
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
-              font-size: 14px;
-              padding: 8px;
-            }
-            p { margin-bottom: 1rem; line-height: 1.6; }
-            ul { margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.5rem; list-style-type: disc !important; }
-            ol { margin-top: 0.5rem; margin-bottom: 0.5rem; padding-left: 1.5rem; list-style-type: decimal !important; }
-            li { margin-bottom: 0.25rem; display: list-item; }
-          `,
-          skin: isDarkMode ? "oxide-dark" : "oxide",
-          content_css: isDarkMode ? "dark" : "default",
-          placeholder,
-          branding: false,
-          promotion: false,
-          automatic_uploads: true,
-          file_picker_types: "image",
-          images_upload_handler: async (blobInfo: {
-            blob: () => Blob;
-            filename: () => string;
-          }) => {
-            return handleTinyMceImageUpload(blobInfo);
-          },
-          file_picker_callback: (
-            callback: (url: string, meta?: { title?: string }) => void,
-          ) => {
-            handleTinyMceFilePicker(callback);
-          },
-          /* Ensure editor starts with a paragraph for predictable Enter behaviour */
-          setup: (editor: {
-            on: (event: string, cb: () => void) => void;
-            getContent: (opts: { format: "raw" }) => string;
-            setContent: (content: string) => void;
-          }) => {
-            editor.on("init", () => {
-              if (!editor.getContent({ format: "raw" })) {
-                editor.setContent("<p></p>");
-              }
-            });
-          },
-        }}
+        onChange={onChange}
+        modules={modules}
+        formats={formats}
+        placeholder={placeholder}
+        readOnly={disabled}
       />
     </div>
   );
