@@ -23,8 +23,6 @@ export default async function ManageBlogPostsPage() {
   try {
     const response = await blogService.getAdminPosts();
     if (response) {
-      // Handle both possible structures if necessary, but strictly typing based on blog.http
-      // blog.http says: data: { posts: [...] }
       if (response.success && response.data) {
         posts = response.data.posts || [];
         pagination = response.data.pagination;
