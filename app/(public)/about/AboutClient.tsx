@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   BadgeCheck,
@@ -9,7 +10,6 @@ import {
   Mail,
   MapPin,
   Phone,
-  Shield,
   Sparkles,
   Users,
 } from "lucide-react";
@@ -145,37 +145,16 @@ export default function AboutClient() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="rounded-3xl border border-white/60 bg-gradient-to-br from-emerald-500/90 to-sky-500/90 p-1 shadow-2xl"
+            className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/60 shadow-2xl lg:aspect-auto lg:h-full"
           >
-            <div className="h-full rounded-[26px] bg-white/95 p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(16,185,129,0.25)]">
-              <div className="flex items-center gap-3 text-emerald-600">
-                <Shield className="h-10 w-10" />
-                <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
-                    Mandate
-                  </p>
-                  <p className="text-xl font-semibold text-slate-900">
-                    Serving since January 2025
-                  </p>
-                </div>
-              </div>
-              <p className="mt-4 text-base text-slate-600">
-                &ldquo;My duty is to champion accountable governance,
-                sustainable development and youth-first policies across Sefwi
-                Wiawso.&rdquo;
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Badge className="bg-emerald-100/80 text-emerald-700">
-                  Transparent governance
-                </Badge>
-                <Badge className="bg-sky-100/80 text-sky-700">
-                  Youth empowerment
-                </Badge>
-                <Badge className="bg-amber-100/80 text-amber-700">
-                  Sustainable growth
-                </Badge>
-              </div>
-            </div>
+            <Image
+              src="https://res.cloudinary.com/kwamegilbert/image/upload/v1774465088/DSC_4681.jpg_oigsp1.jpg"
+              alt="Hon. Kofi Benteh Afful"
+              fill
+              className="object-cover transition-transform duration-700 hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 40vw"
+              priority
+            />
           </motion.div>
         </div>
 
