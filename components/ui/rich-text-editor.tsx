@@ -1,24 +1,9 @@
 "use client";
 
-import React, { useMemo, useRef } from "react";
-import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
+import "quill/dist/quill.snow.css";
 import { cn } from "@/lib/utils";
 import { uploadService } from "@/lib/services/upload-service";
-
-// Dynamically import ReactQuill to avoid SSR issues
-const ReactQuill = dynamic(
-  async () => {
-    const { default: RQ } = await import("react-quill");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Component = ({ forwardedRef, ...props }: any) => (
-      <RQ ref={forwardedRef} {...props} />
-    );
-    Component.displayName = "ReactQuill";
-    return Component;
-  },
-  { ssr: false },
-);
 
 interface RichTextEditorProps {
   value?: string;
@@ -39,25 +24,29 @@ export function RichTextEditor({
   height = 400,
   error = false,
 }: RichTextEditorProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const containerRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<any>(null);
+  const isInternalChange = useRef(false);
+  const onChangeRef = useRef(onChange);
+
+  // Keep onChange ref updated to avoid stale closures in Quill events
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
 
   const uploadEditorImage = async (file: File): Promise<string> => {
     const response = await uploadService.uploadFile(file, "editor", "image");
     const rawUrl = response.data.url;
 
-    // If the server returns a relative path, prepend the backend API URL
     if (rawUrl.startsWith("/")) {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
-      // Strip any trailing slashes from baseUrl for clean concatenation
       const cleanBaseUrl = baseUrl.replace(/\/+$/, "");
       return `${cleanBaseUrl}${rawUrl}`;
     }
-
     return rawUrl;
   };
 
-  const imageHandler = React.useCallback(() => {
+  const imageHandler = useCallback(async () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
@@ -65,16 +54,13 @@ export function RichTextEditor({
 
     input.onchange = async () => {
       const file = input.files?.[0];
-      if (file) {
-        const quill = quillRef.current?.getEditor();
-        if (quill) {
-          const range = quill.getSelection();
-          try {
-            const url = await uploadEditorImage(file);
-            quill.insertEmbed(range?.index || 0, "image", url);
-          } catch (error) {
-            console.error("Image upload failed", error);
-          }
+      if (file && quillRef.current) {
+        const range = quillRef.current.getSelection();
+        try {
+          const url = await uploadEditorImage(file);
+          quillRef.current.insertEmbed(range?.index || 0, "image", url);
+        } catch (error) {
+          console.error("Image upload failed", error);
         }
       }
     };
@@ -85,7 +71,7 @@ export function RichTextEditor({
       toolbar: {
         container: [
           [{ header: [1, 2, 3, 4, false] }],
-          ["bold", "italic", "underline", "strike", "blockquote"],
+          ["bold", "italic", "underline", "strike", "blockquote", "code-block", "code", "script", "formula"],
           [{ list: "ordered" }, { list: "bullet" }],
           [{ align: [] }],
           ["link", "image", "video"],
@@ -99,31 +85,81 @@ export function RichTextEditor({
         matchVisual: false,
       },
     }),
-    [imageHandler],
+    [imageHandler]
   );
 
   const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-    "align",
+    "header", "bold", "italic", "underline", "strike", "blockquote",
+    "list", "bullet", "indent", "link", "image", "video", "align",
   ];
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !containerRef.current || quillRef.current) return;
+
+    const initQuill = async () => {
+      try {
+        const { default: Quill } = await import("quill");
+        
+        if (!containerRef.current || quillRef.current) return;
+
+        const quill = new Quill(containerRef.current, {
+          theme: "snow",
+          placeholder,
+          modules,
+          formats,
+          readOnly: disabled,
+        });
+
+        quillRef.current = quill;
+
+        if (value) {
+          isInternalChange.current = true;
+          quill.root.innerHTML = value;
+          isInternalChange.current = false;
+        }
+
+        quill.on("text-change", () => {
+          if (!isInternalChange.current) {
+            const html = quill.root.innerHTML;
+            onChangeRef.current?.(html === "<p><br></p>" ? "" : html);
+          }
+        });
+      } catch (error) {
+        console.error("Quill initialization failed:", error);
+      }
+    };
+
+    initQuill();
+
+    return () => {
+      if (quillRef.current) {
+        quillRef.current = null;
+      }
+    };
+  }, []); // Initialize once
+
+  // Sync value from props to editor
+  useEffect(() => {
+    if (quillRef.current && value !== quillRef.current.root.innerHTML && !isInternalChange.current) {
+      isInternalChange.current = true;
+      quillRef.current.root.innerHTML = value || "";
+      isInternalChange.current = false;
+    }
+  }, [value]);
+
+  // Sync disabled state
+  useEffect(() => {
+    if (quillRef.current) {
+      quillRef.current.enable(!disabled);
+    }
+  }, [disabled]);
 
   return (
     <div
       className={cn(
         "rounded-md border border-input rich-text-wrapper bg-white dark:bg-slate-950",
         error && "border-destructive ring-destructive/20",
-        className,
+        className
       )}
       style={{ minHeight: height }}
     >
@@ -140,30 +176,15 @@ export function RichTextEditor({
           font-size: 0.875rem;
           min-height: ${height - 42}px;
         }
-        .dark .rich-text-wrapper .ql-snow .ql-stroke {
-          stroke: #94a3b8;
-        }
-        .dark .rich-text-wrapper .ql-snow .ql-fill {
-          fill: #94a3b8;
-        }
-        .dark .rich-text-wrapper .ql-snow .ql-picker {
-          color: #94a3b8;
-        }
+        .dark .rich-text-wrapper .ql-snow .ql-stroke { stroke: #94a3b8; }
+        .dark .rich-text-wrapper .ql-snow .ql-fill { fill: #94a3b8; }
+        .dark .rich-text-wrapper .ql-snow .ql-picker { color: #94a3b8; }
         .dark .rich-text-wrapper .ql-snow .ql-picker-options {
           background-color: #020617;
           border-color: #1e293b;
         }
       `}</style>
-      <ReactQuill
-        forwardedRef={quillRef}
-        theme="snow"
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        formats={formats}
-        placeholder={placeholder}
-        readOnly={disabled}
-      />
+      <div ref={containerRef} />
     </div>
   );
 }
