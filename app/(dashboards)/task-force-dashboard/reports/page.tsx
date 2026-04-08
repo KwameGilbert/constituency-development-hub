@@ -126,16 +126,31 @@ export default function ReportsPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [reportsRes, teamRes] = await Promise.all([
+        const [reportsRes, teamRes] = await Promise.allSettled([
           taskForceService.getReports(),
           taskForceService.getTeamMembers({ limit: 50 }),
         ]);
 
-        if (reportsRes.success) {
-          setReports(reportsRes.data);
+        if (reportsRes.status === "fulfilled" && reportsRes.value.success) {
+          setReports(reportsRes.value.data);
+        } else {
+          setReports({
+            status_distribution: {},
+            priority_distribution: {},
+            category_distribution: [],
+            monthly_trends: [],
+            top_performers: [],
+            avg_resolution_days: 0,
+            total_issues: 0,
+            resolved_issues: 0,
+          });
+          if (process.env.NODE_ENV === "development") {
+            console.warn("Reports endpoint unavailable, showing fallback data.");
+          }
         }
-        if (teamRes.success) {
-          setTeamMembers(teamRes.data.members);
+
+        if (teamRes.status === "fulfilled" && teamRes.value.success) {
+          setTeamMembers(teamRes.value.data.members);
         }
       } catch (error) {
         console.error("Failed to fetch reports data:", error);

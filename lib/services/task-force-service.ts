@@ -305,7 +305,7 @@ export const taskForceService = {
    * Get reports/analytics
    */
   async getReports(): Promise<{ success: boolean; data: TaskForceReports }> {
-    return apiClient("/task-force/reports");
+    return fetchReportsWithFallback();
   },
 };
 
@@ -318,6 +318,140 @@ export interface TaskForceReports {
   avg_resolution_days: number;
   total_issues: number;
   resolved_issues: number;
+}
+
+const EMPTY_TASK_FORCE_REPORTS: TaskForceReports = {
+  status_distribution: {},
+  priority_distribution: {},
+  category_distribution: [],
+  monthly_trends: [],
+  top_performers: [],
+  avg_resolution_days: 0,
+  total_issues: 0,
+  resolved_issues: 0,
+};
+
+function normalizeTaskForceReports(raw: unknown): TaskForceReports {
+  if (!raw || typeof raw !== "object") {
+    return EMPTY_TASK_FORCE_REPORTS;
+  }
+
+  const payload = raw as Record<string, unknown>;
+
+  // Preferred/expected reports payload.
+  if (payload.status_distribution || payload.monthly_trends) {
+    return {
+      ...EMPTY_TASK_FORCE_REPORTS,
+      ...(payload as Partial<TaskForceReports>),
+      status_distribution:
+        (payload.status_distribution as Record<string, number>) || {},
+      priority_distribution:
+        (payload.priority_distribution as Record<string, number>) || {},
+      category_distribution:
+        (payload.category_distribution as { name: string; count: number }[]) ||
+        [],
+      monthly_trends:
+        (payload.monthly_trends as {
+          month: string;
+          submitted: number;
+          resolved: number;
+        }[]) || [],
+      top_performers:
+        (payload.top_performers as {
+          name: string;
+          assessments: number;
+          resolutions: number;
+        }[]) || [],
+      avg_resolution_days:
+        typeof payload.avg_resolution_days === "number"
+          ? payload.avg_resolution_days
+          : 0,
+      total_issues:
+        typeof payload.total_issues === "number" ? payload.total_issues : 0,
+      resolved_issues:
+        typeof payload.resolved_issues === "number"
+          ? payload.resolved_issues
+          : 0,
+    };
+  }
+
+  // Fallback for dashboard-style stats payload.
+  const assignments =
+    (payload.my_assignments as Record<string, unknown>) ||
+    (payload.overview as Record<string, unknown>) ||
+    {};
+
+  const pendingAssessment =
+    typeof assignments.pending_assessment === "number"
+      ? assignments.pending_assessment
+      : typeof assignments.pending === "number"
+        ? assignments.pending
+        : 0;
+
+  const assessmentInProgress =
+    typeof assignments.assessment_in_progress === "number"
+      ? assignments.assessment_in_progress
+      : typeof assignments.in_progress === "number"
+        ? assignments.in_progress
+        : 0;
+
+  const resolved =
+    typeof assignments.resolved === "number"
+      ? assignments.resolved
+      : typeof assignments.completed === "number"
+        ? assignments.completed
+        : 0;
+
+  const total =
+    typeof assignments.total === "number"
+      ? assignments.total
+      : pendingAssessment + assessmentInProgress + resolved;
+
+  return {
+    ...EMPTY_TASK_FORCE_REPORTS,
+    status_distribution: {
+      assigned_to_task_force: pendingAssessment,
+      assessment_in_progress: assessmentInProgress,
+      resolved,
+    },
+    total_issues: total,
+    resolved_issues: resolved,
+  };
+}
+
+type ReportsResponse = { success: boolean; data?: unknown; message?: string };
+
+async function fetchReportsWithFallback(): Promise<{
+  success: boolean;
+  data: TaskForceReports;
+}> {
+  const endpoints = [
+    "/task-force/reports",
+    "/task-force/analytics",
+    "/task-force/dashboard/stats",
+  ];
+
+  let lastError: unknown;
+
+  for (const endpoint of endpoints) {
+    try {
+      const response = await apiClient<ReportsResponse>(endpoint);
+      if (response?.success) {
+        return {
+          success: true,
+          data: normalizeTaskForceReports(response.data),
+        };
+      }
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+
+  return { success: true, data: EMPTY_TASK_FORCE_REPORTS };
 }
 
 export default taskForceService;
