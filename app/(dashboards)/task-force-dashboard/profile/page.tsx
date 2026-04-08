@@ -88,10 +88,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="p-6 max-w-4xl mx-auto flex items-center justify-center min-h-[400px]">
+      <div className="max-w-4xl mx-auto flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading profile...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-amber-600 mx-auto mb-4" />
+          <p className="text-slate-600">Loading profile...</p>
         </div>
       </div>
     );
@@ -99,9 +99,9 @@ export default function ProfilePage() {
 
   if (!currentUser) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="text-center py-12">
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             Failed to load profile. Please try again.
           </p>
           <Button onClick={fetchProfile} className="mt-4">
@@ -113,12 +113,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Profile</h1>
+          <p className="text-slate-600 mt-1">
             Manage your account information and preferences
           </p>
         </div>
@@ -156,17 +156,17 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
-                <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center">
-                  <User className="h-10 w-10 text-purple-600" />
+                <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center">
+                  <User className="h-10 w-10 text-amber-600" />
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-xl font-semibold">
+                    <h3 className="text-xl font-semibold text-slate-900">
                       {currentUser.name}
                     </h3>
                     <Badge variant="secondary">{currentUser.role}</Badge>
                   </div>
-                  <p className="text-gray-600">{currentUser.email}</p>
+                  <p className="text-slate-600">{currentUser.email}</p>
                 </div>
               </div>
 
@@ -236,21 +236,21 @@ export default function ProfilePage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Role</p>
+                  <p className="text-sm text-slate-600">Role</p>
                   <p className="font-medium capitalize">{currentUser.role}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Status</p>
+                  <p className="text-sm text-slate-600">Status</p>
                   <p className="font-medium capitalize">{currentUser.status}</p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Location</p>
+                  <p className="text-sm text-slate-600">Location</p>
                   <p className="font-medium">
                     {currentUser.location || "Not specified"}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-600">Last Login</p>
+                  <p className="text-sm text-slate-600">Last Login</p>
                   <p className="font-medium">
                     {currentUser.last_login
                       ? new Date(currentUser.last_login).toLocaleString()
@@ -271,8 +271,8 @@ export default function ProfilePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8 text-gray-500">
-                <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <div className="text-center py-8 text-slate-500">
+                <Clock className="h-12 w-12 mx-auto mb-4 text-slate-300" />
                 <p>No recent activity found.</p>
               </div>
             </CardContent>
@@ -289,7 +289,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h4 className="font-medium">Email Notifications</h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Receive notifications about new assignments
                   </p>
                 </div>
@@ -304,7 +304,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h4 className="font-medium">Password</h4>
-                  <p className="text-sm text-gray-600">Update your password</p>
+                  <p className="text-sm text-slate-600">Update your password</p>
                 </div>
                 <Button
                   variant="outline"
@@ -317,7 +317,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <h4 className="font-medium">Two-Factor Authentication</h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Add an extra layer of security
                   </p>
                 </div>

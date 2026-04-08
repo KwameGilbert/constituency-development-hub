@@ -198,12 +198,12 @@ export default function IssuesPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">All Issues</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">All Issues</h1>
+          <p className="text-slate-600 mt-1">
             Comprehensive view of all constituency issues and their status
           </p>
         </div>
@@ -212,7 +212,7 @@ export default function IssuesPage() {
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input
             placeholder="Search issues by title, description, location, or submitter..."
             className="pl-10"
@@ -306,15 +306,15 @@ export default function IssuesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
               <div className="col-span-full flex justify-center py-20">
-                <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+                <Loader2 className="h-10 w-10 text-amber-600 animate-spin" />
               </div>
             ) : filteredIssues.length === 0 ? (
               <div className="col-span-full text-center py-12">
-                <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <FileText className="h-12 w-12 mx-auto text-slate-400 mb-4" />
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">
                   No Issues Found
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-slate-600">
                   {searchTerm ||
                   statusFilter !== "all" ||
                   priorityFilter !== "all" ||
@@ -334,10 +334,10 @@ export default function IssuesPage() {
                   <Card
                     key={issue.id}
                     className={`
-                    hover:shadow-lg transition-all duration-300
-                    ${isRejected ? "border-red-500 border-2 shadow-red-100 bg-red-50/10" : ""}
-                    ${isRevision ? "border-orange-500 border-2 shadow-orange-100 bg-orange-50/10" : ""}
-                    ${isPendingAssessment ? "border-blue-500 border-2 shadow-blue-100 bg-blue-50/10" : ""}
+                    border-none shadow-md shadow-slate-200/50 hover:shadow-lg transition-all duration-300
+                    ${isRejected ? "shadow-red-100 bg-red-50/10" : ""}
+                    ${isRevision ? "shadow-orange-100 bg-orange-50/10" : ""}
+                    ${isPendingAssessment ? "shadow-indigo-100 bg-indigo-50/10" : ""}
                   `}
                   >
                     <CardHeader className="pb-2">
@@ -356,7 +356,7 @@ export default function IssuesPage() {
                             </div>
                           )}
                           {isPendingAssessment && (
-                            <div className="flex items-center gap-1 text-blue-600 text-xs font-bold uppercase tracking-wider mb-1">
+                            <div className="flex items-center gap-1 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-1">
                               <Clock className="h-3 w-3" />
                               Ready for Assessment
                             </div>
@@ -399,26 +399,26 @@ export default function IssuesPage() {
                         {cleanupHtml(issue.description)}
                       </CardDescription>
 
-                      <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className="space-y-2 text-sm text-slate-600 mb-4">
                         <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <MapPin className="h-4 w-4 text-slate-400" />
                           <span>{issue.location}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-gray-400" />
+                          <User className="h-4 w-4 text-slate-400" />
                           <span>{issue.reporter_name || "Anonymous"}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-gray-400" />
+                          <Calendar className="h-4 w-4 text-slate-400" />
                           <span>{formatDate(issue.created_at)}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-gray-400" />
+                          <FileText className="h-4 w-4 text-slate-400" />
                           <span>{issue.category}</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-100/60">
                         <div className="flex items-center gap-2">
                           {/* Budget display removed as it is not part of TaskForceIssue */}
                         </div>
@@ -446,7 +446,7 @@ export default function IssuesPage() {
                               </Button>
                             </Link>
                           )}
-                          <ArrowUpRight className="h-4 w-4 text-gray-400" />
+                          <ArrowUpRight className="h-4 w-4 text-slate-400" />
                         </div>
                       </div>
                     </CardContent>

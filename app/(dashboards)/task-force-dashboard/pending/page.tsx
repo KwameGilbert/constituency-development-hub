@@ -124,12 +124,12 @@ export default function PendingIssuesPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Pending Issues</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Pending Issues</h1>
+          <p className="text-slate-600 mt-1">
             Issues awaiting assessment - {issues.length} of {stats.total} issues
           </p>
         </div>
@@ -137,17 +137,17 @@ export default function PendingIssuesPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-yellow-100">
-                <Clock className="h-6 w-6 text-yellow-600" />
+              <div className="p-3 rounded-lg bg-amber-100">
+                <Clock className="h-6 w-6 text-amber-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Total Pending
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {stats.total}
                 </p>
               </div>
@@ -155,17 +155,17 @@ export default function PendingIssuesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-red-100">
-                <AlertTriangle className="h-6 w-6 text-red-600" />
+              <div className="p-3 rounded-lg bg-indigo-100">
+                <AlertTriangle className="h-6 w-6 text-indigo-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   High Priority
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {stats.highPriority}
                 </p>
               </div>
@@ -173,17 +173,17 @@ export default function PendingIssuesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-blue-100">
-                <FileText className="h-6 w-6 text-blue-600" />
+              <div className="p-3 rounded-lg bg-emerald-100">
+                <FileText className="h-6 w-6 text-emerald-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Overdue (7+ days)
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {stats.overdue}
                 </p>
               </div>
@@ -193,12 +193,12 @@ export default function PendingIssuesPage() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border-none shadow-md shadow-slate-200/50">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search pending issues..."
                 value={searchTerm}
@@ -242,10 +242,10 @@ export default function PendingIssuesPage() {
       </Card>
 
       {/* Issues List */}
-      <Card>
+      <Card className="border-none shadow-md shadow-slate-200/50">
         <CardHeader>
-          <CardTitle>Pending Issues</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-slate-900">Pending Issues</CardTitle>
+          <CardDescription className="text-slate-600">
             Issues requiring immediate assessment
           </CardDescription>
         </CardHeader>
@@ -253,11 +253,11 @@ export default function PendingIssuesPage() {
           <div className="space-y-4">
             {loading ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
               </div>
             ) : issues.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <div className="text-center py-8 text-slate-500">
+                <Clock className="h-12 w-12 mx-auto mb-4 text-slate-300" />
                 <p>No pending issues found matching your criteria</p>
               </div>
             ) : (
@@ -271,7 +271,7 @@ export default function PendingIssuesPage() {
                   <div
                     key={issue.id}
                     className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
-                      isOverdue ? "border-red-200 bg-red-50" : "border-gray-200"
+                      isOverdue ? "border-red-200 bg-red-50" : "border-slate-200/60"
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -279,7 +279,7 @@ export default function PendingIssuesPage() {
                         <div className="flex items-start gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <h3 className="font-semibold text-gray-900">
+                              <h3 className="font-semibold text-slate-900">
                                 {issue.title}
                               </h3>
                               {isOverdue && (
@@ -291,7 +291,7 @@ export default function PendingIssuesPage() {
 
                             <SanitizedHtml
                               html={issue.description}
-                              className="text-sm text-gray-600 mb-3 line-clamp-2"
+                              className="text-sm text-slate-600 mb-3 line-clamp-2"
                             />
 
                             <div className="flex flex-wrap gap-2 mb-3">
@@ -309,7 +309,7 @@ export default function PendingIssuesPage() {
                               <Badge variant="outline">{issue.category}</Badge>
                             </div>
 
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <div className="flex items-center gap-4 text-sm text-slate-600">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
                                 {issue.location}
@@ -339,7 +339,7 @@ export default function PendingIssuesPage() {
                             >
                               <Button
                                 size="sm"
-                                className="bg-purple-600 hover:bg-purple-700"
+                                className="bg-amber-600 hover:bg-amber-700 text-white"
                               >
                                 <MessageSquare className="h-4 w-4 mr-1" />
                                 Assess Now

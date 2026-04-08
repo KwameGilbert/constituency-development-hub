@@ -306,21 +306,21 @@ const getStatusColor = (status: string) => {
   // Reuse specific logic or fallback to lib/data
   switch (status) {
     case "pending_assessment":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      return "bg-amber-100 text-amber-800 border-amber-200";
     case "assigned_to_task_force":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      return "bg-amber-100 text-amber-800 border-amber-200";
     case "under_assessment":
-      return "bg-blue-100 text-blue-800 border-blue-200";
+      return "bg-indigo-100 text-indigo-800 border-indigo-200";
     case "assessment_in_progress":
-      return "bg-blue-100 text-blue-800 border-blue-200";
+      return "bg-indigo-100 text-indigo-800 border-indigo-200";
     case "approved":
-      return "bg-green-100 text-green-800 border-green-200";
+      return "bg-emerald-100 text-emerald-800 border-emerald-200";
     case "resolved":
-      return "bg-green-100 text-green-800 border-green-200";
+      return "bg-emerald-100 text-emerald-800 border-emerald-200";
     case "rejected":
       return "bg-red-100 text-red-800 border-red-200";
     default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
+      return "bg-slate-100 text-slate-800 border-slate-200";
   }
 };
 
@@ -330,11 +330,11 @@ const getPriorityColor = (priority: string) => {
     case "urgent":
       return "bg-red-100 text-red-800";
     case "medium":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-amber-100 text-amber-800";
     case "low":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-100 text-emerald-800";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-slate-100 text-slate-800";
   }
 };
 
@@ -368,7 +368,7 @@ export default function IssueDetailPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+        <Loader2 className="h-10 w-10 text-amber-600 animate-spin" />
       </div>
     );
   }
@@ -399,7 +399,7 @@ export default function IssueDetailPage() {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-gray-900">{issue.title}</h1>
+            <h1 className="text-2xl font-bold text-slate-900">{issue.title}</h1>
             <Badge className={getStatusColor(issue.status)}>
               {issue.status
                 .replace(/_/g, " ")
@@ -500,25 +500,25 @@ export default function IssueDetailPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
                     <div>
-                      <Label className="text-sm font-medium text-gray-500">
+                      <Label className="text-sm font-medium text-slate-600">
                         Category
                       </Label>
                       <p className="font-medium">{issue.category}</p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-gray-500">
+                      <Label className="text-sm font-medium text-slate-600">
                         Sector
                       </Label>
                       <p className="font-medium">{issue.sector}</p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-gray-500">
+                      <Label className="text-sm font-medium text-slate-600">
                         Sub-Sector
                       </Label>
                       <p className="font-medium">{issue.subsector || "N/A"}</p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-gray-500">
+                      <Label className="text-sm font-medium text-slate-600">
                         Priority
                       </Label>
                       <Badge className={getPriorityColor(issue.priority)}>
@@ -544,11 +544,11 @@ export default function IssueDetailPage() {
                         issue.impactAssessment.findings) && (
                         <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
                           <div className="mb-4">
-                            <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                              <FileText className="h-4 w-4 text-purple-600" />{" "}
+                            <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-amber-600" />{" "}
                               Assessment Summary
                             </h4>
-                            <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                            <p className="text-sm text-slate-700 whitespace-pre-wrap">
                               {issue.impactAssessment.summary ||
                                 "No summary provided."}
                             </p>
@@ -556,11 +556,11 @@ export default function IssueDetailPage() {
 
                           {issue.impactAssessment.findings && (
                             <div className="pt-4 border-t border-slate-200">
-                              <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                                <Search className="h-4 w-4 text-blue-600" />{" "}
+                              <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                                <Search className="h-4 w-4 text-indigo-600" />{" "}
                                 Findings
                               </h4>
-                              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                              <p className="text-sm text-slate-700 whitespace-pre-wrap">
                                 {issue.impactAssessment.findings}
                               </p>
                             </div>
@@ -568,11 +568,11 @@ export default function IssueDetailPage() {
 
                           {issue.impactAssessment.recommendations && (
                             <div className="pt-4 mt-4 border-t border-slate-200">
-                              <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                                <CheckCircle className="h-4 w-4 text-green-600" />{" "}
+                              <h4 className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                                <CheckCircle className="h-4 w-4 text-emerald-600" />{" "}
                                 Recommendations
                               </h4>
-                              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                              <p className="text-sm text-slate-700 whitespace-pre-wrap">
                                 {issue.impactAssessment.recommendations}
                               </p>
                             </div>

@@ -400,13 +400,13 @@ export default function AssessIssue() {
   const getDecisionColor = (decision: string) => {
     switch (decision) {
       case "approve":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
       case "reject":
         return "bg-red-100 text-red-800 border-red-200";
       case "request_more_info":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-amber-100 text-amber-800 border-amber-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-slate-100 text-slate-800 border-slate-200";
     }
   };
 
@@ -426,7 +426,7 @@ export default function AssessIssue() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+        <Loader2 className="h-10 w-10 text-amber-600 animate-spin" />
       </div>
     );
   }
@@ -437,10 +437,10 @@ export default function AssessIssue() {
       <div className="p-6 max-w-7xl mx-auto">
         <div className="text-center py-12">
           <AlertTriangle className="h-12 w-12 mx-auto text-red-500 mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-slate-900 mb-2">
             Issue Not Found
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-slate-600 mb-4">
             The issue you&apos;re looking for doesn&apos;t exist or has been
             removed.
           </p>
@@ -570,13 +570,13 @@ export default function AssessIssue() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Households:</span>
+                    <span className="text-slate-600">Households:</span>
                     <span className="font-medium">
                       {issue.impactAssessment.householdsAffected}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Estimated Cost:</span>
+                    <span className="text-slate-600">Estimated Cost:</span>
                     <span className="font-medium">
                       ₵{issue.impactAssessment.estimatedCost.toLocaleString()}
                     </span>
@@ -586,14 +586,14 @@ export default function AssessIssue() {
 
               {issue.attachments.length > 0 && (
                 <div className="pt-4 border-t">
-                  <h4 className="font-medium text-gray-900 mb-2">
+                  <h4 className="font-medium text-slate-900 mb-2">
                     Attachments
                   </h4>
                   <div className="space-y-2">
                     {issue.attachments.map((attachment) => (
                       <div
                         key={attachment.id}
-                        className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                        className="flex items-center justify-between p-2 bg-slate-50 rounded-lg"
                       >
                         <div className="flex items-center gap-2">
                           <FileText className="h-4 w-4 text-gray-400" />
@@ -656,7 +656,7 @@ export default function AssessIssue() {
                       <SelectContent>
                         <SelectItem value="approve">
                           <div className="flex items-center gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <CheckCircle className="h-4 w-4 text-emerald-600" />
                             Approve for Implementation
                           </div>
                         </SelectItem>
@@ -668,7 +668,7 @@ export default function AssessIssue() {
                         </SelectItem>
                         <SelectItem value="request_more_info">
                           <div className="flex items-center gap-2">
-                            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                            <AlertTriangle className="h-4 w-4 text-amber-600" />
                             Request More Information
                           </div>
                         </SelectItem>
@@ -734,7 +734,7 @@ export default function AssessIssue() {
                           Estimated Budget (₵) *
                         </Label>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <DollarSign className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                           <Input
                             id="budget"
                             type="number"
@@ -827,12 +827,12 @@ export default function AssessIssue() {
                       />
                       <label
                         htmlFor="file-upload"
-                        className="cursor-pointer inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                        className="cursor-pointer inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800"
                       >
                         <Upload className="h-4 w-4" />
                         Upload Files
                       </label>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-slate-500 mt-1">
                         Max 10MB per file. Supported: JPG, PNG, PDF, DOC, DOCX
                       </p>
                     </div>
@@ -871,7 +871,7 @@ export default function AssessIssue() {
 
                   {/* Action Buttons */}
                   <div className="flex items-center justify-between pt-6 border-t">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-slate-600">
                       <User className="h-4 w-4" />
                       <span>Assessor: {currentUser.name}</span>
                     </div>
@@ -890,7 +890,7 @@ export default function AssessIssue() {
                       <Button
                         onClick={handleSubmitAssessment}
                         disabled={isSubmitting}
-                        className="bg-purple-600 hover:bg-purple-700"
+                        className="bg-amber-600 hover:bg-amber-700"
                       >
                         {isSubmitting ? (
                           <>
@@ -922,7 +922,7 @@ export default function AssessIssue() {
                           <p className="font-medium text-gray-900">
                             {event.event}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-slate-600">
                             {formatDate(event.date)}
                           </p>
                         </div>

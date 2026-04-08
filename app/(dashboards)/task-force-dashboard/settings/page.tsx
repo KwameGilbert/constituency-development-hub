@@ -109,8 +109,8 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Settings</h1>
+          <p className="text-slate-600 mt-1">
             Manage your application preferences and configuration
           </p>
         </div>
@@ -139,7 +139,7 @@ export default function SettingsPage() {
                   <Label htmlFor="email-notifications">
                     Email Notifications
                   </Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Receive notifications via email
                   </p>
                 </div>
@@ -154,7 +154,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="push-notifications">Push Notifications</Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Receive browser push notifications
                   </p>
                 </div>
@@ -169,7 +169,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="new-assignments">New Assignment Alerts</Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Get notified when assigned new issues
                   </p>
                 </div>
@@ -188,7 +188,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="status-updates">Status Updates</Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Get notified of issue status changes
                   </p>
                 </div>
@@ -207,7 +207,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="weekly-report">Weekly Reports</Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Receive weekly summary reports
                   </p>
                 </div>
@@ -296,7 +296,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="two-factor">Two-Factor Authentication</Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Add an extra layer of security to your account
                   </p>
                 </div>
@@ -313,7 +313,7 @@ export default function SettingsPage() {
                   <Label htmlFor="login-notifications">
                     Login Notifications
                   </Label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Get notified of new login attempts
                   </p>
                 </div>
@@ -382,7 +382,7 @@ export default function SettingsPage() {
               </Button>
             </div>
             <Separator className="my-4" />
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-slate-600">
               <p className="mb-2">Data export includes:</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
                 <li>Assessment records</li>
@@ -406,13 +406,13 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <Label>Version</Label>
-                <p className="text-gray-600">
+                <p className="text-slate-600">
                   {process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0"}
                 </p>
               </div>
               <div>
                 <Label>Last Updated</Label>
-                <p className="text-gray-600">
+                <p className="text-slate-600">
                   {new Date().toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -422,7 +422,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <Label>Environment</Label>
-                <p className="text-gray-600">
+                <p className="text-slate-600">
                   {process.env.NODE_ENV || "development"}
                 </p>
               </div>

@@ -117,19 +117,19 @@ export default function TeamPage() {
 
   if (loading && members.length === 0) {
     return (
-      <div className="p-6 max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-10 w-10 animate-spin text-purple-600" />
+      <div className="max-w-7xl mx-auto flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-10 w-10 animate-spin text-amber-600" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Team Management</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Team Management</h1>
+          <p className="text-slate-600 mt-1">
             Manage assessors and team performance
           </p>
         </div>
@@ -137,17 +137,17 @@ export default function TeamPage() {
 
       {/* Team Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-blue-100">
-                <Users className="h-6 w-6 text-blue-600" />
+              <div className="p-3 rounded-lg bg-indigo-100">
+                <Users className="h-6 w-6 text-indigo-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Total Members
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {teamStats.totalMembers}
                 </p>
               </div>
@@ -155,17 +155,17 @@ export default function TeamPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-green-100">
-                <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className="p-3 rounded-lg bg-emerald-100">
+                <CheckCircle className="h-6 w-6 text-emerald-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Active Members
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {teamStats.activeMembers}
                 </p>
               </div>
@@ -173,17 +173,17 @@ export default function TeamPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-purple-100">
-                <Clock className="h-6 w-6 text-purple-600" />
+              <div className="p-3 rounded-lg bg-amber-100">
+                <Clock className="h-6 w-6 text-amber-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Total Assessments
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {teamStats.totalAssessments}
                 </p>
               </div>
@@ -191,17 +191,17 @@ export default function TeamPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-yellow-100">
-                <TrendingUp className="h-6 w-6 text-yellow-600" />
+              <div className="p-3 rounded-lg bg-indigo-100">
+                <TrendingUp className="h-6 w-6 text-indigo-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Avg Completion
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {teamStats.avgCompletionRate}%
                 </p>
               </div>
@@ -221,7 +221,7 @@ export default function TeamPage() {
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search team members..."
                 className="pl-10"
@@ -262,19 +262,19 @@ export default function TeamPage() {
             {filteredMembers.map((member) => (
               <Card
                 key={member.id}
-                className="hover:shadow-lg transition-shadow"
+                className="border-none shadow-md shadow-slate-200/50 hover:shadow-lg transition-shadow"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                        <Users className="h-6 w-6 text-purple-600" />
+                      <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                        <Users className="h-6 w-6 text-amber-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-slate-900">
                           {member.name}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate-600">
                           {member.title ||
                             member.specialization ||
                             "Task Force Member"}
@@ -284,8 +284,8 @@ export default function TeamPage() {
                     <Badge
                       className={
                         member.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
+                          ? "bg-emerald-100 text-emerald-800"
+                          : "bg-slate-100 text-slate-800"
                       }
                     >
                       {member.status}
@@ -294,19 +294,19 @@ export default function TeamPage() {
 
                   <div className="space-y-2 mb-4">
                     {member.email && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
                         <Mail className="h-4 w-4" />
                         <span>{member.email}</span>
                       </div>
                     )}
                     {member.phone && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
                         <Phone className="h-4 w-4" />
                         <span>{member.phone}</span>
                       </div>
                     )}
                     {member.specialization && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm text-slate-600">
                         <MapPin className="h-4 w-4" />
                         <span className="capitalize">
                           {member.specialization.replace("_", " ")}
@@ -317,29 +317,29 @@ export default function TeamPage() {
 
                   <div className="grid grid-cols-2 gap-4 mb-4 text-center">
                     <div>
-                      <p className="text-lg font-semibold text-gray-900">
+                      <p className="text-lg font-semibold text-slate-900">
                         {member.assigned_count}
                       </p>
-                      <p className="text-xs text-gray-600">Assigned</p>
+                      <p className="text-xs text-slate-600">Assigned</p>
                     </div>
                     <div>
-                      <p className="text-lg font-semibold text-gray-900">
+                      <p className="text-lg font-semibold text-slate-900">
                         {member.completed_count}
                       </p>
-                      <p className="text-xs text-gray-600">Completed</p>
+                      <p className="text-xs text-slate-600">Completed</p>
                     </div>
                   </div>
 
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">Completion Rate</span>
+                      <span className="text-slate-600">Completion Rate</span>
                       <span className="font-medium">
                         {Math.round(member.completion_rate)}%
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-slate-200 rounded-full h-2">
                       <div
-                        className="bg-purple-600 h-2 rounded-full transition-all"
+                        className="bg-amber-600 h-2 rounded-full transition-all"
                         style={{ width: `${member.completion_rate}%` }}
                       ></div>
                     </div>
@@ -362,33 +362,33 @@ export default function TeamPage() {
                       </DialogHeader>
                       <div className="space-y-6">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <p className="text-2xl font-bold text-gray-900">
+                          <div className="text-center p-4 bg-slate-50 rounded-lg">
+                            <p className="text-2xl font-bold text-slate-900">
                               {member.assigned_count}
                             </p>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-600">
                               Assigned Issues
                             </p>
                           </div>
-                          <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <p className="text-2xl font-bold text-gray-900">
+                          <div className="text-center p-4 bg-slate-50 rounded-lg">
+                            <p className="text-2xl font-bold text-slate-900">
                               {member.completed_count}
                             </p>
-                            <p className="text-sm text-gray-600">Completed</p>
+                            <p className="text-sm text-slate-600">Completed</p>
                           </div>
-                          <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <p className="text-2xl font-bold text-gray-900">
+                          <div className="text-center p-4 bg-slate-50 rounded-lg">
+                            <p className="text-2xl font-bold text-slate-900">
                               {Math.round(member.completion_rate)}%
                             </p>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-slate-600">
                               Completion Rate
                             </p>
                           </div>
-                          <div className="text-center p-4 bg-gray-50 rounded-lg">
-                            <p className="text-2xl font-bold text-gray-900">
+                          <div className="text-center p-4 bg-slate-50 rounded-lg">
+                            <p className="text-2xl font-bold text-slate-900">
                               {member.assessments_completed}
                             </p>
-                            <p className="text-sm text-gray-600">Assessments</p>
+                            <p className="text-sm text-slate-600">Assessments</p>
                           </div>
                         </div>
                       </div>

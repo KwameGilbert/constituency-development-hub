@@ -151,7 +151,7 @@ export default function ResolveIssuePage() {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
-        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
       </div>
     );
   }
@@ -160,7 +160,7 @@ export default function ResolveIssuePage() {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
         <div className="text-center">
-          <h2 className="text-xl font-bold text-gray-800">Issue Not Found</h2>
+          <h2 className="text-xl font-bold text-slate-900">Issue Not Found</h2>
           <Button variant="link" onClick={() => router.back()}>
             Go Back
           </Button>
@@ -198,7 +198,7 @@ export default function ResolveIssuePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
                 Resolution Details
               </CardTitle>
               <CardDescription>
@@ -288,7 +288,7 @@ export default function ResolveIssuePage() {
                     setFormData({ ...formData, actual_cost: e.target.value })
                   }
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-slate-600">
                   Total cost incurred during resolution. Leave blank if N/A.
                 </p>
               </div>
@@ -310,7 +310,7 @@ export default function ResolveIssuePage() {
                   {beforePreviews.map((src, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-md overflow-hidden border bg-gray-100 group"
+                      className="relative aspect-square rounded-md overflow-hidden border bg-slate-100 group"
                     >
                       <Image
                         src={src}
@@ -328,8 +328,8 @@ export default function ResolveIssuePage() {
                     </div>
                   ))}
                   <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
-                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                    <span className="text-xs text-gray-500">Upload Before</span>
+                    <Upload className="h-8 w-8 text-slate-400 mb-2" />
+                    <span className="text-xs text-slate-600">Upload Before</span>
                     <input
                       type="file"
                       className="hidden"
@@ -348,7 +348,7 @@ export default function ResolveIssuePage() {
                   {afterPreviews.map((src, idx) => (
                     <div
                       key={idx}
-                      className="relative aspect-square rounded-md overflow-hidden border bg-gray-100 group"
+                      className="relative aspect-square rounded-md overflow-hidden border bg-slate-100 group"
                     >
                       <Image
                         src={src}
@@ -366,8 +366,8 @@ export default function ResolveIssuePage() {
                     </div>
                   ))}
                   <label className="flex flex-col items-center justify-center aspect-square border-2 border-dashed rounded-md cursor-pointer hover:bg-slate-50 transition-colors">
-                    <Upload className="h-8 w-8 text-green-500 mb-2" />
-                    <span className="text-xs text-gray-500">Upload After</span>
+                    <Upload className="h-8 w-8 text-emerald-500 mb-2" />
+                    <span className="text-xs text-slate-600">Upload After</span>
                     <input
                       type="file"
                       className="hidden"
@@ -415,7 +415,7 @@ export default function ResolveIssuePage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-green-600 hover:bg-green-700 min-w-[150px]"
+              className="bg-emerald-600 hover:bg-emerald-700 min-w-[150px]"
             >
               {isSubmitting ? (
                 <>

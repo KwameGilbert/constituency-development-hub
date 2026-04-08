@@ -15,8 +15,8 @@ export default function TaskForceDashboardPage() {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="text-center">
-        <Loader2 className="h-10 w-10 text-purple-600 animate-spin mx-auto mb-4" />
-        <p className="text-gray-600">Redirecting to dashboard...</p>
+        <Loader2 className="h-10 w-10 text-amber-600 animate-spin mx-auto mb-4" />
+        <p className="text-slate-600">Redirecting to dashboard...</p>
       </div>
     </div>
   );

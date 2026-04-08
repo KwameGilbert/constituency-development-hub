@@ -45,6 +45,7 @@ import {
   DashboardStats,
   TaskForceIssue,
 } from "@/lib/services/task-force-service";
+import { TaskForceMetricsCards } from "@/components/task-force-dashboard/TaskForceMetricsCards";
 import Link from "next/link";
 import * as XLSX from "xlsx";
 
@@ -141,34 +142,34 @@ function TaskForceMainDashboardPage() {
   if (loading && !stats) {
     return (
       <div className="flex h-screen items-center justify-center p-6">
-        <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+        <Loader2 className="h-10 w-10 text-amber-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
             Assessment Dashboard
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-slate-600 mt-1">
             Review and assess community issues for parliamentary action
           </p>
         </div>
         <div className="flex gap-3">
           <Button
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-slate-200/60 hover:border-amber-500/50 hover:bg-amber-50/50 hover:text-amber-700"
             onClick={handleExportReports}
           >
             <Download className="h-4 w-4" />
             Export Reports
           </Button>
           <Link href="/task-force-dashboard/issues">
-            <Button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700">
+            <Button className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white">
               <Eye className="h-4 w-4" />
               View All Issues
             </Button>
@@ -176,82 +177,8 @@ function TaskForceMainDashboardPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-blue-100">
-                <Clock className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Pending Assessment
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats?.overview?.pending_assessment || 0}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-orange-100">
-                <AlertCircle className="h-6 w-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Under Assessment
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats?.overview?.assessment_in_progress || 0}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-green-100">
-                <CheckCircle className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Resolved</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats?.overview?.resolved || 0}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-purple-100">
-                <TrendingUp className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Issues
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {(stats?.overview?.pending_assessment || 0) +
-                    (stats?.overview?.assessment_in_progress || 0) +
-                    (stats?.overview?.assessment_submitted || 0) +
-                    (stats?.overview?.resolution_in_progress || 0) +
-                    (stats?.overview?.resolved || 0)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Metrics Cards */}
+      <TaskForceMetricsCards stats={stats} loading={loading} />
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -259,7 +186,7 @@ function TaskForceMainDashboardPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+              <CardTitle className="flex items-center justify-between text-slate-900">
                 Issues Overview
                 <Link href="/task-force-dashboard/issues">
                   <Button variant="outline" size="sm">
@@ -267,7 +194,7 @@ function TaskForceMainDashboardPage() {
                   </Button>
                 </Link>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-slate-600">
                 Recent community issues submitted for assessment
               </CardDescription>
             </CardHeader>
@@ -275,7 +202,7 @@ function TaskForceMainDashboardPage() {
               {/* Search and Filter */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                   <Input
                     placeholder="Search issues..."
                     value={searchTerm}
@@ -318,17 +245,17 @@ function TaskForceMainDashboardPage() {
               <div className="space-y-4">
                 {loading ? (
                   <div className="flex justify-center py-8">
-                    <Loader2 className="h-8 w-8 text-purple-600 animate-spin" />
+                    <Loader2 className="h-8 w-8 text-amber-600 animate-spin" />
                   </div>
                 ) : filteredIssues.length > 0 ? (
                   filteredIssues.map((issue) => (
                     <div
                       key={issue.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                      className="flex items-center justify-between p-4 border border-slate-200/60 rounded-lg hover:bg-slate-50 transition-colors"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h4 className="font-medium text-gray-900">
+                          <h4 className="font-medium text-slate-900">
                             {issue.title}
                           </h4>
                           <Badge
@@ -351,7 +278,7 @@ function TaskForceMainDashboardPage() {
                             {issue.priority}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 text-sm text-slate-600">
                           <div className="flex items-center gap-1">
                             <MapPin className="h-4 w-4" />
                             {issue.location}
@@ -383,7 +310,7 @@ function TaskForceMainDashboardPage() {
                           >
                             <Button
                               size="sm"
-                              className="bg-purple-600 hover:bg-purple-700"
+                              className="bg-amber-600 hover:bg-amber-700"
                             >
                               <FileText className="h-4 w-4 mr-2" />
                               Assess
@@ -394,8 +321,8 @@ function TaskForceMainDashboardPage() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <div className="text-center py-8 text-slate-500">
+                    <AlertCircle className="h-12 w-12 mx-auto mb-4 text-slate-300" />
                     <p>No issues found matching your criteria.</p>
                   </div>
                 )}
@@ -409,12 +336,12 @@ function TaskForceMainDashboardPage() {
           {/* Quick Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Stats</CardTitle>
+              <CardTitle className="text-slate-900">Quick Stats</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Total Issues</span>
-                <span className="font-semibold">
+                <span className="text-sm text-slate-600">Total Issues</span>
+                <span className="font-semibold text-slate-900">
                   {(stats?.overview?.pending_assessment || 0) +
                     (stats?.overview?.assessment_in_progress || 0) +
                     (stats?.overview?.assessment_submitted || 0) +
@@ -423,20 +350,20 @@ function TaskForceMainDashboardPage() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Resolved</span>
-                <span className="font-semibold text-green-600">
+                <span className="text-sm text-slate-600">Resolved</span>
+                <span className="font-semibold text-emerald-600">
                   {stats?.overview?.resolved || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Pending</span>
-                <span className="font-semibold text-yellow-600">
+                <span className="text-sm text-slate-600">Pending</span>
+                <span className="font-semibold text-amber-600">
                   {stats?.overview?.pending_assessment || 0}
                 </span>
               </div>
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t border-slate-200/60">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Last Updated</span>
+                  <span className="text-sm text-slate-600">Last Updated</span>
                   <span className="text-sm font-medium">Just now</span>
                 </div>
               </div>
@@ -446,20 +373,20 @@ function TaskForceMainDashboardPage() {
           {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
+              <CardTitle className="text-slate-900">Recent Activity</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {recentIssues.map((issue) => (
                   <div key={issue.id} className="flex items-start gap-3">
-                    <div className="p-2 rounded-lg bg-purple-100">
-                      <FileText className="h-4 w-4 text-purple-600" />
+                    <div className="p-2 rounded-lg bg-amber-100">
+                      <FileText className="h-4 w-4 text-amber-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium text-slate-900 truncate">
                         {issue.title}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-slate-500">
                         {issue.location} • {getRelativeTime(issue.created_at)}
                       </p>
                     </div>
@@ -472,7 +399,7 @@ function TaskForceMainDashboardPage() {
           {/* Action Items */}
           <Card>
             <CardHeader>
-              <CardTitle>Action Items</CardTitle>
+              <CardTitle className="text-slate-900">Action Items</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -483,7 +410,7 @@ function TaskForceMainDashboardPage() {
                   </AlertDescription>
                 </Alert>
                 <Link href="/task-force-dashboard/issues?status=assigned_to_task_force">
-                  <Button className="w-full bg-purple-600 hover:bg-purple-700">
+                  <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white">
                     <Clock className="h-4 w-4 mr-2" />
                     Review Pending Issues
                   </Button>

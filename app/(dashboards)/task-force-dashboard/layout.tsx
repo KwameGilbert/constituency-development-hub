@@ -1,76 +1,24 @@
 "use client";
 
-import AppHeader from "@/components/app-header";
-import { AppSidebar } from "@/components/appsidebar";
-import {
-  Home,
-  FileText,
-  BarChart3,
-  Users,
-  Clock,
-  AlertCircle,
-  UserCircle,
-  Settings,
-} from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { TaskForceSidebar } from "@/components/task-force-dashboard/TaskForceSidebar";
+import TaskForceDashboardHeader from "@/components/task-force-dashboard/TaskForceDashboardHeader";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-
-const taskForceNavItems = [
-  {
-    label: "Dashboard",
-    href: "/task-force-dashboard/dashboard",
-    icon: <Home className="h-4 w-4" />,
-  },
-  {
-    label: "Pending Issues",
-    href: "/task-force-dashboard/pending",
-    icon: <Clock className="h-4 w-4" />,
-  },
-  {
-    label: "Under Assessment",
-    href: "/task-force-dashboard/under-assessment",
-    icon: <AlertCircle className="h-4 w-4" />,
-  },
-  {
-    label: "All Issues",
-    href: "/task-force-dashboard/issues",
-    icon: <FileText className="h-4 w-4" />,
-  },
-  {
-    label: "Reports",
-    href: "/task-force-dashboard/reports",
-    icon: <BarChart3 className="h-4 w-4" />,
-  },
-  {
-    label: "Team",
-    href: "/task-force-dashboard/team",
-    icon: <Users className="h-4 w-4" />,
-  },
-  {
-    label: "Profile",
-    href: "/task-force-dashboard/profile",
-    icon: <UserCircle className="h-4 w-4" />,
-  },
-  {
-    label: "Settings",
-    href: "/task-force-dashboard/settings",
-    icon: <Settings className="h-4 w-4" />,
-  },
-];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ProtectedRoute allowedRoles={["task_force"]}>
-      <div className="flex h-screen overflow-hidden">
-        <div className="w-64 flex-shrink-0">
-          <AppSidebar navItems={taskForceNavItems} />
-        </div>
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-shrink-0">
-            <AppHeader />
+      <SidebarProvider>
+        <div className="flex h-screen w-full">
+          <TaskForceSidebar />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TaskForceDashboardHeader />
+            <main className="flex-1 overflow-y-auto bg-slate-50 p-6">
+              {children}
+            </main>
           </div>
-          <main className="flex-1 overflow-y-auto p-0">{children}</main>
         </div>
-      </div>
+      </SidebarProvider>
     </ProtectedRoute>
   );
 }

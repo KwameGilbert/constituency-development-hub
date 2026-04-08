@@ -81,15 +81,15 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 border border-gray-100 shadow-lg rounded-lg">
-        <p className="text-sm font-medium text-gray-900 mb-1">{label}</p>
+        <p className="text-sm font-medium text-slate-900 mb-1">{label}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2 text-xs">
             <div
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-gray-500 capitalize">{entry.name}:</span>
-            <span className="font-semibold text-gray-900">{entry.value}</span>
+            <span className="text-slate-600 capitalize">{entry.name}:</span>
+            <span className="font-semibold text-slate-900">{entry.value}</span>
           </div>
         ))}
       </div>
@@ -261,13 +261,13 @@ export default function ReportsPage() {
   if (loading && !reports) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-12 w-12 text-purple-600 animate-spin" />
+        <Loader2 className="h-12 w-12 text-amber-600 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-[1600px] mx-auto space-y-8 bg-gray-50/50 min-h-screen">
+    <div className="max-w-[1600px] mx-auto space-y-8 bg-slate-50/50 min-h-screen">
       <style type="text/css" media="print">
         {`
           @page { size: landscape; margin: 5mm; }
@@ -307,10 +307,10 @@ export default function ReportsPage() {
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b pb-6 print:hidden">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
             Performance Analytics
           </h1>
-          <p className="text-gray-500 mt-2 text-lg">
+          <p className="text-slate-600 mt-2 text-lg">
             Comprehensive reporting with interpretation and specific date
             filtering.
           </p>
@@ -377,15 +377,15 @@ export default function ReportsPage() {
       <div
         id="report-content"
         ref={reportRef}
-        className="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-100"
+        className="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-slate-100/60"
       >
         {/* Report Header in PDF */}
-        <div className="flex justify-between items-center border-b pb-4 mb-4">
+        <div className="flex justify-between items-center border-b pb-4 mb-4 border-slate-200/60">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-slate-900">
               Task Force Report
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-slate-600 text-sm">
               Generated: {format(new Date(), "PPP")} | Period:{" "}
               {date?.from ? format(date.from, "PPP") : "..."} -{" "}
               {date?.to ? format(date.to, "PPP") : "..."}
@@ -398,42 +398,42 @@ export default function ReportsPage() {
 
         {/* --- KPI GRID --- */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-gray-50 border-l-4 border-l-purple-500">
+          <Card className="bg-slate-50 border-l-4 border-l-amber-600">
             <CardContent className="p-4">
-              <p className="text-sm font-medium text-gray-500 uppercase">
+              <p className="text-sm font-medium text-slate-600 uppercase">
                 Total Issues
               </p>
-              <h3 className="text-3xl font-bold text-gray-900 mt-2">
+              <h3 className="text-3xl font-bold text-slate-900 mt-2">
                 {reports?.total_issues || 0}
               </h3>
             </CardContent>
           </Card>
-          <Card className="bg-gray-50 border-l-4 border-l-green-500">
+          <Card className="bg-slate-50 border-l-4 border-l-emerald-600">
             <CardContent className="p-4">
-              <p className="text-sm font-medium text-gray-500 uppercase">
+              <p className="text-sm font-medium text-slate-600 uppercase">
                 Resolved
               </p>
-              <h3 className="text-3xl font-bold text-gray-900 mt-2">
+              <h3 className="text-3xl font-bold text-slate-900 mt-2">
                 {reports?.resolved_issues || 0}
               </h3>
             </CardContent>
           </Card>
-          <Card className="bg-gray-50 border-l-4 border-l-blue-500">
+          <Card className="bg-slate-50 border-l-4 border-l-indigo-600">
             <CardContent className="p-4">
-              <p className="text-sm font-medium text-gray-500 uppercase">
+              <p className="text-sm font-medium text-slate-600 uppercase">
                 Pending
               </p>
-              <h3 className="text-3xl font-bold text-gray-900 mt-2">
+              <h3 className="text-3xl font-bold text-slate-900 mt-2">
                 {reports?.status_distribution?.assigned_to_task_force || 0}
               </h3>
             </CardContent>
           </Card>
-          <Card className="bg-gray-50 border-l-4 border-l-orange-500">
+          <Card className="bg-slate-50 border-l-4 border-l-amber-500">
             <CardContent className="p-4">
-              <p className="text-sm font-medium text-gray-500 uppercase">
+              <p className="text-sm font-medium text-slate-600 uppercase">
                 Efficiency
               </p>
-              <h3 className="text-3xl font-bold text-gray-900 mt-2">
+              <h3 className="text-3xl font-bold text-slate-900 mt-2">
                 {resolutionRate}%
               </h3>
             </CardContent>

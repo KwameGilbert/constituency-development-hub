@@ -141,14 +141,14 @@ export default function UnderAssessmentPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
             Issues Under Assessment
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-slate-600 mt-1">
             Currently being reviewed - {issues.length} of {stats.total} issues
           </p>
         </div>
@@ -156,17 +156,17 @@ export default function UnderAssessmentPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-blue-100">
-                <AlertCircle className="h-6 w-6 text-blue-600" />
+              <div className="p-3 rounded-lg bg-indigo-100">
+                <AlertCircle className="h-6 w-6 text-indigo-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Under Review
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {stats.total}
                 </p>
               </div>
@@ -174,17 +174,17 @@ export default function UnderAssessmentPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-red-100">
-                <Clock className="h-6 w-6 text-red-600" />
+              <div className="p-3 rounded-lg bg-amber-100">
+                <Clock className="h-6 w-6 text-amber-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   Long Duration (5+ days)
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {stats.longDuration}
                 </p>
               </div>
@@ -192,17 +192,17 @@ export default function UnderAssessmentPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-none shadow-md shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-green-100">
-                <FileText className="h-6 w-6 text-green-600" />
+              <div className="p-3 rounded-lg bg-emerald-100">
+                <FileText className="h-6 w-6 text-emerald-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-slate-600">
                   High Priority
                 </p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-slate-900">
                   {stats.highPriority}
                 </p>
               </div>
@@ -212,12 +212,12 @@ export default function UnderAssessmentPage() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border-none shadow-md shadow-slate-200/50">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Search issues..."
                 value={searchTerm}
@@ -261,10 +261,10 @@ export default function UnderAssessmentPage() {
       </Card>
 
       {/* Issues List */}
-      <Card>
+      <Card className="border-none shadow-md shadow-slate-200/50">
         <CardHeader>
-          <CardTitle>Issues Under Assessment</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-slate-900">Issues Under Assessment</CardTitle>
+          <CardDescription className="text-slate-600">
             Issues currently being reviewed by assessors
           </CardDescription>
         </CardHeader>
@@ -272,11 +272,11 @@ export default function UnderAssessmentPage() {
           <div className="space-y-4">
             {loading ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
               </div>
             ) : issues.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <div className="text-center py-8 text-slate-500">
+                <AlertCircle className="h-12 w-12 mx-auto mb-4 text-slate-300" />
                 <p>No issues under assessment matching your criteria</p>
               </div>
             ) : (
@@ -291,8 +291,8 @@ export default function UnderAssessmentPage() {
                     key={issue.id}
                     className={`border rounded-lg p-4 hover:shadow-md transition-shadow ${
                       isLongDuration
-                        ? "border-yellow-200 bg-yellow-50"
-                        : "border-gray-200"
+                        ? "border-amber-200/60 bg-amber-50/50"
+                        : "border-slate-200/60"
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -300,11 +300,11 @@ export default function UnderAssessmentPage() {
                         <div className="flex items-start gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                              <h3 className="font-semibold text-gray-900">
+                              <h3 className="font-semibold text-slate-900">
                                 {issue.title}
                               </h3>
                               {isLongDuration && (
-                                <Badge className="bg-yellow-100 text-yellow-800">
+                                <Badge className="bg-amber-100 text-amber-800">
                                   Long Duration ({assessmentDuration} days)
                                 </Badge>
                               )}
@@ -312,7 +312,7 @@ export default function UnderAssessmentPage() {
 
                             <SanitizedHtml
                               html={issue.description}
-                              className="text-sm text-gray-600 mb-3 line-clamp-2"
+                              className="text-sm text-slate-600 mb-3 line-clamp-2"
                             />
 
                             <div className="flex flex-wrap gap-2 mb-3">
@@ -330,7 +330,7 @@ export default function UnderAssessmentPage() {
                               <Badge variant="outline">{issue.category}</Badge>
                             </div>
 
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <div className="flex items-center gap-4 text-sm text-slate-600">
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
                                 {issue.location}
@@ -364,7 +364,7 @@ export default function UnderAssessmentPage() {
                             >
                               <Button
                                 size="sm"
-                                className="bg-purple-600 hover:bg-purple-700"
+                                className="bg-amber-600 hover:bg-amber-700 text-white"
                               >
                                 <MessageSquare className="h-4 w-4 mr-1" />
                                 Continue Assessment
@@ -384,23 +384,23 @@ export default function UnderAssessmentPage() {
 
       {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <div className="text-sm text-gray-500">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200/60">
+          <div className="text-sm text-slate-600">
             Showing{" "}
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-slate-900">
               {(currentPage - 1) * pageSize + 1}
             </span>{" "}
             to{" "}
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-slate-900">
               {Math.min(currentPage * pageSize, issues.length)}
             </span>{" "}
             of{" "}
-            <span className="font-medium text-gray-900">{issues.length}</span>{" "}
+            <span className="font-medium text-slate-900">{issues.length}</span>{" "}
             issues
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 mr-4">
-              <span className="text-sm text-gray-500">Rows per page:</span>
+              <span className="text-sm text-slate-500">Rows per page:</span>
               <Select
                 value={pageSize.toString()}
                 onValueChange={(value) => {
@@ -418,7 +418,7 @@ export default function UnderAssessmentPage() {
                 </SelectContent>
               </Select>
             </div>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-slate-500">
               Page {currentPage} of {totalPages}
             </span>
             <div className="flex items-center gap-1">
