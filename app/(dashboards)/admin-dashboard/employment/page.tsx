@@ -25,7 +25,7 @@ export default function JobsListPage() {
         setError(null);
       } catch (err) {
         console.error("Failed to load jobs data:", err);
-        setError("Failed to load jobs data");
+        setError("Process failure in job data synchronization");
       } finally {
         setLoading(false);
       }
@@ -35,28 +35,32 @@ export default function JobsListPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Employment" />
-      <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <AdminHeader 
+        title="EmploymentHub" 
+        description="Vocational opportunities and labor market oversight"
+        roleAbbr="MP"
+      />
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
         <JobsHeader />
 
         {/* Loading State */}
         {loading && (
-          <Card className="p-6">
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white/50 backdrop-blur-sm p-6">
             <div className="space-y-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-4 border rounded-lg"
+                  className="flex items-center justify-between p-5 bg-white border border-slate-50 rounded-2xl shadow-sm"
                 >
                   <div className="space-y-2">
-                    <Skeleton className="h-5 w-64" />
-                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-6 w-64 rounded-lg" />
+                    <Skeleton className="h-4 w-48 rounded-lg" />
                   </div>
-                  <div className="flex space-x-2">
-                    <Skeleton className="h-6 w-16" />
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-8 w-16" />
+                  <div className="flex gap-3">
+                    <Skeleton className="h-7 w-20 rounded-xl" />
+                    <Skeleton className="h-7 w-24 rounded-xl" />
+                    <Skeleton className="h-10 w-28 rounded-xl" />
                   </div>
                 </div>
               ))}
@@ -66,10 +70,13 @@ export default function JobsListPage() {
 
         {/* Error State */}
         {error && !loading && (
-          <Card className="p-12 text-center">
-            <p className="text-red-600 text-lg font-medium">{error}</p>
-            <p className="text-slate-500 mt-2">
-              Please try refreshing the page
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl p-12 text-center bg-white/50 backdrop-blur-sm">
+            <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+               <span className="text-2xl">⚠️</span>
+            </div>
+            <p className="text-red-500 text-lg font-bold">{error}</p>
+            <p className="text-slate-500 mt-1 font-medium italic">
+              Please verify your system credentials and refresh
             </p>
           </Card>
         )}

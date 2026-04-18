@@ -18,7 +18,6 @@ import {
   FileText,
   ClipboardList,
   Users,
-  // Shield,    // Commented out: Officers page disabled
   Briefcase,
   GraduationCap,
   MapPin,
@@ -26,16 +25,16 @@ import {
   Lightbulb,
   Settings,
   ShieldAlert,
-  UserCircle,
   HelpCircle,
   LogOut,
   Crown,
-  Star,
-  Tag,
   DollarSign,
+  Tag,
+  UserCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,150 +68,83 @@ export function AdminSidebar() {
     router.push("/login");
   };
 
-  // Helper to determine if a link is active
   const isActive = (path: string) =>
     pathname === path || pathname.startsWith(`${path}/`);
 
   return (
     <Sidebar
-      className="bg-white border-r border-gray-200 text-gray-700"
-      collapsible="icon"
+      collapsible="offcanvas"
+      className="bg-slate-900 border-r-0 selection:bg-amber-500/30 z-40"
     >
-      {/* Sidebar Header */}
-      <SidebarHeader className="h-20 border-b border-red-800 bg-red-900">
-        <div className="flex items-center gap-3 px-2 py-3">
-          <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <Crown className="text-red-900 w-5 h-5" />
-            </div>
-            {/* Admin badge */}
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center">
-              <Star className="text-white w-2.5 h-2.5" />
-            </div>
+      <SidebarHeader className="h-20 border-b border-slate-800/50 bg-slate-900 sticky top-0 z-10 px-2 overflow-hidden">
+        <div className="flex items-center gap-3 px-4 py-6">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-amber-400 to-amber-600 text-slate-900 shadow-lg shadow-amber-500/20">
+            <Crown className="h-6 w-6 stroke-[2.5px]" />
           </div>
-          <div className="overflow-hidden">
-            <h3 className="text-white font-semibold truncate">MP Portal</h3>
-            <p className="text-red-100 text-xs truncate">
-              Constituency Management
-            </p>
+          <div className="flex flex-col overflow-hidden">
+            <span className="font-semibold text-slate-100 tracking-tight text-lg">
+              MP Portal
+            </span>
+            <span className="text-[10px] text-amber-500/80 font-medium mt-1">
+              Admin Hub
+            </span>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-white font-inter">
+      <SidebarContent className="bg-slate-900 px-3 custom-scrollbar">
         {/* System Overview */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-gray-400 uppercase tracking-wider px-4 mt-2">
+        <SidebarGroup className="py-4">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 uppercase tracking-wider">
             System Overview
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Dashboard"
-                  className={`px-4 py-2.5 h-auto text-sm transition-all duration-200 ease-in-out ${
-                    isActive("/admin-dashboard") &&
-                    pathname === "/admin-dashboard"
-                      ? "bg-red-900 text-white font-medium shadow-lg hover:bg-red-800 hover:text-white"
-                      : "text-gray-600 hover:bg-red-100 hover:text-red-900"
-                  }`}
-                >
-                  <Link href="/admin-dashboard">
-                    <LayoutDashboard className="w-5 h-5 mr-3" />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Analytics"
-                  className={`px-4 py-2.5 h-auto text-sm transition-all duration-200 ease-in-out ${
-                    isActive("/admin-dashboard/analytics")
-                      ? "bg-red-900 text-white font-medium shadow-lg hover:bg-red-800 hover:text-white"
-                      : "text-gray-600 hover:bg-red-100 hover:text-red-900"
-                  }`}
-                >
-                  <Link href="/admin-dashboard/analytics">
-                    <BarChart className="w-5 h-5 mr-3" />
-                    <span>Analytics</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  tooltip="Reports"
-                  className={`px-4 py-2.5 h-auto text-sm transition-all duration-200 ease-in-out ${
-                    isActive("/admin-dashboard/reports")
-                      ? "bg-red-900 text-white font-medium shadow-lg hover:bg-red-800 hover:text-white"
-                      : "text-gray-600 hover:bg-red-100 hover:text-red-900"
-                  }`}
-                >
-                  <Link href="/admin-dashboard/reports">
-                    <FileText className="w-5 h-5 mr-3" />
-                    <span>Reports</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+            <SidebarMenu className="gap-1">
+              {[
+                { title: "Dashboard", icon: LayoutDashboard, href: "/admin-dashboard" },
+                { title: "Analytics", icon: BarChart, href: "/admin-dashboard/analytics" },
+                { title: "Reports", icon: FileText, href: "/admin-dashboard/reports" },
+              ].map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
+                  >
+                    <Link href={item.href}>
+                      <item.icon className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                      <span className="text-sm">{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Management */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-gray-400 uppercase tracking-wider px-4 mt-2">
+        <SidebarGroup className="py-2">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 uppercase tracking-wider">
             Management
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="gap-1">
               {[
-                {
-                  title: "Issues",
-                  icon: ClipboardList,
-                  href: "/admin-dashboard/issues",
-                },
+                { title: "Issues", icon: ClipboardList, href: "/admin-dashboard/issues" },
                 { title: "Users", icon: Users, href: "/admin-dashboard/users" },
-                // {
-                //   title: "Officers",
-                //   icon: Shield,
-                //   href: "/admin-dashboard/officers",
-                // },
-                // {
-                //   title: "Field Agents",
-                //   icon: Briefcase,
-                //   href: "/admin-dashboard/agents",
-                // },
-                {
-                  title: "Youth Records",
-                  icon: GraduationCap,
-                  href: "/admin-dashboard/youth",
-                },
-                {
-                  title: "Locations",
-                  icon: MapPin,
-                  href: "/admin-dashboard/locations",
-                },
-                {
-                  title: "Sectors",
-                  icon: Tag,
-                  href: "/admin-dashboard/sectors",
-                },
+                { title: "Youth Records", icon: GraduationCap, href: "/admin-dashboard/youth" },
+                { title: "Locations", icon: MapPin, href: "/admin-dashboard/locations" },
+                { title: "Sectors", icon: Tag, href: "/admin-dashboard/sectors" },
               ].map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    tooltip={item.title}
-                    className={`px-4 py-2.5 h-auto text-sm transition-all duration-200 ease-in-out ${
-                      isActive(item.href)
-                        ? "bg-red-900 text-white font-medium shadow-lg hover:bg-red-800 hover:text-white"
-                        : "text-gray-600 hover:bg-red-100 hover:text-red-900"
-                    }`}
+                    isActive={isActive(item.href)}
+                    className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                   >
                     <Link href={item.href}>
-                      <item.icon className="w-5 h-5 mr-3" />
-                      <span>{item.title}</span>
+                      <item.icon className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                      <span className="text-sm">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -222,47 +154,27 @@ export function AdminSidebar() {
         </SidebarGroup>
 
         {/* Content & Projects */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-gray-400 uppercase tracking-wider px-4 mt-2">
+        <SidebarGroup className="py-2">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 uppercase tracking-wider">
             Content & Projects
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="gap-1">
               {[
-                {
-                  title: "Projects",
-                  icon: FolderKanban,
-                  href: "/admin-dashboard/projects",
-                },
-                {
-                  title: "Employment",
-                  icon: Briefcase,
-                  href: "/admin-dashboard/employment",
-                },
-                {
-                  title: "Ideas & Suggestions",
-                  icon: Lightbulb,
-                  href: "/admin-dashboard/ideas",
-                },
-                {
-                  title: "Finance",
-                  icon: DollarSign,
-                  href: "/admin-dashboard/finance",
-                },
+                { title: "Projects", icon: FolderKanban, href: "/admin-dashboard/projects" },
+                { title: "Employment", icon: Briefcase, href: "/admin-dashboard/employment" },
+                { title: "Ideas & Suggestions", icon: Lightbulb, href: "/admin-dashboard/ideas" },
+                { title: "Finance", icon: DollarSign, href: "/admin-dashboard/finance" },
               ].map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    tooltip={item.title}
-                    className={`px-4 py-2.5 h-auto text-sm transition-all duration-200 ease-in-out ${
-                      isActive(item.href)
-                        ? "bg-red-900 text-white font-medium shadow-lg hover:bg-red-800 hover:text-white"
-                        : "text-gray-600 hover:bg-red-100 hover:text-red-900"
-                    }`}
+                    isActive={isActive(item.href)}
+                    className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                   >
                     <Link href={item.href}>
-                      <item.icon className="w-5 h-5 mr-3" />
-                      <span>{item.title}</span>
+                      <item.icon className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                      <span className="text-sm">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -272,47 +184,27 @@ export function AdminSidebar() {
         </SidebarGroup>
 
         {/* System Administration */}
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupLabel className="text-xs font-medium text-gray-400 uppercase tracking-wider px-4 mt-2">
+        <SidebarGroup className="mt-auto py-2">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 uppercase tracking-wider">
             System
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="gap-1">
               {[
-                {
-                  title: "System Settings",
-                  icon: Settings,
-                  href: "/admin-dashboard/system-settings",
-                },
-                {
-                  title: "Audit Logs",
-                  icon: ShieldAlert,
-                  href: "/admin-dashboard/audit",
-                },
-                {
-                  title: "Profile",
-                  icon: UserCircle,
-                  href: "/admin-dashboard/profile",
-                },
-                {
-                  title: "Help & Support",
-                  icon: HelpCircle,
-                  href: "/admin-dashboard/help",
-                },
+                { title: "System Settings", icon: Settings, href: "/admin-dashboard/system-settings" },
+                { title: "Audit Logs", icon: ShieldAlert, href: "/admin-dashboard/audit" },
+                { title: "Profile", icon: UserCircle, href: "/admin-dashboard/profile" },
+                { title: "Help & Support", icon: HelpCircle, href: "/admin-dashboard/help" },
               ].map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    tooltip={item.title}
-                    className={`px-4 py-2.5 h-auto text-sm transition-all duration-200 ease-in-out ${
-                      isActive(item.href)
-                        ? "bg-red-900 text-white font-medium shadow-lg hover:bg-red-800 hover:text-white"
-                        : "text-gray-600 hover:bg-red-100 hover:text-red-900"
-                    }`}
+                    isActive={isActive(item.href)}
+                    className="h-11 px-4 text-slate-400 data-[active=true]:bg-amber-500 data-[active=true]:text-slate-950 data-[active=true]:font-semibold hover:bg-slate-800 hover:text-slate-100 transition-all duration-200 rounded-lg group"
                   >
                     <Link href={item.href}>
-                      <item.icon className="w-5 h-5 mr-3" />
-                      <span>{item.title}</span>
+                      <item.icon className="h-5 w-5 group-data-[active=true]:text-slate-950" />
+                      <span className="text-sm">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -322,40 +214,47 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-red-900 border-t border-red-800 p-4">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-3 overflow-hidden">
-            <div className="relative flex-shrink-0">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-red-900">
-                <UserCircle className="w-5 h-5" />
-              </div>
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-medium text-white truncate">
+      <SidebarFooter className="border-t border-slate-800/50 bg-slate-900 p-4">
+        <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-slate-800/40 border border-slate-700/30">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <Avatar className="h-9 w-9 shrink-0 ring-2 ring-slate-700/50">
+              <AvatarImage src="/placeholder-user.jpg" />
+              <AvatarFallback className="bg-amber-500 text-slate-950 font-semibold text-xs capitalize">
+                {userName.slice(0, 2).toLowerCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col overflow-hidden">
+              <span className="truncate text-xs font-semibold text-slate-100 capitalize">
                 {userName}
-              </p>
-              <p className="text-xs text-red-100 truncate">{userEmail}</p>
+              </span>
+              <span className="truncate text-[10px] text-slate-400">
+                {userEmail}
+              </span>
             </div>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="p-2 rounded-lg text-white hover:text-red-900 hover:bg-white transition-colors flex-shrink-0">
-                <LogOut className="w-4 h-4" />
+              <button className="shrink-0 p-2 text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400 rounded-lg">
+                <LogOut className="h-4 w-4" />
               </button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-slate-900 border-slate-800 text-slate-100">
               <AlertDialogHeader>
-                <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-white">
+                  Confirm Logout
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-400">
                   Are you sure you want to log out? You will need to sign in
                   again to access the admin dashboard.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-100 hover:bg-slate-700">
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-red-600 hover:bg-red-700 text-white"
                 >
                   Logout
                 </AlertDialogAction>

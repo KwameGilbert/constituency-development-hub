@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Inbox } from "lucide-react";
+import { Inbox, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import {
   dashboardService,
@@ -14,15 +14,15 @@ import { cleanupHtml } from "@/lib/utils";
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "resolved":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-100 text-emerald-800";
     case "in progress":
-      return "bg-blue-100 text-blue-800";
+      return "bg-amber-100 text-amber-800";
     case "pending review":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-indigo-100 text-indigo-800";
     case "approved":
-      return "bg-purple-100 text-purple-800";
+      return "bg-blue-100 text-blue-800";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-slate-100 text-slate-800";
   }
 };
 
@@ -30,15 +30,15 @@ const getSeverityColor = (severity: string) => {
   switch (severity.toLowerCase()) {
     case "critical":
     case "urgent":
-      return "bg-red-100 text-red-800";
+      return "bg-red-50 text-red-600 border-red-100";
     case "high":
-      return "bg-orange-100 text-orange-800";
+      return "bg-orange-50 text-orange-600 border-orange-100";
     case "medium":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-amber-50 text-amber-600 border-amber-100";
     case "low":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-50 text-emerald-600 border-emerald-100";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-slate-50 text-slate-600 border-slate-100";
   }
 };
 
@@ -70,76 +70,17 @@ export function AdminRecentIssues() {
 
   if (loading) {
     return (
-      <Card className="flex-1">
-        <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-800">
+      <Card className="flex-1 border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100/60 p-5 bg-white/50">
+          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
             Recent Issues
           </CardTitle>
-          <Link
-            href="/admin-dashboard/issues"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            View All Issues →
-          </Link>
+          <div className="h-4 bg-slate-100 rounded animate-pulse w-24"></div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="bg-white">
-            {/* Table Header */}
-            <div className="grid grid-cols-4 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
-              <div>Issue</div>
-              <div>Agent</div>
-              <div>Status</div>
-              <div className="col-span-1 grid grid-cols-2">
-                <span>Severity</span>
-                <span className="text-right">Date</span>
-              </div>
-            </div>
-
-            {/* Loading State */}
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3"></div>
-              <p className="text-sm text-gray-500">Loading recent issues...</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="flex-1">
-        <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-          <CardTitle className="text-lg font-semibold text-gray-800">
-            Recent Issues
-          </CardTitle>
-          <Link
-            href="/admin-dashboard/issues"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            View All Issues →
-          </Link>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="bg-white">
-            {/* Table Header */}
-            <div className="grid grid-cols-4 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
-              <div>Issue</div>
-              <div>Agent</div>
-              <div>Status</div>
-              <div className="col-span-1 grid grid-cols-2">
-                <span>Severity</span>
-                <span className="text-right">Date</span>
-              </div>
-            </div>
-
-            {/* Error State */}
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-3">
-                <Inbox className="w-6 h-6 text-red-600" />
-              </div>
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500 mb-3"></div>
+            <p className="text-sm text-slate-500 font-medium">Syncing issues...</p>
           </div>
         </CardContent>
       </Card>
@@ -147,130 +88,89 @@ export function AdminRecentIssues() {
   }
 
   return (
-    <Card className="flex-1">
-      <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
-        <CardTitle className="text-lg font-semibold text-gray-800">
+    <Card className="flex-1 border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100/60 p-5 bg-white/50">
+        <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
           Recent Issues
         </CardTitle>
         <Link
           href="/admin-dashboard/issues"
-          className="text-sm text-blue-600 hover:underline"
+          className="text-xs font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full transition-all flex items-center gap-1"
         >
-          View All Issues →
+          View All <ArrowRight className="w-3 h-3" />
         </Link>
       </CardHeader>
       <CardContent className="p-0">
         <div className="bg-white">
-          {/* Table Header (Desktop Only) */}
-          <div className="hidden md:grid grid-cols-4 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b">
-            <div>Issue</div>
-            <div>Agent</div>
-            <div>Status</div>
+          <div className="hidden md:grid grid-cols-4 gap-4 px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50/50 border-b border-slate-100/60">
+            <div>Issue Detail</div>
+            <div>Field Agent</div>
+            <div>Current Status</div>
             <div className="col-span-1 grid grid-cols-2">
               <span>Severity</span>
-              <span className="text-right">Date</span>
+              <span className="text-right">Reported</span>
             </div>
           </div>
 
-          {/* Issues List */}
           {issues.length > 0 ? (
-            <div className="overflow-hidden">
-              <div className="divide-y divide-gray-100">
-                {issues.map((issue) => (
-                  <div
-                    key={issue.id}
-                    className="flex flex-col md:grid md:grid-cols-4 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
-                  >
-                    {/* Issue Title & Desc */}
-                    <div className="flex flex-col">
-                      <div className="flex justify-between items-start md:block">
-                        <span
-                          className="text-sm font-medium text-gray-900 truncate block max-w-[200px] md:max-w-none"
-                          title={issue.title}
-                        >
-                          {issue.title}
-                        </span>
-                        {/* Mobile Status Badge */}
-                        <div className="md:hidden">
-                          <Badge
-                            className={`text-xs ${getStatusColor(issue.status)}`}
-                          >
-                            {issue.status}
-                          </Badge>
-                        </div>
+            <div className="divide-y divide-slate-100/60">
+              {issues.map((issue) => (
+                <div
+                  key={issue.id}
+                  className="flex flex-col md:grid md:grid-cols-4 gap-4 px-6 py-4 hover:bg-slate-50/80 transition-colors"
+                >
+                  <div className="flex flex-col overflow-hidden">
+                    <div className="flex justify-between items-start md:block">
+                      <span className="text-sm font-semibold text-slate-900 truncate block transition-colors group-hover:text-amber-600" title={issue.title}>
+                        {issue.title}
+                      </span>
+                      <div className="md:hidden">
+                        <Badge className={`text-[10px] font-bold uppercase ${getStatusColor(issue.status)} border-none`}>
+                          {issue.status}
+                        </Badge>
                       </div>
-                      <span
-                        className="text-xs text-gray-500 truncate mt-1"
-                        title={cleanupHtml(issue.description)}
-                      >
-                        {cleanupHtml(issue.description)}
-                      </span>
                     </div>
+                    <span className="text-xs text-slate-500 truncate mt-0.5 font-medium leading-relaxed" title={cleanupHtml(issue.description)}>
+                      {cleanupHtml(issue.description)}
+                    </span>
+                  </div>
 
-                    {/* Desktop: Agent */}
-                    <div className="hidden md:flex items-center">
-                      <span className="text-sm text-gray-900">
-                        {issue.agent}
-                      </span>
-                    </div>
-
-                    {/* Desktop: Status */}
-                    <div className="hidden md:flex items-center">
-                      <Badge
-                        className={`text-xs ${getStatusColor(issue.status)}`}
-                      >
-                        {issue.status}
-                      </Badge>
-                    </div>
-
-                    {/* Desktop: Severity & Date */}
-                    <div className="hidden md:grid grid-cols-2 gap-2">
-                      <Badge
-                        className={`text-xs justify-center ${getSeverityColor(
-                          issue.severity,
-                        )}`}
-                      >
-                        {issue.severity}
-                      </Badge>
-                      <span className="text-sm text-gray-500 text-right">
-                        {new Date(issue.date).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                        })}
-                      </span>
-                    </div>
-
-                    {/* Mobile Details Row */}
-                    <div className="flex md:hidden items-center justify-between mt-2 text-xs text-gray-500">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-700">
-                          {issue.agent}
-                        </span>
-                        <span>•</span>
-                        <span
-                          className={`${getSeverityColor(issue.severity).replace("bg-", "text-").replace("text-", "bg-transparent ")} font-medium`}
-                        >
-                          {issue.severity}
-                        </span>
+                  <div className="hidden md:flex items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                        {issue.agent.charAt(0)}
                       </div>
-                      <span>
-                        {new Date(issue.date).toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                        })}
-                      </span>
+                      <span className="text-sm text-slate-700 font-medium">{issue.agent}</span>
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  <div className="hidden md:flex items-center">
+                    <Badge className={`text-[10px] font-bold uppercase tracking-wider ${getStatusColor(issue.status)} border-none px-2 py-0.5`}>
+                      {issue.status}
+                    </Badge>
+                  </div>
+
+                  <div className="hidden md:grid grid-cols-2 items-center gap-2">
+                    <Badge className={`text-[10px] font-bold uppercase border justify-center ${getSeverityColor(issue.severity)}`}>
+                      {issue.severity}
+                    </Badge>
+                    <span className="text-xs text-slate-400 text-right font-medium">
+                      {new Date(issue.date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
-            /* Empty State */
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-3">
-                <Inbox className="w-6 h-6 text-gray-400" />
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
+                <Inbox className="w-8 h-8 text-slate-300" />
               </div>
-              <p className="text-sm text-gray-500">No recent issues found.</p>
+              <p className="text-sm text-slate-500 font-semibold">No recent issues found</p>
+              <p className="text-[11px] text-slate-400 mt-1">Check back later for field updates</p>
             </div>
           )}
         </div>

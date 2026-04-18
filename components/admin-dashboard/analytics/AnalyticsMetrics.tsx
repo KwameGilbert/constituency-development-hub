@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   AlertCircle,
   Users,
@@ -13,11 +13,14 @@ import {
   List,
   TrendingUp,
   TrendingDown,
+  Activity,
+  Zap,
 } from "lucide-react";
 import {
   dashboardService,
   AnalyticsMetricsData,
 } from "@/lib/services/dashboard-service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AnalyticsMetrics() {
   const [metricsData, setMetricsData] = useState<AnalyticsMetricsData | null>(
@@ -51,17 +54,17 @@ export function AnalyticsMetrics() {
     return new Intl.NumberFormat("en-GH", {
       style: "currency",
       currency: "GHS",
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
   const TrendIndicator = ({ change }: { change: number }) => {
     const isPositive = change >= 0;
     const Icon = isPositive ? TrendingUp : TrendingDown;
-    const color = isPositive ? "text-green-600" : "text-red-600";
+    const color = isPositive ? "text-emerald-600 bg-emerald-50" : "text-red-500 bg-red-50";
 
     return (
-      <div className={`flex items-center gap-1 text-xs ${color}`}>
+      <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[10px] font-bold ${color}`}>
         <Icon className="w-3 h-3" />
         <span>{Math.abs(change)}%</span>
       </div>
@@ -71,37 +74,27 @@ export function AnalyticsMetrics() {
   if (loading) {
     return (
       <div className="space-y-6">
-        {/* Row 1: Main Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Card
-              key={i}
-              className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white"
-            >
-              <div className="animate-pulse">
-                <div className="w-12 h-12 bg-gray-200 rounded-lg"></div>
-              </div>
-              <div className="animate-pulse">
-                <div className="h-3 bg-gray-200 rounded w-20 mb-2"></div>
-                <div className="h-6 bg-gray-200 rounded w-16"></div>
-              </div>
+            <Card key={i} className="border-none shadow-sm h-24">
+              <CardContent className="p-5 flex items-center gap-4">
+                <Skeleton className="h-11 w-11 rounded-2xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-7 w-12" />
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>
-
-        {/* Row 2: Secondary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <Card
-              key={i}
-              className="p-4 flex items-center justify-between shadow-sm animate-pulse"
-            >
-              <div>
-                <div className="h-3 bg-gray-200 rounded w-24 mb-2"></div>
-                <div className="h-6 bg-gray-200 rounded w-12"></div>
-              </div>
-              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-            </Card>
+             <Card key={i} className="border-none shadow-sm h-20">
+              <CardContent className="p-4">
+                <Skeleton className="h-3 w-24 mb-2" />
+                <Skeleton className="h-6 w-12" />
+              </CardContent>
+             </Card>
           ))}
         </div>
       </div>
@@ -110,168 +103,69 @@ export function AnalyticsMetrics() {
 
   if (error || !metricsData) {
     return (
-      <div className="space-y-6">
-        <Card className="col-span-full p-6">
-          <div className="text-center text-red-600">
-            {error || "No metrics data available"}
-          </div>
-        </Card>
-      </div>
+      <Card className="p-6 bg-red-50 border-none shadow-sm">
+        <div className="text-center text-red-600 font-bold flex items-center justify-center gap-2">
+          <AlertCircle className="w-5 h-5" />
+          {error || "No analytics metrics available"}
+        </div>
+      </Card>
     );
   }
 
+  const mainMetrics = [
+    { label: "Total Issues", value: metricsData.metrics.totalIssues, trend: metricsData.trends.issuesChange, icon: AlertCircle, bg: "from-amber-500/10 to-amber-500/20", color: "text-amber-600" },
+    { label: "Active Staff", value: metricsData.metrics.activeStaff, trend: metricsData.trends.staffChange, icon: Users, bg: "from-slate-100 to-slate-200", color: "text-slate-900" },
+    { label: "Total Projects", value: metricsData.metrics.totalProjects, trend: metricsData.trends.projectsChange, icon: FolderKanban, bg: "from-slate-100 to-slate-200", color: "text-slate-900" },
+    { label: "Active Budget", value: formatCurrency(metricsData.metrics.activeBudget), trend: metricsData.trends.budgetChange, icon: DollarSign, bg: "from-slate-100 to-slate-200", color: "text-slate-900" },
+  ];
+
+  const secondaryMetrics = [
+    { label: "New This Week", value: metricsData.metrics.newIssuesThisWeek, trend: metricsData.trends.newIssuesChange, icon: Activity, color: "text-amber-500", bg: "bg-amber-50" },
+    { label: "Resolutions", value: metricsData.metrics.resolvedThisWeek, trend: metricsData.trends.resolvedChange, icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50" },
+    { label: "Recent Users", value: metricsData.metrics.activeUsers7Days, trend: metricsData.trends.activeUsersChange, icon: UserPlus, color: "text-blue-500", bg: "bg-blue-50" },
+    { label: "Ongoing", value: metricsData.metrics.ongoingProjects, trend: metricsData.trends.ongoingProjectsChange, icon: List, color: "text-slate-400", bg: "bg-slate-50" },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Row 1: Main Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Issues */}
-        <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
-          <div className="p-3 rounded-lg bg-red-100 text-red-600">
-            <AlertCircle className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">
-              Total Issues
-            </p>
-            <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">
-                {metricsData.metrics.totalIssues}
-              </h3>
-              <TrendIndicator change={metricsData.trends.issuesChange} />
-            </div>
-          </div>
-        </Card>
-
-        {/* Active Staff */}
-        <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
-          <div className="p-3 rounded-lg bg-blue-100 text-blue-600">
-            <Users className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">
-              Active Staff
-            </p>
-            <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">
-                {metricsData.metrics.activeStaff}
-              </h3>
-              <TrendIndicator change={metricsData.trends.staffChange} />
-            </div>
-          </div>
-        </Card>
-
-        {/* Total Projects */}
-        <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
-          <div className="p-3 rounded-lg bg-green-100 text-green-600">
-            <FolderKanban className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">
-              Total Projects
-            </p>
-            <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">
-                {metricsData.metrics.totalProjects}
-              </h3>
-              <TrendIndicator change={metricsData.trends.projectsChange} />
-            </div>
-          </div>
-        </Card>
-
-        {/* Active Budget */}
-        <Card className="p-4 flex items-center space-x-4 border-none shadow-sm bg-white">
-          <div className="p-3 rounded-lg bg-purple-100 text-purple-600">
-            <DollarSign className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-gray-500 uppercase">
-              Active Budget
-            </p>
-            <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-gray-800">
-                {formatCurrency(metricsData.metrics.activeBudget)}
-              </h3>
-              <TrendIndicator change={metricsData.trends.budgetChange} />
-            </div>
-          </div>
-        </Card>
+      {/* Primary Highlights */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {mainMetrics.map((metric, index) => (
+          <Card key={index} className="border-none shadow-md shadow-slate-200/40 group hover:shadow-lg transition-all rounded-2xl overflow-hidden bg-white">
+            <CardContent className="p-5 flex items-center gap-4 relative">
+              <div className={`p-3 rounded-2xl bg-linear-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform`}>
+                <metric.icon className="w-6 h-6 stroke-[2.5px]" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">{metric.label}</p>
+                   <TrendIndicator change={metric.trend} />
+                </div>
+                <h3 className="text-xl font-black text-slate-900 tracking-tight truncate leading-none">
+                  {metric.value}
+                </h3>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Row 2: Secondary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* New Issues This Week */}
-        <Card className="p-4 flex items-center justify-between border-l-4 border-l-yellow-400 bg-yellow-50 shadow-sm">
-          <div>
-            <p className="text-xs font-semibold text-yellow-800">
-              New Issues This Week
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-yellow-900">
-                {metricsData.metrics.newIssuesThisWeek}
-              </h3>
-              <TrendIndicator change={metricsData.trends.newIssuesChange} />
+      {/* Grid Support Metrics */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {secondaryMetrics.map((metric, index) => (
+          <Card key={index} className="border-none shadow-md shadow-slate-200/40 rounded-2xl flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm group hover:bg-white transition-all">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{metric.label}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-black text-slate-800 leading-none">{metric.value}</span>
+                <TrendIndicator change={metric.trend} />
+              </div>
             </div>
-          </div>
-          <div className="p-2 bg-yellow-400 rounded-full text-white">
-            <Clock className="w-4 h-4" />
-          </div>
-        </Card>
-
-        {/* Resolved This Week */}
-        <Card className="p-4 flex items-center justify-between border-l-4 border-l-green-400 bg-green-50 shadow-sm">
-          <div>
-            <p className="text-xs font-semibold text-green-800">
-              Resolved This Week
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-green-900">
-                {metricsData.metrics.resolvedThisWeek}
-              </h3>
-              <TrendIndicator change={metricsData.trends.resolvedChange} />
+            <div className={`p-2.5 rounded-xl ${metric.bg} ${metric.color} transition-transform group-hover:rotate-12`}>
+              <metric.icon className="w-4 h-4" />
             </div>
-          </div>
-          <div className="p-2 bg-green-400 rounded-full text-white">
-            <CheckCircle className="w-4 h-4" />
-          </div>
-        </Card>
-
-        {/* Active Users (7 days) */}
-        <Card className="p-4 flex items-center justify-between border-l-4 border-l-blue-400 bg-blue-50 shadow-sm">
-          <div>
-            <p className="text-xs font-semibold text-blue-800">
-              Active Users (7 days)
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-blue-900">
-                {metricsData.metrics.activeUsers7Days}
-              </h3>
-              <TrendIndicator change={metricsData.trends.activeUsersChange} />
-            </div>
-          </div>
-          <div className="p-2 bg-blue-400 rounded-lg text-white">
-            <UserPlus className="w-4 h-4" />
-          </div>
-        </Card>
-
-        {/* Ongoing Projects */}
-        <Card className="p-4 flex items-center justify-between border-l-4 border-l-purple-400 bg-purple-50 shadow-sm">
-          <div>
-            <p className="text-xs font-semibold text-purple-800">
-              Ongoing Projects
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <h3 className="text-2xl font-bold text-purple-900">
-                {metricsData.metrics.ongoingProjects}
-              </h3>
-              <TrendIndicator
-                change={metricsData.trends.ongoingProjectsChange}
-              />
-            </div>
-          </div>
-          <div className="p-2 bg-purple-200 text-purple-700 rounded-lg">
-            <List className="w-4 h-4" />
-          </div>
-        </Card>
+          </Card>
+        ))}
       </div>
     </div>
   );

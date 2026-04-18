@@ -15,6 +15,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { AdminChartsData } from "@/lib/services/dashboard-service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AnalyticsChartsProps {
   chartsData: AdminChartsData | null;
@@ -30,36 +31,29 @@ export function AnalyticsCharts({
   if (loading) {
     return (
       <div className="space-y-6">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <div className="animate-pulse">
-                  <div className="h-5 bg-gray-200 rounded w-48 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-32"></div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px] w-full bg-gray-100 rounded-lg animate-pulse"></div>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[1, 2].map((i) => (
+             <Card key={i} className="border-none shadow-sm h-[400px]">
+               <CardHeader className="p-5">
+                 <Skeleton className="h-6 w-48" />
+               </CardHeader>
+               <CardContent>
+                 <Skeleton className="h-[300px] w-full rounded-2xl" />
+               </CardContent>
+             </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error || !chartsData) {
     return (
-      <div className="space-y-6">
-        <Card className="col-span-full">
-          <CardContent className="p-6">
-            <div className="text-center text-red-600">
-              {error || "No charts data available"}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="border-none shadow-sm bg-red-50 p-6">
+        <div className="text-center text-red-600 font-bold">
+           {error || "No chart analytics available"}
+        </div>
+      </Card>
     );
   }
 
@@ -68,21 +62,20 @@ export function AnalyticsCharts({
       {/* Row 1: Status & Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Issues by Status */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-semibold text-gray-800">
-              Issues by Status
+        <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white">
+          <CardHeader className="flex flex-row items-center justify-between bg-white/50 border-b border-slate-100/60 p-5">
+            <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+              Distribution by Status
             </CardTitle>
-            <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">
-              Total:{" "}
-              {chartsData.charts.issueStatusDistribution.reduce(
-                (sum, item) => sum + item.value,
-                0,
-              )}
-            </span>
+            <div className="flex items-center gap-2">
+               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Reports</span>
+               <Badge className="bg-slate-100 text-slate-600 border-none font-bold">
+                {chartsData.charts.issueStatusDistribution.reduce((sum, item) => sum + item.value, 0)}
+               </Badge>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full flex items-center justify-center">
+          <CardContent className="p-6">
+            <div className="h-[320px] w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -90,22 +83,27 @@ export function AnalyticsCharts({
                     cx="50%"
                     cy="50%"
                     innerRadius={80}
-                    outerRadius={120}
-                    paddingAngle={2}
+                    outerRadius={115}
+                    paddingAngle={5}
                     dataKey="value"
                     strokeWidth={0}
                   >
                     {chartsData.charts.issueStatusDistribution.map(
                       (entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell key={`cell-${index}`} fill={entry.color} className="hover:opacity-80 transition-opacity" />
                       ),
                     )}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                  />
                   <Legend
                     verticalAlign="bottom"
-                    height={36}
+                    height={40}
                     iconType="circle"
+                    formatter={(value) => (
+                       <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">{value}</span>
+                    )}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -114,56 +112,62 @@ export function AnalyticsCharts({
         </Card>
 
         {/* Monthly Trends */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base font-semibold text-gray-800">
-              Monthly Trends
+        <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white">
+          <CardHeader className="flex flex-row items-center justify-between bg-white/50 border-b border-slate-100/60 p-5">
+            <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+              Resolution Trends
             </CardTitle>
-            <span className="text-xs text-blue-100 bg-blue-600 px-2 py-1 rounded-full">
-              Last 12 Months
-            </span>
+            <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 font-bold text-[10px] uppercase tracking-widest rounded-full">
+               System Performance
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full">
+          <CardContent className="p-6">
+            <div className="h-[320px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={chartsData.charts.monthlyTrends}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     vertical={false}
-                    stroke="#f0f0f0"
+                    stroke="#f1f5f9"
                   />
                   <XAxis
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: "#6b7280", fontSize: 12 }}
+                    tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 600 }}
                     dy={10}
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: "#6b7280", fontSize: 12 }}
+                    tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 600 }}
                   />
-                  <Tooltip />
-                  <Legend verticalAlign="top" height={36} iconType="circle" />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                  />
+                  <Legend verticalAlign="top" height={36} iconType="circle" 
+                    formatter={(value) => <span className="text-[11px] font-bold text-slate-500">{value}</span>}
+                  />
                   <Line
                     type="monotone"
                     dataKey="issues"
-                    name="Issues Created"
-                    stroke="#ef4444"
-                    strokeWidth={2}
-                    dot={{ r: 4, fill: "#fff" }}
+                    name="Issues Reported"
+                    stroke="#f59e0b"
+                    strokeWidth={3}
+                    dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                    activeDot={{ r: 6, strokeWidth: 2, fill: "#f59e0b" }}
                   />
                   <Line
                     type="monotone"
                     dataKey="resolved"
                     name="Issues Resolved"
                     stroke="#10b981"
-                    strokeWidth={2}
-                    dot={{ r: 4, fill: "#fff" }}
+                    strokeWidth={3}
+                    dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+                    activeDot={{ r: 6, strokeWidth: 2, fill: "#10b981" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -177,38 +181,46 @@ export function AnalyticsCharts({
         chartsData.charts.categoryDistribution.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Issues by Severity */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-base font-semibold text-gray-800">
-                  Issues by Severity
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white">
+              <CardHeader className="flex flex-row items-center justify-between bg-white/50 border-b border-slate-100/60 p-5">
+                <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+                  Criticality Levels
                 </CardTitle>
-                <span className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">
-                  Priority Analysis
-                </span>
+                <div className="flex items-center gap-2">
+                   <span className="text-[10px] font-bold text-slate-400 capitalize bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-100">
+                    Priority Analysis
+                   </span>
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="h-[300px] w-full flex items-center justify-center">
+              <CardContent className="p-6">
+                <div className="h-[320px] w-full flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={chartsData.charts.categoryDistribution}
                         cx="50%"
                         cy="50%"
-                        outerRadius={120}
+                        innerRadius={0}
+                        outerRadius={115}
                         dataKey="value"
                         strokeWidth={0}
                       >
                         {chartsData.charts.categoryDistribution.map(
                           (entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
+                            <Cell key={`cell-${index}`} fill={entry.color} className="hover:opacity-80 transition-opacity" />
                           ),
                         )}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip 
+                        contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                      />
                       <Legend
                         verticalAlign="bottom"
-                        height={36}
+                        height={40}
                         iconType="circle"
+                        formatter={(value) => (
+                           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">{value}</span>
+                        )}
                       />
                     </PieChart>
                   </ResponsiveContainer>
@@ -217,38 +229,38 @@ export function AnalyticsCharts({
             </Card>
 
             {/* Top Issue Categories */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-base font-semibold text-gray-800">
-                  Top Issue Categories
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white">
+              <CardHeader className="flex flex-row items-center justify-between bg-white/50 border-b border-slate-100/60 p-5">
+                <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+                  Prevalent Categories
                 </CardTitle>
-                <span className="text-xs text-gray-500">Top 10</span>
+                <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-2 py-0.5 rounded-lg uppercase tracking-widest">Top 10</span>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="space-y-4">
                   {chartsData.charts.categoryDistribution.map((cat, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between text-sm"
+                      className="flex items-center justify-between text-sm group"
                     >
                       <div className="flex items-center gap-3">
                         <span
-                          className={`w-6 h-6 rounded flex items-center justify-center text-xs font-medium text-white ${cat.value > 0 ? "bg-indigo-600" : "bg-indigo-400"}`}
+                          className={`w-7 h-7 rounded-xl flex items-center justify-center text-[11px] font-bold transition-all shadow-sm ${cat.value > 0 ? "bg-slate-900 text-amber-500" : "bg-slate-100 text-slate-400"}`}
                         >
                           {index + 1}
                         </span>
-                        <span className="text-gray-700">{cat.name}</span>
+                        <span className="text-slate-700 font-bold tracking-tight group-hover:text-amber-600 transition-colors">{cat.name}</span>
                       </div>
-                      <div className="flex items-center gap-2 w-1/3 justify-end">
-                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                      <div className="flex items-center gap-4 w-1/3 justify-end">
+                        <div className="h-2 w-full bg-slate-50 flex-1 rounded-full overflow-hidden shadow-inner">
                           <div
-                            className={`h-full rounded-full ${cat.value > 0 ? "bg-indigo-600" : "bg-gray-300"}`}
+                            className={`h-full rounded-full transition-all duration-1000 ${cat.value > 0 ? "bg-amber-500 shadow-sm shadow-amber-500/30" : "bg-slate-200"}`}
                             style={{
                               width: `${(cat.value / Math.max(...chartsData.charts.categoryDistribution!.map((c) => c.value))) * 100}%`,
                             }}
                           ></div>
                         </div>
-                        <span className="font-semibold text-gray-800 w-4 text-right">
+                        <span className="font-black text-slate-900 w-6 text-right text-xs">
                           {cat.value}
                         </span>
                       </div>
@@ -262,3 +274,9 @@ export function AnalyticsCharts({
     </div>
   );
 }
+
+const Badge = ({ children, className }: { children: React.ReactNode, className?: string }) => (
+  <span className={`px-2 py-0.5 rounded-lg text-xs font-bold ${className}`}>
+    {children}
+  </span>
+);

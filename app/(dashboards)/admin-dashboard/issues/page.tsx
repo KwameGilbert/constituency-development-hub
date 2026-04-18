@@ -14,7 +14,7 @@ import {
 
 export default function AdminIssuesPage() {
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full bg-slate-50/50">
       <AdminHeader
         title="All Issues"
         description="System-wide issues overview and management"
@@ -45,7 +45,7 @@ export default function AdminIssuesPage() {
           {
             label: "Logout",
             icon: LogOut,
-            className: "text-red-600 focus:text-red-600 focus:bg-red-50",
+            className: "text-red-600 focus:text-red-600 focus:bg-red-50/50 transition-colors font-medium",
           },
         ]}
         actionButtons={[
@@ -53,7 +53,7 @@ export default function AdminIssuesPage() {
             label: "Analytics",
             href: "/admin-dashboard/analytics",
             icon: BarChart3,
-            className: "bg-red-900 text-white hover:bg-red-800 shadow-sm",
+            className: "bg-slate-900 text-white hover:bg-slate-800 shadow-lg font-bold flex items-center gap-2 rounded-2xl",
           },
         ]}
       />

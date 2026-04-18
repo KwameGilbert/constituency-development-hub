@@ -42,12 +42,16 @@ export default function AnnouncementsListPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen w-full bg-slate-50">
-        <AdminHeader title="Announcements" />
-        <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
+      <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+        <AdminHeader 
+          title="Announcements" 
+          description="Synchronizing broadcast communication..."
+          roleAbbr="MP"
+        />
+        <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <Skeleton className="h-8 w-48 mb-2" />
+              <Skeleton className="h-10 w-64 rounded-xl" />
               <Skeleton className="h-4 w-64" />
             </div>
             <Skeleton className="h-10 w-48" />
@@ -92,9 +96,13 @@ export default function AnnouncementsListPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Announcements" />
-      <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <AdminHeader 
+        title="Announcements" 
+        description="Public communications and broadcast oversight"
+        roleAbbr="MP"
+      />
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
         <AnnouncementsHeader />
         <AnnouncementsTable announcements={announcements} />
       </div>

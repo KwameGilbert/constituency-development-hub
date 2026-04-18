@@ -236,18 +236,18 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full bg-slate-50/50">
       <AdminHeader
         title="System Analytics"
         description="Comprehensive insights and performance metrics"
         roleAbbr="MP"
         actionButtons={[
           {
-            label: isExporting ? "Exporting..." : "Export Report",
+            label: isExporting ? "Indexing Data..." : "Generate Report",
             onClick: handleExport,
             icon: Download,
             className:
-              "bg-red-900 text-white hover:bg-red-800 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed",
+              "bg-amber-500 text-slate-950 hover:bg-amber-600 shadow-md shadow-amber-500/20 font-bold rounded-2xl disabled:opacity-50",
           },
         ]}
       />

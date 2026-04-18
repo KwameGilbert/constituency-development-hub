@@ -36,8 +36,15 @@ interface AdminChartsProps {
   error: string | null;
 }
 
+const UI_COLORS = {
+  amber: "#f59e0b",
+  emerald: "#10b981",
+  blue: "#3b82f6",
+  slate: "#64748b",
+  red: "#ef4444",
+};
+
 export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
-  // Transform API data to component format
   const chartData: ChartData | null = chartsData?.charts
     ? {
         issuesStatusDistribution:
@@ -54,13 +61,13 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         {[1, 2].map((i) => (
-          <Card key={i}>
+          <Card key={i} className="border-none shadow-sm h-[400px]">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="h-6 bg-gray-200 rounded animate-pulse w-48"></div>
-              <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+              <div className="h-6 bg-slate-100 rounded animate-pulse w-48"></div>
+              <div className="h-4 bg-slate-100 rounded animate-pulse w-20"></div>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px] w-full bg-gray-100 rounded-lg animate-pulse"></div>
+              <div className="h-[300px] w-full bg-slate-50/50 rounded-2xl animate-pulse"></div>
             </CardContent>
           </Card>
         ))}
@@ -71,9 +78,9 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
   if (error || !chartData) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <Card>
+        <Card className="border-none shadow-sm">
           <CardContent className="p-6">
-            <div className="text-center text-red-600">
+            <div className="text-center text-red-500 font-medium">
               {error || "No chart data available"}
             </div>
           </CardContent>
@@ -84,20 +91,19 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-      {/* Issues Status Distribution */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-lg font-semibold text-gray-800">
+      <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white/50 border-b border-slate-100/60 p-5">
+          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
             Issues Status Distribution
           </CardTitle>
           <Link
             href="/admin-dashboard/issues"
-            className="text-sm text-blue-600 hover:underline"
+            className="text-xs font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full transition-all"
           >
-            View All →
+            Manage Issues
           </Link>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -105,22 +111,28 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
                   data={chartData.issuesStatusDistribution}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
+                  innerRadius={70}
                   outerRadius={100}
-                  paddingAngle={0}
+                  paddingAngle={5}
                   dataKey="value"
-                  strokeWidth={2}
-                  stroke="#fff"
+                  strokeWidth={0}
                 >
                   {chartData.issuesStatusDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.color} 
+                      className="hover:opacity-80 transition-opacity"
+                    />
                   ))}
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    borderRadius: "8px",
+                    borderRadius: "16px",
                     border: "none",
-                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                    boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    padding: "10px 16px",
                   }}
                 />
                 <Legend
@@ -128,7 +140,7 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
                   height={36}
                   iconType="circle"
                   formatter={(value) => (
-                    <span className="text-xs text-gray-600 ml-1">{value}</span>
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1">{value}</span>
                   )}
                 />
               </PieChart>
@@ -137,21 +149,20 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
         </CardContent>
       </Card>
 
-      {/* Monthly Trends */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-lg font-semibold text-gray-800">
-            Monthly Trends
+      <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white/50 border-b border-slate-100/60 p-5">
+          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+            Monthly Resolution Trends
           </CardTitle>
           <Link
             href="/admin-dashboard/analytics"
-            className="text-sm text-blue-600 hover:underline flex items-center"
+            className="text-xs font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full transition-all"
           >
-            Detailed Analytics →
+            Full Report
           </Link>
         </CardHeader>
-        <CardContent>
-          <div className="h-[300px] w-full bg-white rounded-lg">
+        <CardContent className="p-6">
+          <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={chartData.monthlyTrends}
@@ -160,39 +171,41 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   vertical={false}
-                  stroke="#f0f0f0"
+                  stroke="#f1f5f9"
                 />
                 <XAxis
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#6b7280", fontSize: 12 }}
+                  tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 600 }}
                   dy={10}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#6b7280", fontSize: 12 }}
+                  tick={{ fill: "#94a3b8", fontSize: 11, fontWeight: 600 }}
                 />
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ borderRadius: "16px", border: "none", boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+                />
                 <Legend verticalAlign="top" height={36} iconType="circle" />
                 <Line
                   type="monotone"
                   dataKey="total"
-                  name="Total Issues"
-                  stroke="#ef4444"
-                  strokeWidth={2}
+                  name="Submissions"
+                  stroke={UI_COLORS.amber}
+                  strokeWidth={3}
                   dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
-                  activeDot={{ r: 6 }}
+                  activeDot={{ r: 6, strokeWidth: 2, fill: UI_COLORS.amber }}
                 />
                 <Line
                   type="monotone"
                   dataKey="resolved"
-                  name="Resolved Issues"
-                  stroke="#10b981"
-                  strokeWidth={2}
+                  name="Resolutions"
+                  stroke={UI_COLORS.emerald}
+                  strokeWidth={3}
                   dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
-                  activeDot={{ r: 6 }}
+                  activeDot={{ r: 6, strokeWidth: 2, fill: UI_COLORS.emerald }}
                 />
               </LineChart>
             </ResponsiveContainer>

@@ -14,7 +14,7 @@ import {
 
 export default function UsersPage() {
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full bg-slate-50/50">
       <AdminHeader
         title="All Users"
         description="System-wide user management"
@@ -45,7 +45,7 @@ export default function UsersPage() {
           {
             label: "Logout",
             icon: LogOut,
-            className: "text-red-600 focus:text-red-600 focus:bg-red-50",
+            className: "text-red-600 focus:text-red-600 focus:bg-red-50/50 transition-colors font-medium",
           },
         ]}
         actionButtons={[
@@ -53,7 +53,7 @@ export default function UsersPage() {
             label: "Add New User",
             href: "/admin-dashboard/users/new",
             icon: UserPlus,
-            className: "bg-red-900 text-white hover:bg-red-800 shadow-sm",
+            className: "bg-amber-500 text-slate-950 hover:bg-amber-600 shadow-md shadow-amber-500/20 font-bold",
           },
         ]}
       />

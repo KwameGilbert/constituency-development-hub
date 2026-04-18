@@ -37,10 +37,10 @@ interface ActionButton {
 interface DropdownItemConfig {
   label: string;
   href?: string;
-  count?: number; // For notifications or counts if needed later
+  count?: number;
   onClick?: () => void;
   icon: React.ComponentType<{ className?: string }>;
-  className?: string; // To style text-red-600 etc
+  className?: string;
 }
 
 interface AdminHeaderProps {
@@ -56,15 +56,14 @@ interface AdminHeaderProps {
 export function AdminHeader({
   title,
   description,
-  roleAbbr = "SA",
+  roleAbbr = "MP",
   userName = "Administrator",
-  userRoleLabel = "Super Admin",
+  userRoleLabel = "Member of Parliament",
   actionButtons = [],
   dropdownItems,
 }: AdminHeaderProps) {
   const primaryButton = actionButtons[0];
 
-  // Default dropdown items if none provided
   const defaultDropdownItems: DropdownItemConfig[] = [
     {
       label: "Refresh Data",
@@ -77,205 +76,118 @@ export function AdminHeader({
       href: "/admin-dashboard/profile",
       icon: UserCircle,
     },
-    { label: "Audit Logs", href: "/admin-dashboard/audit", icon: ShieldAlert },
-    {
-      label: "System Settings",
-      href: "/admin-dashboard/system-settings",
-      icon: Settings2,
-    },
-    {
-      label: "Logout",
-      icon: LogOut,
-      className: "text-red-600 focus:text-red-600 focus:bg-red-50",
-    },
+    { label: "Logout", icon: LogOut, className: "text-red-500 focus:text-red-500 focus:bg-red-50" },
   ];
 
   const itemsToRender = dropdownItems || defaultDropdownItems;
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+    <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm sticky top-0 z-30">
       <div className="px-4 py-4 sm:px-6 flex items-center justify-between">
-        <div className="flex items-center">
-          {/* Mobile Sidebar Trigger - using SidebarTrigger from Shadcn which handles toggle */}
-          <div className="lg:hidden mr-3">
-            <SidebarTrigger className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            {/* Page Title and Description */}
-            <div>
-              <div className="flex items-center space-x-3">
-                <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">
-                  {title}
-                </h1>
-                {/* Admin Role Badge */}
-                <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-900 text-white">
-                  <Crown className="mr-1 w-3 h-3 text-white" />
-                  {roleAbbr}
-                </span>
-              </div>
-              {description && (
-                <p className="text-sm text-gray-600 mt-1 hidden sm:block">
-                  {description}
-                </p>
-              )}
+        <div className="flex items-center gap-4">
+          <SidebarTrigger className="text-slate-600 hover:text-amber-600 hover:bg-amber-50" />
+          
+          <div className="flex flex-col">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight">
+                {title}
+              </h1>
+              <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950 uppercase tracking-widest border border-amber-600/20">
+                <Crown className="mr-1 w-3 h-3 text-slate-950" />
+                {roleAbbr}
+              </span>
             </div>
+            {description && (
+              <p className="text-xs text-slate-500 mt-1 hidden sm:block font-medium">
+                {description}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Action Buttons and Admin Info */}
         <div className="flex items-center space-x-2 sm:space-x-4">
-          {/* Action Buttons - Primary Desktop */}
           {primaryButton && (
-            <div className="hidden xl:flex items-center space-x-3">
-              {primaryButton.href ? (
-                <Link
-                  href={primaryButton.href}
-                  className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center space-x-2 font-medium ${
-                    primaryButton.className ||
-                    "bg-red-900 text-white hover:bg-red-800 shadow-sm"
-                  }`}
-                >
-                  {primaryButton.icon && (
-                    <primaryButton.icon className="w-3 h-3" />
-                  )}
-                  <span>{primaryButton.label}</span>
-                </Link>
-              ) : (
-                <button
-                  onClick={primaryButton.onClick}
-                  className={`px-3 py-2 text-sm rounded-lg transition-all duration-200 flex items-center space-x-2 font-medium ${
-                    primaryButton.className ||
-                    "bg-red-900 text-white hover:bg-red-800 shadow-sm"
-                  }`}
-                >
-                  {primaryButton.icon && (
-                    <primaryButton.icon className="w-3 h-3" />
-                  )}
-                  <span>{primaryButton.label}</span>
-                </button>
-              )}
+            <div className="hidden xl:flex items-center">
+              <Button
+                asChild={!!primaryButton.href}
+                onClick={primaryButton.onClick}
+                className={`h-10 px-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                  primaryButton.className || "bg-amber-500 text-slate-950 hover:bg-amber-600 shadow-md shadow-amber-500/20"
+                }`}
+              >
+                {primaryButton.href ? (
+                  <Link href={primaryButton.href}>
+                    {primaryButton.icon && <primaryButton.icon className="w-4 h-4 mr-2" />}
+                    <span>{primaryButton.label}</span>
+                  </Link>
+                ) : (
+                  <>
+                    {primaryButton.icon && <primaryButton.icon className="w-4 h-4 mr-2" />}
+                    <span>{primaryButton.label}</span>
+                  </>
+                )}
+              </Button>
             </div>
           )}
 
-          {/* Admin Quick Actions Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                id="adminMenuToggle"
-                className="flex items-center space-x-2 px-2 py-2 text-sm text-gray-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors outline-none focus:ring-2 focus:ring-red-100"
-              >
-                <div className="w-8 h-8 bg-red-900 rounded-full flex items-center justify-center">
-                  <User className="text-white w-3.5 h-3.5" />
+              <button className="flex items-center space-x-2 p-1.5 pr-3 text-slate-600 hover:bg-slate-100 rounded-full transition-all outline-none">
+                <div className="w-8 h-8 rounded-full bg-linear-to-br from-amber-400 to-amber-600 p-0.5 shadow-sm">
+                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+                    <User className="text-amber-500 w-4 h-4" />
+                  </div>
                 </div>
-                <ChevronDown className="w-3 h-3 hidden sm:block" />
+                <ChevronDown className="w-4 h-4 hidden sm:block" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel className="font-normal">
+            <DropdownMenuContent className="w-64 mt-2 p-2 rounded-2xl shadow-xl border-slate-200" align="end">
+              <DropdownMenuLabel className="p-3">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium text-gray-900 leading-none">
+                  <p className="text-sm font-semibold text-slate-900 leading-none">
                     {userName}
                   </p>
-                  <p className="text-xs leading-none text-gray-500">
+                  <p className="text-[10px] uppercase font-bold tracking-wider text-amber-600">
                     {userRoleLabel}
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-
-              {/* Mobile Actions in Dropdown */}
-              {actionButtons.length > 0 && (
-                <DropdownMenuGroup className="xl:hidden">
-                  {actionButtons.map((btn, idx) => (
-                    <DropdownMenuItem key={idx} asChild={!!btn.href}>
-                      {btn.href ? (
-                        <Link
-                          href={btn.href}
-                          className="cursor-pointer flex items-center w-full"
-                        >
-                          {btn.icon ? (
-                            <btn.icon className="mr-2 h-4 w-4" />
-                          ) : null}
-                          <span>{btn.label}</span>
+              <DropdownMenuSeparator className="bg-slate-100" />
+              
+              <DropdownMenuGroup className="p-1">
+                {itemsToRender
+                  .filter((item) => item.label !== "Logout")
+                  .map((item, idx) => (
+                    <DropdownMenuItem
+                      key={idx}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-slate-600 focus:bg-slate-50 focus:text-slate-900"
+                      asChild={!!item.href}
+                      onClick={item.onClick}
+                    >
+                      {item.href ? (
+                        <Link href={item.href}>
+                          <item.icon className="h-4 w-4" />
+                          <span className="text-sm font-medium">{item.label}</span>
                         </Link>
                       ) : (
-                        <button
-                          className="cursor-pointer flex items-center w-full outline-none select-none"
-                          onClick={btn.onClick}
-                        >
-                          {btn.icon ? (
-                            <btn.icon className="mr-2 h-4 w-4" />
-                          ) : null}
-                          <span>{btn.label}</span>
-                        </button>
+                        <div>
+                          <item.icon className="h-4 w-4" />
+                          <span className="text-sm font-medium">{item.label}</span>
+                        </div>
                       )}
                     </DropdownMenuItem>
                   ))}
-                  <DropdownMenuSeparator />
-                </DropdownMenuGroup>
-              )}
-
-              <DropdownMenuGroup>
-                {itemsToRender
-                  .filter((item) => item.label !== "Logout")
-                  .map((item, idx) => {
-                    const content = (
-                      <>
-                        {item.icon ? (
-                          <item.icon className="mr-2 h-4 w-4" />
-                        ) : null}
-                        <span>{item.label}</span>
-                      </>
-                    );
-
-                    return (
-                      <DropdownMenuItem
-                        key={idx}
-                        asChild={!!item.href}
-                        className={`cursor-pointer ${item.className || ""}`}
-                        onClick={item.onClick}
-                      >
-                        {item.href ? (
-                          <Link href={item.href}>{content}</Link>
-                        ) : (
-                          <span>{content}</span>
-                        )}
-                      </DropdownMenuItem>
-                    );
-                  })}
               </DropdownMenuGroup>
-
-              <DropdownMenuSeparator />
-
-              {(() => {
-                const logoutItem: DropdownItemConfig = itemsToRender.find(
-                  (item) => item.label === "Logout",
-                ) || {
-                  label: "Logout",
-                  icon: LogOut,
-                  className: "text-red-600 focus:text-red-600 focus:bg-red-50",
-                  onClick: undefined,
-                };
-                const content = (
-                  <>
-                    {logoutItem.icon ? (
-                      <logoutItem.icon className="mr-2 h-4 w-4" />
-                    ) : null}
-                    <span>{logoutItem.label}</span>
-                  </>
-                );
-                return (
-                  <DropdownMenuItem
-                    className={`cursor-pointer ${logoutItem.className || ""}`}
-                    onClick={logoutItem.onClick}
-                  >
-                    {/* Logout usually href="../login/logout.php" in php but here likely specific logic or link */}
-                    {/* Defaulting to span content for now as nextjs auth varies */}
-                    <span>{content}</span>
-                  </DropdownMenuItem>
-                );
-              })()}
+              
+              <DropdownMenuSeparator className="bg-slate-100" />
+              
+              <DropdownMenuItem
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer text-red-500 focus:bg-red-50 focus:text-red-700 font-medium"
+                onClick={() => itemsToRender.find(i => i.label === "Logout")?.onClick?.()}
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="text-sm">Logout</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

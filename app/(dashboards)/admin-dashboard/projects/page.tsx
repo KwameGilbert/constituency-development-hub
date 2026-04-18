@@ -40,9 +40,13 @@ export default function ProjectsListPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Projects" />
-      <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <AdminHeader 
+        title="Projects" 
+        description="Development projects and progress tracking"
+        roleAbbr="MP"
+      />
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
         <ProjectsHeader />
 
         {loading ? (

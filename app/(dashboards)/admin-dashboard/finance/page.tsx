@@ -45,16 +45,23 @@ export default function FinancePage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Finance" />
-      <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800">
-            Financial Overview
-          </h2>
-          <p className="text-gray-500 mt-1">
-            Track budgets and spending across projects and issues
-          </p>
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <AdminHeader 
+        title="Finance" 
+        description="Budget allocation and expenditure oversight"
+        roleAbbr="MP"
+      />
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+        <div className="flex items-center gap-4">
+          <div className="w-1.5 h-10 bg-amber-500 rounded-full" />
+          <div>
+            <h2 className="text-3xl font-bold text-slate-950 tracking-tight">
+              Financial Overview
+            </h2>
+            <p className="text-slate-500 font-medium text-sm mt-0.5">
+              Strategic budget tracking and fiscal accountability
+            </p>
+          </div>
         </div>
 
         {loading ? (
