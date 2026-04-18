@@ -7,6 +7,7 @@ import { IdeasTable } from "@/components/admin-dashboard/ideas/IdeasTable";
 import { ideasService, Idea } from "@/lib/services/ideas-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
+import { ShieldAlert, LogOut } from "lucide-react";
 
 export default function IdeasListPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -24,7 +25,7 @@ export default function IdeasListPage() {
         setError(null);
       } catch (err) {
         console.error("Failed to load ideas:", err);
-        setError("Failed to load ideas data");
+        setError("Process failure in community idea synchronization");
       } finally {
         setLoading(false);
       }
@@ -34,45 +35,67 @@ export default function IdeasListPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50">
-      <AdminHeader title="Ideas & Suggestions" />
-      <div className="flex-1 p-8 space-y-8 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+      <AdminHeader 
+        title="Strategy & Insight" 
+        description="Unified registry for community project proposals and strategic suggestions"
+        roleAbbr="MP"
+        dropdownItems={[
+          {
+            label: "System Audit",
+            href: "/admin-dashboard/audit",
+            icon: ShieldAlert,
+          },
+          {
+            label: "Logout",
+            icon: LogOut,
+            className: "text-red-500 font-bold",
+          },
+        ]}
+      />
+      
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
         <IdeasHeader />
 
-        {/* Loading State */}
+        {/* Loading State Matrix */}
         {loading && (
-          <Card className="p-6">
-            <div className="space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-5 w-64" />
-                    <Skeleton className="h-4 w-96" />
+          <div className="space-y-6">
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl overflow-hidden p-6 bg-white">
+              <div className="space-y-6">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-6 border-b border-slate-50 last:border-none"
+                  >
+                    <div className="space-y-3 flex-1">
+                      <Skeleton className="h-5 w-64 rounded-lg bg-slate-100" />
+                      <Skeleton className="h-4 w-96 rounded-lg bg-slate-50" />
+                    </div>
+                    <div className="flex space-x-3">
+                      <Skeleton className="h-8 w-24 rounded-xl bg-slate-100" />
+                      <Skeleton className="h-8 w-20 rounded-xl bg-slate-50" />
+                    </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-16" />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Strategic Error State */}
+        {error && !loading && (
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white p-24 text-center">
+            <div className="flex flex-col items-center gap-4">
+               <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-500">
+                  <ShieldAlert className="w-8 h-8" />
+               </div>
+               <p className="text-red-600 text-lg font-black uppercase tracking-widest">{error}</p>
+               <p className="text-slate-500 font-medium">Please re-initiate registry synchronization</p>
             </div>
           </Card>
         )}
 
-        {/* Error State */}
-        {error && !loading && (
-          <Card className="p-12 text-center">
-            <p className="text-red-600 text-lg font-medium">{error}</p>
-            <p className="text-slate-500 mt-2">
-              Please try refreshing the page
-            </p>
-          </Card>
-        )}
-
-        {/* Ideas Table */}
+        {/* Ideas Visualization Matrix */}
         {!loading && !error && <IdeasTable ideas={ideas} />}
       </div>
     </div>

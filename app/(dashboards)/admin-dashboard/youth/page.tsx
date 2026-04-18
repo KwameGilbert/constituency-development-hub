@@ -4,7 +4,7 @@ import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import {
   Search,
   Plus,
@@ -27,6 +28,11 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
+  Users,
+  MapPin,
+  Clock,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -111,7 +117,7 @@ export default function YouthPage() {
       }
     } catch (err) {
       console.error("Failed to load youth records:", err);
-      setError("Failed to load youth records");
+      setError("System failure in record synchronization");
     } finally {
       setLoading(false);
     }
@@ -137,15 +143,14 @@ export default function YouthPage() {
     try {
       const response = await youthRecordsService.deleteYouthRecord(id);
       if (response.success) {
-        toast.success("Record deleted successfully");
+        toast.success("Youth profile deactivated");
         fetchRecords();
         fetchStats();
       } else {
-        toast.error(response.message || "Failed to delete record");
+        toast.error(response.message || "Execution failure");
       }
     } catch (err) {
-      console.error("Failed to delete record:", err);
-      toast.error("Failed to delete record");
+      toast.error("Process error");
     }
   };
 
@@ -157,452 +162,359 @@ export default function YouthPage() {
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case "approved":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-emerald-50 text-emerald-700 border-emerald-100 font-bold";
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-amber-50 text-amber-700 border-amber-100 font-bold";
       case "rejected":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-red-50 text-red-700 border-red-100 font-bold";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-slate-50 text-slate-500 border-slate-100 font-medium";
     }
   };
 
   const getEmploymentBadgeClass = (status: string) => {
     switch (status) {
       case "employed":
-        return "bg-green-50 text-green-700 border-green-200";
+        return "bg-slate-900 text-slate-50 border-slate-800 font-black";
       case "unemployed":
-        return "bg-red-50 text-red-700 border-red-200";
+        return "bg-red-50 text-red-700 border-red-100 font-bold";
       case "student":
-        return "bg-blue-50 text-blue-700 border-blue-200";
+        return "bg-indigo-50 text-indigo-700 border-indigo-100 font-bold";
       case "self_employed":
-        return "bg-purple-50 text-purple-700 border-purple-200";
+        return "bg-amber-50 text-amber-900 border-amber-200/50 font-bold";
       default:
-        return "bg-gray-50 text-gray-700 border-gray-200";
+        return "bg-slate-50 text-slate-700 border-slate-200/50 font-medium";
     }
   };
 
   const formatEmploymentStatus = (status: string) => {
-    return status.replace("_", "-").replace(/\b\w/g, (l) => l.toUpperCase());
+    return status.replace("_", " ").toUpperCase();
   };
 
-  if (loading && records.length === 0) {
-    return (
-      <div className="flex flex-col h-full bg-slate-50">
-        <AdminHeader
-          title="Youth Records Management"
-          description="Manage all youth records"
-        />
-        <div className="flex-1 p-6 space-y-6">
-          <div className="max-w-[1600px] mx-auto space-y-6">
-            <Card className="p-6">
-              <div className="space-y-4">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
-                    <Skeleton className="h-4 w-1/4" />
-                    <Skeleton className="h-4 w-1/4" />
-                    <Skeleton className="h-4 w-1/6" />
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-20" />
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col h-full bg-slate-50">
-        <AdminHeader
-          title="Youth Records Management"
-          description="Manage all youth records"
-        />
-        <div className="flex-1 p-6 space-y-6">
-          <div className="max-w-[1600px] mx-auto">
-            <Card className="p-12 text-center">
-              <p className="text-red-600 text-lg font-medium">{error}</p>
-              <p className="text-slate-500 mt-2">
-                Please try refreshing the page
-              </p>
-              <Button onClick={fetchRecords} className="mt-4">
-                Retry
-              </Button>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <AdminHeader
-        title="Youth Records Management"
-        description="Manage all youth records, view, edit, delete, and update employment status."
+        title="YouthHub"
+        description="Unified registry for youth development and human capital oversight"
         roleAbbr="MP"
-        userName="Admin.Rock"
-        userRoleLabel="MP"
         dropdownItems={[
           {
-            label: "Profile Settings",
-            href: "/admin-dashboard/profile",
-            icon: UserCircle,
-          },
-          {
-            label: "Audit Logs",
+            label: "System Audit",
             href: "/admin-dashboard/audit",
             icon: ShieldAlert,
           },
           {
-            label: "System Settings",
-            href: "/admin-dashboard/system-settings",
-            icon: Settings2,
-          },
-          {
             label: "Logout",
             icon: LogOut,
-            className: "text-red-600 focus:text-red-600 focus:bg-red-50",
-          },
-        ]}
-        actionButtons={[
-          {
-            label: "Add New Youth Record",
-            href: "/admin-dashboard/youth/new",
-            icon: Plus,
-            className: "bg-red-600 hover:bg-red-700 text-white",
+            className: "text-red-500 font-bold",
           },
         ]}
       />
 
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <div className="max-w-[1600px] mx-auto space-y-6">
-          {/* Stats Overview */}
-          <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm flex flex-wrap gap-6 items-center">
-            <h2 className="text-lg font-bold text-gray-900 mr-4">
-              Youth Records Management
-            </h2>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Briefcase className="w-4 h-4 text-gray-400" />
-              <span>Total Records: {stats?.total ?? 0}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-              <span className="text-gray-600">
-                Pending: {stats?.pending ?? 0}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <span className="text-gray-600">
-                Approved: {stats?.approved ?? 0}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Briefcase className="w-4 h-4 text-red-500" />
-              <span className="text-gray-600">
-                Unemployed: {stats?.unemployed ?? 0}
-              </span>
-            </div>
-            <div className="flex-1"></div>
-            <div className="flex gap-2">
-              <Button
-                className="bg-red-600 hover:bg-red-700 text-white"
-                asChild
-              >
-                <Link href="/admin-dashboard/youth/new">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Youth Record
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                className="text-gray-700 border-gray-300 bg-slate-700 text-white hover:bg-slate-800 hover:text-white"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Export Records
-              </Button>
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+        {/* Strategic Stats Matrix */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white overflow-hidden relative group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-bl-full -mr-8 -mt-8" />
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-500">
+                <Users className="w-7 h-7" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Master Registry</span>
+                <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.total ?? 0}</span>
+                <span className="text-[10px] font-bold text-amber-600 mt-0.5 uppercase tracking-wider">Active Entities</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white overflow-hidden relative group">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500">
+                <Briefcase className="w-7 h-7" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Employment Base</span>
+                <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.employed ?? 0}</span>
+                <span className="text-[10px] font-bold text-emerald-600 mt-0.5 uppercase tracking-wider">Workforce Ready</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white overflow-hidden relative group">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition-all duration-500">
+                <GraduationCap className="w-7 h-7" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Human Capital</span>
+                <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.students ?? 0}</span>
+                <span className="text-[10px] font-bold text-indigo-600 mt-0.5 uppercase tracking-wider">Active Scholars</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white overflow-hidden relative group">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-500">
+                <Clock className="w-7 h-7" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pending Review</span>
+                <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.pending ?? 0}</span>
+                <span className="text-[10px] font-bold text-amber-600 mt-0.5 uppercase tracking-wider">Awaiting Validation</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Search & Action Bar */}
+        <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
+           <div className="flex items-center gap-4">
+            <div className="w-1.5 h-10 bg-amber-500 rounded-full" />
+            <div>
+              <h2 className="text-3xl font-bold text-slate-950 tracking-tight">
+                Records Management
+              </h2>
+              <p className="text-slate-500 font-medium text-sm mt-0.5">
+                {loading ? "Synchronizing ledger metadata..." : `Overseeing ${pagination?.total ?? 0} specialized personnel records`}
+              </p>
             </div>
           </div>
-
-          {/* Filters and Search */}
-          <Card className="p-4 bg-white">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-              <div className="md:col-span-4 space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">
-                  Search
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Name, ID, Phone, Community"
-                    className="pl-9 bg-gray-50 border-gray-200"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleFilter()}
-                  />
+          
+          <div className="flex items-center gap-3 w-full lg:w-auto">
+             <Link href="/admin-dashboard/youth/new" className="flex-1 lg:flex-none">
+              <Button className="w-full h-12 px-6 bg-slate-900 text-white hover:bg-slate-800 rounded-2xl shadow-xl font-black text-xs uppercase tracking-widest flex items-center gap-3 group">
+                <div className="p-1.5 bg-amber-500 rounded-lg group-hover:rotate-12 transition-transform shadow-md shadow-amber-500/20">
+                   <Plus className="h-4 w-4 text-slate-950" />
                 </div>
+                Draft New Profile
+              </Button>
+            </Link>
+            <Button variant="outline" className="h-12 px-6 rounded-2xl border-slate-200 bg-white text-slate-700 font-black text-xs uppercase tracking-widest flex items-center gap-3 group hover:bg-slate-50 transition-all">
+              <Download className="h-4 w-4 text-slate-400 group-hover:text-amber-500" />
+              Export
+            </Button>
+          </div>
+        </div>
+
+        {/* Filters and Matrix Context */}
+        <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white overflow-hidden">
+          <CardContent className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
+              <div className="md:col-span-4 relative group">
+                 <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Registry Search</Label>
+                 <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-amber-500 transition-colors" />
+                    <Input
+                      placeholder="Name, ID, Phone, Community..."
+                      className="h-12 pl-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleFilter()}
+                    />
+                 </div>
               </div>
-              <div className="md:col-span-2 space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">
-                  Status
-                </label>
+              
+              <div className="md:col-span-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Validation Status</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="bg-gray-50 border-gray-200">
-                    <SelectValue placeholder="All Statuses" />
+                  <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none font-bold text-slate-700">
+                    <SelectValue placeholder="All Clusters" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectContent className="rounded-xl border-slate-100">
+                    <SelectItem value="all" className="font-bold">All Clusters</SelectItem>
                     {RECORD_STATUSES.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
+                      <SelectItem key={s.value} value={s.value} className="font-bold uppercase tracking-wider text-xs">
                         {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="md:col-span-2 space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">
-                  Employment
-                </label>
-                <Select
-                  value={employmentFilter}
-                  onValueChange={setEmploymentFilter}
-                >
-                  <SelectTrigger className="bg-gray-50 border-gray-200">
-                    <SelectValue placeholder="All Employment" />
+
+              <div className="md:col-span-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Economic Mode</Label>
+                <Select value={employmentFilter} onValueChange={setEmploymentFilter}>
+                  <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none font-bold text-slate-700">
+                    <SelectValue placeholder="Unified Mode" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Employment</SelectItem>
+                  <SelectContent className="rounded-xl border-slate-100">
+                    <SelectItem value="all" className="font-bold">Unified Mode</SelectItem>
                     {EMPLOYMENT_STATUSES.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
+                      <SelectItem key={s.value} value={s.value} className="font-bold uppercase tracking-wider text-xs">
                         {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="md:col-span-3 space-y-1.5">
-                <label className="text-xs font-medium text-gray-500">
-                  Education Level
-                </label>
-                <Select
-                  value={educationFilter}
-                  onValueChange={setEducationFilter}
-                >
-                  <SelectTrigger className="bg-gray-50 border-gray-200">
-                    <SelectValue placeholder="All Levels" />
+
+              <div className="md:col-span-3">
+                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Academic Rank</Label>
+                <Select value={educationFilter} onValueChange={setEducationFilter}>
+                  <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none font-bold text-slate-700">
+                    <SelectValue placeholder="All Tiers" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Levels</SelectItem>
+                  <SelectContent className="rounded-xl border-slate-100">
+                    <SelectItem value="all" className="font-bold">All Tiers</SelectItem>
                     {EDUCATION_LEVELS.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>
+                      <SelectItem key={s.value} value={s.value} className="font-bold uppercase tracking-wider text-xs">
                         {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="md:col-span-1">
                 <Button
-                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  className="w-full h-12 bg-slate-950 text-white hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-slate-900/20"
                   onClick={handleFilter}
                 >
-                  Filter
+                  Sync
                 </Button>
               </div>
             </div>
-          </Card>
 
-          {/* Records List Table */}
-          <Card className="bg-white overflow-hidden border-gray-200 shadow-sm">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-gray-50 hover:bg-gray-50">
-                  <TableHead className="w-[80px]">ID</TableHead>
-                  <TableHead>Full Name</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Community</TableHead>
-                  <TableHead>Education</TableHead>
-                  <TableHead>Employment</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {records.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No youth records found
-                    </TableCell>
+            {/* Records Visualization Table */}
+            <div className="rounded-2xl border border-slate-50 overflow-hidden">
+              <Table>
+                <TableHeader className="bg-slate-50/50">
+                  <TableRow className="hover:bg-transparent border-slate-100">
+                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[80px]">Registry</TableHead>
+                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subject Profile</TableHead>
+                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Community</TableHead>
+                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Rank</TableHead>
+                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Economics</TableHead>
+                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</TableHead>
+                    <TableHead className="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">Actions</TableHead>
                   </TableRow>
-                ) : (
-                  records.map((record) => (
-                    <TableRow key={record.id} className="hover:bg-gray-50">
-                      <TableCell className="font-medium text-xs text-gray-600">
-                        #{record.id}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-medium text-gray-900">
-                            {record.full_name}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {record.gender
-                              ? `${record.gender.charAt(0).toUpperCase() + record.gender.slice(1)}`
-                              : ""}
-                            {record.age ? `, ${record.age} yrs` : ""}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {record.phone || "-"}
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {record.community || "-"}
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {record.education_level
-                          ? EDUCATION_LEVELS.find(
-                              (e) => e.value === record.education_level,
-                            )?.label || record.education_level
-                          : "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={getEmploymentBadgeClass(
-                            record.employment_status,
-                          )}
-                        >
-                          {formatEmploymentStatus(record.employment_status)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={getStatusBadgeClass(record.status)}
-                        >
-                          {record.status.charAt(0).toUpperCase() +
-                            record.status.slice(1)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-gray-500 hover:text-blue-600 hover:bg-blue-50"
-                            title="View Details"
-                            asChild
-                          >
-                            <Link href={`/admin-dashboard/youth/${record.id}`}>
-                              <Eye className="w-4 h-4" />
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
-                            title="Edit"
-                            asChild
-                          >
-                            <Link
-                              href={`/admin-dashboard/youth/${record.id}/edit`}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Link>
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-gray-500 hover:text-red-600 hover:bg-red-50"
-                                title="Delete"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Delete Record
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete the record for{" "}
-                                  <strong>{record.full_name}</strong>? This
-                                  action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(record.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                </TableHeader>
+                <TableBody>
+                  {records.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-24">
+                        <div className="flex flex-col items-center gap-3">
+                           <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300">
+                              <Users className="w-8 h-8" />
+                           </div>
+                           <p className="text-slate-400 font-bold italic">No matching records found in registry</p>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))
+                  ) : (
+                    records.map((record) => (
+                      <TableRow key={record.id} className="hover:bg-slate-50 transition-colors group">
+                        <TableCell className="px-6 py-5">
+                           <span className="font-mono text-[10px] font-bold text-slate-400 group-hover:text-amber-600 transition-colors">#{record.id}</span>
+                        </TableCell>
+                        <TableCell className="px-6 py-5">
+                          <div className="flex flex-col min-w-max">
+                            <span className="font-bold text-slate-950 text-sm group-hover:text-amber-600 transition-colors">
+                              {record.full_name}
+                            </span>
+                            <div className="flex items-center gap-1.5 mt-0.5 text-slate-400 font-bold">
+                              <span className="text-[10px] uppercase tracking-wider">{record.gender} • {record.age} YRS</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-5">
+                           <div className="flex items-center gap-1.5 text-slate-600">
+                              <MapPin className="w-3.5 h-3.5 text-slate-300" />
+                              <span className="text-xs font-bold truncate max-w-[150px]">{record.community || "N/A"}</span>
+                           </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-5">
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                            {record.education_level ? 
+                              EDUCATION_LEVELS.find(e => e.value === record.education_level)?.label || record.education_level
+                              : "N/A"}
+                          </span>
+                        </TableCell>
+                        <TableCell className="px-6 py-5">
+                          <Badge className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 border shadow-xs ${getEmploymentBadgeClass(record.employment_status)}`}>
+                            {formatEmploymentStatus(record.employment_status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="px-6 py-5">
+                          <Badge className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 border shadow-xs ${getStatusBadgeClass(record.status)}`}>
+                            {record.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="px-6 py-5 text-right">
+                          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Link href={`/admin-dashboard/youth/${record.id}`}>
+                              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-950">
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                            </Link>
+                            <Link href={`/admin-dashboard/youth/${record.id}/edit`}>
+                              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-blue-50 text-slate-400 hover:text-blue-600">
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            </Link>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-600">
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+                                <div className="p-8 space-y-4">
+                                   <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-600">
+                                      <Trash2 className="w-8 h-8" />
+                                   </div>
+                                   <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-2xl font-black text-slate-950 tracking-tight">Purge Record</AlertDialogTitle>
+                                      <AlertDialogDescription className="text-slate-500 font-medium text-base">
+                                        Are you absolutely certain you want to delete the record for &quot;{record.full_name}&quot;? This action will permanently remove all associated developmental history.
+                                      </AlertDialogDescription>
+                                   </AlertDialogHeader>
+                                </div>
+                                <AlertDialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex-row gap-4">
+                                  <AlertDialogCancel className="flex-1 h-12 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400 hover:bg-white border-slate-100">Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(record.id)}
+                                    className="flex-1 h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-600/20"
+                                  >
+                                    Confirm Purge
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )
                 )}
               </TableBody>
             </Table>
+          </div>
 
-            {/* Pagination */}
-            {pagination && pagination.total_pages > 1 && (
-              <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
-                <div className="text-sm text-gray-500">
-                  Showing {(pagination.page - 1) * pagination.limit + 1} to{" "}
-                  {Math.min(
-                    pagination.page * pagination.limit,
-                    pagination.total,
-                  )}{" "}
-                  of {pagination.total} records
+          {/* Improved Pagination Matrix */}
+          {pagination && pagination.total_pages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-50/50 border-t border-slate-100">
+               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Showing <span className="text-slate-950">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="text-slate-950">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="text-slate-950">{pagination.total}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={pagination.page <= 1}
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Previous
-                  </Button>
-                  <span className="text-sm text-gray-600">
-                    Page {pagination.page} of {pagination.total_pages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setCurrentPage((p) =>
-                        Math.min(pagination.total_pages, p + 1),
-                      )
-                    }
-                    disabled={pagination.page >= pagination.total_pages}
-                  >
-                    Next
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
+              
+              <div className="flex items-center gap-3">
+                 <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 shadow-xs" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={pagination.page <= 1}>
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <span className="text-xs font-black text-slate-900 px-3 py-1 bg-white rounded-lg border border-slate-100">
+                  {pagination.page} / {pagination.total_pages}
+                </span>
+                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 shadow-xs" onClick={() => setCurrentPage((p) => Math.min(pagination.total_pages, p + 1))} disabled={pagination.page >= pagination.total_pages}>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
-            )}
-          </Card>
-        </div>
-      </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

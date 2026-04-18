@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   Settings2,
   LogOut,
+  FileOutput,
 } from "lucide-react";
 import {
   ReportData,
@@ -58,55 +59,60 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <AdminHeader
-        title="Reports"
-        description="Create, filter, and export system reports"
+        title="Reports Hub"
+        description="Unified interface for strategic data synthesis and multi-cluster reporting"
         roleAbbr="MP"
-        userName="Admin.Rock"
-        userRoleLabel="MP"
         dropdownItems={[
           {
-            label: "Profile Settings",
-            href: "/admin-dashboard/profile",
-            icon: UserCircle,
+            label: "Analytical Insights",
+            href: "/admin-dashboard/analytics",
+            icon: BarChart3,
           },
           {
-            label: "Audit Logs",
-            href: "/admin-dashboard/audit",
-            icon: ShieldAlert,
-          },
-          {
-            label: "System Settings",
-            href: "/admin-dashboard/system-settings",
-            icon: Settings2,
+             label: "System Settings",
+             href: "/admin-dashboard/system-settings",
+             icon: Settings2,
           },
           {
             label: "Logout",
             icon: LogOut,
-            className: "text-red-600 focus:text-red-600 focus:bg-red-50",
+            className: "text-red-500 font-bold",
           },
         ]}
         actionButtons={[
           {
-            label: "Analytics",
+            label: "Analytics Portal",
             href: "/admin-dashboard/analytics",
             icon: BarChart3,
-            className: "bg-red-900 text-white hover:bg-red-800 shadow-sm",
+            className: "bg-slate-950 text-white hover:bg-slate-800 rounded-2xl shadow-xl font-black text-xs uppercase tracking-widest flex items-center gap-3",
           },
         ]}
       />
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+         <div className="flex items-center gap-4">
+            <div className="w-1.5 h-10 bg-amber-500 rounded-full" />
+            <div>
+              <h2 className="text-3xl font-bold text-slate-950 tracking-tight">
+                Strategic Intelligence
+              </h2>
+              <p className="text-slate-500 font-medium text-sm mt-0.5">
+                Execute complex queries across issues, projects, and personnel registries
+              </p>
+            </div>
+          </div>
+
         <BudgetChart
           chartsData={chartsData}
           loading={chartsLoading}
           error={chartsError}
         />
 
-        {/* Report Builder */}
+        {/* Report Builder Matrix */}
         <ReportBuilder onPreview={handlePreview} />
 
-        {/* Report Preview */}
+        {/* Report Preview Ledger */}
         <ReportPreview data={reportData} columns={currentColumns} />
       </div>
     </div>

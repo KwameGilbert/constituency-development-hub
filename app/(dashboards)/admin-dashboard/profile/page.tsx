@@ -24,6 +24,11 @@ import {
   Loader2,
   Camera,
   History,
+  Mail,
+  Phone,
+  Briefcase,
+  Activity,
+  ArrowRight,
 } from "lucide-react";
 import {
   profileService,
@@ -43,7 +48,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    department: "", // Note: API might not support department update directly if it's not in allowedFields in Controller
+    department: "",
     bio: "",
   });
 
@@ -66,7 +71,7 @@ export default function ProfilePage() {
           setFormData({
             name: profileRes.data.user.name,
             phone: profileRes.data.user.phone || "",
-            department: "Administration", // Placeholder or derived from role
+            department: "Administration",
             bio: profileRes.data.user.bio || "",
           });
         }
@@ -76,7 +81,7 @@ export default function ProfilePage() {
         }
       } catch (error) {
         console.error("Failed to load profile", error);
-        toast.error("Failed to load profile data");
+        toast.error("Process Failure: Identity synchronization interrupted");
       } finally {
         setLoading(false);
       }
@@ -97,12 +102,12 @@ export default function ProfilePage() {
 
       if (response.success) {
         setProfile(response.data.user);
-        toast.success("Profile updated successfully");
+        toast.success("Identity Registry updated");
       } else {
-        toast.error(response.message || "Failed to update profile");
+        toast.error(response.message || "Modification failure");
       }
     } catch (error) {
-      toast.error("An error occurred");
+      toast.error("System process error");
     } finally {
       setSubmitting(false);
     }
@@ -113,7 +118,7 @@ export default function ProfilePage() {
     setSubmitting(true);
 
     if (passwordData.new_password !== passwordData.new_password_confirmation) {
-      toast.error("New passwords do not match");
+      toast.error("Protocol Error: Credential mismatch");
       setSubmitting(false);
       return;
     }
@@ -121,18 +126,18 @@ export default function ProfilePage() {
     try {
       const response = await profileService.changePassword(passwordData);
       if (response.success) {
-        toast.success("Password changed successfully");
+        toast.success("Security protocol updated: Password changed");
         setPasswordData({
           current_password: "",
           new_password: "",
           new_password_confirmation: "",
         });
       } else {
-        toast.error(response.message || "Failed to change password");
+        toast.error(response.message || "Security violation: Check permissions");
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "An error occurred";
+        error instanceof Error ? error.message : "Security system failure";
       toast.error(errorMessage);
     } finally {
       setSubmitting(false);
@@ -147,47 +152,54 @@ export default function ProfilePage() {
       const response = await profileService.uploadAvatar(file);
       if (response.success && profile) {
         setProfile({ ...profile, avatar: response.data.avatar });
-        toast.success("Avatar updated");
+        toast.success("Visual signature updated");
       }
     } catch (error) {
-      toast.error("Failed to upload avatar");
+      toast.error("Visual registry failure");
     }
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+      <div className="flex h-screen flex-col items-center justify-center bg-slate-50/50 gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Validating Administrative Identity...</span>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <AdminHeader
-        title="Profile Settings"
-        description="Manage your account information and preferences"
+        title="Admin Identity"
+        description="Strategic credentials, visual signature, and operational activity registry"
+        roleAbbr="MP"
       />
 
-      <div className="flex-1 p-6 overflow-y-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-[1600px] mx-auto">
-          {/* Left Column */}
-          <div className="space-y-8">
-            {/* Profile Card */}
-            <Card>
-              <CardContent className="pt-6 flex flex-col items-center text-center">
-                <div className="relative group mb-4">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage src={profile?.avatar} />
-                    <AvatarFallback className="bg-indigo-100 text-indigo-600 text-xl">
-                      {profile?.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+      <div className="flex-1 p-8 overflow-y-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1600px] mx-auto w-full">
+          {/* Left Column: Visual Signature & Stats */}
+          <div className="lg:col-span-4 space-y-8">
+            {/* Identity Perspective Card */}
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden group">
+              <div className="h-24 bg-slate-950 relative overflow-hidden">
+                 <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500 to-transparent" />
+              </div>
+              <CardContent className="pt-0 flex flex-col items-center text-center relative px-8 pb-8">
+                <div className="relative -mt-12 mb-6 group/avatar">
+                  <div className="p-1.5 bg-white rounded-full shadow-2xl relative z-10">
+                    <Avatar className="h-24 w-24 border-4 border-slate-50">
+                      <AvatarImage src={profile?.avatar} className="object-cover" />
+                      <AvatarFallback className="bg-amber-100 text-amber-700 font-black text-2xl">
+                        {profile?.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
                   <label
                     htmlFor="avatar-upload"
-                    className="absolute bottom-0 right-0 p-1.5 bg-white rounded-full shadow-md cursor-pointer hover:bg-gray-50 border transition-colors opacity-0 group-hover:opacity-100"
+                    className="absolute bottom-1 right-1 p-2 bg-slate-950 text-white rounded-xl shadow-xl cursor-pointer hover:bg-slate-800 transition-all z-20 opacity-0 group-hover/avatar:opacity-100 transform translate-y-2 group-hover/avatar:translate-y-0"
                   >
-                    <Camera className="w-4 h-4 text-gray-600" />
+                    <Camera className="w-4 h-4" />
                     <input
                       id="avatar-upload"
                       type="file"
@@ -198,39 +210,56 @@ export default function ProfilePage() {
                   </label>
                 </div>
 
-                <h2 className="text-xl font-bold text-[#1e1b4b]">
-                  {profile?.name}
-                </h2>
-                <p className="text-muted-foreground text-sm mb-2 capitalize">
-                  {profile?.role?.replace("_", " ")}
-                </p>
-                <Badge
-                  className={`${profile?.status === "active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"} mb-6`}
-                >
-                  {profile?.status}
-                </Badge>
+                <div className="space-y-1">
+                   <h2 className="text-2xl font-black text-slate-950 tracking-tight leading-none">
+                    {profile?.name}
+                  </h2>
+                  <div className="flex items-center justify-center gap-2">
+                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      {profile?.role?.replace("_", " ")}
+                    </span>
+                    <div className="w-1 h-1 bg-slate-200 rounded-full" />
+                    <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">
+                      Constituency Admin
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="mt-4">
+                  <Badge
+                    className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border shadow-xs ${profile?.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-red-50 text-red-700 border-red-100"}`}
+                  >
+                    {profile?.status}
+                  </Badge>
+                </div>
 
-                <div className="w-full space-y-3 text-sm border-t pt-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Email:</span>
-                    <span
-                      className="font-medium truncate max-w-[150px]"
-                      title={profile?.email}
-                    >
+                <div className="w-full mt-8 space-y-4 pt-6 border-t border-slate-50">
+                  <div className="flex items-center justify-between group/meta">
+                    <div className="flex items-center gap-2 text-slate-400">
+                       <Mail className="w-3.5 h-3.5" />
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Registry Email</span>
+                    </div>
+                    <span className="text-xs font-black text-slate-950 truncate max-w-[150px] group-hover:text-amber-600 transition-colors">
                       {profile?.email}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Joined:</span>
-                    <span className="font-medium">
-                      {new Date(profile?.created_at || "").toLocaleDateString()}
+                  <div className="flex items-center justify-between group/meta">
+                    <div className="flex items-center gap-2 text-slate-400">
+                       <Phone className="w-3.5 h-3.5" />
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Secure Link</span>
+                    </div>
+                    <span className="text-xs font-black text-slate-950">
+                      {profile?.phone || "UNREGISTERED"}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Last Login:</span>
-                    <span className="font-medium">
+                  <div className="flex items-center justify-between group/meta">
+                    <div className="flex items-center gap-2 text-slate-400">
+                       <History className="w-3.5 h-3.5" />
+                       <span className="text-[10px] font-bold uppercase tracking-widest">Auth Pulse</span>
+                    </div>
+                    <span className="text-xs font-black text-slate-950">
                       {profile?.last_login
-                        ? new Date(profile.last_login).toLocaleDateString()
+                        ? new Date(profile.last_login).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})
                         : "Never"}
                     </span>
                   </div>
@@ -238,202 +267,224 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <History className="w-4 h-4" /> Recent Activity
+            {/* Strategic Evolution Registry (Activity) */}
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden">
+              <CardHeader className="p-8 pb-4">
+                <CardTitle className="text-lg font-black text-slate-950 flex items-center gap-3">
+                  <History className="w-5 h-5 text-amber-500" /> Action Genesis
                 </CardTitle>
+                <CardDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                   Last 5 cryptographic security events
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              <CardContent className="p-8 pt-4 space-y-6">
+                <div className="space-y-6 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-slate-100">
                   {activities.length > 0 ? (
                     activities.map((activity) => (
                       <div
                         key={activity.id}
-                        className="flex items-start gap-3 text-sm pb-3 border-b border-gray-100 last:border-0 last:pb-0"
+                        className="flex items-start gap-4 relative z-10 group"
                       >
-                        <div className="p-1.5 bg-gray-100 rounded text-gray-600 mt-0.5">
-                          <Info className="h-3 w-3" />
+                        <div className="w-6 h-6 rounded-lg bg-white border-2 border-slate-100 flex items-center justify-center text-slate-300 mt-0.5 group-hover:border-amber-500 group-hover:text-amber-500 transition-all">
+                          <Activity className="h-3 w-3" />
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
+                        <div className="flex-1">
+                          <p className="font-bold text-slate-950 text-[11px] uppercase tracking-wider leading-none">
                             {activity.action.replace(/_/g, " ")}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(activity.created_at).toLocaleString()}
+                          <p className="text-[10px] font-medium text-slate-400 mt-1">
+                            {new Date(activity.created_at).toLocaleString(undefined, {hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric'})}
                           </p>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm text-gray-500 italic text-center py-4">
-                      No recent activity
-                    </p>
+                    <div className="flex flex-col items-center justify-center py-6 text-slate-300 gap-2">
+                       <Shield className="w-10 h-10 opacity-20" />
+                       <p className="text-[10px] font-black uppercase tracking-widest italic">Registry Empty</p>
+                    </div>
                   )}
                 </div>
+                <Button variant="ghost" className="w-full h-11 rounded-2xl bg-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 hover:text-slate-900 group">
+                   Audit Full Timeline <ArrowRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Column */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Update Profile Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Update Profile Information</CardTitle>
-                <CardDescription>
-                  Keep your personal details up to date
-                </CardDescription>
+          {/* Right Column: Modification Matrix */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Identity Information Matrix */}
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden">
+               <div className="h-1.5 bg-amber-500 w-full" />
+              <CardHeader className="p-8">
+                <div className="flex items-center gap-4 mb-2">
+                   <div className="p-2.5 bg-amber-50 rounded-2xl">
+                      <Briefcase className="w-5 h-5 text-amber-600" />
+                   </div>
+                   <div>
+                      <CardTitle className="text-2xl font-black text-slate-950 tracking-tight">Modification Matrix</CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        Synthesize and update primary administrative identity parameters
+                      </CardDescription>
+                   </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleProfileUpdate} className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-[#1e1b4b] font-semibold">
-                      <User className="h-4 w-4" />
-                      <h3>Personal Information</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="fullName">Full Name</Label>
-                        <Input
+              <CardContent className="p-8 pt-0">
+                <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2 group">
+                    <Label htmlFor="fullName" className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Full Signature</Label>
+                    <div className="relative">
+                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-amber-500 transition-colors" />
+                       <Input
                           id="fullName"
                           value={formData.name}
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
                           }
                           required
+                          className="h-12 pl-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                          value={profile?.email}
-                          disabled
-                          className="bg-muted"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Entry Email (Non-Modifiable)</Label>
+                    <div className="relative">
+                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                       <Input
+                         value={profile?.email}
+                         disabled
+                         className="h-12 pl-12 bg-slate-100 border-none rounded-xl text-slate-400 font-bold cursor-not-allowed"
+                       />
+                    </div>
+                  </div>
+                  <div className="space-y-2 group">
+                    <Label htmlFor="phone" className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Secure Contact</Label>
+                    <div className="relative">
+                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-amber-500 transition-colors" />
+                       <Input
                           id="phone"
                           value={formData.phone}
                           onChange={(e) =>
                             setFormData({ ...formData, phone: e.target.value })
                           }
+                          className="h-12 pl-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="department">Department</Label>
-                        <Input
-                          value={formData.department}
-                          disabled
-                          className="bg-muted"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bio">Bio</Label>
-                      <Input
-                        id="bio"
-                        value={formData.bio}
-                        onChange={(e) =>
-                          setFormData({ ...formData, bio: e.target.value })
-                        }
-                      />
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Functional Tier</Label>
+                    <div className="relative">
+                       <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                       <Input
+                         value={formData.department}
+                         disabled
+                         className="h-12 pl-12 bg-slate-100 border-none rounded-xl text-slate-400 font-bold cursor-not-allowed"
+                       />
+                    </div>
+                  </div>
+                  <div className="md:col-span-2 space-y-2 group">
+                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Strategic Bio / Mandate</label>
+                    <textarea
+                      id="bio"
+                      value={formData.bio}
+                      onChange={(e) =>
+                        setFormData({ ...formData, bio: e.target.value })
+                      }
+                      rows={4}
+                      className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold text-sm resize-none"
+                      placeholder="Declare your operational mandate or administrative focus..."
+                    />
+                  </div>
 
-                  <div className="flex justify-end">
+                  <div className="md:col-span-2 flex justify-end">
                     <Button
                       type="submit"
-                      className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 gap-2"
+                      className="h-12 px-8 bg-slate-950 text-white hover:bg-slate-800 rounded-2xl shadow-xl font-black text-xs uppercase tracking-widest flex items-center gap-3 transition-all"
                       disabled={submitting}
                     >
                       {submitting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
-                        <Save className="h-4 w-4" />
+                        <Save className="h-4 w-4 text-amber-500" />
                       )}
-                      Update Profile
+                      Sync Identity Changes
                     </Button>
                   </div>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Change Password Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Security Settings</CardTitle>
-                <CardDescription>
-                  Manage your password and security preferences
-                </CardDescription>
+            {/* Security Protocol Calibration (Password) */}
+            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden">
+              <CardHeader className="p-8">
+                <div className="flex items-center gap-4 mb-2">
+                   <div className="p-2.5 bg-red-50 rounded-2xl">
+                      <Lock className="w-5 h-5 text-red-600" />
+                   </div>
+                   <div>
+                      <CardTitle className="text-2xl font-black text-slate-950 tracking-tight">Security Protocol</CardTitle>
+                      <CardDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        Calibrate cryptographic security parameters and password rotation
+                      </CardDescription>
+                   </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handlePasswordChange} className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-[#1e1b4b] font-semibold">
-                      <Lock className="h-4 w-4" />
-                      <h3>Change Password</h3>
+              <CardContent className="p-8 pt-0">
+                <form onSubmit={handlePasswordChange} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Root Password</Label>
+                      <Input
+                        type="password"
+                        value={passwordData.current_password}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            current_password: e.target.value,
+                          })
+                        }
+                        required={passwordData.new_password.length > 0}
+                        className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-slate-950/20 text-slate-900 font-bold"
+                      />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="currentPassword">
-                          Current Password
-                        </Label>
-                        <Input
-                          id="currentPassword"
-                          type="password"
-                          value={passwordData.current_password}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              current_password: e.target.value,
-                            })
-                          }
-                          required={passwordData.new_password.length > 0}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="newPassword">New Password</Label>
-                        <Input
-                          id="newPassword"
-                          type="password"
-                          value={passwordData.new_password}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              new_password: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">
-                          Confirm New Password
-                        </Label>
-                        <Input
-                          id="confirmPassword"
-                          type="password"
-                          value={passwordData.new_password_confirmation}
-                          onChange={(e) =>
-                            setPasswordData({
-                              ...passwordData,
-                              new_password_confirmation: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
+                    <div className="space-y-2">
+                       <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">New Hash</Label>
+                      <Input
+                        type="password"
+                        value={passwordData.new_password}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            new_password: e.target.value,
+                          })
+                        }
+                        className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                       <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Confirm New Hash</Label>
+                      <Input
+                        type="password"
+                        value={passwordData.new_password_confirmation}
+                        onChange={(e) =>
+                          setPasswordData({
+                            ...passwordData,
+                            new_password_confirmation: e.target.value,
+                          })
+                        }
+                        className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
+                      />
                     </div>
                   </div>
                   <div className="flex justify-end">
                     <Button
                       type="submit"
                       variant="outline"
+                      className="h-11 px-6 rounded-xl border-slate-200 text-slate-500 font-black text-[10px] uppercase tracking-[0.15em] hover:bg-slate-50 hover:text-slate-950 transition-all"
                       disabled={submitting || !passwordData.new_password}
                     >
-                      Change Password
+                      Authenticate & Rotate Hash
                     </Button>
                   </div>
                 </form>

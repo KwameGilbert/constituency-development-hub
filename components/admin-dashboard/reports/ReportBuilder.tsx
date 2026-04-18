@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Eye, FileDown, Loader2 } from "lucide-react";
+import { Eye, FileDown, Loader2, Settings2, Columns, Filter, Calendar } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import {
@@ -83,7 +83,7 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
   const handlePreview = async () => {
     const selectedCols = getSelectedColumns();
     if (selectedCols.length === 0) {
-      toast.error("Please select at least one column");
+      toast.error("Process Blocked: At least one column required for synthesis.");
       return;
     }
 
@@ -99,14 +99,14 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
       });
 
       if (response.success) {
-        toast.success(`Loaded ${response.data.rows.length} records`);
+        toast.success(`Contextual survey loaded: ${response.data.rows.length} entries`);
         onPreview?.(response.data, columns);
       } else {
-        toast.error(response.message || "Failed to generate report");
+        toast.error(response.message || "Synthesis failure");
       }
     } catch (error) {
       console.error("Report generation error:", error);
-      toast.error("Failed to generate report");
+      toast.error("System synchronization failure");
     } finally {
       setLoading(false);
     }
@@ -116,7 +116,7 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
   const handleExport = async () => {
     const selectedCols = getSelectedColumns();
     if (selectedCols.length === 0) {
-      toast.error("Please select at least one column");
+      toast.error("Process Blocked: Selection registry mandatory");
       return;
     }
 
@@ -133,170 +133,164 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
 
       if (response.success) {
         reportsService.exportAsCSV(response.data, columns);
-        toast.success(`Exported ${response.data.rows.length} records to CSV`);
+        toast.success(`Strategic ledger exported: ${response.data.rows.length} records`);
       } else {
-        toast.error(response.message || "Failed to export report");
+        toast.error(response.message || "Export failure");
       }
     } catch (error) {
       console.error("Export error:", error);
-      toast.error("Failed to export report");
+      toast.error("System process error during export");
     } finally {
       setExporting(false);
     }
   };
 
   return (
-    <Card className="shadow-sm border-gray-200">
-      <CardHeader className="bg-gray-50/50 pb-4 border-b border-gray-100">
-        <CardTitle className="text-lg font-semibold text-gray-800">
-          Report Builder
-        </CardTitle>
-        <CardDescription>
-          Choose data source, fields, filters, and time range. Preview before
-          exporting.
-        </CardDescription>
+    <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
+      <CardHeader className="p-8 bg-slate-950 text-white relative">
+        <div className="absolute top-8 left-8 w-1 h-8 bg-amber-500 rounded-full" />
+        <div className="pl-6">
+           <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+             <Settings2 className="w-6 h-6 text-amber-500" />
+             Report Synthesis Matrix
+           </CardTitle>
+           <CardDescription className="text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-1">
+             Declare data source parameters and strategic fields for contextual ledger generation
+           </CardDescription>
+        </div>
       </CardHeader>
 
-      <CardContent className="space-y-6 pt-6">
-        {/* Report Type & Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Report Type */}
-          <div className="lg:col-span-3 space-y-2">
-            <Label
-              htmlFor="report-type"
-              className="text-sm font-medium text-gray-700"
-            >
-              Report Type
-            </Label>
+      <CardContent className="p-8 space-y-8">
+        {/* Report Type & Columns Configuration Matrix */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Report Type Selection */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+               <div className="w-1 h-4 bg-amber-500 rounded-full" />
+               <Label htmlFor="report-type" className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Source Registry</Label>
+            </div>
             <Select
               value={reportType}
               onValueChange={(val) => handleReportTypeChange(val as ReportType)}
             >
-              <SelectTrigger id="report-type" className="w-full">
-                <SelectValue placeholder="Select type" />
+              <SelectTrigger id="report-type" className="h-12 rounded-xl bg-slate-50 border-none font-black text-slate-950 uppercase tracking-widest text-[10px]">
+                <SelectValue placeholder="Select context" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="issues">Issues</SelectItem>
-                <SelectItem value="projects">Projects</SelectItem>
-                <SelectItem value="users">Users</SelectItem>
+              <SelectContent className="rounded-xl border-slate-100">
+                <SelectItem value="issues" className="font-bold uppercase text-[10px] tracking-widest">Issues Registry</SelectItem>
+                <SelectItem value="projects" className="font-bold uppercase text-[10px] tracking-widest">Project Ledger</SelectItem>
+                <SelectItem value="users" className="font-bold uppercase text-[10px] tracking-widest">Personnel Matrix</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-[10px] font-medium text-slate-400 italic px-2">Primary data cluster for strategic synthesis.</p>
           </div>
 
-          {/* Columns Selection */}
-          <div className="lg:col-span-9 space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-gray-700">
-                Columns
-              </Label>
+          {/* Columns Selection Matrix */}
+          <div className="lg:col-span-8 space-y-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                 <div className="w-1 h-4 bg-amber-500 rounded-full" />
+                 <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Metric Visibility</Label>
+              </div>
+              <div className="flex items-center gap-4">
+                <button onClick={selectAllColumns} className="text-[10px] font-black uppercase text-amber-600 tracking-widest hover:text-amber-700 transition-colors">Select All</button>
+                <button onClick={clearAllColumns} className="text-[10px] font-black uppercase text-slate-400 tracking-widest hover:text-slate-600 transition-colors">Clear</button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-6 bg-slate-50/50 rounded-2xl border border-slate-50">
               {columns.map((col) => (
-                <div key={col.id} className="flex items-center space-x-2">
+                <div key={col.id} className="flex items-center space-x-3 group cursor-pointer" onClick={() => toggleColumn(col.id)}>
                   <Checkbox
                     id={col.id}
                     checked={col.checked}
-                    onCheckedChange={() => toggleColumn(col.id)}
-                    className="border-gray-300 data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                    className="h-5 w-5 rounded-lg border-slate-200 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 transition-all shadow-sm"
                   />
                   <Label
                     htmlFor={col.id}
-                    className="text-sm text-gray-600 font-normal cursor-pointer"
+                    className="text-[11px] font-bold text-slate-600 uppercase tracking-wider cursor-pointer group-hover:text-slate-950 transition-colors"
                   >
                     {col.label}
                   </Label>
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-3 mt-2 text-xs">
-              <button
-                onClick={selectAllColumns}
-                className="text-red-600 font-medium hover:underline"
-              >
-                Select all
-              </button>
-              <button
-                onClick={clearAllColumns}
-                className="text-gray-500 hover:text-gray-700 hover:underline"
-              >
-                Clear all
-              </button>
-            </div>
           </div>
         </div>
 
-        <Separator />
+        <Separator className="bg-slate-50" />
 
-        {/* Filters & Date Range */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Filters */}
-          <div className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <Label className="text-sm font-semibold text-gray-800">
-              Filters
-            </Label>
+        {/* Dynamic Filters & Temporal Range Matrix */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Contextual Filters Hub */}
+          <div className="space-y-6 p-8 bg-slate-50/30 rounded-3xl border border-slate-50/50 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+               <Filter className="w-12 h-12 text-slate-900" />
+            </div>
+            <div className="flex items-center gap-3">
+               <div className="p-2 bg-white rounded-xl shadow-sm">
+                  <Filter className="w-4 h-4 text-amber-500" />
+               </div>
+               <span className="text-[10px] font-black uppercase text-slate-950 tracking-[0.2em]">Parameter Refinement</span>
+            </div>
 
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-gray-500">Status</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Lifecycle Status</Label>
                 <Select
                   value={filters.status}
-                  onValueChange={(val) =>
-                    setFilters((f) => ({ ...f, status: val }))
-                  }
+                  onValueChange={(val) => setFilters((f) => ({ ...f, status: val }))}
                 >
-                  <SelectTrigger className="w-full bg-white h-9">
-                    <SelectValue placeholder="Any" />
+                  <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-bold text-xs">
+                    <SelectValue placeholder="Unified Status" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="resolved">Resolved</SelectItem>
-                    <SelectItem value="closed">Closed</SelectItem>
+                  <SelectContent className="rounded-xl border-slate-100">
+                    <SelectItem value="any" className="font-bold text-xs uppercase tracking-widest">Unified</SelectItem>
+                    <SelectItem value="pending" className="font-bold text-xs uppercase tracking-widest">Pending</SelectItem>
+                    <SelectItem value="in_progress" className="font-bold text-xs uppercase tracking-widest">Active</SelectItem>
+                    <SelectItem value="resolved" className="font-bold text-xs uppercase tracking-widest">Resolved</SelectItem>
+                    <SelectItem value="closed" className="font-bold text-xs uppercase tracking-widest">Archived</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+              
               {reportType === "issues" && (
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500">Severity</Label>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Threat Level</Label>
                   <Select
                     value={filters.severity}
-                    onValueChange={(val) =>
-                      setFilters((f) => ({ ...f, severity: val }))
-                    }
+                    onValueChange={(val) => setFilters((f) => ({ ...f, severity: val }))}
                   >
-                    <SelectTrigger className="w-full bg-white h-9">
-                      <SelectValue placeholder="Any" />
+                    <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-bold text-xs">
+                      <SelectValue placeholder="All severities" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
+                    <SelectContent className="rounded-xl border-slate-100">
+                      <SelectItem value="any" className="font-bold text-xs uppercase tracking-widest">Unified</SelectItem>
+                      <SelectItem value="high" className="font-bold text-xs uppercase tracking-widest text-red-600">Critical</SelectItem>
+                      <SelectItem value="medium" className="font-bold text-xs uppercase tracking-widest text-amber-600">Standard</SelectItem>
+                      <SelectItem value="low" className="font-bold text-xs uppercase tracking-widest text-emerald-600">Operational</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               )}
+              
               {reportType === "users" && (
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-gray-500">Role</Label>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contextual Role</Label>
                   <Select
                     value={filters.role || "any"}
-                    onValueChange={(val) =>
-                      setFilters((f) => ({ ...f, role: val }))
-                    }
+                    onValueChange={(val) => setFilters((f) => ({ ...f, role: val }))}
                   >
-                    <SelectTrigger className="w-full bg-white h-9">
-                      <SelectValue placeholder="Any" />
+                    <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-bold text-xs">
+                      <SelectValue placeholder="All roles" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="any">Any</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="web_admin">Web Admin</SelectItem>
-                      <SelectItem value="officer">Officer</SelectItem>
-                      <SelectItem value="agent">Agent</SelectItem>
-                      <SelectItem value="task_force">Task Force</SelectItem>
+                    <SelectContent className="rounded-xl border-slate-100">
+                      <SelectItem value="any" className="font-bold text-xs uppercase tracking-widest">Unified</SelectItem>
+                      <SelectItem value="admin" className="font-bold text-xs uppercase tracking-widest">Admin</SelectItem>
+                      <SelectItem value="web_admin" className="font-bold text-xs uppercase tracking-widest">Web Admin</SelectItem>
+                      <SelectItem value="officer" className="font-bold text-xs uppercase tracking-widest">Officer</SelectItem>
+                      <SelectItem value="agent" className="font-bold text-xs uppercase tracking-widest">Agent</SelectItem>
+                      <SelectItem value="task_force" className="font-bold text-xs uppercase tracking-widest">Task Force</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -304,60 +298,70 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
             </div>
           </div>
 
-          {/* Date Range */}
-          <div className="space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <Label className="text-sm font-semibold text-gray-800">
-              Date Range
-            </Label>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-gray-500">Period</Label>
+          {/* Temporal Consistency Hub */}
+          <div className="space-y-6 p-8 bg-slate-50/30 rounded-3xl border border-slate-50/50 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+               <Calendar className="w-12 h-12 text-slate-900" />
+            </div>
+            <div className="flex items-center gap-3">
+               <div className="p-2 bg-white rounded-xl shadow-sm">
+                  <Calendar className="w-4 h-4 text-amber-500" />
+               </div>
+               <span className="text-[10px] font-black uppercase text-slate-950 tracking-[0.2em]">Temporal Scope</span>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Period Assignment</Label>
               <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="w-full bg-white">
-                  <SelectValue placeholder="All time" />
+                <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-bold text-xs">
+                  <SelectValue placeholder="Full Registry" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All time</SelectItem>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="week">This Week</SelectItem>
-                  <SelectItem value="month">This Month</SelectItem>
-                  <SelectItem value="quarter">This Quarter</SelectItem>
-                  <SelectItem value="year">This Year</SelectItem>
+                <SelectContent className="rounded-xl border-slate-100">
+                  <SelectItem value="all" className="font-bold text-xs uppercase tracking-widest">Full Registry</SelectItem>
+                  <SelectItem value="today" className="font-bold text-xs uppercase tracking-widest">Last 24h</SelectItem>
+                  <SelectItem value="week" className="font-bold text-xs uppercase tracking-widest">Active Week</SelectItem>
+                  <SelectItem value="month" className="font-bold text-xs uppercase tracking-widest">Fiscal Month</SelectItem>
+                  <SelectItem value="quarter" className="font-bold text-xs uppercase tracking-widest">Quarterly</SelectItem>
+                  <SelectItem value="year" className="font-bold text-xs uppercase tracking-widest">Calendar Year</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <p className="text-xs text-gray-400 pt-2">
-              Date filters apply to the record&apos;s created_at field by
-              default.
+            <p className="text-[10px] font-medium text-slate-400 italic leading-relaxed pt-2">
+              Note: Temporal filters scope content based on entry initialization (created_at) by system default.
             </p>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end gap-3 pt-2 pb-6 px-6">
+      <CardFooter className="p-8 bg-slate-50/50 border-t border-slate-50 flex-row justify-end gap-4">
         <Button
           variant="outline"
-          className="gap-2"
+          className="h-12 px-6 rounded-2xl bg-white border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 flex items-center gap-3 transition-all"
           onClick={handlePreview}
           disabled={loading}
         >
           {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin text-amber-500" />
           ) : (
-            <Eye className="w-4 h-4" />
+             <div className="p-1 bg-slate-100 rounded-lg">
+                <Eye className="w-3.5 h-3.5 text-slate-400" />
+             </div>
           )}
-          Preview
+          Load Preview
         </Button>
         <Button
-          className="bg-red-600 hover:bg-red-700 gap-2"
+          className="h-12 px-8 rounded-2xl bg-slate-950 text-white hover:bg-slate-800 font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-slate-900/20"
           onClick={handleExport}
           disabled={exporting}
         >
           {exporting ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
-            <FileDown className="w-4 h-4" />
+             <div className="p-1.5 bg-amber-500 rounded-lg">
+                <FileDown className="w-3.5 h-3.5 text-slate-950" />
+             </div>
           )}
-          Export CSV
+          Capture Strategic CSV
         </Button>
       </CardFooter>
     </Card>

@@ -19,6 +19,8 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  ListTree,
+  ExternalLink,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -60,9 +62,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { SubSectorsManager } from "@/components/admin-dashboard/sectors/SubSectorsManager";
-import { ListTree } from "lucide-react";
 
 export default function SectorsPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -78,7 +78,7 @@ export default function SectorsPage() {
     category_id: "",
     name: "",
     description: "",
-    color: "#1e1b4b", // default color
+    color: "#f59e0b", // standard amber
     icon: "",
   });
 
@@ -102,7 +102,7 @@ export default function SectorsPage() {
       }
     } catch (error) {
       console.error("Failed to fetch sectors:", error);
-      toast.error("Failed to load sectors");
+      toast.error("Process failure in sector synchronization");
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ export default function SectorsPage() {
       category_id: "",
       name: "",
       description: "",
-      color: "#1e1b4b",
+      color: "#f59e0b",
       icon: "",
     });
   };
@@ -161,7 +161,7 @@ export default function SectorsPage() {
   // Handle adding a new sector
   const handleAddSector = async () => {
     if (!formData.name.trim()) {
-      toast.error("Sector name is required");
+      toast.error("Identity profile requires a name");
       return;
     }
 
@@ -179,16 +179,16 @@ export default function SectorsPage() {
       });
 
       if (response.success) {
-        toast.success("Sector added successfully");
+        toast.success("Sector taxonomy initialized");
         setIsAddModalOpen(false);
         resetForm();
         fetchSectors();
       } else {
-        toast.error(response.message || "Failed to add sector");
+        toast.error(response.message || "Execution failure");
       }
     } catch (error) {
       console.error("Failed to add sector:", error);
-      toast.error("Failed to add sector");
+      toast.error("Process error");
     } finally {
       setIsSubmitting(false);
     }
@@ -201,7 +201,7 @@ export default function SectorsPage() {
       category_id: sector.category_id?.toString() || "",
       name: sector.name,
       description: sector.description || "",
-      color: sector.color || "#1e1b4b",
+      color: sector.color || "#f59e0b",
       icon: sector.icon || "",
     });
     setIsEditModalOpen(true);
@@ -212,7 +212,7 @@ export default function SectorsPage() {
     if (!selectedSector) return;
 
     if (!formData.name.trim()) {
-      toast.error("Sector name is required");
+      toast.error("Sector identification required");
       return;
     }
 
@@ -230,17 +230,17 @@ export default function SectorsPage() {
       });
 
       if (response.success) {
-        toast.success("Sector updated successfully");
+        toast.success("Sector profile synchronization complete");
         setIsEditModalOpen(false);
         setSelectedSector(null);
         resetForm();
         fetchSectors();
       } else {
-        toast.error(response.message || "Failed to update sector");
+        toast.error(response.message || "Synchronization failure");
       }
     } catch (error) {
       console.error("Failed to update sector:", error);
-      toast.error("Failed to update sector");
+      toast.error("Update process error");
     } finally {
       setIsSubmitting(false);
     }
@@ -261,16 +261,16 @@ export default function SectorsPage() {
       const response = await sectorsService.deleteSector(selectedSector.id);
 
       if (response.success) {
-        toast.success("Sector deleted successfully");
+        toast.success("Sector taxonomy purged");
         setIsDeleteDialogOpen(false);
         setSelectedSector(null);
         fetchSectors();
       } else {
-        toast.error(response.message || "Failed to delete sector");
+        toast.error(response.message || "Purge failure");
       }
     } catch (error) {
       console.error("Failed to delete sector:", error);
-      toast.error("Failed to delete sector. It may have associated projects.");
+      toast.error("Process error: Associated dependencies detected");
     } finally {
       setIsSubmitting(false);
     }
@@ -282,561 +282,371 @@ export default function SectorsPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
       <AdminHeader
         title="Sectors"
-        description="Manage project sectors and categories"
+        description="Strategic categorization and developmental sector oversight"
         roleAbbr="MP"
-        userName="Admin.Rock"
-        userRoleLabel="MP"
         dropdownItems={[
           {
-            label: "Categories",
+            label: "Categories Hub",
             href: "/admin-dashboard/categories",
             icon: FolderTree,
           },
           {
-            label: "Back to Dashboard",
+            label: "Main Dashboard",
             href: "/admin-dashboard",
             icon: ArrowLeft,
           },
           {
-            label: "Profile Settings",
-            href: "/admin-dashboard/profile",
-            icon: UserCircle,
-          },
-          {
-            label: "Audit Logs",
+            label: "Audit Oversight",
             href: "/admin-dashboard/audit",
             icon: ShieldAlert,
           },
           {
-            label: "System Settings",
-            href: "/admin-dashboard/system-settings",
-            icon: Settings2,
-          },
-          {
             label: "Logout",
             icon: LogOut,
-            className: "text-red-600 focus:text-red-600 focus:bg-red-50",
+            className: "text-red-500 font-bold",
           },
         ]}
         actionButtons={[
           {
-            label: "Categories",
+            label: "Manage Categories",
             icon: FolderTree,
             href: "/admin-dashboard/categories",
-            className:
-              "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50",
-          },
-          {
-            label: "Add Sector",
-            icon: Plus,
-            onClick: () => {
-              resetForm();
-              setIsAddModalOpen(true);
-            },
-            className: "bg-indigo-600 hover:bg-indigo-700 text-white",
+            className: "bg-white border border-slate-100 text-slate-700 hover:bg-slate-50 shadow-sm",
           },
         ]}
       />
 
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <div className="max-w-[1600px] mx-auto space-y-6">
-          {/* Content Header */}
-          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Sectors & Categories
+      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+        {/* Content Header Cluster */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-1.5 h-10 bg-amber-500 rounded-full" />
+            <div>
+              <h2 className="text-3xl font-bold text-slate-950 tracking-tight">
+                Taxonomy Control
               </h2>
-              <p className="text-sm text-gray-500">
-                {loading
-                  ? "Loading..."
-                  : `Showing ${filteredSectors.length} sectors`}
+              <p className="text-slate-500 font-medium text-sm mt-0.5">
+                {loading ? "Synchronizing sector metadata..." : `Overseeing ${filteredSectors.length} developmental sectors`}
               </p>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
-              <div className="relative w-full sm:max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search sectors..."
-                  className="pl-10 w-full bg-gray-50 border-gray-200 focus:bg-white transition-all"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button
-                onClick={() => {
-                  resetForm();
-                  setIsAddModalOpen(true);
-                }}
-                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add New Sector
-              </Button>
+          </div>
+          
+          <Button
+            onClick={() => {
+              resetForm();
+              setIsAddModalOpen(true);
+            }}
+            className="h-12 px-6 bg-slate-900 text-white hover:bg-slate-800 rounded-2xl shadow-xl font-black text-xs uppercase tracking-widest flex items-center gap-3 group transition-all"
+          >
+            <div className="p-1.5 bg-amber-500 rounded-lg group-hover:rotate-12 transition-transform shadow-md shadow-amber-500/20">
+               <Plus className="h-4 w-4 text-slate-950" />
             </div>
+            Initialize Sector
+          </Button>
+        </div>
 
-            {/* Table */}
-            <div className="rounded-lg border border-gray-100 overflow-hidden">
-              <Table>
-                <TableHeader className="bg-gray-50/50">
-                  <TableRow className="hover:bg-transparent border-gray-100">
-                    <TableHead className="w-[30%] font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Name
-                    </TableHead>
-                    <TableHead className="w-[40%] font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Description
-                    </TableHead>
-                    <TableHead className="font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Projects
-                    </TableHead>
-                    <TableHead className="text-right font-medium text-gray-500 text-xs uppercase tracking-wider">
-                      Actions
-                    </TableHead>
+        {/* Search & Filter Unit */}
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-amber-500 transition-colors" />
+          <Input
+            placeholder="Search operational sectors by name or slug..."
+            className="h-14 pl-12 bg-white border-none shadow-md shadow-slate-200/40 rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-medium"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {/* Data Table Core */}
+        <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
+          <div className="overflow-x-auto custom-scrollbar">
+            <Table>
+              <TableHeader className="bg-slate-50/50">
+                <TableRow className="hover:bg-transparent border-slate-100">
+                  <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[30%]">Sector Identity</TableHead>
+                  <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[40%]">Strategic Summary</TableHead>
+                  <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Allocation</TableHead>
+                  <TableHead className="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">Controls</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                     <TableCell colSpan={4} className="py-24">
+                        <div className="flex flex-col items-center justify-center gap-4">
+                           <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
+                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Synchronizing Master Taxonomy...</span>
+                        </div>
+                     </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className="text-center py-10">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
-                          <span className="text-gray-500">
-                            Loading sectors...
-                          </span>
+                ) : paginatedSectors.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="py-24 text-center">
+                       <p className="text-slate-400 font-bold italic">No matching sectors found in database records</p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedSectors.map((sector) => (
+                    <TableRow key={sector.id} className="hover:bg-slate-50/50 border-slate-50 transition-colors group">
+                      <TableCell className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                          <div 
+                            className="w-10 h-10 rounded-2xl flex items-center justify-center text-slate-900 shadow-lg group-hover:scale-110 transition-transform"
+                            style={{ backgroundColor: sector.color || "#f59e0b" }}
+                          >
+                            <Tag className="w-5 h-5 stroke-[2.5px]" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-slate-950 text-sm group-hover:text-amber-600 transition-colors">{sector.name}</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">/{sector.slug}</span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-6 py-5">
+                         <span className="text-xs font-medium text-slate-500 line-clamp-2 leading-relaxed">
+                          {sector.description || "N/A — No strategic summary provided for this sector."}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-6 py-5">
+                         <div className="flex items-center gap-2 bg-slate-50 px-3 py-1 pb-1 rounded-xl w-fit group-hover:bg-amber-50 transition-colors">
+                            <span className="text-xs font-black text-slate-900">{sector.projects_count || 0}</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Investments</span>
+                         </div>
+                      </TableCell>
+                      <TableCell className="px-6 py-5 text-right">
+                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-950 hover:bg-slate-100 flex items-center gap-2 border border-transparent hover:border-slate-100"
+                            onClick={() => handleManageSubSectors(sector)}
+                          >
+                            <ListTree className="w-4 h-4" />
+                            Subsectors
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50"
+                            onClick={() => handleEditClick(sector)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={`h-9 w-9 rounded-xl ${
+                              (sector.projects_count || 0) > 0
+                                ? "text-slate-200 cursor-not-allowed"
+                                : "text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            }`}
+                            onClick={() => {
+                              if ((sector.projects_count || 0) > 0) {
+                                toast.error("Deployment dependency prevents deletion");
+                                return;
+                              }
+                              handleDeleteClick(sector);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ) : paginatedSectors.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="text-center py-10 text-gray-500"
-                      >
-                        No sectors found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    paginatedSectors.map((sector) => (
-                      <TableRow
-                        key={sector.id}
-                        className="hover:bg-gray-50/50 border-gray-100 transition-colors"
-                      >
-                        <TableCell className="font-medium text-gray-900">
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-8 h-8 rounded-lg flex items-center justify-center text-white"
-                              style={{
-                                backgroundColor: sector.color || "#6366f1",
-                              }}
-                            >
-                              <Tag className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <div className="font-medium">{sector.name}</div>
-                              <div className="text-xs text-gray-400">
-                                /{sector.slug}
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-gray-500 text-sm max-w-[300px] truncate">
-                          {sector.description || "-"}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50"
-                          >
-                            {sector.projects_count || 0} projects
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-8 text-xs bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                              onClick={() => handleManageSubSectors(sector)}
-                            >
-                              <ListTree className="w-3.5 h-3.5 mr-1.5" />
-                              Subsectors
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-                              onClick={() => handleEditClick(sector)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className={`h-8 w-8 ${
-                                (sector.projects_count || 0) > 0
-                                  ? "text-gray-300 cursor-not-allowed"
-                                  : "text-red-400 hover:text-red-500 hover:bg-red-50"
-                              }`}
-                              onClick={() => {
-                                if ((sector.projects_count || 0) > 0) {
-                                  toast.error(
-                                    "Cannot delete sector with existing projects",
-                                  );
-                                  return;
-                                }
-                                handleDeleteClick(sector);
-                              }}
-                              title={
-                                (sector.projects_count || 0) > 0
-                                  ? "Cannot delete sector with existing projects"
-                                  : "Delete Sector"
-                              }
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
 
-          {/* Pagination */}
+          {/* Pagination Controls */}
           {!loading && totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-              <p className="text-sm text-gray-600">
-                Showing{" "}
-                <span className="font-medium text-gray-900">
-                  {(currentPage - 1) * pageSize + 1}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium text-gray-900">
-                  {Math.min(currentPage * pageSize, filteredSectors.length)}
-                </span>{" "}
-                of{" "}
-                <span className="font-medium text-gray-900">
-                  {filteredSectors.length}
-                </span>{" "}
-                sectors
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage(1)}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronsLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => setCurrentPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                  >
-                    <ChevronsRight className="h-4 w-4" />
-                  </Button>
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-50/50 border-t border-slate-100">
+               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                  Showing <span className="text-slate-950">{paginatedSectors.length}</span> of <span className="text-slate-950">{filteredSectors.length}</span>
                 </div>
+              
+              <div className="flex items-center gap-1.5">
+                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
-      {/* Add Sector Modal */}
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Add New Sector</DialogTitle>
-          </DialogHeader>
-          <div className="py-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select
-                value={formData.category_id}
-                onValueChange={(value) =>
-                  handleFormChange("category_id", value)
-                }
-                disabled={isSubmitting}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id.toString()}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="name">
-                Sector Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="name"
-                placeholder="e.g. Education"
-                value={formData.name}
-                onChange={(e) => handleFormChange("name", e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Brief description of the sector..."
-                value={formData.description}
-                onChange={(e) =>
-                  handleFormChange("description", e.target.value)
-                }
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="color">Color Code</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="color"
-                    type="color"
-                    className="w-12 h-10 p-1 cursor-pointer"
-                    value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
-                    disabled={isSubmitting}
-                  />
-                  <Input
-                    value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
-                    disabled={isSubmitting}
-                    placeholder="#000000"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="icon">Icon Class (Optional)</Label>
-                <Input
-                  id="icon"
-                  placeholder="e.g. lucide-book"
-                  value={formData.icon}
-                  onChange={(e) => handleFormChange("icon", e.target.value)}
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddModalOpen(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              onClick={handleAddSector}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Adding...
-                </>
-              ) : (
-                "Add Sector"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Sector Modal */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Edit Sector</DialogTitle>
-          </DialogHeader>
-          <div className="py-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-category">Category</Label>
-              <Select
-                value={formData.category_id}
-                onValueChange={(value) =>
-                  handleFormChange("category_id", value)
-                }
-                disabled={isSubmitting}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id.toString()}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">
-                Sector Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="edit-name"
-                placeholder="e.g. Education"
-                value={formData.name}
-                onChange={(e) => handleFormChange("name", e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">Description</Label>
-              <Textarea
-                id="edit-description"
-                placeholder="Brief description of the sector..."
-                value={formData.description}
-                onChange={(e) =>
-                  handleFormChange("description", e.target.value)
-                }
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-color">Color Code</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="edit-color"
-                    type="color"
-                    className="w-12 h-10 p-1 cursor-pointer"
-                    value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
-                    disabled={isSubmitting}
-                  />
-                  <Input
-                    value={formData.color}
-                    onChange={(e) => handleFormChange("color", e.target.value)}
-                    disabled={isSubmitting}
-                    placeholder="#000000"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-icon">Icon Class (Optional)</Label>
-                <Input
-                  id="edit-icon"
-                  placeholder="e.g. lucide-book"
-                  value={formData.icon}
-                  onChange={(e) => handleFormChange("icon", e.target.value)}
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditModalOpen(false)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              onClick={handleSaveChanges}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Save Changes"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
+      {/* Initialize / Edit Modals — Unified Premium Style */}
+      <Dialog 
+        open={isAddModalOpen || isEditModalOpen} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsAddModalOpen(false);
+            setIsEditModalOpen(false);
+            setSelectedSector(null);
+            resetForm();
+          }
+        }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Sector</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete &quot;{selectedSector?.name}
-              &quot;? This action cannot be undone. Sectors with associated
-              projects cannot be deleted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isSubmitting}>
+        <DialogContent className="sm:max-w-[500px] border-none shadow-2xl rounded-3xl overflow-hidden p-0">
+          <DialogHeader className="p-6 bg-slate-950 text-white relative">
+            <div className="absolute top-6 left-6 w-1 h-6 bg-amber-500 rounded-full" />
+            <DialogTitle className="pl-4 text-xl font-bold tracking-tight">
+              {isEditModalOpen ? "Sector Synchronization" : "Sector Initialization"}
+            </DialogTitle>
+            <p className="pl-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Configure developmental taxonomy profile</p>
+          </DialogHeader>
+          
+          <div className="p-8 space-y-6 bg-white">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Functional Category</Label>
+              <Select
+                value={formData.category_id}
+                onValueChange={(value) => handleFormChange("category_id", value)}
+                disabled={isSubmitting}
+              >
+                <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-slate-100">
+                  <SelectValue placeholder="Select primary category profile" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-slate-100">
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()} className="font-bold text-slate-700">
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Sector Title Identity</Label>
+              <Input
+                placeholder="e.g. Health & Wellness"
+                className="h-12 rounded-xl bg-slate-50 border-slate-100 focus:bg-white transition-all font-bold"
+                value={formData.name}
+                onChange={(e) => handleFormChange("name", e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Strategic Description</Label>
+              <Textarea
+                placeholder="Comprehensive summary of sector mandate..."
+                className="min-h-[100px] rounded-xl bg-slate-50 border-slate-100 focus:bg-white transition-all font-medium text-sm"
+                value={formData.description}
+                onChange={(e) => handleFormChange("description", e.target.value)}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">System Tint</Label>
+                <div className="flex gap-3">
+                  <Input
+                    type="color"
+                    className="w-12 h-12 p-1 cursor-pointer rounded-xl border-slate-100"
+                    value={formData.color}
+                    onChange={(e) => handleFormChange("color", e.target.value)}
+                    disabled={isSubmitting}
+                  />
+                  <div className="flex-1 rounded-xl bg-slate-50 border border-slate-100 h-12 flex items-center px-4 font-mono text-xs font-bold text-slate-500 uppercase">
+                     {formData.color}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Registry Icon</Label>
+                <div className="relative">
+                   <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                   <Input
+                    placeholder="lucide-tag"
+                    className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 focus:bg-white transition-all font-mono text-xs font-bold"
+                    value={formData.icon}
+                    onChange={(e) => handleFormChange("icon", e.target.value)}
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex-row gap-3">
+            <Button
+              variant="ghost"
+              className="flex-1 h-12 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400 hover:bg-white"
+              onClick={() => {
+                setIsAddModalOpen(false);
+                setIsEditModalOpen(false);
+              }}
+              disabled={isSubmitting}
+            >
               Cancel
-            </AlertDialogCancel>
+            </Button>
+            <Button
+              className="flex-1 h-12 rounded-xl bg-slate-950 text-white hover:bg-slate-800 font-black text-[10px] uppercase tracking-widest shadow-lg shadow-slate-900/20"
+              onClick={isEditModalOpen ? handleSaveChanges : handleAddSector}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                 <Loader2 className="w-4 h-4 animate-spin" />
+              ) : isEditModalOpen ? (
+                "Update Profile"
+              ) : (
+                "Commit Sector"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Alert Cluster */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="rounded-3xl border-none shadow-2xl p-0 overflow-hidden">
+          <div className="p-8 space-y-4">
+             <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-600 mb-2">
+                <Trash2 className="w-8 h-8" />
+             </div>
+             <AlertDialogHeader>
+                <AlertDialogTitle className="text-2xl font-black text-slate-950 tracking-tight">Decommission Sector</AlertDialogTitle>
+                <AlertDialogDescription className="text-slate-500 font-medium text-base">
+                  Are you certain you want to purge &quot;{selectedSector?.name}&quot;? This action will permanently remove this developmental taxonomy and all metadata.
+                </AlertDialogDescription>
+             </AlertDialogHeader>
+          </div>
+          <AlertDialogFooter className="p-6 bg-slate-50 border-t border-slate-100 flex-row gap-4">
+            <AlertDialogCancel className="flex-1 h-12 rounded-xl font-black text-[10px] uppercase tracking-widest text-slate-400 hover:bg-white border-slate-100">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-              disabled={isSubmitting}
+              className="flex-1 h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-600/20"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
-                </>
-              ) : (
-                "Delete"
-              )}
+              Confirm Purge
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Sub-Sectors Manager Dialog */}
-      <SubSectorsManager
-        sector={selectedSector}
-        isOpen={isSubSectorsOpen}
-        onClose={() => setIsSubSectorsOpen(false)}
-      />
+      {/* SubSectors Context Slide — Maintaining existing functionality with theme updates */}
+      {selectedSector && (
+        <SubSectorsManager
+          isOpen={isSubSectorsOpen}
+          onClose={() => setIsSubSectorsOpen(false)}
+          sectorId={selectedSector.id}
+          sectorName={selectedSector.name}
+        />
+      )}
     </div>
   );
 }
