@@ -499,7 +499,7 @@ export default function YouthPage() {
                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
                   Showing <span className="text-slate-950">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="text-slate-950">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="text-slate-950">{pagination.total}</span>
                 </div>
-              
+
               <div className="flex items-center gap-3">
                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-white border border-transparent hover:border-slate-100 shadow-xs" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={pagination.page <= 1}>
                   <ChevronLeft className="w-4 h-4" />
@@ -515,6 +515,7 @@ export default function YouthPage() {
           )}
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 }
