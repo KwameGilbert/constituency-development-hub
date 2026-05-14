@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -641,10 +642,9 @@ export default function SectorsPage() {
       {/* SubSectors Context Slide — Maintaining existing functionality with theme updates */}
       {selectedSector && (
         <SubSectorsManager
+          sector={selectedSector}
           isOpen={isSubSectorsOpen}
           onClose={() => setIsSubSectorsOpen(false)}
-          sectorId={selectedSector.id}
-          sectorName={selectedSector.name}
         />
       )}
     </div>

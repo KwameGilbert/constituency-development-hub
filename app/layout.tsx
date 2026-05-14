@@ -15,7 +15,7 @@ const geistMono = {
 };
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_APP_URL || "https://kofibentehafful.com";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://kofibenteh.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -97,8 +97,8 @@ export default function RootLayout({
               addressCountry: "GH",
             },
             sameAs: [
-              "https://twitter.com/kofibentehafful",
-              "https://facebook.com/kofibentehafful",
+              "https://twitter.com/kofibenteh",
+              "https://facebook.com/kofibenteh",
             ],
           }}
         />

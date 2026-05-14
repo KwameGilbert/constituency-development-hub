@@ -102,7 +102,7 @@ export default async function EventDetailPage({ params }: PageProps) {
         organizer: {
           "@type": "Person",
           name: "Kofi Benteh Afful",
-          url: "https://kofibentehafful.com",
+          url: "https://kofibenteh.com",
         },
       }
     : null;

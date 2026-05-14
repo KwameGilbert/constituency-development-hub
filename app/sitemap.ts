@@ -4,7 +4,7 @@ import { eventsService } from "@/lib/services/events-service";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://kofibentehafful.com";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://kofibenteh.com";
 
   // Static routes
   const routes = [

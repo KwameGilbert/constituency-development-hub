@@ -38,7 +38,7 @@ export async function generateMetadata(
             : previousImages,
           type: "article",
           siteName: "Hon. Kofi Benteh Afful - Office of the MP",
-          url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://kofibentehafful.com"}/blog/${slug}`,
+          url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://kofibenteh.com"}/blog/${slug}`,
           publishedTime: post.published_at,
           modifiedTime: post.published_at,
           authors: post.author ? [post.author] : ["Hon. Kofi Benteh Afful"],
@@ -63,10 +63,10 @@ export async function generateMetadata(
           title: post.title,
           description: post.excerpt || defaultDesc,
           images: post.image ? [getImageUrl(post.image)] : undefined,
-          site: "@KofiBentehAfful",
+          site: "@kofibenteh",
           creator: post.author
             ? `@${post.author.replace(/\s+/g, "")}`
-            : "@KofiBentehAfful",
+            : "@kofibenteh",
         },
       };
     }
