@@ -38,11 +38,7 @@ const getImportMetaEnv = (): ViteEnv => {
 
 const importMetaEnv = getImportMetaEnv();
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  importMetaEnv.VITE_PUBLIC_API_BASE_URL ||
-  "";
+const API_BASE_URL =  process.env.NEXT_PUBLIC_API_URL;
 const API_TOKEN =
   process.env.NEXT_PUBLIC_API_TOKEN ||
   importMetaEnv.VITE_PUBLIC_API_TOKEN ||

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 // Temporarily using system fonts due to Google Fonts connectivity issues
 // import { Geist, Geist_Mono } from "next/font/google";
+// @ts-expect-error: Allow side-effect import for global CSS without type declarations
 import "./globals.css";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import JsonLd from "@/components/seo/JsonLd";

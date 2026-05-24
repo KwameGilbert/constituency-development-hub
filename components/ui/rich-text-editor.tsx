@@ -39,7 +39,7 @@ export function RichTextEditor({
     const rawUrl = response.data.url;
 
     if (rawUrl.startsWith("/")) {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL|| "";
       const cleanBaseUrl = baseUrl.replace(/\/+$/, "");
       return `${cleanBaseUrl}${rawUrl}`;
     }

@@ -9,7 +9,7 @@ export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "";
   if (path.startsWith("data:")) return path;
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL|| "http://localhost:8080";
   let apiOrigin = "";
   try {
     apiOrigin = new URL(apiUrl).origin;

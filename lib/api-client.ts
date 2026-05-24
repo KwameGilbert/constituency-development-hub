@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface FetchOptions extends RequestInit {
   requiresAuth?: boolean;
@@ -12,7 +12,7 @@ export async function apiClient<T>(
   const { requiresAuth = true, isFormData = false, ...fetchOptions } = options;
 
   if (!BASE_URL) {
-    throw new Error("NEXT_PUBLIC_API_URL is not defined");
+    throw new Error("NEXT_PUBLIC_API_URLis not defined");
   }
 
   const headers = new Headers(fetchOptions.headers);

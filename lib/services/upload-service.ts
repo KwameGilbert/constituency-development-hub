@@ -29,7 +29,7 @@ export const uploadService = {
     // Use fetch directly for FormData (don't set Content-Type header)
     const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
     if (!BASE_URL) {
-      throw new Error("NEXT_PUBLIC_API_URL is not defined");
+      throw new Error("NEXT_PUBLIC_API_URLis not defined");
     }
 
     // Get token
