@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const blogResponse = await blogService.getAllPosts(1, 100);
-    if (blogResponse.success && blogResponse.data.posts) {
+    if (blogResponse && blogResponse.success && blogResponse.data?.posts) {
       blogRoutes = blogResponse.data.posts.map((post) => ({
         url: `${baseUrl}/blog/${post.slug}`,
         lastModified: new Date(
@@ -44,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let eventRoutes: MetadataRoute.Sitemap = [];
   try {
     const eventsResponse = await eventsService.getAllEvents(1, 100);
-    if (eventsResponse.success && eventsResponse.data.events) {
+    if (eventsResponse && eventsResponse.success && eventsResponse.data?.events) {
       eventRoutes = eventsResponse.data.events.map((event) => ({
         url: `${baseUrl}/events/${event.slug || event.id}`,
         lastModified: new Date(

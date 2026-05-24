@@ -87,6 +87,48 @@ interface EditIssueProps {
   onIssueLoad?: (caseId: string) => void;
 }
 
+interface RawIssue {
+  id: number;
+  case_id?: string;
+  title?: string;
+  description?: string;
+  category?: string;
+  category_id?: string | number;
+  issue_type?: string;
+  priority?: string;
+  community?: string;
+  location?: string;
+  community_id?: string | number;
+  suburb?: string;
+  suburb_id?: string | number;
+  specific_location?: string;
+  cottage?: string;
+  sector_id?: string | number;
+  sector?: string;
+  sub_sector_id?: string | number;
+  subsector?: string;
+  people_affected?: string | number;
+  details?: string;
+  additional_notes?: string;
+  reporter_name?: string;
+  reporter_phone?: string;
+  reporter_email?: string;
+  reporter_gender?: string;
+  reporter_address?: string;
+  constituent?: {
+    name?: string;
+    phone_number?: string;
+    email?: string;
+    gender?: string;
+    home_address?: string;
+  };
+  agent?: {
+    id?: number;
+  };
+  agent_id?: string | number;
+  images?: string[];
+}
+
 export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("constituent-details");
@@ -159,21 +201,28 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
           issuesService.getAgentsForOfficer(),
         ]);
 
-        if ((locRes as any).success && (locRes as any).data?.locations) {
-          setLocations((locRes as any).data.locations);
+        const typedLocRes = locRes as unknown as { success: boolean; data?: { locations?: Location[] } };
+        if (typedLocRes.success && typedLocRes.data?.locations) {
+          setLocations(typedLocRes.data.locations);
         }
-        if ((secRes as any).success && (secRes as any).data?.sectors) {
-          setSectors((secRes as any).data.sectors);
+
+        const typedSecRes = secRes as unknown as { success: boolean; data?: { sectors?: Sector[] } };
+        if (typedSecRes.success && typedSecRes.data?.sectors) {
+          setSectors(typedSecRes.data.sectors);
         }
-        if ((catRes as any).success && (catRes as any).data?.categories) {
-          setCategories((catRes as any).data.categories);
+
+        const typedCatRes = catRes as unknown as { success: boolean; data?: { categories?: Category[] } };
+        if (typedCatRes.success && typedCatRes.data?.categories) {
+          setCategories(typedCatRes.data.categories);
         }
-        if ((agentRes as any).success && (agentRes as any).data?.agents) {
-          setAgents((agentRes as any).data.agents);
+
+        const typedAgentRes = agentRes as unknown as { success: boolean; data?: { agents?: { id: number; name: string; email: string }[] } };
+        if (typedAgentRes.success && typedAgentRes.data?.agents) {
+          setAgents(typedAgentRes.data.agents);
         }
 
         if (issueRes.success && issueRes.data.report) {
-          const issue = issueRes.data.report as any;
+          const issue = issueRes.data.report as unknown as RawIssue;
 
           if (onIssueLoad && issue.case_id) {
             onIssueLoad(issue.case_id);

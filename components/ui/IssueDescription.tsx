@@ -22,16 +22,23 @@ export default function IssueDescription({
 
   if (sepIndex === -1) {
     // No additional details — render as-is
+    let htmlContent: string | null = null;
     try {
+      htmlContent = sanitizeHtml(raw);
+    } catch {
+      // Fallback to raw content if sanitization fails
+    }
+
+    if (htmlContent !== null) {
       return (
         <div
           className={`whitespace-pre-wrap ${className}`}
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(raw) }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       );
-    } catch {
-      return <div className={`whitespace-pre-wrap ${className}`}>{raw}</div>;
     }
+
+    return <div className={`whitespace-pre-wrap ${className}`}>{raw}</div>;
   }
 
   const mainDescription = raw.substring(0, sepIndex).trim();
@@ -50,7 +57,7 @@ export default function IssueDescription({
     "Community",
   ];
 
-  let remaining = additionalRaw;
+  const remaining = additionalRaw;
   for (let i = 0; i < knownKeys.length; i++) {
     const key = knownKeys[i];
     const keyPattern = `${key}:`;
@@ -76,16 +83,23 @@ export default function IssueDescription({
 
   const renderMainDescription = () => {
     if (!mainDescription) return null;
+    let htmlContent: string | null = null;
     try {
+      htmlContent = sanitizeHtml(mainDescription);
+    } catch {
+      // Fallback if sanitization fails
+    }
+
+    if (htmlContent !== null) {
       return (
         <div
           className="whitespace-pre-wrap"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(mainDescription) }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       );
-    } catch {
-      return <div className="whitespace-pre-wrap">{mainDescription}</div>;
     }
+
+    return <div className="whitespace-pre-wrap">{mainDescription}</div>;
   };
 
   return (

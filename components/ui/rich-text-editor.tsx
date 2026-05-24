@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
+import type Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { cn } from "@/lib/utils";
 import { uploadService } from "@/lib/services/upload-service";
@@ -25,7 +26,7 @@ export function RichTextEditor({
   error = false,
 }: RichTextEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const quillRef = useRef<any>(null);
+  const quillRef = useRef<Quill | null>(null);
   const isInternalChange = useRef(false);
   const onChangeRef = useRef(onChange);
 

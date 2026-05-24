@@ -135,7 +135,7 @@ export function EditAgentForm({ agentId }: EditAgentFormProps) {
 
     setSubmitting(true);
     try {
-        const updateData: any = {
+        const updateData: Record<string, string | boolean | undefined> = {
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
