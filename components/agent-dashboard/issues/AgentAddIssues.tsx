@@ -108,7 +108,7 @@ export function AgentAddIssues() {
     issue_type: "community_based", // NEW: Community-based or individual-based
     priority: "medium",
     community: "",
-    community_id: 0,
+    community_id: "",
     suburb: "",
     suburb_id: undefined,
     specific_location: "",

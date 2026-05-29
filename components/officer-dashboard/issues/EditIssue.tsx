@@ -244,12 +244,14 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
             priority:
               (issue.priority as "low" | "medium" | "high" | "urgent") ||
               "medium",
-            location: issue.community || issue.location || "",
-            community_id: issue.community_id
+            location: (issue.community && issue.community !== "Unknown" && issue.community !== "0")
+              ? issue.community
+              : (issue.location && issue.location !== "0" ? issue.location : ""),
+            community_id: (issue.community_id && Number(issue.community_id) !== 0)
               ? Number(issue.community_id)
               : undefined,
-            suburb: issue.suburb || "",
-            suburb_id: issue.suburb_id ? Number(issue.suburb_id) : undefined,
+            suburb: (issue.suburb && issue.suburb !== "Unknown" && issue.suburb !== "0") ? issue.suburb : "",
+            suburb_id: (issue.suburb_id && Number(issue.suburb_id) !== 0) ? Number(issue.suburb_id) : undefined,
             cottage: issue.specific_location || issue.cottage || "",
             sector_id: issue.sector_id ? Number(issue.sector_id) : undefined,
             sector: issue.sector || "",
