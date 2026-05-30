@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, UserCheck, UserX, FileText, TrendingUp } from "lucide-react";
 import { agentService } from "@/lib/services/agent-service";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AgentsMetrics() {
   const [stats, setStats] = useState({
@@ -34,39 +34,35 @@ export function AgentsMetrics() {
 
   const metrics = [
     {
-      label: "Total Agents",
+      label: "TOTAL AGENTS",
       value: stats.total_agents,
       icon: Users,
-      color: "blue",
-      gradient: "from-blue-500/10 to-indigo-500/5",
-      iconBg: "bg-blue-100 text-blue-600",
+      color: "text-blue-900",
+      bg: "from-blue-100 to-blue-200",
       description: "Registered field agents",
     },
     {
-      label: "Active Agents",
+      label: "ACTIVE AGENTS",
       value: stats.active_agents,
       icon: UserCheck,
-      color: "green",
-      gradient: "from-emerald-500/10 to-green-500/5",
-      iconBg: "bg-emerald-100 text-emerald-600",
+      color: "text-emerald-900",
+      bg: "from-emerald-100 to-emerald-200",
       description: "Currently on the field",
     },
     {
-      label: "Inactive Agents",
+      label: "INACTIVE AGENTS",
       value: stats.inactive_agents,
       icon: UserX,
-      color: "red",
-      gradient: "from-red-500/10 to-orange-500/5",
-      iconBg: "bg-red-100 text-red-600",
+      color: "text-red-900",
+      bg: "from-red-100 to-red-200",
       description: "Agents off-duty",
     },
     {
-      label: "Total Reports",
+      label: "TOTAL REPORTS",
       value: stats.issues_handled,
       icon: FileText,
-      color: "purple",
-      gradient: "from-purple-500/10 to-pink-500/5",
-      iconBg: "bg-purple-100 text-purple-600",
+      color: "text-purple-900",
+      bg: "from-purple-100 to-purple-200",
       description: "Submitted across zones",
     },
   ];
@@ -76,45 +72,28 @@ export function AgentsMetrics() {
       {metrics.map((metric, index) => (
         <Card
           key={index}
-          className="overflow-hidden border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 group"
+          className="border-none shadow-md shadow-slate-200/50 overflow-hidden group hover:shadow-lg transition-all duration-300"
         >
-          <CardContent
-            className={cn("p-5 relative", "bg-gradient-to-br", metric.gradient)}
-          >
-            <div className="flex items-start justify-between relative z-10">
-              <div className="space-y-1">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  {metric.label}
-                </p>
-                <div className="flex items-baseline gap-2">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                    {loading ? (
-                      <div className="h-8 w-16 bg-slate-200 animate-pulse rounded" />
-                    ) : (
-                      metric.value
-                    )}
-                  </h3>
-                  {!loading && (
-                    <TrendingUp className="h-3 w-3 text-emerald-500 mb-1" />
-                  )}
-                </div>
-                <p className="text-[10px] text-slate-400 font-medium">
-                  {metric.description}
-                </p>
-              </div>
-              <div
-                className={cn(
-                  "p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-110",
-                  metric.iconBg,
-                )}
-              >
-                <metric.icon className="h-5 w-5" />
-              </div>
+          <CardContent className="px-5 py-6 flex items-center gap-4 relative bg-white">
+            <div
+              className={`p-3 rounded-2xl bg-gradient-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}
+            >
+              <metric.icon className="h-6 w-6 stroke-[2.5px]" />
             </div>
-
-            {/* Subtle background pattern */}
-            <div className="absolute -bottom-2 -right-2 opacity-5 scale-150 rotate-12 transition-transform duration-500 group-hover:rotate-0">
-              <metric.icon className="h-16 w-16" />
+            <div className="flex flex-col z-10">
+              <span className="text-2xl font-bold text-slate-900 leading-none flex items-center gap-1.5">
+                {loading ? <Skeleton className="h-8 w-16" /> : metric.value}
+                {!loading && <TrendingUp className="h-4 w-4 text-emerald-500" />}
+              </span>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-1.5">
+                {metric.label}
+              </p>
+              <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                {metric.description}
+              </p>
+            </div>
+            <div className="absolute top-0 right-0 p-1 opacity-10 group-hover:opacity-20 transition-opacity">
+              <metric.icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
             </div>
           </CardContent>
         </Card>
