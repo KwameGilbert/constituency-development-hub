@@ -221,9 +221,9 @@ export default function YouthPage() {
                 <Users className="w-7 h-7" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Master Registry</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Master Registry</span>
                 <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.total ?? 0}</span>
-                <span className="text-[10px] font-bold text-amber-600 mt-0.5 uppercase tracking-wider">Active Entities</span>
+                <span className="text-xs font-semibold text-amber-600 mt-1 uppercase tracking-wide">Active Entities</span>
               </div>
             </CardContent>
           </Card>
@@ -234,9 +234,9 @@ export default function YouthPage() {
                 <Briefcase className="w-7 h-7" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Employment Base</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Employment Base</span>
                 <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.employed ?? 0}</span>
-                <span className="text-[10px] font-bold text-emerald-600 mt-0.5 uppercase tracking-wider">Workforce Ready</span>
+                <span className="text-xs font-semibold text-emerald-600 mt-1 uppercase tracking-wide">Workforce Ready</span>
               </div>
             </CardContent>
           </Card>
@@ -247,9 +247,9 @@ export default function YouthPage() {
                 <GraduationCap className="w-7 h-7" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Human Capital</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Human Capital</span>
                 <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.students ?? 0}</span>
-                <span className="text-[10px] font-bold text-indigo-600 mt-0.5 uppercase tracking-wider">Active Scholars</span>
+                <span className="text-xs font-semibold text-indigo-600 mt-1 uppercase tracking-wide">Active Scholars</span>
               </div>
             </CardContent>
           </Card>
@@ -260,9 +260,9 @@ export default function YouthPage() {
                 <Clock className="w-7 h-7" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pending Review</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Pending Review</span>
                 <span className="text-3xl font-black text-slate-950 tracking-tighter">{stats?.pending ?? 0}</span>
-                <span className="text-[10px] font-bold text-amber-600 mt-0.5 uppercase tracking-wider">Awaiting Validation</span>
+                <span className="text-xs font-semibold text-amber-600 mt-1 uppercase tracking-wide">Awaiting Validation</span>
               </div>
             </CardContent>
           </Card>
@@ -303,7 +303,7 @@ export default function YouthPage() {
           <CardContent className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
               <div className="md:col-span-4 relative group">
-                 <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Registry Search</Label>
+                 <Label className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2 block ml-1">Registry Search</Label>
                  <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-amber-500 transition-colors" />
                     <Input
@@ -317,7 +317,7 @@ export default function YouthPage() {
               </div>
               
               <div className="md:col-span-2">
-                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Validation Status</Label>
+                <Label className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2 block ml-1">Validation Status</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none font-bold text-slate-700">
                     <SelectValue placeholder="All Clusters" />
@@ -334,7 +334,7 @@ export default function YouthPage() {
               </div>
 
               <div className="md:col-span-2">
-                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Economic Mode</Label>
+                <Label className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2 block ml-1">Economic Mode</Label>
                 <Select value={employmentFilter} onValueChange={setEmploymentFilter}>
                   <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none font-bold text-slate-700">
                     <SelectValue placeholder="Unified Mode" />
@@ -351,7 +351,7 @@ export default function YouthPage() {
               </div>
 
               <div className="md:col-span-3">
-                <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-2 block ml-1">Academic Rank</Label>
+                <Label className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2 block ml-1">Academic Rank</Label>
                 <Select value={educationFilter} onValueChange={setEducationFilter}>
                   <SelectTrigger className="h-12 rounded-xl bg-slate-50 border-none font-bold text-slate-700">
                     <SelectValue placeholder="All Tiers" />
@@ -369,7 +369,7 @@ export default function YouthPage() {
 
               <div className="md:col-span-1">
                 <Button
-                  className="w-full h-12 bg-slate-950 text-white hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-slate-900/20"
+                  className="w-full h-12 bg-slate-950 text-white hover:bg-slate-800 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-slate-900/20"
                   onClick={handleFilter}
                 >
                   Sync
@@ -382,13 +382,13 @@ export default function YouthPage() {
               <Table>
                 <TableHeader className="bg-slate-50/50">
                   <TableRow className="hover:bg-transparent border-slate-100">
-                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[80px]">Registry</TableHead>
-                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subject Profile</TableHead>
-                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Community</TableHead>
-                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Rank</TableHead>
-                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Economics</TableHead>
-                    <TableHead className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</TableHead>
-                    <TableHead className="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">Actions</TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-[80px]">Registry</TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Subject Profile</TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Community</TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Academic Rank</TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Economics</TableHead>
+                    <TableHead className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</TableHead>
+                    <TableHead className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -407,7 +407,7 @@ export default function YouthPage() {
                     records.map((record) => (
                       <TableRow key={record.id} className="hover:bg-slate-50 transition-colors group">
                         <TableCell className="px-6 py-5">
-                           <span className="font-mono text-[10px] font-bold text-slate-400 group-hover:text-amber-600 transition-colors">#{record.id}</span>
+                           <span className="font-mono text-xs font-bold text-slate-400 group-hover:text-amber-600 transition-colors">#{record.id}</span>
                         </TableCell>
                         <TableCell className="px-6 py-5">
                           <div className="flex flex-col min-w-max">
@@ -415,7 +415,7 @@ export default function YouthPage() {
                               {record.full_name}
                             </span>
                             <div className="flex items-center gap-1.5 mt-0.5 text-slate-400 font-bold">
-                              <span className="text-[10px] uppercase tracking-wider">{record.gender} • {record.age} YRS</span>
+                              <span className="text-xs uppercase tracking-wider">{record.gender} • {record.age} YRS</span>
                             </div>
                           </div>
                         </TableCell>
@@ -433,12 +433,12 @@ export default function YouthPage() {
                           </span>
                         </TableCell>
                         <TableCell className="px-6 py-5">
-                          <Badge className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 border shadow-xs ${getEmploymentBadgeClass(record.employment_status)}`}>
+                          <Badge className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 border shadow-xs ${getEmploymentBadgeClass(record.employment_status)}`}>
                             {formatEmploymentStatus(record.employment_status)}
                           </Badge>
                         </TableCell>
                         <TableCell className="px-6 py-5">
-                          <Badge className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 border shadow-xs ${getStatusBadgeClass(record.status)}`}>
+                          <Badge className={`text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 border shadow-xs ${getStatusBadgeClass(record.status)}`}>
                             {record.status}
                           </Badge>
                         </TableCell>
@@ -496,7 +496,7 @@ export default function YouthPage() {
           {/* Improved Pagination Matrix */}
           {pagination && pagination.total_pages > 1 && (
             <div className="flex items-center justify-between px-6 py-4 bg-slate-50/50 border-t border-slate-100">
-               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+               <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Showing <span className="text-slate-950">{(pagination.page - 1) * pagination.limit + 1}</span> to <span className="text-slate-950">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of <span className="text-slate-950">{pagination.total}</span>
                 </div>
 

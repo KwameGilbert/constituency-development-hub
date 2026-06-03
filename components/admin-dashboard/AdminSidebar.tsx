@@ -68,8 +68,12 @@ export function AdminSidebar() {
     router.push("/login");
   };
 
-  const isActive = (path: string) =>
-    pathname === path || pathname.startsWith(`${path}/`);
+  const isActive = (path: string) => {
+    if (path === "/admin-dashboard") {
+      return pathname === "/admin-dashboard" || pathname === "/admin-dashboard/";
+    }
+    return pathname === path || pathname.startsWith(`${path}/`);
+  };
 
   return (
     <Sidebar

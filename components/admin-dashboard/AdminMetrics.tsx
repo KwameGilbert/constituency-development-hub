@@ -211,13 +211,13 @@ export function AdminMetrics() {
                 <IconComponent className="w-6 h-6 stroke-[2.5px]" />
               </div>
               <div className="flex flex-col">
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
                   {metric.label}
                 </p>
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
                   {metric.value}
                 </h3>
-                <p className="text-[10px] text-slate-500 mt-1 font-medium">{metric.subtitle}</p>
+                <p className="text-xs text-slate-500 mt-1 font-medium">{metric.subtitle}</p>
               </div>
             </CardContent>
             {/* Background Decorative Icon */}
