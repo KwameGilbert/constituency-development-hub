@@ -14,7 +14,7 @@ export function AgentsHeader() {
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
               Agent Registry
             </h1>
             <Badge
@@ -24,7 +24,7 @@ export function AgentsHeader() {
               Secure
             </Badge>
           </div>
-          <p className="text-xs text-slate-400 font-bold uppercase tracking-[0.2em] font-mono mt-0.5">
+          <p className="text-xs text-slate-400 font-semibold uppercase tracking-[0.2em] font-mono mt-0.5">
             Operational Intelligence Center
           </p>
         </div>
