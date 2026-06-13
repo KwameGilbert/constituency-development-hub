@@ -67,16 +67,16 @@ export function AgentDetails({ agentId = "1" }: { agentId?: string }) {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] font-mono">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] font-mono">
               Mission Profile
             </span>
           </div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-3xl font-bold text-[#1e1b4b] tracking-tight">
             Operative Intelligence
           </h2>
-          <p className="text-sm text-slate-500 font-medium">
-            Detailed performance telemetry and field credentials für{" "}
-            <span className="text-indigo-600 font-bold">{agent.user.name}</span>
+          <p className="text-sm text-muted-foreground font-medium">
+            Detailed performance telemetry and field credentials for{" "}
+            <span className="text-[#1e1b4b] font-bold">{agent.user.name}</span>
           </p>
         </div>
       </div>

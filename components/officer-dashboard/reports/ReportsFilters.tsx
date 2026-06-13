@@ -81,7 +81,7 @@ export function ReportsFilters() {
         </div>
       </div>
       <div className="flex justify-end gap-3 pt-2">
-        <Button className="bg-[#312e81] hover:bg-[#312e81]/90 gap-2">
+        <Button className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 gap-2">
           <Filter className="h-4 w-4" />
           Apply Filters
         </Button>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
-import { Save, Bell, Shield, Globe, Mail, Smartphone, Settings2, ShieldCheck, Zap, Activity } from "lucide-react";
+import { Save, Bell, Shield, Globe, Mail, Smartphone, Settings2, ShieldCheck, Zap, Activity, ShieldAlert, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,14 +26,26 @@ import {
 
 export default function SystemSettingsPage() {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-hidden">
       <AdminHeader
         title="System Protocol"
         description="Global configuration suite for system-wide operational parameters and security policies"
         roleAbbr="MP"
+        dropdownItems={[
+          {
+            label: "System Audit",
+            href: "/admin-dashboard/audit",
+            icon: ShieldAlert,
+          },
+          {
+            label: "Logout",
+            icon: LogOut,
+            className: "text-red-500 font-bold",
+          },
+        ]}
       />
 
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
         <div className="max-w-[1600px] mx-auto w-full space-y-8">
            {/* Strategic Title Section */}
            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">

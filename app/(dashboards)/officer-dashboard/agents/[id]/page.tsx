@@ -8,9 +8,9 @@ export default async function AgentDetailsPage({
 }) {
   const { id } = await params;
   return (
-    <div className="flex-1 flex flex-col min-h-screen bg-slate-50/50">
+    <div className="flex-1 flex flex-col h-full w-full overflow-y-auto custom-scrollbar bg-slate-50/50">
       <AgentsHeader />
-      <main className="flex-1 p-6 sm:p-8">
+      <main className="flex-1 p-6 sm:p-8 pb-20">
         <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <AgentDetails agentId={id} />
         </div>

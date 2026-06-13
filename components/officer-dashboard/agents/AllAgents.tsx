@@ -130,14 +130,14 @@ export function AllAgents() {
       <Card className="border-slate-200/60 shadow-sm overflow-hidden">
         <div className="p-4 sm:p-6 space-y-6 bg-slate-50/50">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-slate-800 flex items-center gap-2">
-              <Search className="h-4 w-4 text-indigo-500" />
+            <h3 className="font-bold text-[#1e1b4b] text-lg flex items-center gap-2">
+              <Search className="h-4 w-4 text-[#1e1b4b]" />
               Find Agents
             </h3>
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 text-slate-500 hover:text-indigo-600"
+              className="h-8 text-muted-foreground hover:text-[#1e1b4b]"
               onClick={() => setShowFilters(!showFilters)}
             >
               <span className="text-xs font-semibold uppercase tracking-wider mr-2">
@@ -152,7 +152,7 @@ export function AllAgents() {
           {showFilters && (
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="lg:col-span-2 space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1 font-mono">
                   Agent Search
                 </label>
                 <div className="relative group">
@@ -162,12 +162,12 @@ export function AllAgents() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-[#1e1b4b] transition-colors" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1 font-mono">
                   Agent Status
                 </label>
                 <Select
@@ -199,7 +199,7 @@ export function AllAgents() {
                 </Button>
                 <Button
                   size="sm"
-                  className="h-10 px-6 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm gap-2 rounded-lg"
+                  className="h-10 px-6 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 shadow-sm gap-2 rounded-lg"
                   onClick={() => fetchAgents()}
                 >
                   Filter Results
@@ -257,10 +257,10 @@ export function AllAgents() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-sm font-bold text-slate-900 leading-none mb-1">
+                        <p className="text-sm font-bold text-[#1e1b4b] leading-none mb-1">
                           {agent.user?.name || "Unknown"}
                         </p>
-                        <p className="text-[10px] text-slate-500 font-medium">
+                        <p className="text-[10px] text-muted-foreground font-medium">
                           {agent.agent_code}
                         </p>
                       </div>
@@ -388,10 +388,10 @@ export function AllAgents() {
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col">
-                            <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                            <span className="text-sm font-bold text-[#1e1b4b] group-hover:text-[#1e1b4b]/80 transition-colors">
                               {agent.user?.name || "Unknown"}
                             </span>
-                            <span className="text-[11px] text-slate-500 font-medium">
+                            <span className="text-[11px] text-muted-foreground font-medium">
                               {agent.user?.email}
                             </span>
                           </div>

@@ -9,29 +9,30 @@ import { RecentActivityTable } from "@/components/officer-dashboard/reports/Rece
 
 export default function ReportsPage() {
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full overflow-hidden bg-slate-50/50">
       <ReportsHeader />
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="p-6 space-y-6 pb-20">
+          <ReportsFilters />
 
-      <div className="p-6 space-y-6">
-        <ReportsFilters />
+          <div className="bg-white p-6 rounded-lg border shadow-sm text-center space-y-2">
+            <h2 className="text-xl font-bold text-[#1e1b4b]">
+              System Performance Report
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Report Period: Jan 01, 2000 - Dec 04, 2025
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Generated on Dec 04, 2025 22:53 by Officer.Rock
+            </p>
+          </div>
 
-        <div className="bg-white p-6 rounded-lg border shadow-sm text-center space-y-2">
-          <h2 className="text-xl font-bold text-[#1e1b4b]">
-            System Performance Report
-          </h2>
-          <p className="text-muted-foreground">
-            Report Period: Jan 01, 2000 - Dec 04, 2025
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Generated on Dec 04, 2025 22:53 by Officer.Rock
-          </p>
+          <ReportsMetrics />
+          <ReportsCharts />
+          <TopAgentPerformance />
+          <IssuesBreakdown />
+          <RecentActivityTable />
         </div>
-
-        <ReportsMetrics />
-        <ReportsCharts />
-        <TopAgentPerformance />
-        <IssuesBreakdown />
-        <RecentActivityTable />
       </div>
     </div>
   );

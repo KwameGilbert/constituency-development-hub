@@ -53,7 +53,7 @@ export function ReportsMetrics() {
       {/* Total Issues */}
       <Card>
         <CardContent className="p-6 flex items-center gap-4">
-          <div className="p-3 bg-blue-100 rounded-lg text-blue-600">
+          <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
             <FileText className="h-6 w-6" />
           </div>
           <div>
@@ -70,7 +70,7 @@ export function ReportsMetrics() {
       {/* Pending Issues */}
       <Card>
         <CardContent className="p-6 flex items-center gap-4">
-          <div className="p-3 bg-yellow-100 rounded-lg text-yellow-600">
+          <div className="p-3 bg-yellow-50 rounded-lg text-yellow-600">
             <Clock className="h-6 w-6" />
           </div>
           <div>
@@ -87,7 +87,7 @@ export function ReportsMetrics() {
       {/* Resolved Issues */}
       <Card>
         <CardContent className="p-6 flex items-center gap-4">
-          <div className="p-3 bg-green-100 rounded-lg text-green-600">
+          <div className="p-3 bg-green-50 rounded-lg text-green-600">
             <CheckCircle className="h-6 w-6" />
           </div>
           <div>
@@ -104,7 +104,7 @@ export function ReportsMetrics() {
       {/* Avg Resolution Time */}
       <Card>
         <CardContent className="p-6 flex items-center gap-4">
-          <div className="p-3 bg-purple-100 rounded-lg text-purple-600">
+          <div className="p-3 bg-purple-50 rounded-lg text-purple-600">
             <TrendingUp className="h-6 w-6" />
           </div>
           <div>

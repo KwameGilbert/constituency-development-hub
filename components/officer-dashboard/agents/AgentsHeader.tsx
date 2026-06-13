@@ -14,7 +14,7 @@ export function AgentsHeader() {
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-bold text-[#1e1b4b] tracking-tight">
               Agent Registry
             </h1>
             <Badge
@@ -24,14 +24,14 @@ export function AgentsHeader() {
               Secure
             </Badge>
           </div>
-          <p className="text-xs text-slate-400 font-semibold uppercase tracking-[0.2em] font-mono mt-0.5">
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-[0.2em] font-mono mt-0.5">
             Operational Intelligence Center
           </p>
         </div>
       </div>
       <div className="flex items-center gap-3">
         <Link href="/officer-dashboard/agents/add">
-          <Button className="h-11 px-6 bg-indigo-600 hover:bg-slate-900 text-white gap-3 rounded-xl shadow-lg shadow-indigo-100 hover:shadow-slate-200 transition-all font-bold group">
+          <Button className="h-11 px-6 bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 text-white gap-3 rounded-xl shadow-lg shadow-indigo-950/10 transition-all font-bold group">
             <div className="p-1 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
               <UserPlus className="h-4 w-4" />
             </div>

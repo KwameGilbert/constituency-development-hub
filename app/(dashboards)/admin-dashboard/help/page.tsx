@@ -7,7 +7,7 @@ import { HelpCircle, ShieldAlert, LogOut } from "lucide-react";
 
 export default function HelpPage() {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-hidden">
       <AdminHeader
         title="Intelligence Center"
         description="Unified documentation hub, operational guidance, and strategic support registry"
@@ -26,7 +26,7 @@ export default function HelpPage() {
         ]}
       />
 
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
         <div className="max-w-[1600px] mx-auto w-full space-y-8">
            <div className="flex items-center gap-4">
             <div className="w-1.5 h-10 bg-amber-500 rounded-full" />

@@ -118,7 +118,7 @@ export function ReportsHeader() {
       </div>
       <div className="flex items-center gap-3 print:hidden">
         <Button
-          className="bg-[#312e81] hover:bg-[#312e81]/90 gap-2"
+          className="bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 gap-2"
           onClick={handleExport}
           disabled={isExporting}
         >
