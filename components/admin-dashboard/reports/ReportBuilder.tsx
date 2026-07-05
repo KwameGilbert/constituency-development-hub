@@ -150,11 +150,11 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
       <CardHeader className="p-8 bg-slate-950 text-white relative">
         <div className="absolute top-8 left-8 w-1 h-8 bg-amber-500 rounded-full" />
         <div className="pl-6">
-           <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+           <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-3">
              <Settings2 className="w-6 h-6 text-amber-500" />
              Report Synthesis Matrix
            </CardTitle>
-           <CardDescription className="text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-1">
+           <CardDescription className="text-sm font-normal text-muted-foreground mt-1">
              Declare data source parameters and strategic fields for contextual ledger generation
            </CardDescription>
         </div>
@@ -167,22 +167,22 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-2 mb-2">
                <div className="w-1 h-4 bg-amber-500 rounded-full" />
-               <Label htmlFor="report-type" className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Source Registry</Label>
+               <Label htmlFor="report-type" className="text-base font-semibold text-slate-800">Source Registry</Label>
             </div>
             <Select
               value={reportType}
               onValueChange={(val) => handleReportTypeChange(val as ReportType)}
             >
-              <SelectTrigger id="report-type" className="h-12 rounded-xl bg-slate-50 border-none font-black text-slate-950 uppercase tracking-widest text-[10px]">
+              <SelectTrigger id="report-type" className="h-12 rounded-xl bg-slate-50 border-none font-medium text-slate-900 text-sm">
                 <SelectValue placeholder="Select context" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-slate-100">
-                <SelectItem value="issues" className="font-bold uppercase text-[10px] tracking-widest">Issues Registry</SelectItem>
-                <SelectItem value="projects" className="font-bold uppercase text-[10px] tracking-widest">Project Ledger</SelectItem>
-                <SelectItem value="users" className="font-bold uppercase text-[10px] tracking-widest">Personnel Matrix</SelectItem>
+                <SelectItem value="issues" className="font-normal text-sm">Issues Registry</SelectItem>
+                <SelectItem value="projects" className="font-normal text-sm">Project Ledger</SelectItem>
+                <SelectItem value="users" className="font-normal text-sm">Personnel Matrix</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-[10px] font-medium text-slate-400 italic px-2">Primary data cluster for strategic synthesis.</p>
+            <p className="text-xs font-normal text-muted-foreground italic px-2">Primary data cluster for strategic synthesis.</p>
           </div>
 
           {/* Columns Selection Matrix */}
@@ -190,11 +190,11 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                  <div className="w-1 h-4 bg-amber-500 rounded-full" />
-                 <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Metric Visibility</Label>
+                 <Label className="text-base font-semibold text-slate-800">Metric Visibility</Label>
               </div>
               <div className="flex items-center gap-4">
-                <button onClick={selectAllColumns} className="text-[10px] font-black uppercase text-amber-600 tracking-widest hover:text-amber-700 transition-colors">Select All</button>
-                <button onClick={clearAllColumns} className="text-[10px] font-black uppercase text-slate-400 tracking-widest hover:text-slate-600 transition-colors">Clear</button>
+                <button onClick={selectAllColumns} className="text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors">Select All</button>
+                <button onClick={clearAllColumns} className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors">Clear</button>
               </div>
             </div>
 
@@ -208,7 +208,7 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
                   />
                   <Label
                     htmlFor={col.id}
-                    className="text-[11px] font-bold text-slate-600 uppercase tracking-wider cursor-pointer group-hover:text-slate-950 transition-colors"
+                    className="text-sm font-normal text-slate-700 cursor-pointer group-hover:text-slate-950 transition-colors"
                   >
                     {col.label}
                   </Label>
@@ -231,32 +231,32 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
                <div className="p-2 bg-white rounded-xl shadow-sm">
                   <Filter className="w-4 h-4 text-amber-500" />
                </div>
-               <span className="text-[10px] font-black uppercase text-slate-950 tracking-[0.2em]">Parameter Refinement</span>
+               <span className="text-base font-semibold text-slate-800">Parameter Refinement</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Lifecycle Status</Label>
+                <Label className="text-sm font-medium text-slate-700 ml-1">Lifecycle Status</Label>
                 <Select
                   value={filters.status}
                   onValueChange={(val) => setFilters((f) => ({ ...f, status: val }))}
                 >
-                  <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-bold text-xs">
+                  <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-medium text-sm">
                     <SelectValue placeholder="Unified Status" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-slate-100">
-                    <SelectItem value="any" className="font-bold text-xs uppercase tracking-widest">Unified</SelectItem>
-                    <SelectItem value="pending" className="font-bold text-xs uppercase tracking-widest">Pending</SelectItem>
-                    <SelectItem value="in_progress" className="font-bold text-xs uppercase tracking-widest">Active</SelectItem>
-                    <SelectItem value="resolved" className="font-bold text-xs uppercase tracking-widest">Resolved</SelectItem>
-                    <SelectItem value="closed" className="font-bold text-xs uppercase tracking-widest">Archived</SelectItem>
+                    <SelectItem value="any" className="font-normal text-sm">Unified</SelectItem>
+                    <SelectItem value="pending" className="font-normal text-sm">Pending</SelectItem>
+                    <SelectItem value="in_progress" className="font-normal text-sm">Active</SelectItem>
+                    <SelectItem value="resolved" className="font-normal text-sm">Resolved</SelectItem>
+                    <SelectItem value="closed" className="font-normal text-sm">Archived</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               {reportType === "issues" && (
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Threat Level</Label>
+                  <Label className="text-sm font-medium text-slate-700 ml-1">Threat Level</Label>
                   <Select
                     value={filters.severity}
                     onValueChange={(val) => setFilters((f) => ({ ...f, severity: val }))}
@@ -265,10 +265,10 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
                       <SelectValue placeholder="All severities" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-100">
-                      <SelectItem value="any" className="font-bold text-xs uppercase tracking-widest">Unified</SelectItem>
-                      <SelectItem value="high" className="font-bold text-xs uppercase tracking-widest text-red-600">Critical</SelectItem>
-                      <SelectItem value="medium" className="font-bold text-xs uppercase tracking-widest text-amber-600">Standard</SelectItem>
-                      <SelectItem value="low" className="font-bold text-xs uppercase tracking-widest text-emerald-600">Operational</SelectItem>
+                      <SelectItem value="any" className="font-normal text-sm">Unified</SelectItem>
+                      <SelectItem value="high" className="font-normal text-sm text-red-600">Critical</SelectItem>
+                      <SelectItem value="medium" className="font-normal text-sm text-amber-600">Standard</SelectItem>
+                      <SelectItem value="low" className="font-normal text-sm text-emerald-600">Operational</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -276,7 +276,7 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
               
               {reportType === "users" && (
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contextual Role</Label>
+                  <Label className="text-sm font-medium text-slate-700 ml-1">Contextual Role</Label>
                   <Select
                     value={filters.role || "any"}
                     onValueChange={(val) => setFilters((f) => ({ ...f, role: val }))}
@@ -285,12 +285,12 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
                       <SelectValue placeholder="All roles" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-slate-100">
-                      <SelectItem value="any" className="font-bold text-xs uppercase tracking-widest">Unified</SelectItem>
-                      <SelectItem value="admin" className="font-bold text-xs uppercase tracking-widest">Admin</SelectItem>
-                      <SelectItem value="web_admin" className="font-bold text-xs uppercase tracking-widest">Web Admin</SelectItem>
-                      <SelectItem value="officer" className="font-bold text-xs uppercase tracking-widest">Officer</SelectItem>
-                      <SelectItem value="agent" className="font-bold text-xs uppercase tracking-widest">Agent</SelectItem>
-                      <SelectItem value="task_force" className="font-bold text-xs uppercase tracking-widest">Task Force</SelectItem>
+                      <SelectItem value="any" className="font-normal text-sm">Unified</SelectItem>
+                      <SelectItem value="admin" className="font-normal text-sm">Admin</SelectItem>
+                      <SelectItem value="web_admin" className="font-normal text-sm">Web Admin</SelectItem>
+                      <SelectItem value="officer" className="font-normal text-sm">Officer</SelectItem>
+                      <SelectItem value="agent" className="font-normal text-sm">Agent</SelectItem>
+                      <SelectItem value="task_force" className="font-normal text-sm">Task Force</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -307,26 +307,26 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
                <div className="p-2 bg-white rounded-xl shadow-sm">
                   <Calendar className="w-4 h-4 text-amber-500" />
                </div>
-               <span className="text-[10px] font-black uppercase text-slate-950 tracking-[0.2em]">Temporal Scope</span>
+               <span className="text-base font-semibold text-slate-800">Temporal Scope</span>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Period Assignment</Label>
+              <Label className="text-sm font-medium text-slate-700 ml-1">Period Assignment</Label>
               <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-bold text-xs">
+                <SelectTrigger className="h-11 bg-white border-slate-100 rounded-xl font-medium text-sm">
                   <SelectValue placeholder="Full Registry" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-slate-100">
-                  <SelectItem value="all" className="font-bold text-xs uppercase tracking-widest">Full Registry</SelectItem>
-                  <SelectItem value="today" className="font-bold text-xs uppercase tracking-widest">Last 24h</SelectItem>
-                  <SelectItem value="week" className="font-bold text-xs uppercase tracking-widest">Active Week</SelectItem>
-                  <SelectItem value="month" className="font-bold text-xs uppercase tracking-widest">Fiscal Month</SelectItem>
-                  <SelectItem value="quarter" className="font-bold text-xs uppercase tracking-widest">Quarterly</SelectItem>
-                  <SelectItem value="year" className="font-bold text-xs uppercase tracking-widest">Calendar Year</SelectItem>
+                  <SelectItem value="all" className="font-normal text-sm">Full Registry</SelectItem>
+                  <SelectItem value="today" className="font-normal text-sm">Last 24h</SelectItem>
+                  <SelectItem value="week" className="font-normal text-sm">Active Week</SelectItem>
+                  <SelectItem value="month" className="font-normal text-sm">Fiscal Month</SelectItem>
+                  <SelectItem value="quarter" className="font-normal text-sm">Quarterly</SelectItem>
+                  <SelectItem value="year" className="font-normal text-sm">Calendar Year</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <p className="text-[10px] font-medium text-slate-400 italic leading-relaxed pt-2">
+            <p className="text-xs font-normal text-muted-foreground italic leading-relaxed pt-2">
               Note: Temporal filters scope content based on entry initialization (created_at) by system default.
             </p>
           </div>
@@ -336,7 +336,7 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
       <CardFooter className="p-8 bg-slate-50/50 border-t border-slate-50 flex-row justify-end gap-4">
         <Button
           variant="outline"
-          className="h-12 px-6 rounded-2xl bg-white border-slate-200 text-slate-700 font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 flex items-center gap-3 transition-all"
+          className="h-12 px-6 rounded-2xl bg-white border-slate-200 text-slate-700 font-medium text-sm hover:bg-slate-50 flex items-center gap-3 transition-all"
           onClick={handlePreview}
           disabled={loading}
         >
@@ -350,7 +350,7 @@ export function ReportBuilder({ onPreview }: ReportBuilderProps) {
           Load Preview
         </Button>
         <Button
-          className="h-12 px-8 rounded-2xl bg-slate-950 text-white hover:bg-slate-800 font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-slate-900/20"
+          className="h-12 px-8 rounded-2xl bg-slate-950 text-white hover:bg-slate-800 font-medium text-sm flex items-center gap-3 shadow-xl shadow-slate-900/20"
           onClick={handleExport}
           disabled={exporting}
         >

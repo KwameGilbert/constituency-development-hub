@@ -53,7 +53,7 @@ export default function AdminIssuesPage() {
             label: "Analytics",
             href: "/admin-dashboard/analytics",
             icon: BarChart3,
-            className: "bg-slate-900 text-white hover:bg-slate-800 shadow-lg font-bold flex items-center gap-2 rounded-2xl",
+            className: "bg-slate-900 text-white hover:bg-slate-800 shadow-lg font-medium text-sm flex items-center gap-2 rounded-2xl",
           },
         ]}
       />

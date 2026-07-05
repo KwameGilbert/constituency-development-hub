@@ -89,7 +89,7 @@ export function AdminHeader({
           
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight">
+              <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#1e1b4b' }}>
                 {title}
               </h1>
               <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950 uppercase tracking-widest border border-amber-600/20">
@@ -98,7 +98,7 @@ export function AdminHeader({
               </span>
             </div>
             {description && (
-              <p className="text-xs text-slate-500 mt-1 hidden sm:block font-medium">
+              <p className="text-base font-normal text-muted-foreground mt-1 hidden sm:block">
                 {description}
               </p>
             )}
@@ -111,7 +111,7 @@ export function AdminHeader({
               <Button
                 asChild={!!primaryButton.href}
                 onClick={primaryButton.onClick}
-                className={`h-10 px-4 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                className={`h-10 px-4 text-sm font-medium rounded-xl transition-all duration-200 ${
                   primaryButton.className || "bg-amber-500 text-slate-950 hover:bg-amber-600 shadow-md shadow-amber-500/20"
                 }`}
               >

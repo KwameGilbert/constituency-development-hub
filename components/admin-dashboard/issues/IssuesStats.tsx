@@ -107,19 +107,21 @@ export function IssuesStats() {
         {metrics.map((metric, index) => (
           <Card 
             key={index} 
-            className="border-none shadow-md shadow-slate-200/40 group hover:shadow-lg transition-all duration-300 overflow-hidden relative"
+            className="border-none shadow-sm shadow-slate-200/50 group hover:shadow-md transition-all duration-200 rounded-2xl overflow-hidden bg-white"
           >
-            <CardContent className="px-5 py-6 flex items-center gap-4 relative z-10">
-              <div className={`p-3 rounded-2xl bg-linear-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
-                <metric.icon className="w-6 h-6 stroke-[2.5px]" />
+            <CardContent className="p-5 flex items-center gap-4">
+              <div className={`shrink-0 p-3 rounded-xl bg-linear-to-br ${metric.bg} ${metric.color} group-hover:scale-105 transition-transform duration-200`}>
+                <metric.icon className="w-5 h-5 stroke-2" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-slate-900 leading-tight">
-                  {metric.value}
-                </span>
-                <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mt-0.5">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider truncate mb-1">
                   {metric.label}
                 </p>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
+                    {metric.value}
+                  </span>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -129,7 +131,7 @@ export function IssuesStats() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Status Breakdown */}
         <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
-          <div className="bg-white/50 border-b border-slate-100/60 p-4 font-bold text-sm text-slate-800 flex items-center gap-2">
+          <div className="bg-white/50 border-b border-slate-100/60 p-4 text-lg font-semibold text-slate-800 tracking-tight flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-amber-500" />
             Status Breakdown
           </div>
@@ -140,7 +142,7 @@ export function IssuesStats() {
                   key={status}
                   className="p-3 rounded-xl border border-slate-50 bg-slate-50/30 hover:bg-slate-50 transition-colors"
                 >
-                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1 truncate">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 truncate">
                     {status.replace(/_/g, " ")}
                   </p>
                   <p className="text-xl font-bold text-slate-900">{count}</p>
@@ -152,7 +154,7 @@ export function IssuesStats() {
 
         {/* Priority Distribution */}
         <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
-          <div className="bg-white/50 border-b border-slate-100/60 p-4 font-bold text-sm text-slate-800 flex items-center gap-2">
+          <div className="bg-white/50 border-b border-slate-100/60 p-4 text-lg font-semibold text-slate-800 tracking-tight flex items-center gap-2">
             <Activity className="w-4 h-4 text-amber-500" />
             Priority Distribution
           </div>
@@ -172,7 +174,7 @@ export function IssuesStats() {
                     className={`p-3 rounded-xl border border-transparent ${priorityConfig.bg} transition-all`}
                   >
                     <div className="flex items-center justify-between">
-                      <p className={`text-[10px] font-bold uppercase ${priorityConfig.color}`}>
+                      <p className={`text-xs font-bold uppercase tracking-wider ${priorityConfig.color}`}>
                         {priority}
                       </p>
                       <p className={`text-xl font-bold ${priorityConfig.color}`}>{count}</p>

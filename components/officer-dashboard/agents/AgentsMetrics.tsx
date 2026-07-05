@@ -68,32 +68,32 @@ export function AgentsMetrics() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {metrics.map((metric, index) => (
         <Card
           key={index}
-          className="border border-slate-100 shadow-sm overflow-hidden group hover:shadow-md transition-all duration-300 rounded-2xl"
+          className="border border-slate-100 shadow-sm overflow-hidden group hover:shadow-md transition-all duration-300 rounded-xl"
         >
-          <CardContent className="px-5 py-6 flex items-center gap-4 relative bg-white">
+          <CardContent className="p-4 flex items-center gap-3 relative bg-white">
             <div
-              className={`p-3 rounded-2xl ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}
+              className={`p-2.5 rounded-xl ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}
             >
-              <metric.icon className="h-6 w-6 stroke-[2.5px]" />
+              <metric.icon className="h-5 w-5 stroke-[2.5px]" />
             </div>
             <div className="flex flex-col z-10">
-              <span className="text-2xl font-bold text-slate-900 leading-none flex items-center gap-1.5">
-                {loading ? <Skeleton className="h-8 w-16" /> : metric.value}
-                {!loading && <TrendingUp className="h-4 w-4 text-emerald-500" />}
+              <span className="text-xl font-bold text-slate-900 leading-none flex items-center gap-1.5">
+                {loading ? <Skeleton className="h-6 w-12" /> : metric.value}
+                {!loading && <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />}
               </span>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-1.5">
+              <div className="text-xs font-semibold text-slate-950 mt-1">
                 {metric.label}
-              </p>
-              <p className="text-[10px] text-muted-foreground font-medium mt-0.5">
+              </div>
+              <div className="text-xs text-muted-foreground mt-0.5">
                 {metric.description}
-              </p>
+              </div>
             </div>
             <div className="absolute top-0 right-0 p-1 opacity-5 group-hover:opacity-10 transition-opacity">
-              <metric.icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
+              <metric.icon className="h-12 w-12 -mr-3 -mt-3 rotate-12" />
             </div>
           </CardContent>
         </Card>

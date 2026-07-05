@@ -93,7 +93,7 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
       <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white/50 border-b border-slate-100/60 p-5">
-          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+          <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
             Issues Status Distribution
           </CardTitle>
           <Link
@@ -151,7 +151,7 @@ export function AdminCharts({ chartsData, loading, error }: AdminChartsProps) {
 
       <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between pb-2 bg-white/50 border-b border-slate-100/60 p-5">
-          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+          <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
             Monthly Resolution Trends
           </CardTitle>
           <Link

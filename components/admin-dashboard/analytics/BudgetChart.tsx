@@ -59,7 +59,7 @@ export function BudgetChart({ chartsData, loading, error }: BudgetChartProps) {
       {/* Budget Distribution Bar Chart */}
       <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
         <CardHeader className="bg-white/50 border-b border-slate-100/60 p-5">
-          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+          <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
             Budget Allocation
           </CardTitle>
         </CardHeader>
@@ -100,7 +100,7 @@ export function BudgetChart({ chartsData, loading, error }: BudgetChartProps) {
       {/* Budget Distribution Pie Chart */}
       <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
         <CardHeader className="bg-white/50 border-b border-slate-100/60 p-5">
-          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+          <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
             Budget Distribution Share
           </CardTitle>
         </CardHeader>

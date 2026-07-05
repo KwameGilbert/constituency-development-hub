@@ -32,65 +32,64 @@ export function AgentProfileCard({ agent }: AgentProfileCardProps) {
   const statusClass = statusColors[status] || statusColors.inactive;
 
   return (
-    <Card className="border-slate-200/60 shadow-xl shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
-      <CardContent className="p-8 flex flex-col items-center text-center">
-        <div className="relative mb-6">
-          <div className="absolute inset-0 bg-indigo-500 blur-2xl opacity-10 rounded-full scale-110" />
-          <Avatar className="h-28 w-28 border-4 border-white shadow-xl relative z-10">
+    <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white">
+      <CardContent className="p-3 flex flex-col items-center text-center">
+        <div className="relative mb-3">
+          <Avatar className="h-16 w-16 border-2 border-slate-100 shadow-sm relative z-10">
             <AvatarImage
               src={agent.profile_image || undefined}
               className="object-cover"
             />
-            <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-3xl font-bold">
+            <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-xl font-bold">
               {agent.user.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div
-            className={`absolute bottom-2 right-2 h-5 w-5 rounded-full border-4 border-white ${status === "active" ? "bg-emerald-500" : "bg-slate-300"} z-20 shadow-sm`}
+            className={`absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full border-2 border-white ${status === "active" ? "bg-emerald-500" : "bg-slate-300"} z-20 shadow-sm`}
           />
         </div>
 
-        <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-tight">
+        <h2 className="text-base font-bold text-slate-900 tracking-tight leading-tight">
           {agent.user.name}
         </h2>
-        <div className="flex items-center gap-2 mt-1 mb-4">
-          <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest bg-indigo-50 px-2 py-0.5 rounded">
-            Operative
+        <div className="flex items-center gap-1.5 mt-0.5 mb-1.5">
+          <span className="text-[9px] font-semibold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+            Agent
           </span>
-          <span className="text-sm text-slate-400 font-mono">
+          <span className="text-xs text-slate-400 font-mono">
             {agent.agent_code}
           </span>
         </div>
 
         <Badge
           variant="outline"
-          className={`${statusClass} mb-8 capitalize px-4 py-1 rounded-full text-xs font-bold border`}
+          className={`${statusClass} mb-3.5 capitalize px-2 py-0 rounded-full text-[9px] font-bold border`}
         >
           {agent.user.status}
         </Badge>
 
-        <div className="w-full space-y-5 text-sm text-left border-t border-slate-100 pt-8">
+        <div className="w-full space-y-2.5 text-xs text-left border-t border-slate-100 pt-3">
           <div className="group">
-            <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">
-              Email Terminal
+            <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider mb-0.5">
+              Email
             </span>
-            <span className="font-bold text-slate-700 break-all group-hover:text-indigo-600 transition-colors cursor-pointer">
+            <span className="font-semibold text-slate-700 break-all transition-colors">
               {agent.user.email}
             </span>
           </div>
           <div className="group">
-            <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">
-              Mobile Uplink
+            <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider mb-0.5">
+              Phone
             </span>
-            <span className="font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">
+            <span className="font-semibold text-slate-700">
               {agent.user.phone || "No secure line"}
             </span>
           </div>
           <div className="group">
-            <span className="text-slate-400 block text-[10px] font-bold uppercase tracking-wider mb-1 font-mono">
-              Assigned Enclave
+            <span className="text-slate-400 block text-[10px] font-semibold uppercase tracking-wider mb-0.5">
+              Assigned Location
             </span>
-            <span className="font-bold text-slate-700 flex items-center gap-2 group-hover:text-amber-600 transition-colors">
+            <span className="font-semibold text-slate-700 flex items-center gap-1.5 transition-colors">
               {agent.assigned_location ? (
                 <>
                   <MapPin className="h-3.5 w-3.5 text-amber-500" />{" "}
@@ -101,12 +100,12 @@ export function AgentProfileCard({ agent }: AgentProfileCardProps) {
               )}
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-50">
+          <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-50">
             <div>
-              <span className="text-slate-400 block text-[9px] font-bold uppercase tracking-wider mb-0.5 font-mono">
+              <span className="text-slate-400 block text-[9px] font-semibold uppercase tracking-wider mb-0.5">
                 Enrollment
               </span>
-              <span className="font-bold text-slate-600 text-xs">
+              <span className="font-semibold text-slate-600 text-xs">
                 {new Date(agent.created_at).toLocaleDateString(undefined, {
                   month: "short",
                   day: "numeric",
@@ -115,16 +114,16 @@ export function AgentProfileCard({ agent }: AgentProfileCardProps) {
               </span>
             </div>
             <div className="text-right">
-              <span className="text-slate-400 block text-[9px] font-bold uppercase tracking-wider mb-0.5 font-mono">
-                Last Signal
+              <span className="text-slate-400 block text-[9px] font-semibold uppercase tracking-wider mb-0.5">
+                Last Active
               </span>
-              <span className="font-bold text-slate-600 text-xs">
+              <span className="font-semibold text-slate-600 text-xs">
                 {agent.last_active_at
                   ? new Date(agent.last_active_at).toLocaleDateString(
                       undefined,
                       { month: "short", day: "numeric" },
                     )
-                  : "No signals"}
+                  : "Never"}
               </span>
             </div>
           </div>

@@ -72,7 +72,7 @@ export function AdminRecentIssues() {
     return (
       <Card className="flex-1 border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100/60 p-5 bg-white/50">
-          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+          <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
             Recent Issues
           </CardTitle>
           <div className="h-4 bg-slate-100 rounded animate-pulse w-24"></div>
@@ -90,7 +90,7 @@ export function AdminRecentIssues() {
   return (
     <Card className="flex-1 border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100/60 p-5 bg-white/50">
-        <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+        <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
           Recent Issues
         </CardTitle>
         <Link
@@ -130,7 +130,7 @@ export function AdminRecentIssues() {
                         </Badge>
                       </div>
                     </div>
-                    <span className="text-xs text-slate-500 truncate mt-0.5 font-medium leading-relaxed" title={cleanupHtml(issue.description)}>
+                    <span className="text-xs font-normal text-muted-foreground truncate mt-0.5 leading-relaxed" title={cleanupHtml(issue.description)}>
                       {cleanupHtml(issue.description)}
                     </span>
                   </div>
@@ -154,7 +154,7 @@ export function AdminRecentIssues() {
                     <Badge className={`text-[10px] font-bold uppercase border justify-center ${getSeverityColor(issue.severity)}`}>
                       {issue.severity}
                     </Badge>
-                    <span className="text-xs text-slate-400 text-right font-medium">
+                    <span className="text-xs text-muted-foreground text-right font-normal">
                       {new Date(issue.date).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",

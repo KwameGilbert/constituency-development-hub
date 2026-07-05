@@ -290,7 +290,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
         <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 border-b border-slate-50">
           <div className="flex items-center gap-3">
             <div className="h-8 w-1 bg-indigo-500 rounded-sm" />
-            <h3 className="font-bold text-slate-900 tracking-tight">
+            <h3 className="text-lg font-semibold text-slate-800 tracking-tight">
               Issues Filters
             </h3>
           </div>
@@ -299,7 +299,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
               variant="ghost"
               size="sm"
               onClick={handleResetFilters}
-              className="text-xs font-semibold text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg px-4"
+              className="text-sm font-medium text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg px-4"
             >
               <RotateCcw className="h-3.5 w-3.5 mr-2" />
               Reset
@@ -324,7 +324,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
         {showFilters && (
           <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-5 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="md:col-span-4 lg:col-span-3 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+              <label className="text-sm font-medium text-slate-700 ml-1">
                 Search Keywords
               </label>
               <Input
@@ -336,7 +336,7 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
             </div>
 
             <div className="md:col-span-4 lg:col-span-3 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+              <label className="text-sm font-medium text-slate-700 ml-1">
                 Category
               </label>
               <Select
@@ -357,11 +357,11 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
             </div>
 
             <div className="md:col-span-4 lg:col-span-3 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+              <label className="text-sm font-medium text-slate-700 ml-1">
                 Status
               </label>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-sm font-medium">
                   <SelectValue placeholder="All Statuses" />
                 </SelectTrigger>
                 <SelectContent>
@@ -377,14 +377,14 @@ export function AllIssues({ readOnly = false }: AllIssuesProps) {
             </div>
 
             <div className="md:col-span-4 lg:col-span-3 space-y-2">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+              <label className="text-sm font-medium text-slate-700 ml-1">
                 Priority
               </label>
               <Select
                 value={selectedPriority}
                 onValueChange={setSelectedPriority}
               >
-                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-xs">
+                <SelectTrigger className="h-10 bg-slate-50/50 border-slate-200 focus:bg-white rounded-lg text-sm font-medium">
                   <SelectValue placeholder="All Priorities" />
                 </SelectTrigger>
                 <SelectContent>

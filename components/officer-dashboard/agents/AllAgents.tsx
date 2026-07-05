@@ -125,12 +125,12 @@ export function AllAgents() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Filter Section */}
       <Card className="border-slate-200/60 shadow-sm overflow-hidden">
-        <div className="p-4 sm:p-6 space-y-6 bg-slate-50/50">
+        <div className="p-3 sm:p-4 space-y-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-[#1e1b4b] text-lg flex items-center gap-2">
+            <h3 className="font-semibold text-[#1e1b4b] text-base flex items-center gap-2">
               <Search className="h-4 w-4 text-[#1e1b4b]" />
               Find Agents
             </h3>
@@ -152,7 +152,7 @@ export function AllAgents() {
           {showFilters && (
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="lg:col-span-2 space-y-2">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1 font-mono">
+                <label className="text-sm font-medium text-slate-700 pl-0.5">
                   Agent Search
                 </label>
                 <div className="relative group">
@@ -167,7 +167,7 @@ export function AllAgents() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1 font-mono">
+                <label className="text-sm font-medium text-slate-700 pl-0.5">
                   Agent Status
                 </label>
                 <Select
@@ -191,7 +191,7 @@ export function AllAgents() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-10 px-4 text-xs font-semibold text-slate-600 border-slate-200 hover:bg-slate-100 gap-2 rounded-lg"
+                  className="h-10 px-4 text-sm font-medium text-slate-600 border-slate-200 hover:bg-slate-100 gap-2 rounded-lg"
                   onClick={handleResetFilters}
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
@@ -199,7 +199,7 @@ export function AllAgents() {
                 </Button>
                 <Button
                   size="sm"
-                  className="h-10 px-6 text-xs font-bold text-white bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 shadow-sm gap-2 rounded-lg"
+                  className="h-10 px-6 text-sm font-medium text-white bg-[#1e1b4b] hover:bg-[#1e1b4b]/90 shadow-sm gap-2 rounded-lg"
                   onClick={() => fetchAgents()}
                 >
                   Filter Results
@@ -351,22 +351,22 @@ export function AllAgents() {
               <Table>
                 <TableHeader className="bg-slate-50/80 border-b border-slate-100">
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4 pl-6">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2.5 pl-4">
                       Agent Details
                     </TableHead>
-                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2.5">
                       Agent Code
                     </TableHead>
-                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2.5">
                       Location
                     </TableHead>
-                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2.5">
                       Reports
                     </TableHead>
-                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2.5">
                       Status
                     </TableHead>
-                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-4 text-right pr-6">
+                    <TableHead className="text-[10px] font-bold text-slate-500 uppercase tracking-widest py-2.5 text-right pr-4">
                       Management
                     </TableHead>
                   </TableRow>
@@ -377,9 +377,9 @@ export function AllAgents() {
                       key={agent.id}
                       className="group hover:bg-slate-50/50 transition-colors"
                     >
-                      <TableCell className="py-4 pl-6">
+                      <TableCell className="py-2.5 pl-4">
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9 border-2 border-white shadow-sm ring-1 ring-slate-100 group-hover:scale-105 transition-transform">
+                          <Avatar className="h-8 w-8 border-2 border-white shadow-sm ring-1 ring-slate-100 group-hover:scale-105 transition-transform">
                             <AvatarImage
                               src={agent.profile_image || undefined}
                             />
@@ -397,23 +397,23 @@ export function AllAgents() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-mono font-bold text-slate-600 bg-slate-100/80 px-2 py-1 rounded">
+                      <TableCell className="py-2.5">
+                        <span className="text-xs font-mono font-bold text-slate-600 bg-slate-100/80 px-2 py-0.5 rounded">
                           {agent.agent_code}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-2.5">
                         <p className="text-xs text-slate-600 font-medium truncate max-w-[150px]">
                           {agent.assigned_location}
                         </p>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-2.5">
                         <div className="flex items-center gap-2">
                           <div className="flex -space-x-1">
                             {[1, 2, 3].map((i) => (
                               <div
                                 key={i}
-                                className="h-5 w-5 rounded-full border border-white bg-indigo-50 flex items-center justify-center"
+                                className="h-4.5 w-4.5 rounded-full border border-white bg-indigo-50 flex items-center justify-center"
                               >
                                 <TrendingUp className="h-2.5 w-2.5 text-indigo-400" />
                               </div>
@@ -424,18 +424,18 @@ export function AllAgents() {
                           </span>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-2.5">
                         <Badge
-                          variant="outline"
-                          className={cn(
-                            "text-[10px] uppercase tracking-wider font-bold border-0",
-                            getStatusBadge(agent.user?.status || ""),
-                          )}
+                           variant="outline"
+                           className={cn(
+                             "text-[10px] uppercase tracking-wider font-bold border-0 py-0",
+                             getStatusBadge(agent.user?.status || ""),
+                           )}
                         >
                           {agent.user?.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right pr-6">
+                      <TableCell className="py-2.5 text-right pr-4">
                         <div className="flex justify-end gap-1.5">
                           <Link href={`/officer-dashboard/agents/${agent.id}`}>
                             <Button

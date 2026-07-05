@@ -131,7 +131,6 @@ interface RawIssue {
 
 export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("constituent-details");
   const [submitting, setSubmitting] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
 
@@ -366,9 +365,6 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
     fetchSubLocations();
   }, [formData.location, locations]);
 
-  const handleNext = (nextTab: string) => {
-    setActiveTab(nextTab);
-  };
 
   const updateField = (
     field: keyof FormData,
@@ -396,7 +392,6 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
 
     if (!formData.reporter_name || !formData.reporter_phone) {
       toast.error("Please provide constituent name and phone number");
-      setActiveTab("constituent-details");
       return false;
     }
 
@@ -524,508 +519,474 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px] mb-8 bg-slate-100">
-          <TabsTrigger
-            value="constituent-details"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
-          >
-            Constituent Details
-          </TabsTrigger>
-          <TabsTrigger
-            value="location"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
-          >
-            Location
-          </TabsTrigger>
-          <TabsTrigger
-            value="issue-details"
-            className="data-[state=active]:bg-white data-[state=active]:text-slate-900"
-          >
-            Issue Details
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Tab 1: Constituent Details */}
-        <TabsContent value="constituent-details" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Constituent Name" required>
-              <Input
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                value={formData.reporter_name || ""}
-                onChange={(e) => updateField("reporter_name", e.target.value)}
-              />
-            </FormItem>
-            <FormItem label="Phone Number" required>
-              <Input
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                placeholder="+233 ..."
-                value={formData.reporter_phone || ""}
-                onChange={(e) => updateField("reporter_phone", e.target.value)}
-              />
-            </FormItem>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Email Address">
-              <Input
-                type="email"
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                value={formData.reporter_email || ""}
-                onChange={(e) => updateField("reporter_email", e.target.value)}
-              />
-            </FormItem>
-            <FormItem label="Gender">
-              <Select
-                value={formData.reporter_gender || ""}
-                onValueChange={(v) => updateField("reporter_gender", v)}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          </div>
-
-          <FormItem label="Home Address">
-            <Input
-              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-              value={formData.reporter_address || ""}
-              onChange={(e) => updateField("reporter_address", e.target.value)}
-            />
-          </FormItem>
-
-          <div className="flex justify-between items-center pt-4">
-            <p className="text-sm text-red-500">* Required fields</p>
-            <Button
-              onClick={() => handleNext("location")}
-              className="bg-slate-900 hover:bg-slate-800 text-white"
-            >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
-        </TabsContent>
-
-        {/* Tab 2: Location */}
-        <TabsContent value="location" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Main Community" required>
-              <SearchableSelect
-                value={formData.location}
-                onChange={(v) => {
-                  const loc = locations.find((l) => l.name === v);
-                  setFormData((prev) => ({
-                    ...prev,
-                    location: v,
-                    community_id: loc?.id,
-                    suburb: "",
-                    suburb_id: undefined,
-                  }));
-                }}
-                options={locations.map((loc) => ({
-                  label: loc.name,
-                  value: loc.name,
-                }))}
-                placeholder={
-                  loadingData ? "Loading..." : "Select Main Community"
-                }
-                searchPlaceholder="Search communities..."
-                loading={loadingData}
-                disabled={loadingData}
-              />
-            </FormItem>
-            <FormItem label="Suburb">
-              <SearchableSelect
-                value={formData.suburb || ""}
-                onChange={(v) => {
-                  const loc = suburbs.find((l) => l.name === v);
-                  setFormData((prev) => ({
-                    ...prev,
-                    suburb: v,
-                    suburb_id: loc?.id,
-                  }));
-                }}
-                options={suburbs.map((loc) => ({
-                  label: loc.name,
-                  value: loc.name,
-                }))}
-                placeholder={
-                  !formData.location
-                    ? "Select Main Community first"
-                    : "Select Suburb (Optional)"
-                }
-                searchPlaceholder="Search suburbs..."
-                disabled={!formData.location || loadingSubLocations}
-                loading={loadingSubLocations}
-                emptyMessage="No suburb found."
-              />
-            </FormItem>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Specific Location Details">
-              <Input
-                placeholder="e.g., 'Near the old market'"
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-                value={formData.cottage || ""}
-                onChange={(e) => updateField("cottage", e.target.value)}
-              />
-            </FormItem>
-          </div>
-
-          <div className="flex justify-between items-center pt-4">
-            <p className="text-sm text-red-500">* Required fields</p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => handleNext("constituent-details")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <Button
-                onClick={() => handleNext("issue-details")}
-                className="bg-slate-900 hover:bg-slate-800 text-white"
-              >
-                Next <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Tab 3: Issue Details */}
-        <TabsContent value="issue-details" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Issue Title" required>
-              <Input
-                placeholder="Enter a clear and concise title"
-                value={formData.title}
-                onChange={(e) => updateField("title", e.target.value)}
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-              />
-            </FormItem>
-            <FormItem label="Impact Type" required>
-              <Select
-                value={formData.issue_type || "community_based"}
-                onValueChange={(v: "community_based" | "individual_based") => {
-                  updateField("issue_type", v);
-                  if (v === "individual_based") {
-                    updateField("people_affected", 1);
-                  }
-                }}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Impact Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="community_based">
-                    Community-Based Issue
-                  </SelectItem>
-                  <SelectItem value="individual_based">
-                    Individual Issue
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          </div>
-
-          <FormItem label="Description" required>
-            <RichTextEditor
-              value={formData.description}
-              onChange={(value) => updateField("description", value)}
-              placeholder="Describe the issue in detail..."
-              height={200}
-            />
-          </FormItem>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Category" required>
-              <Select
-                value={formData.category_id?.toString() || ""}
-                onValueChange={(v) => {
-                  const categoryId = parseInt(v);
-                  const selectedCat = categories.find(
-                    (c) => c.id === categoryId,
-                  );
-                  setFormData((prev) => ({
-                    ...prev,
-                    category_id: categoryId,
-                    category: selectedCat?.name || "",
-                    sector_id: undefined,
-                    sector: "",
-                    sub_sector_id: undefined,
-                    subsector: "",
-                  }));
-                }}
-                disabled={loadingData}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue
-                    placeholder={loadingData ? "Loading..." : "Select Category"}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id.toString()}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-            <FormItem label="Priority" required>
-              <Select
-                value={formData.priority}
-                onValueChange={(v: "low" | "medium" | "high" | "urgent") =>
-                  updateField("priority", v)
-                }
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Assign To Agent (Optional)">
-              <SearchableSelect
-                value={formData.agent_id?.toString() || ""}
-                onChange={(v) => {
-                  const id = v ? parseInt(v) : undefined;
-                  updateField("agent_id", id);
-                }}
-                options={agents.map((a) => ({
-                  label: `${a.name} (${a.email})`,
-                  value: a.id.toString(),
-                }))}
-                placeholder="Select Agent to handle this issue"
-                searchPlaceholder="Search agents..."
-                emptyMessage="No agent found."
-              />
-            </FormItem>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormItem label="Sector">
-              <Select
-                value={formData.sector_id?.toString() || ""}
-                onValueChange={(v) => {
-                  if (v === "placeholder" || v === "loading" || v === "empty")
-                    return;
-                  const sectorId = parseInt(v);
-                  const selectedSec = filteredSectors.find(
-                    (s) => s.id === sectorId,
-                  );
-                  setFormData((prev) => ({
-                    ...prev,
-                    sector_id: sectorId,
-                    sector: selectedSec?.name || "",
-                    sub_sector_id: undefined,
-                    subsector: "",
-                  }));
-                }}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Sector" />
-                </SelectTrigger>
-                <SelectContent>
-                  {!formData.category_id ? (
-                    <SelectItem value="placeholder" disabled>
-                      Select a category first
-                    </SelectItem>
-                  ) : loadingSectors ? (
-                    <SelectItem value="loading" disabled>
-                      Loading sectors...
-                    </SelectItem>
-                  ) : filteredSectors.length === 0 ? (
-                    <SelectItem value="empty" disabled>
-                      No sectors found for this category
-                    </SelectItem>
-                  ) : (
-                    filteredSectors.map((sec) => (
-                      <SelectItem key={sec.id} value={sec.id.toString()}>
-                        {sec.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </FormItem>
-            <FormItem label="Subsector">
-              <Select
-                value={formData.sub_sector_id?.toString() || ""}
-                onValueChange={(v) => {
-                  if (v === "placeholder" || v === "loading" || v === "empty")
-                    return;
-                  const subSectorId = parseInt(v);
-                  const selectedSubSec = subSectors.find(
-                    (s) => s.id === subSectorId,
-                  );
-                  updateField("sub_sector_id", subSectorId);
-                  updateField("subsector", selectedSubSec?.name || "");
-                }}
-              >
-                <SelectTrigger className="border-slate-200">
-                  <SelectValue placeholder="Select Subsector (Optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {!formData.sector_id ? (
-                    <SelectItem value="placeholder" disabled>
-                      Select a sector first
-                    </SelectItem>
-                  ) : loadingSubSectors ? (
-                    <SelectItem value="loading" disabled>
-                      Loading subsectors...
-                    </SelectItem>
-                  ) : subSectors.length === 0 ? (
-                    <SelectItem value="empty" disabled>
-                      No subsectors available
-                    </SelectItem>
-                  ) : (
-                    subSectors.map((sub) => (
-                      <SelectItem key={sub.id} value={sub.id.toString()}>
-                        {sub.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          </div>
-
-          {formData.issue_type === "community_based" && (
-            <FormItem label="People Affected (Approx.)" required>
-              <Input
-                type="number"
-                placeholder="e.g., 100"
-                value={formData.people_affected || ""}
-                onChange={(e) =>
-                  updateField(
-                    "people_affected",
-                    e.target.value ? parseInt(e.target.value) : undefined,
-                  )
-                }
-                className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
-              />
-            </FormItem>
-          )}
-
-          <FormItem label="Additional Notes">
-            <Textarea
-              className="border-slate-200 focus:border-slate-500 focus:ring-slate-500 min-h-[100px]"
-              value={formData.additional_notes || ""}
-              onChange={(e) => updateField("additional_notes", e.target.value)}
-              placeholder="Any other details that might be helpful..."
-            />
-          </FormItem>
-
-          <FormItem label="Issue Images">
-            <div className="mt-2 flex flex-wrap gap-4">
-              {/* Existing Images */}
-              {formData.images?.map((img, index) => (
-                <div
-                  key={`existing-${index}`}
-                  className="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 shadow-sm"
-                >
-                  <Image
-                    src={img}
-                    alt="Existing"
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeExistingImage(img)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-
-              {/* New Previews */}
-              {newImagePreviews.map((preview, index) => (
-                <div
-                  key={`new-${index}`}
-                  className="relative w-24 h-24 rounded-lg overflow-hidden border border-indigo-200 shadow-sm ring-2 ring-indigo-100"
-                >
-                  <Image
-                    src={preview}
-                    alt="New Preview"
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeNewImage(index)}
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-indigo-500/80 text-[8px] text-white py-0.5 text-center font-bold">
-                    NEW
-                  </div>
-                </div>
-              ))}
-
-              <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-slate-400 hover:bg-slate-50/30 transition-all text-slate-400 hover:text-slate-600">
-                <ImageIcon className="h-6 w-6 mb-1" />
-                <span className="text-[10px] font-medium">Add Image</span>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: Constituent & Location Details */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">
+              Constituent Details
+            </h3>
+            
+            <div className="space-y-4">
+              <FormItem label="Constituent Name" required>
+                <Input
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                  value={formData.reporter_name || ""}
+                  onChange={(e) => updateField("reporter_name", e.target.value)}
                 />
-              </label>
-            </div>
-          </FormItem>
+              </FormItem>
+              
+              <FormItem label="Phone Number" required>
+                <Input
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                  placeholder="+233 ..."
+                  value={formData.reporter_phone || ""}
+                  onChange={(e) => updateField("reporter_phone", e.target.value)}
+                />
+              </FormItem>
 
-          <div className="flex justify-between items-center pt-4">
-            <p className="text-sm text-red-500">* Required fields</p>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => handleNext("location")}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-900"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <Button
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                    Updating...
-                  </>
-                ) : (
-                  <>
-                    <Save className="mr-2 h-4 w-4" /> Save Changes
-                  </>
-                )}
-              </Button>
+              <FormItem label="Email Address">
+                <Input
+                  type="email"
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                  value={formData.reporter_email || ""}
+                  onChange={(e) => updateField("reporter_email", e.target.value)}
+                />
+              </FormItem>
+
+              <FormItem label="Gender">
+                <Select
+                  value={formData.reporter_gender || ""}
+                  onValueChange={(v) => updateField("reporter_gender", v)}
+                >
+                  <SelectTrigger className="border-slate-200">
+                    <SelectValue placeholder="Select Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+
+              <FormItem label="Home Address">
+                <Input
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                  value={formData.reporter_address || ""}
+                  onChange={(e) => updateField("reporter_address", e.target.value)}
+                />
+              </FormItem>
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+
+          <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">
+              Location Details
+            </h3>
+
+            <div className="space-y-4">
+              <FormItem label="Main Community" required>
+                <SearchableSelect
+                  value={formData.location}
+                  onChange={(v) => {
+                    const loc = locations.find((l) => l.name === v);
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: v,
+                      community_id: loc?.id,
+                      suburb: "",
+                      suburb_id: undefined,
+                    }));
+                  }}
+                  options={locations.map((loc) => ({
+                    label: loc.name,
+                    value: loc.name,
+                  }))}
+                  placeholder={
+                    loadingData ? "Loading..." : "Select Main Community"
+                  }
+                  searchPlaceholder="Search communities..."
+                  loading={loadingData}
+                  disabled={loadingData}
+                />
+              </FormItem>
+
+              <FormItem label="Suburb">
+                <SearchableSelect
+                  value={formData.suburb || ""}
+                  onChange={(v) => {
+                    const loc = suburbs.find((l) => l.name === v);
+                    setFormData((prev) => ({
+                      ...prev,
+                      suburb: v,
+                      suburb_id: loc?.id,
+                    }));
+                  }}
+                  options={suburbs.map((loc) => ({
+                    label: loc.name,
+                    value: loc.name,
+                  }))}
+                  placeholder={
+                    !formData.location
+                      ? "Select Main Community first"
+                      : "Select Suburb (Optional)"
+                  }
+                  searchPlaceholder="Search suburbs..."
+                  disabled={!formData.location || loadingSubLocations}
+                  loading={loadingSubLocations}
+                  emptyMessage="No suburb found."
+                />
+              </FormItem>
+
+              <FormItem label="Specific Location Details">
+                <Input
+                  placeholder="e.g., 'Near the old market'"
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                  value={formData.cottage || ""}
+                  onChange={(e) => updateField("cottage", e.target.value)}
+                />
+              </FormItem>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Issue Details */}
+        <div className="lg:col-span-7 space-y-6">
+          <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <h3 className="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2">
+              Issue Details
+            </h3>
+
+            <div className="space-y-4">
+              <FormItem label="Issue Title" required>
+                <Input
+                  placeholder="Enter a clear and concise title"
+                  value={formData.title}
+                  onChange={(e) => updateField("title", e.target.value)}
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                />
+              </FormItem>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormItem label="Impact Type" required>
+                  <Select
+                    value={formData.issue_type || "community_based"}
+                    onValueChange={(v: "community_based" | "individual_based") => {
+                      updateField("issue_type", v);
+                      if (v === "individual_based") {
+                        updateField("people_affected", 1);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="border-slate-200">
+                      <SelectValue placeholder="Select Impact Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="community_based">
+                        Community-Based
+                      </SelectItem>
+                      <SelectItem value="individual_based">
+                        Individual
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+
+                {formData.issue_type === "community_based" && (
+                  <FormItem label="People Affected (Approx.)" required>
+                    <Input
+                      type="number"
+                      placeholder="e.g., 100"
+                      value={formData.people_affected || ""}
+                      onChange={(e) =>
+                        updateField(
+                          "people_affected",
+                          e.target.value ? parseInt(e.target.value) : undefined,
+                        )
+                      }
+                      className="border-slate-200 focus:border-slate-500 focus:ring-slate-500"
+                    />
+                  </FormItem>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormItem label="Category" required>
+                  <Select
+                    value={formData.category_id?.toString() || ""}
+                    onValueChange={(v) => {
+                      const categoryId = parseInt(v);
+                      const selectedCat = categories.find(
+                        (c) => c.id === categoryId,
+                      );
+                      setFormData((prev) => ({
+                        ...prev,
+                        category_id: categoryId,
+                        category: selectedCat?.name || "",
+                        sector_id: undefined,
+                        sector: "",
+                        sub_sector_id: undefined,
+                        subsector: "",
+                      }));
+                    }}
+                    disabled={loadingData}
+                  >
+                    <SelectTrigger className="border-slate-200">
+                      <SelectValue
+                        placeholder={loadingData ? "Loading..." : "Select Category"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+
+                <FormItem label="Priority" required>
+                  <Select
+                    value={formData.priority}
+                    onValueChange={(v: "low" | "medium" | "high" | "urgent") =>
+                      updateField("priority", v)
+                    }
+                  >
+                    <SelectTrigger className="border-slate-200">
+                      <SelectValue placeholder="Select Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormItem label="Sector">
+                  <Select
+                    value={formData.sector_id?.toString() || ""}
+                    onValueChange={(v) => {
+                      if (v === "placeholder" || v === "loading" || v === "empty")
+                        return;
+                      const sectorId = parseInt(v);
+                      const selectedSec = filteredSectors.find(
+                        (s) => s.id === sectorId,
+                      );
+                      setFormData((prev) => ({
+                        ...prev,
+                        sector_id: sectorId,
+                        sector: selectedSec?.name || "",
+                        sub_sector_id: undefined,
+                        subsector: "",
+                      }));
+                    }}
+                  >
+                    <SelectTrigger className="border-slate-200">
+                      <SelectValue placeholder="Select Sector" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {!formData.category_id ? (
+                        <SelectItem value="placeholder" disabled>
+                          Select a category first
+                        </SelectItem>
+                      ) : loadingSectors ? (
+                        <SelectItem value="loading" disabled>
+                          Loading sectors...
+                        </SelectItem>
+                      ) : filteredSectors.length === 0 ? (
+                        <SelectItem value="empty" disabled>
+                          No sectors found
+                        </SelectItem>
+                      ) : (
+                        filteredSectors.map((sec) => (
+                          <SelectItem key={sec.id} value={sec.id.toString()}>
+                            {sec.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+
+                <FormItem label="Subsector">
+                  <Select
+                    value={formData.sub_sector_id?.toString() || ""}
+                    onValueChange={(v) => {
+                      if (v === "placeholder" || v === "loading" || v === "empty")
+                        return;
+                      const subSectorId = parseInt(v);
+                      const selectedSubSec = subSectors.find(
+                        (s) => s.id === subSectorId,
+                      );
+                      updateField("sub_sector_id", subSectorId);
+                      updateField("subsector", selectedSubSec?.name || "");
+                    }}
+                  >
+                    <SelectTrigger className="border-slate-200">
+                      <SelectValue placeholder="Select Subsector (Optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {!formData.sector_id ? (
+                        <SelectItem value="placeholder" disabled>
+                          Select a sector first
+                        </SelectItem>
+                      ) : loadingSubSectors ? (
+                        <SelectItem value="loading" disabled>
+                          Loading subsectors...
+                        </SelectItem>
+                      ) : subSectors.length === 0 ? (
+                        <SelectItem value="empty" disabled>
+                          No subsectors available
+                        </SelectItem>
+                      ) : (
+                        subSectors.map((sub) => (
+                          <SelectItem key={sub.id} value={sub.id.toString()}>
+                            {sub.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              </div>
+
+              <FormItem label="Assign To Agent (Optional)">
+                <SearchableSelect
+                  value={formData.agent_id?.toString() || ""}
+                  onChange={(v) => {
+                    const id = v ? parseInt(v) : undefined;
+                    updateField("agent_id", id);
+                  }}
+                  options={agents.map((a) => ({
+                    label: `${a.name} (${a.email})`,
+                    value: a.id.toString(),
+                  }))}
+                  placeholder="Select Agent to handle this issue"
+                  searchPlaceholder="Search agents..."
+                  emptyMessage="No agent found."
+                />
+              </FormItem>
+
+              <FormItem label="Description" required>
+                <RichTextEditor
+                  value={formData.description}
+                  onChange={(value) => updateField("description", value)}
+                  placeholder="Describe the issue in detail..."
+                  height={160}
+                />
+              </FormItem>
+
+              <FormItem label="Additional Notes">
+                <Textarea
+                  className="border-slate-200 focus:border-slate-500 focus:ring-slate-500 min-h-[80px]"
+                  value={formData.additional_notes || ""}
+                  onChange={(e) => updateField("additional_notes", e.target.value)}
+                  placeholder="Any other details that might be helpful..."
+                />
+              </FormItem>
+
+              <FormItem label="Issue Images">
+                <div className="mt-2 flex flex-wrap gap-4">
+                  {/* Existing Images */}
+                  {formData.images?.map((img, index) => (
+                    <div
+                      key={`existing-${index}`}
+                      className="relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200 shadow-sm"
+                    >
+                      <Image
+                        src={img}
+                        alt="Existing"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeExistingImage(img)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* New Previews */}
+                  {newImagePreviews.map((preview, index) => (
+                    <div
+                      key={`new-${index}`}
+                      className="relative w-20 h-20 rounded-lg overflow-hidden border border-indigo-200 shadow-sm ring-2 ring-indigo-100"
+                    >
+                      <Image
+                        src={preview}
+                        alt="New Preview"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeNewImage(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                      <div className="absolute bottom-0 left-0 right-0 bg-indigo-500/80 text-[8px] text-white py-0.5 text-center font-bold">
+                        NEW
+                      </div>
+                    </div>
+                  ))}
+
+                  <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 transition-all text-slate-400 hover:text-indigo-500">
+                    <ImageIcon className="h-5 w-5 mb-1" />
+                    <span className="text-[9px] font-medium">Add Image</span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </FormItem>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center pt-6 mt-6 border-t border-slate-100">
+        <p className="text-xs text-red-500">* Required fields</p>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={() => router.push(`/officer-dashboard/issues/${issueId}`)}
+            className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold px-4 py-2"
+          >
+            Cancel
+          </Button>
+          <Button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2"
+            onClick={handleSubmit}
+            disabled={submitting}
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" /> Save Changes
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

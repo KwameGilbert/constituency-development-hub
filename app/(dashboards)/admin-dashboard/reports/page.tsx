@@ -59,7 +59,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
+    <div className="flex flex-col h-full bg-slate-50">
       <AdminHeader
         title="Reports Hub"
         description="Unified interface for strategic data synthesis and multi-cluster reporting"
@@ -90,14 +90,14 @@ export default function ReportsPage() {
           },
         ]}
       />
-      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
          <div className="flex items-center gap-4">
             <div className="w-1.5 h-10 bg-amber-500 rounded-full" />
             <div>
-              <h2 className="text-3xl font-bold text-slate-950 tracking-tight">
+              <h2 className="text-xl font-semibold text-slate-800 tracking-tight">
                 Strategic Intelligence
               </h2>
-              <p className="text-slate-500 font-medium text-sm mt-0.5">
+              <p className="text-sm font-normal text-muted-foreground mt-0.5">
                 Execute complex queries across issues, projects, and personnel registries
               </p>
             </div>

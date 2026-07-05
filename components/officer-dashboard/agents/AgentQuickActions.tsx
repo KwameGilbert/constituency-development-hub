@@ -48,22 +48,22 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
   };
 
   return (
-    <Card className="border-slate-200/60 shadow-xl shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
-      <CardHeader className="border-b border-slate-50 bg-slate-50/30 pb-4">
-        <CardTitle className="text-sm font-bold text-slate-900 uppercase tracking-widest pl-1 font-mono">
-          Command Center
+    <Card className="border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white">
+      <CardHeader className="border-b border-slate-100 bg-slate-50/50 px-4 py-3">
+        <CardTitle className="text-xs font-semibold text-slate-700">
+          Agent Actions
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-6 space-y-3">
+      <CardContent className="p-2.5 space-y-1.5">
         <Link href={`/officer-dashboard/agents/${agentId}/edit`}>
           <Button
             variant="outline"
-            className="w-full justify-start gap-3 h-12 rounded-2xl border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all font-bold"
+            className="w-full justify-start gap-2 h-8 rounded-md border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all font-medium text-[11px]"
           >
-            <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100">
-              <Edit className="h-4 w-4" />
+            <div className="p-0.5 bg-indigo-50 text-indigo-600 rounded">
+              <Edit className="h-3.5 w-3.5" />
             </div>
-            Update Agent Credentials
+            Edit Agent Profile
           </Button>
         </Link>
 
@@ -71,29 +71,27 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
           <AlertDialogTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-start gap-3 h-12 rounded-2xl border-rose-100 text-rose-600 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 transition-all font-bold"
+              className="w-full justify-start gap-2 h-8 rounded-md border-rose-100 text-rose-600 hover:text-rose-700 hover:bg-rose-50 hover:border-rose-200 transition-all font-medium text-[11px]"
             >
-              <div className="p-1.5 bg-rose-50 text-rose-600 rounded-lg group-hover:bg-rose-100">
-                <UserX className="h-4 w-4" />
+              <div className="p-0.5 bg-rose-50 text-rose-600 rounded">
+                <UserX className="h-3.5 w-3.5" />
               </div>
-              Revoke Access
+              Deactivate Agent
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-3xl border-slate-200">
+          <AlertDialogContent className="rounded-xl border-slate-200 max-w-sm">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-xl font-bold text-slate-900">
-                Security Authorization Required
+              <AlertDialogTitle className="text-base font-bold text-slate-900">
+                Deactivate Field Agent
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-slate-500 font-medium">
-                This action will decommission the agent&apos;s operative status.
-                They will lose all access to the constituency infrastructure
-                immediately.
+              <AlertDialogDescription className="text-slate-500 text-xs leading-normal">
+                Are you sure you want to deactivate this agent? They will lose access to field tools immediately.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="gap-3">
+            <AlertDialogFooter className="gap-2 mt-2">
               <AlertDialogCancel
                 disabled={loading}
-                className="rounded-xl font-bold border-slate-200"
+                className="rounded-lg font-medium border-slate-200 text-xs h-9 px-4"
               >
                 Cancel
               </AlertDialogCancel>
@@ -103,15 +101,15 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
                   handleDeactivate();
                 }}
                 disabled={loading}
-                className="bg-rose-600 hover:bg-rose-700 focus:ring-rose-600 text-white font-bold rounded-xl px-6"
+                className="bg-rose-600 hover:bg-rose-700 focus:ring-rose-600 text-white font-medium rounded-lg text-xs h-9 px-4 border-0 shadow-sm"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    Deactivating...
                   </>
                 ) : (
-                  "Confirm Deactivation"
+                  "Deactivate"
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -123,12 +121,12 @@ export function AgentQuickActions({ agentId = "1" }: { agentId?: string }) {
         >
           <Button
             variant="outline"
-            className="w-full justify-start gap-3 h-12 rounded-2xl border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-100 transition-all font-bold"
+            className="w-full justify-start gap-2 h-8 rounded-md border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-100 transition-all font-medium text-[11px]"
           >
-            <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-100">
-              <List className="h-4 w-4" />
+            <div className="p-0.5 bg-amber-50 text-amber-600 rounded">
+              <List className="h-3.5 w-3.5" />
             </div>
-            Mission Intelligence
+            View Submitted Reports
           </Button>
         </Link>
       </CardContent>

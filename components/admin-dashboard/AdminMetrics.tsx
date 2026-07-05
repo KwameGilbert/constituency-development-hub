@@ -217,7 +217,7 @@ export function AdminMetrics() {
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
                   {metric.value}
                 </h3>
-                <p className="text-xs text-slate-500 mt-1 font-medium">{metric.subtitle}</p>
+                <p className="text-xs text-muted-foreground mt-1 font-normal">{metric.subtitle}</p>
               </div>
             </CardContent>
             {/* Background Decorative Icon */}

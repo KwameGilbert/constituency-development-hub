@@ -91,7 +91,7 @@ export function RichTextEditor({
 
   const formats = [
     "header", "bold", "italic", "underline", "strike", "blockquote",
-    "list", "bullet", "indent", "link", "image", "video", "align",
+    "list", "indent", "link", "image", "video", "align",
   ];
 
   useEffect(() => {

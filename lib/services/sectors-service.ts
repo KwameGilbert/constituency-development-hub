@@ -129,7 +129,7 @@ export const sectorsService = {
     return apiClient<{
       success: boolean;
       data: { sub_sectors: SubSector[]; sector_name?: string };
-    }>(`/sub-sectors?sector_id=${sectorId}`, {
+    }>(`/sectors/${sectorId}/sub-sectors`, {
       method: "GET",
     });
   },
@@ -147,9 +147,9 @@ export const sectorsService = {
       success: boolean;
       message: string;
       data: { sub_sector: SubSector };
-    }>("/sub-sectors", {
+    }>(`/admin/sectors/${sectorId}/sub-sectors`, {
       method: "POST",
-      body: JSON.stringify({ ...data, sector_id: sectorId }),
+      body: JSON.stringify(data),
       requiresAuth: true,
     });
   },
@@ -167,7 +167,7 @@ export const sectorsService = {
       success: boolean;
       message: string;
       data: { sub_sector: SubSector };
-    }>(`/sub-sectors/${id}`, {
+    }>(`/admin/sub-sectors/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
       requiresAuth: true,
@@ -179,7 +179,7 @@ export const sectorsService = {
     id: number,
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      `/sub-sectors/${id}`,
+      `/admin/sub-sectors/${id}`,
       {
         method: "DELETE",
         requiresAuth: true,
@@ -192,7 +192,7 @@ export const sectorsService = {
     orderedIds: number[],
   ): Promise<{ success: boolean; message: string }> => {
     return apiClient<{ success: boolean; message: string }>(
-      "/sub-sectors/reorder",
+      "/admin/sub-sectors/reorder",
       {
         method: "PUT",
         body: JSON.stringify({ order: orderedIds }),

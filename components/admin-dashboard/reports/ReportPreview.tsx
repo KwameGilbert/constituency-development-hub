@@ -35,7 +35,7 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
     value: string | number | null,
   ): React.ReactNode => {
     if (value === null || value === undefined)
-      return <span className="text-slate-300 font-bold">N/A</span>;
+      return <span className="text-slate-400 font-normal">N/A</span>;
 
     // Special formatting for known columns
     if (columnId === "status") {
@@ -75,17 +75,17 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
 
     if (columnId === "budget" && typeof value === "number") {
       return (
-        <span className="font-black text-slate-900 text-xs">
+        <span className="font-bold text-slate-900 text-sm">
           GHS {value.toLocaleString()}
         </span>
       );
     }
 
     if (columnId === "people" && typeof value === "number") {
-      return <span className="font-bold text-slate-700">{value.toLocaleString()}</span>;
+      return <span className="font-medium text-slate-900 text-sm">{value.toLocaleString()}</span>;
     }
 
-    return <span className="text-xs font-medium text-slate-600 leading-relaxed">{String(value)}</span>;
+    return <span className="text-sm font-normal text-slate-600 leading-relaxed">{String(value)}</span>;
   };
 
   if (!data) {
@@ -94,8 +94,8 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
         <CardHeader className="p-8 bg-slate-50/50 border-b border-slate-100 flex-row items-center gap-4 space-y-0">
            <div className="w-1 h-8 bg-slate-200 rounded-full group-hover:bg-amber-500 transition-colors" />
            <div>
-              <CardTitle className="text-xl font-black text-slate-950 tracking-tight">Data Preview Matrix</CardTitle>
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mt-1">Registry visibility: 0 entries detected</p>
+              <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">Data Preview Matrix</CardTitle>
+              <p className="text-sm font-normal text-muted-foreground mt-1">Registry visibility: 0 entries detected</p>
            </div>
         </CardHeader>
 
@@ -103,7 +103,7 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
            <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center text-slate-200 mb-6">
               <FileSearch className="w-10 h-10" />
            </div>
-           <p className="text-sm font-bold italic tracking-tight">Synthesis Pending: Declare report parameters above to initiate preview.</p>
+           <p className="text-sm font-normal text-muted-foreground italic tracking-tight">Synthesis Pending: Declare report parameters above to initiate preview.</p>
         </CardContent>
       </Card>
     );
@@ -116,13 +116,13 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
           <div className="flex items-center gap-4">
              <div className="w-1 h-8 bg-amber-500 rounded-full" />
              <div>
-                <CardTitle className="text-xl font-black text-slate-950 tracking-tight">Strategic Synthesis Preview</CardTitle>
+                <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">Strategic Synthesis Preview</CardTitle>
                 <div className="flex items-center gap-3 mt-1">
-                   <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                   <p className="text-sm font-normal text-muted-foreground leading-none">
                       Registry Visibility: <span className="text-slate-950">{data.rows.length}</span> of <span className="text-slate-950">{data.pagination.total}</span> entries
                    </p>
                    {data.pagination.total_pages > 1 && (
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-white px-2 py-0.5 rounded border border-slate-100">
+                      <span className="text-xs font-medium text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-100">
                         Page {data.pagination.page} / {data.pagination.total_pages}
                       </span>
                    )}
@@ -131,7 +131,7 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
           </div>
           <Badge
             variant="outline"
-            className="h-10 px-4 rounded-xl bg-slate-950 text-white border-slate-900 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-slate-900/20"
+            className="h-8 px-3 rounded-lg bg-slate-900 text-white border-slate-900 text-xs font-medium shadow-sm"
           >
             {data.reportType} Matrix
           </Badge>
@@ -144,7 +144,7 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200 mb-4">
                 <TableIcon className="w-8 h-8" />
              </div>
-             <p className="text-sm font-bold italic">Process Outcome: Zero result registry matches detect in survey.</p>
+             <p className="text-sm font-normal text-muted-foreground italic">Process Outcome: Zero result registry matches detect in survey.</p>
           </div>
         ) : (
           <div className="overflow-x-auto custom-scrollbar">
@@ -154,7 +154,7 @@ export function ReportPreview({ data, columns }: ReportPreviewProps) {
                   {data.columns.map((col) => (
                     <TableHead
                       key={col}
-                      className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] border-r border-slate-50 last:border-none"
+                      className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest border-r border-slate-50 last:border-none"
                     >
                       {getColumnLabel(col)}
                     </TableHead>

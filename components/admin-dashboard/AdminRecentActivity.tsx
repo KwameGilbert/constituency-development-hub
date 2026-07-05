@@ -94,7 +94,7 @@ export function AdminRecentActivity() {
     return (
       <Card className="w-full lg:w-[350px] shrink-0 flex flex-col h-full border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden">
         <CardHeader className="pb-4 bg-white/50 border-b border-slate-100/60 p-5">
-          <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+          <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
             Recent Activity
           </CardTitle>
         </CardHeader>
@@ -140,14 +140,14 @@ export function AdminRecentActivity() {
 
                 <div className="flex-1 min-w-0 pt-0.5">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-bold text-slate-900 leading-none">
+                    <span className="text-sm font-semibold text-slate-900 leading-none">
                       {activity.user}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed mb-1">
+                  <p className="text-xs text-muted-foreground font-normal leading-relaxed mb-1">
                     {activity.action}
                   </p>
-                  <p className="text-[10px] text-slate-400 font-bold tracking-tight">
+                  <p className="text-[10px] text-muted-foreground font-normal tracking-tight">
                     {activity.date} • {activity.time}
                   </p>
                 </div>

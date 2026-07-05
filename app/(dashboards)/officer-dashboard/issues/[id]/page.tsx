@@ -529,32 +529,39 @@ export default function OfficerIssueDetailPage({
             )}
 
             {/* Images */}
-            {issue.images && issue.images.length > 0 && (
-              <div className="pt-4">
-                <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                  <div className="h-4 w-1 bg-slate-400 rounded-full" />
-                  Attached Images
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {issue.images.map((image: string, index: number) => (
-                    <div
-                      key={index}
-                      className="aspect-video bg-slate-100 rounded-lg overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
-                    >
-                      <img
-                        src={image}
-                        alt={`Attachment ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "https://via.placeholder.com/400x300?text=Image+Not+Available";
-                        }}
-                      />
-                    </div>
-                  ))}
+            {(() => {
+              const imgs: string[] = Array.isArray(issue.images)
+                ? issue.images
+                : typeof issue.images === "string"
+                  ? (() => { try { return JSON.parse(issue.images); } catch { return []; } })()
+                  : [];
+              return imgs.length > 0 ? (
+                <div className="pt-4">
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                    <div className="h-4 w-1 bg-slate-400 rounded-full" />
+                    Attached Images
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {imgs.map((image: string, index: number) => (
+                      <div
+                        key={index}
+                        className="aspect-video bg-slate-100 rounded-lg overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <img
+                          src={image}
+                          alt={`Attachment ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://via.placeholder.com/400x300?text=Image+Not+Available";
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : null;
+            })()}
           </div>
 
           {/* Sidebar */}

@@ -29,14 +29,14 @@ export function AgentStatusDistribution({
   const hasData = data.some((d) => d.value > 0);
 
   return (
-    <Card className="border-slate-200/60 shadow-xl shadow-slate-200/40 rounded-3xl overflow-hidden bg-white">
-      <CardHeader className="border-b border-slate-50 bg-slate-50/30 pb-4">
-        <CardTitle className="text-sm font-bold text-slate-900 uppercase tracking-widest pl-1 font-mono">
-          Strategic Distribution
+    <Card className="border border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white">
+      <CardHeader className="border-b border-slate-100 bg-slate-50/50 px-4 py-3">
+        <CardTitle className="text-xs font-semibold text-slate-700">
+          Report Status
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-8">
-        <div className="h-[300px] w-full">
+      <CardContent className="p-3">
+        <div className="h-[180px] w-full">
           {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -44,9 +44,9 @@ export function AgentStatusDistribution({
                   data={data}
                   cx="50%"
                   cy="50%"
-                  innerRadius={70}
-                  outerRadius={95}
-                  paddingAngle={8}
+                  innerRadius={40}
+                  outerRadius={60}
+                  paddingAngle={6}
                   dataKey="value"
                   strokeWidth={0}
                 >
@@ -60,19 +60,20 @@ export function AgentStatusDistribution({
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    borderRadius: "16px",
+                    borderRadius: "8px",
                     border: "none",
-                    boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-                    padding: "12px",
+                    boxShadow: "0 4px 12px rgb(0 0 0 / 0.08)",
+                    padding: "8px 12px",
                   }}
-                  itemStyle={{ fontWeight: "bold", fontSize: "12px" }}
+                  itemStyle={{ fontWeight: "medium", fontSize: "11px" }}
                 />
                 <Legend
                   verticalAlign="bottom"
-                  height={36}
+                  height={32}
                   iconType="circle"
+                  iconSize={8}
                   formatter={(value) => (
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider pl-1">
+                    <span className="text-[11px] font-semibold text-slate-600 pl-1">
                       {value}
                     </span>
                   )}
@@ -80,12 +81,9 @@ export function AgentStatusDistribution({
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex flex-col h-full items-center justify-center text-slate-400 gap-4">
-              <div className="p-4 bg-slate-50 rounded-full">
-                <PieChart className="h-8 w-8 text-slate-200" />
-              </div>
-              <span className="text-sm font-bold uppercase tracking-widest font-mono">
-                No Active Telemetry
+            <div className="flex flex-col h-full items-center justify-center text-slate-400 gap-2">
+              <span className="text-xs text-slate-400 font-medium">
+                No Reports Submitted
               </span>
             </div>
           )}

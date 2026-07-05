@@ -127,43 +127,61 @@ export function AnalyticsMetrics() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Primary Highlights */}
+    <div className="space-y-4">
+      {/* Row 1 — Primary KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {mainMetrics.map((metric, index) => (
-          <Card key={index} className="border-none shadow-md shadow-slate-200/40 group hover:shadow-lg transition-all rounded-2xl overflow-hidden bg-white">
-            <CardContent className="p-5 flex items-center gap-4 relative">
-              <div className={`p-3 rounded-2xl bg-linear-to-br ${metric.bg} ${metric.color} shadow-sm group-hover:scale-110 transition-transform`}>
-                <metric.icon className="w-6 h-6 stroke-[2.5px]" />
+          <Card
+            key={index}
+            className="border-none shadow-sm shadow-slate-200/50 group hover:shadow-md transition-all duration-200 rounded-2xl overflow-hidden bg-white"
+          >
+            <CardContent className="p-5 flex items-center gap-4">
+              <div
+                className={`shrink-0 p-3 rounded-xl bg-linear-to-br ${metric.bg} ${metric.color} group-hover:scale-105 transition-transform duration-200`}
+              >
+                <metric.icon className="w-5 h-5 stroke-2" />
               </div>
-              <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">{metric.label}</p>
-                   <TrendIndicator change={metric.trend} />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider truncate mb-1">
+                  {metric.label}
+                </p>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-2xl font-bold text-slate-900 tracking-tight leading-none">
+                    {metric.value}
+                  </span>
+                  <TrendIndicator change={metric.trend} />
                 </div>
-                <h3 className="text-xl font-black text-slate-900 tracking-tight truncate leading-none">
-                  {metric.value}
-                </h3>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Grid Support Metrics */}
+      {/* Row 2 — Secondary Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {secondaryMetrics.map((metric, index) => (
-          <Card key={index} className="border-none shadow-md shadow-slate-200/40 rounded-2xl flex items-center justify-between p-4 bg-white/60 backdrop-blur-sm group hover:bg-white transition-all">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{metric.label}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-black text-slate-800 leading-none">{metric.value}</span>
-                <TrendIndicator change={metric.trend} />
+          <Card
+            key={index}
+            className="border-none shadow-sm shadow-slate-200/50 group hover:shadow-md transition-all duration-200 rounded-2xl overflow-hidden bg-white/70 backdrop-blur-sm"
+          >
+            <CardContent className="p-5 flex items-center gap-4">
+              <div
+                className={`shrink-0 p-2.5 rounded-xl ${metric.bg} ${metric.color} group-hover:scale-105 transition-transform duration-200`}
+              >
+                <metric.icon className="w-4 h-4 stroke-2" />
               </div>
-            </div>
-            <div className={`p-2.5 rounded-xl ${metric.bg} ${metric.color} transition-transform group-hover:rotate-12`}>
-              <metric.icon className="w-4 h-4" />
-            </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider truncate mb-1">
+                  {metric.label}
+                </p>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-xl font-bold text-slate-800 tracking-tight leading-none">
+                    {metric.value}
+                  </span>
+                  <TrendIndicator change={metric.trend} />
+                </div>
+              </div>
+            </CardContent>
           </Card>
         ))}
       </div>

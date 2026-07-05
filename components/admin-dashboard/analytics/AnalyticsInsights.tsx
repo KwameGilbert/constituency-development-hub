@@ -72,11 +72,11 @@ export function AnalyticsInsights() {
         <CardHeader className="bg-white/50 border-b border-slate-100/60 p-5">
           <div className="flex items-center gap-2">
              <Trophy className="w-4 h-4 text-amber-500" />
-             <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+             <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
               Top Performers
             </CardTitle>
           </div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+          <p className="text-xs font-normal text-muted-foreground mt-1">
             Highest resolution rates across sectors
           </p>
         </CardHeader>
@@ -91,7 +91,7 @@ export function AnalyticsInsights() {
                   {performer.rank}
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                  <h4 className="text-sm font-semibold text-slate-900 group-hover:text-amber-600 transition-colors">
                     {performer.name}
                   </h4>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -104,7 +104,7 @@ export function AnalyticsInsights() {
                 <span className="inline-flex px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-600 text-xs font-black mb-1 border border-emerald-100">
                   {performer.resolutionRate}%
                 </span>
-                <span className="text-[10px] font-bold text-slate-400">
+                <span className="text-xs font-normal text-muted-foreground">
                   {performer.resolvedCount} of {performer.totalCount} Cases
                 </span>
               </div>
@@ -118,11 +118,11 @@ export function AnalyticsInsights() {
         <CardHeader className="bg-white/50 border-b border-slate-100/60 p-5">
            <div className="flex items-center gap-2">
              <Target className="w-4 h-4 text-amber-500" />
-             <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+             <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
               Geographic Efficacy
             </CardTitle>
           </div>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+          <p className="text-xs font-normal text-muted-foreground mt-1">
             Volume and resolution time by location
           </p>
         </CardHeader>
@@ -137,10 +137,10 @@ export function AnalyticsInsights() {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                  <h4 className="text-sm font-semibold text-slate-900 group-hover:text-amber-600 transition-colors">
                     {location.location}
                   </h4>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                  <p className="text-xs font-normal text-muted-foreground mt-0.5">
                     {location.issuesReported} Total Reports
                   </p>
                 </div>

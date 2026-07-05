@@ -8,7 +8,7 @@ export default function AgentsPage() {
     <div className="flex-1 flex flex-col h-full w-full overflow-y-auto custom-scrollbar bg-slate-50/50">
       <AgentsHeader />
 
-      <main className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto w-full pb-20">
+      <main className="p-3 sm:p-4 space-y-4 max-w-7xl mx-auto w-full pb-6">
         <AgentsMetrics />
         <AllAgents />
       </main>

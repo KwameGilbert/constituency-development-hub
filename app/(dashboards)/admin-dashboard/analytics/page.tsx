@@ -268,10 +268,10 @@ export default function AnalyticsPage() {
         {/* Budget Analytics */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-slate-800 tracking-tight">
               Budget Analytics
             </h3>
-            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+            <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-normal text-muted-foreground rounded-full">
               Project Finances
             </span>
           </div>

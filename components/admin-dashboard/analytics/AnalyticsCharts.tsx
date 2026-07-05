@@ -183,7 +183,7 @@ export function AnalyticsCharts({
             {/* Issues by Severity */}
             <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white">
               <CardHeader className="flex flex-row items-center justify-between bg-white/50 border-b border-slate-100/60 p-5">
-                <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+                <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
                   Criticality Levels
                 </CardTitle>
                 <div className="flex items-center gap-2">
@@ -231,7 +231,7 @@ export function AnalyticsCharts({
             {/* Top Issue Categories */}
             <Card className="border-none shadow-md shadow-slate-200/40 rounded-2xl overflow-hidden bg-white">
               <CardHeader className="flex flex-row items-center justify-between bg-white/50 border-b border-slate-100/60 p-5">
-                <CardTitle className="text-lg font-bold text-slate-800 tracking-tight">
+                <CardTitle className="text-lg font-semibold text-slate-800 tracking-tight">
                   Prevalent Categories
                 </CardTitle>
                 <span className="text-[10px] bg-amber-500 text-slate-950 font-bold px-2 py-0.5 rounded-lg uppercase tracking-widest">Top 10</span>
@@ -249,7 +249,7 @@ export function AnalyticsCharts({
                         >
                           {index + 1}
                         </span>
-                        <span className="text-slate-700 font-bold tracking-tight group-hover:text-amber-600 transition-colors">{cat.name}</span>
+                        <span className="text-sm font-semibold text-slate-700 tracking-tight group-hover:text-amber-600 transition-colors">{cat.name}</span>
                       </div>
                       <div className="flex items-center gap-4 w-1/3 justify-end">
                         <div className="h-2 w-full bg-slate-50 flex-1 rounded-full overflow-hidden shadow-inner">
@@ -260,7 +260,7 @@ export function AnalyticsCharts({
                             }}
                           ></div>
                         </div>
-                        <span className="font-black text-slate-900 w-6 text-right text-xs">
+                        <span className="font-bold text-slate-900 w-6 text-right text-xs">
                           {cat.value}
                         </span>
                       </div>
