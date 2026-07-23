@@ -83,7 +83,7 @@ export function WebAdminSidebar() {
 
       <SidebarContent className="bg-slate-900 px-3">
         <SidebarGroup className="py-6">
-          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 uppercase tracking-wider">
             Main Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>

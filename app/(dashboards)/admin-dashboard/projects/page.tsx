@@ -7,7 +7,6 @@ import { ProjectsTable } from "@/components/admin-dashboard/projects/ProjectsTab
 import {
   projectsService,
   Project,
-  ProjectResponse,
 } from "@/lib/services/projects-service";
 import { Loader2 } from "lucide-react";
 
@@ -26,7 +25,7 @@ export default function ProjectsListPage() {
         if (response && response.success && response.data) {
           setProjects(response.data.projects || []);
         } else {
-          setError(response.message || "Failed to load projects");
+          setError(response?.message || "Failed to load projects");
         }
       } catch (e) {
         console.error("Failed to fetch projects:", e);
@@ -40,13 +39,13 @@ export default function ProjectsListPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
-      <AdminHeader 
-        title="Projects" 
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-hidden">
+      <AdminHeader
+        title="Projects"
         description="Development projects and progress tracking"
         roleAbbr="MP"
       />
-      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+      <div className="flex-1 p-6 sm:p-8 space-y-8 max-w-[1600px] mx-auto w-full overflow-y-auto custom-scrollbar pb-20">
         <ProjectsHeader />
 
         {loading ? (
@@ -54,7 +53,7 @@ export default function ProjectsListPage() {
             <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
           </div>
         ) : error ? (
-          <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+          <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-200 font-medium">
             Error: {error}
           </div>
         ) : (

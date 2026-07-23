@@ -24,10 +24,11 @@ export default function FinancePage() {
         setLoading(true);
         const res = await financeService.getFinanceOverview();
 
-        if (res?.success && res.data) {
+        if (res && res.success && res.data) {
           setProjects(res.data.projects || []);
           setIssues(res.data.issues || []);
           setSummary(res.data.summary || null);
+          setError(null);
         } else {
           setError(res?.message || "Failed to load finance data");
         }
@@ -45,20 +46,20 @@ export default function FinancePage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
-      <AdminHeader 
-        title="Finance" 
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-hidden">
+      <AdminHeader
+        title="Finance"
         description="Budget allocation and expenditure oversight"
         roleAbbr="MP"
       />
-      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
-        <div className="flex items-center gap-4">
-          <div className="w-1.5 h-10 bg-amber-500 rounded-full" />
+      <div className="flex-1 p-6 sm:p-8 space-y-8 max-w-[1600px] mx-auto w-full overflow-y-auto custom-scrollbar pb-20">
+        <div className="flex items-center gap-3">
+          <div className="w-1.5 h-8 bg-amber-500 rounded-full" />
           <div>
-            <h2 className="text-3xl font-bold text-slate-950 tracking-tight">
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
               Financial Overview
             </h2>
-            <p className="text-slate-500 font-medium text-sm mt-0.5">
+            <p className="text-slate-500 text-sm mt-0.5">
               Strategic budget tracking and fiscal accountability
             </p>
           </div>
@@ -69,7 +70,7 @@ export default function FinancePage() {
             <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
           </div>
         ) : error ? (
-          <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+          <div className="p-4 bg-red-50 text-red-600 rounded-xl border border-red-200 font-medium">
             Error: {error}
           </div>
         ) : (

@@ -245,20 +245,22 @@ export function SubSectorsManager({
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1.5">
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8 rounded-lg hover:bg-slate-100 text-slate-300 hover:text-slate-900"
+                        className="h-8 w-8 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-950 border border-slate-200/60 bg-white"
                         onClick={() => handleEdit(sub)}
+                        title="Edit Subsector"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8 rounded-lg hover:bg-red-50 text-slate-300 hover:text-red-600"
+                        className="h-8 w-8 rounded-lg hover:bg-red-50 text-slate-600 hover:text-red-600 border border-slate-200/60 bg-white"
                         onClick={() => handleDelete(sub.id)}
+                        title="Delete Subsector"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>

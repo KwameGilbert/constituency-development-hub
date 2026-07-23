@@ -4,10 +4,12 @@ import React from "react";
 
 export default function HelpPage() {
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full overflow-hidden bg-slate-50/50">
       <HelpHeader />
-      <div className="p-4">
-        <HelpSections />
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="p-4 sm:p-6 pb-20 max-w-7xl mx-auto space-y-6">
+          <HelpSections />
+        </div>
       </div>
     </div>
   );

@@ -417,31 +417,32 @@ export default function SectorsPage() {
                          </div>
                       </TableCell>
                       <TableCell className="px-6 py-5 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-9 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-950 hover:bg-slate-100 flex items-center gap-2 border border-transparent hover:border-slate-100"
+                            className="h-9 px-3 rounded-xl text-[11px] font-semibold text-slate-700 hover:text-slate-950 hover:bg-slate-100 flex items-center gap-1.5 border border-slate-200/60 bg-white shadow-2xs"
                             onClick={() => handleManageSubSectors(sector)}
                           >
-                            <ListTree className="w-4 h-4" />
+                            <ListTree className="w-4 h-4 text-slate-500" />
                             Subsectors
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-9 w-9 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50"
+                            className="h-9 w-9 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-blue-50 border border-slate-200/60 bg-white shadow-2xs"
                             onClick={() => handleEditClick(sector)}
+                            title="Edit Sector"
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className={`h-9 w-9 rounded-xl ${
+                            className={`h-9 w-9 rounded-xl border border-slate-200/60 bg-white shadow-2xs ${
                               (sector.projects_count || 0) > 0
-                                ? "text-slate-200 cursor-not-allowed"
-                                : "text-slate-400 hover:text-red-600 hover:bg-red-50"
+                                ? "text-slate-300 cursor-not-allowed border-slate-100 bg-slate-50"
+                                : "text-slate-600 hover:text-red-600 hover:bg-red-50"
                             }`}
                             onClick={() => {
                               if ((sector.projects_count || 0) > 0) {
@@ -450,6 +451,7 @@ export default function SectorsPage() {
                               }
                               handleDeleteClick(sector);
                             }}
+                            title="Delete Sector"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>

@@ -120,9 +120,14 @@ class IdeasService {
     id: number | string,
     data: UpdateIdeaStatusData,
   ): Promise<IdeaResponse> {
+    const payload = {
+      status: data.status,
+      notes: data.admin_notes || undefined,
+      admin_notes: data.admin_notes || undefined,
+    };
     return apiClient<IdeaResponse>(`/ideas/${id}/status`, {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
   }
 

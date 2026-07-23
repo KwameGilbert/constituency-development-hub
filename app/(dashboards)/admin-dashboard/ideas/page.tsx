@@ -19,10 +19,12 @@ export default function IdeasListPage() {
       try {
         setLoading(true);
         const response = await ideasService.getAdminIdeas({ limit: 1000 });
-        if (response.success && response.data) {
+        if (response && response.success && response.data) {
           setIdeas(response.data.ideas || []);
+          setError(null);
+        } else {
+          setError(response?.message || "Failed to load community ideas");
         }
-        setError(null);
       } catch (err) {
         console.error("Failed to load ideas:", err);
         setError("Process failure in community idea synchronization");
@@ -35,9 +37,9 @@ export default function IdeasListPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50/50">
-      <AdminHeader 
-        title="Strategy & Insight" 
+    <div className="flex flex-col h-full w-full bg-slate-50/50 overflow-hidden">
+      <AdminHeader
+        title="Strategy & Insight"
         description="Unified registry for community project proposals and strategic suggestions"
         roleAbbr="MP"
         dropdownItems={[
@@ -53,44 +55,44 @@ export default function IdeasListPage() {
           },
         ]}
       />
-      
-      <div className="flex-1 p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+
+      <div className="flex-1 p-6 sm:p-8 space-y-8 max-w-[1600px] mx-auto w-full overflow-y-auto custom-scrollbar pb-20">
         <IdeasHeader />
 
-        {/* Loading State Matrix */}
+        {/* Loading State */}
         {loading && (
-          <div className="space-y-6">
-            <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl overflow-hidden p-6 bg-white">
-              <div className="space-y-6">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between p-6 border-b border-slate-50 last:border-none"
-                  >
-                    <div className="space-y-3 flex-1">
-                      <Skeleton className="h-5 w-64 rounded-lg bg-slate-100" />
-                      <Skeleton className="h-4 w-96 rounded-lg bg-slate-50" />
-                    </div>
-                    <div className="flex space-x-3">
-                      <Skeleton className="h-8 w-24 rounded-xl bg-slate-100" />
-                      <Skeleton className="h-8 w-20 rounded-xl bg-slate-50" />
-                    </div>
+          <Card className="border border-slate-200/80 shadow-xs rounded-2xl overflow-hidden p-6 bg-white">
+            <div className="space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 border-b border-slate-100 last:border-none"
+                >
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-5 w-64 rounded-md" />
+                    <Skeleton className="h-4 w-96 rounded-md" />
                   </div>
-                ))}
-              </div>
-            </Card>
-          </div>
+                  <div className="flex space-x-2">
+                    <Skeleton className="h-8 w-24 rounded-lg" />
+                    <Skeleton className="h-8 w-20 rounded-lg" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
         )}
 
-        {/* Strategic Error State */}
+        {/* Error State */}
         {error && !loading && (
-          <Card className="border-none shadow-md shadow-slate-200/40 rounded-3xl bg-white p-24 text-center">
-            <div className="flex flex-col items-center gap-4">
-               <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-red-500">
-                  <ShieldAlert className="w-8 h-8" />
-               </div>
-               <p className="text-red-600 text-lg font-black uppercase tracking-widest">{error}</p>
-               <p className="text-slate-500 font-medium">Please re-initiate registry synchronization</p>
+          <Card className="border border-red-200 shadow-xs rounded-2xl bg-red-50/40 p-12 text-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <p className="text-red-700 text-base font-bold">{error}</p>
+              <p className="text-slate-500 text-xs font-medium">
+                Please re-initiate registry synchronization
+              </p>
             </div>
           </Card>
         )}

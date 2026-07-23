@@ -16,9 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   User,
-  MapPin,
   Lock,
-  Info,
   Save,
   Shield,
   Loader2,
@@ -36,7 +34,6 @@ import {
   UserActivity,
 } from "@/lib/services/profile-service";
 import { toast } from "sonner";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -102,7 +99,7 @@ export default function ProfilePage() {
 
       if (response.success) {
         setProfile(response.data.user);
-        toast.success("Identity Registry updated");
+        toast.success("Profile updated successfully");
       } else {
         toast.error(response.message || "Modification failure");
       }
@@ -118,7 +115,7 @@ export default function ProfilePage() {
     setSubmitting(true);
 
     if (passwordData.new_password !== passwordData.new_password_confirmation) {
-      toast.error("Protocol Error: Credential mismatch");
+      toast.error("Protocol Error: Passwords do not match");
       setSubmitting(false);
       return;
     }
@@ -126,14 +123,14 @@ export default function ProfilePage() {
     try {
       const response = await profileService.changePassword(passwordData);
       if (response.success) {
-        toast.success("Security protocol updated: Password changed");
+        toast.success("Password changed successfully");
         setPasswordData({
           current_password: "",
           new_password: "",
           new_password_confirmation: "",
         });
       } else {
-        toast.error(response.message || "Security violation: Check permissions");
+        toast.error(response.message || "Failed to update password");
       }
     } catch (error) {
       const errorMessage =
@@ -152,18 +149,20 @@ export default function ProfilePage() {
       const response = await profileService.uploadAvatar(file);
       if (response.success && profile) {
         setProfile({ ...profile, avatar: response.data.avatar });
-        toast.success("Visual signature updated");
+        toast.success("Avatar updated successfully");
       }
     } catch (error) {
-      toast.error("Visual registry failure");
+      toast.error("Avatar upload failed");
     }
   };
 
   if (loading) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center bg-slate-50/50 gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-amber-500" />
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Validating Administrative Identity...</span>
+      <div className="flex h-screen flex-col items-center justify-center bg-slate-50/50 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+        <span className="text-sm font-medium text-slate-500">
+          Loading profile...
+        </span>
       </div>
     );
   }
@@ -176,30 +175,32 @@ export default function ProfilePage() {
         roleAbbr="MP"
       />
 
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-[1600px] mx-auto w-full">
           {/* Left Column: Visual Signature & Stats */}
-          <div className="lg:col-span-4 space-y-8">
-            {/* Identity Perspective Card */}
-            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden group">
-              <div className="h-24 bg-slate-950 relative overflow-hidden">
-                 <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500 to-transparent" />
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="border border-slate-200/80 shadow-xs rounded-2xl bg-white overflow-hidden group">
+              <div className="h-20 bg-slate-900 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-500 to-transparent" />
               </div>
-              <CardContent className="pt-0 flex flex-col items-center text-center relative px-8 pb-8">
-                <div className="relative -mt-12 mb-6 group/avatar">
-                  <div className="p-1.5 bg-white rounded-full shadow-2xl relative z-10">
-                    <Avatar className="h-24 w-24 border-4 border-slate-50">
-                      <AvatarImage src={profile?.avatar} className="object-cover" />
-                      <AvatarFallback className="bg-amber-100 text-amber-700 font-black text-2xl">
+              <CardContent className="pt-0 flex flex-col items-center text-center relative px-6 pb-6">
+                <div className="relative -mt-10 mb-4 group/avatar">
+                  <div className="p-1 bg-white rounded-full shadow-md relative z-10">
+                    <Avatar className="h-20 w-20 border-2 border-slate-100">
+                      <AvatarImage
+                        src={profile?.avatar}
+                        className="object-cover"
+                      />
+                      <AvatarFallback className="bg-amber-100 text-amber-700 font-bold text-xl">
                         {profile?.name.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                   </div>
                   <label
                     htmlFor="avatar-upload"
-                    className="absolute bottom-1 right-1 p-2 bg-slate-950 text-white rounded-xl shadow-xl cursor-pointer hover:bg-slate-800 transition-all z-20 opacity-0 group-hover/avatar:opacity-100 transform translate-y-2 group-hover/avatar:translate-y-0"
+                    className="absolute bottom-0 right-0 p-1.5 bg-slate-900 text-white rounded-lg shadow-md cursor-pointer hover:bg-slate-800 transition-all z-20 opacity-0 group-hover/avatar:opacity-100"
                   >
-                    <Camera className="w-4 h-4" />
+                    <Camera className="w-3.5 h-3.5" />
                     <input
                       id="avatar-upload"
                       type="file"
@@ -211,55 +212,58 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-1">
-                   <h2 className="text-2xl font-black text-slate-950 tracking-tight leading-none">
+                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">
                     {profile?.name}
                   </h2>
                   <div className="flex items-center justify-center gap-2">
-                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    <span className="text-xs font-medium text-slate-500 capitalize">
                       {profile?.role?.replace("_", " ")}
                     </span>
-                    <div className="w-1 h-1 bg-slate-200 rounded-full" />
-                    <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">
+                    <div className="w-1 h-1 bg-slate-300 rounded-full" />
+                    <span className="text-xs font-semibold text-amber-600">
                       Constituency Admin
                     </span>
                   </div>
                 </div>
-                
-                <div className="mt-4">
+
+                <div className="mt-3">
                   <Badge
-                    className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 border shadow-xs ${profile?.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-red-50 text-red-700 border-red-100"}`}
+                    className={`text-xs font-medium px-2.5 py-0.5 border shadow-xs ${profile?.status === "active" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-red-50 text-red-700 border-red-200"}`}
                   >
                     {profile?.status}
                   </Badge>
                 </div>
 
-                <div className="w-full mt-8 space-y-4 pt-6 border-t border-slate-50">
-                  <div className="flex items-center justify-between group/meta">
-                    <div className="flex items-center gap-2 text-slate-400">
-                       <Mail className="w-3.5 h-3.5" />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Registry Email</span>
+                <div className="w-full mt-6 space-y-3 pt-5 border-t border-slate-100">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>Email</span>
                     </div>
-                    <span className="text-xs font-black text-slate-950 truncate max-w-[150px] group-hover:text-amber-600 transition-colors">
+                    <span className="font-semibold text-slate-900 truncate max-w-[160px]">
                       {profile?.email}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between group/meta">
-                    <div className="flex items-center gap-2 text-slate-400">
-                       <Phone className="w-3.5 h-3.5" />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Secure Link</span>
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <Phone className="w-3.5 h-3.5" />
+                      <span>Phone</span>
                     </div>
-                    <span className="text-xs font-black text-slate-950">
-                      {profile?.phone || "UNREGISTERED"}
+                    <span className="font-semibold text-slate-900">
+                      {profile?.phone || "Unregistered"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between group/meta">
-                    <div className="flex items-center gap-2 text-slate-400">
-                       <History className="w-3.5 h-3.5" />
-                       <span className="text-[10px] font-bold uppercase tracking-widest">Auth Pulse</span>
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <History className="w-3.5 h-3.5" />
+                      <span>Last Login</span>
                     </div>
-                    <span className="text-xs font-black text-slate-950">
+                    <span className="font-semibold text-slate-900">
                       {profile?.last_login
-                        ? new Date(profile.last_login).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})
+                        ? new Date(profile.last_login).toLocaleDateString(
+                            undefined,
+                            { month: "short", day: "numeric" },
+                          )
                         : "Never"}
                     </span>
                   </div>
@@ -268,131 +272,167 @@ export default function ProfilePage() {
             </Card>
 
             {/* Strategic Evolution Registry (Activity) */}
-            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden">
-              <CardHeader className="p-8 pb-4">
-                <CardTitle className="text-lg font-black text-slate-950 flex items-center gap-3">
-                  <History className="w-5 h-5 text-amber-500" /> Action Genesis
+            <Card className="border border-slate-200/80 shadow-xs rounded-2xl bg-white">
+              <CardHeader className="p-6 pb-3">
+                <CardTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <History className="w-4 h-4 text-amber-500" /> Recent Activity
                 </CardTitle>
-                <CardDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                   Last 5 cryptographic security events
+                <CardDescription className="text-xs text-slate-500">
+                  Last 5 security and administrative events
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-8 pt-4 space-y-6">
-                <div className="space-y-6 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-slate-100">
+              <CardContent className="p-6 pt-3 space-y-4">
+                <div className="space-y-4 relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-px before:bg-slate-200">
                   {activities.length > 0 ? (
                     activities.map((activity) => (
                       <div
                         key={activity.id}
-                        className="flex items-start gap-4 relative z-10 group"
+                        className="flex items-start gap-3 relative z-10 group"
                       >
-                        <div className="w-6 h-6 rounded-lg bg-white border-2 border-slate-100 flex items-center justify-center text-slate-300 mt-0.5 group-hover:border-amber-500 group-hover:text-amber-500 transition-all">
+                        <div className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center text-slate-400 mt-0.5 group-hover:border-amber-500 group-hover:text-amber-600 transition-colors">
                           <Activity className="h-3 w-3" />
                         </div>
                         <div className="flex-1">
-                          <p className="font-bold text-slate-950 text-[11px] uppercase tracking-wider leading-none">
+                          <p className="font-semibold text-slate-900 text-xs capitalize">
                             {activity.action.replace(/_/g, " ")}
                           </p>
-                          <p className="text-[10px] font-medium text-slate-400 mt-1">
-                            {new Date(activity.created_at).toLocaleString(undefined, {hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric'})}
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {new Date(activity.created_at).toLocaleString(
+                              undefined,
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                month: "short",
+                                day: "numeric",
+                              },
+                            )}
                           </p>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-6 text-slate-300 gap-2">
-                       <Shield className="w-10 h-10 opacity-20" />
-                       <p className="text-[10px] font-black uppercase tracking-widest italic">Registry Empty</p>
+                    <div className="flex flex-col items-center justify-center py-4 text-slate-400 gap-1.5">
+                      <Shield className="w-8 h-8 opacity-30" />
+                      <p className="text-xs font-medium">No activity recorded</p>
                     </div>
                   )}
                 </div>
-                <Button variant="ghost" className="w-full h-11 rounded-2xl bg-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-slate-100 hover:text-slate-900 group">
-                   Audit Full Timeline <ArrowRight className="w-3 h-3 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Button
+                  variant="outline"
+                  className="w-full h-9 rounded-xl border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50 group mt-2"
+                >
+                  Audit Full Timeline{" "}
+                  <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardContent>
             </Card>
           </div>
 
           {/* Right Column: Modification Matrix */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-6">
             {/* Identity Information Matrix */}
-            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden">
-               <div className="h-1.5 bg-amber-500 w-full" />
-              <CardHeader className="p-8">
-                <div className="flex items-center gap-4 mb-2">
-                   <div className="p-2.5 bg-amber-50 rounded-2xl">
-                      <Briefcase className="w-5 h-5 text-amber-600" />
-                   </div>
-                   <div>
-                      <CardTitle className="text-2xl font-black text-slate-950 tracking-tight">Modification Matrix</CardTitle>
-                      <CardDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        Synthesize and update primary administrative identity parameters
-                      </CardDescription>
-                   </div>
+            <Card className="border border-slate-200/80 shadow-xs rounded-2xl bg-white overflow-hidden">
+              <div className="h-1 bg-amber-500 w-full" />
+              <CardHeader className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-amber-50 rounded-xl text-amber-600">
+                    <Briefcase className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-slate-900 tracking-tight">
+                      Personal Information
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-500 mt-0.5">
+                      Update your primary administrative profile details
+                    </CardDescription>
+                  </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-8 pt-0">
-                <form onSubmit={handleProfileUpdate} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2 group">
-                    <Label htmlFor="fullName" className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Full Signature</Label>
+              <CardContent className="p-6 pt-0">
+                <form
+                  onSubmit={handleProfileUpdate}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
+                >
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="fullName"
+                      className="text-sm font-medium text-slate-700"
+                    >
+                      Full Name
+                    </Label>
                     <div className="relative">
-                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-amber-500 transition-colors" />
-                       <Input
-                          id="fullName"
-                          value={formData.name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
-                          required
-                          className="h-12 pl-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
-                        />
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        id="fullName"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
+                        required
+                        className="h-11 pl-10 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 text-sm font-medium"
+                      />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Entry Email (Non-Modifiable)</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Email Address
+                    </Label>
                     <div className="relative">
-                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
-                       <Input
-                         value={profile?.email}
-                         disabled
-                         className="h-12 pl-12 bg-slate-100 border-none rounded-xl text-slate-400 font-bold cursor-not-allowed"
-                       />
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        value={profile?.email}
+                        disabled
+                        className="h-11 pl-10 bg-slate-100/70 border border-slate-200 rounded-lg text-slate-500 text-sm font-medium cursor-not-allowed"
+                      />
                     </div>
                   </div>
-                  <div className="space-y-2 group">
-                    <Label htmlFor="phone" className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Secure Contact</Label>
+                  <div className="space-y-1.5">
+                    <Label
+                      htmlFor="phone"
+                      className="text-sm font-medium text-slate-700"
+                    >
+                      Phone Number
+                    </Label>
                     <div className="relative">
-                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-amber-500 transition-colors" />
-                       <Input
-                          id="phone"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            setFormData({ ...formData, phone: e.target.value })
-                          }
-                          className="h-12 pl-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
-                        />
+                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
+                        className="h-11 pl-10 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 text-sm font-medium"
+                      />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Functional Tier</Label>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Department
+                    </Label>
                     <div className="relative">
-                       <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
-                       <Input
-                         value={formData.department}
-                         disabled
-                         className="h-12 pl-12 bg-slate-100 border-none rounded-xl text-slate-400 font-bold cursor-not-allowed"
-                       />
+                      <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <Input
+                        value={formData.department}
+                        disabled
+                        className="h-11 pl-10 bg-slate-100/70 border border-slate-200 rounded-lg text-slate-500 text-sm font-medium cursor-not-allowed"
+                      />
                     </div>
                   </div>
-                  <div className="md:col-span-2 space-y-2 group">
-                    <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Strategic Bio / Mandate</label>
+                  <div className="md:col-span-2 space-y-1.5">
+                    <Label
+                      htmlFor="bio"
+                      className="text-sm font-medium text-slate-700"
+                    >
+                      Bio / Operational Mandate
+                    </Label>
                     <textarea
                       id="bio"
                       value={formData.bio}
                       onChange={(e) =>
                         setFormData({ ...formData, bio: e.target.value })
                       }
-                      rows={4}
-                      className="w-full p-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold text-sm resize-none"
+                      rows={3}
+                      className="w-full p-3.5 bg-slate-50/50 border border-slate-200 rounded-xl text-slate-900 font-medium text-sm focus:border-amber-500 focus:ring-amber-500 resize-none"
                       placeholder="Declare your operational mandate or administrative focus..."
                     />
                   </div>
@@ -400,15 +440,15 @@ export default function ProfilePage() {
                   <div className="md:col-span-2 flex justify-end">
                     <Button
                       type="submit"
-                      className="h-12 px-8 bg-slate-950 text-white hover:bg-slate-800 rounded-2xl shadow-xl font-black text-xs uppercase tracking-widest flex items-center gap-3 transition-all"
+                      className="h-11 px-6 bg-slate-900 text-white hover:bg-slate-800 rounded-xl shadow-xs font-semibold text-sm flex items-center gap-2 transition-all"
                       disabled={submitting}
                     >
                       {submitting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
-                        <Save className="h-4 w-4 text-amber-500" />
+                        <Save className="h-4 w-4 text-amber-400" />
                       )}
-                      Sync Identity Changes
+                      Save Profile
                     </Button>
                   </div>
                 </form>
@@ -416,25 +456,29 @@ export default function ProfilePage() {
             </Card>
 
             {/* Security Protocol Calibration (Password) */}
-            <Card className="border-none shadow-md shadow-slate-200/40 rounded-[32px] bg-white overflow-hidden">
-              <CardHeader className="p-8">
-                <div className="flex items-center gap-4 mb-2">
-                   <div className="p-2.5 bg-red-50 rounded-2xl">
-                      <Lock className="w-5 h-5 text-red-600" />
-                   </div>
-                   <div>
-                      <CardTitle className="text-2xl font-black text-slate-950 tracking-tight">Security Protocol</CardTitle>
-                      <CardDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        Calibrate cryptographic security parameters and password rotation
-                      </CardDescription>
-                   </div>
+            <Card className="border border-slate-200/80 shadow-xs rounded-2xl bg-white overflow-hidden">
+              <CardHeader className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-red-50 rounded-xl text-red-600">
+                    <Lock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-slate-900 tracking-tight">
+                      Security & Password
+                    </CardTitle>
+                    <CardDescription className="text-xs text-slate-500 mt-0.5">
+                      Update your account security parameters and password
+                    </CardDescription>
+                  </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-8 pt-0">
-                <form onSubmit={handlePasswordChange} className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Root Password</Label>
+              <CardContent className="p-6 pt-0">
+                <form onSubmit={handlePasswordChange} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium text-slate-700">
+                        Current Password
+                      </Label>
                       <Input
                         type="password"
                         value={passwordData.current_password}
@@ -445,11 +489,13 @@ export default function ProfilePage() {
                           })
                         }
                         required={passwordData.new_password.length > 0}
-                        className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-slate-950/20 text-slate-900 font-bold"
+                        className="h-11 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 font-medium text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
-                       <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">New Hash</Label>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium text-slate-700">
+                        New Password
+                      </Label>
                       <Input
                         type="password"
                         value={passwordData.new_password}
@@ -459,11 +505,13 @@ export default function ProfilePage() {
                             new_password: e.target.value,
                           })
                         }
-                        className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
+                        className="h-11 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 font-medium text-sm"
                       />
                     </div>
-                    <div className="space-y-2">
-                       <Label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-1">Confirm New Hash</Label>
+                    <div className="space-y-1.5">
+                      <Label className="text-sm font-medium text-slate-700">
+                        Confirm New Password
+                      </Label>
                       <Input
                         type="password"
                         value={passwordData.new_password_confirmation}
@@ -473,7 +521,7 @@ export default function ProfilePage() {
                             new_password_confirmation: e.target.value,
                           })
                         }
-                        className="h-12 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-amber-500/20 text-slate-900 font-bold"
+                        className="h-11 bg-slate-50/50 border border-slate-200 rounded-lg text-slate-900 font-medium text-sm"
                       />
                     </div>
                   </div>
@@ -481,10 +529,10 @@ export default function ProfilePage() {
                     <Button
                       type="submit"
                       variant="outline"
-                      className="h-11 px-6 rounded-xl border-slate-200 text-slate-500 font-black text-[10px] uppercase tracking-[0.15em] hover:bg-slate-50 hover:text-slate-950 transition-all"
+                      className="h-10 px-5 rounded-xl border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition-all"
                       disabled={submitting || !passwordData.new_password}
                     >
-                      Authenticate & Rotate Hash
+                      Update Password
                     </Button>
                   </div>
                 </form>

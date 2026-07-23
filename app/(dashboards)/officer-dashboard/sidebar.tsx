@@ -119,7 +119,7 @@ export function OfficerSidebar({
 
       <SidebarContent className="bg-slate-900 px-3">
         <SidebarGroup className="py-6">
-          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2">
+          <SidebarGroupLabel className="text-slate-500 font-semibold text-[11px] px-4 mb-2 uppercase tracking-wider">
             Main Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -136,7 +136,7 @@ export function OfficerSidebar({
                     >
                       <Link href={item.url} className="flex items-center gap-3">
                         <item.icon className="h-5 w-5 group-data-[active=true]:text-white shrink-0" />
-                        <span className="text-sm">{item.title}</span>
+                        <span className="text-sm font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
