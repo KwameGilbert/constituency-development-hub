@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
-import { cleanupHtml } from "@/lib/utils";
+import { cleanupHtml, getImageUrl } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -201,7 +201,7 @@ export function CarouselList() {
                     {slide.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={slide.image}
+                        src={getImageUrl(slide.image)}
                         alt={slide.title}
                         className="w-full h-full object-cover"
                       />

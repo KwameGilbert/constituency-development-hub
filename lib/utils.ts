@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "";
-  if (path.startsWith("data:")) return path;
+  if (path.startsWith("data:") || path.startsWith("blob:")) return path;
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL|| "http://localhost:8080";
   let apiOrigin = "";
@@ -57,6 +57,15 @@ export function cleanupHtml(html: string): string {
   return decoded.replace(/<[^>]*>/g, "");
 }
 
+export function fixHtmlImageUrls(html: string): string {
+  if (!html) return "";
+  // Find all <img ... src="..." ... > and convert relative or backend upload URLs using getImageUrl
+  return html.replace(/<img\s+([^>]*?)src=["']([^"']+)["']([^>]*?)>/gi, (match, prefix, src, suffix) => {
+    const fixedUrl = getImageUrl(src);
+    return `<img ${prefix}src="${fixedUrl}"${suffix}>`;
+  });
+}
+
 // Sanitize HTML for safe rendering in the client. Uses isomorphic-dompurify
 // which works on both server and client environments.
 import DOMPurify from "isomorphic-dompurify";
@@ -76,10 +85,15 @@ export function sanitizeHtml(html: string): string {
   if (!html) return "";
   try {
     const decoded = decodeEntities(html);
-    // Allow a reasonable HTML profile (basic formatting)
-    return DOMPurify.sanitize(decoded, { USE_PROFILES: { html: true } });
+    // Allow a reasonable HTML profile (basic formatting) and allow data URIs for images
+    const sanitized = DOMPurify.sanitize(decoded, {
+      USE_PROFILES: { html: true },
+      ADD_DATA_URI_TAGS: ["img"],
+      ADD_ATTR: ["target", "rel", "style", "class"],
+    });
+    return fixHtmlImageUrls(sanitized);
   } catch (err) {
     // On error, fallback to stripping tags
-    return cleanupHtml(html);
+    return fixHtmlImageUrls(cleanupHtml(html));
   }
 }

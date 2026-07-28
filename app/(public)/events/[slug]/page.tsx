@@ -5,27 +5,36 @@ import JsonLd from "@/components/seo/JsonLd";
 import { getImageUrl } from "@/lib/utils";
 
 interface PageProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const slug = params.slug;
   const defaultTitle = "Event Details | Kofi Benteh Afful";
   const defaultDesc =
     "Join Hon. Kofi Benteh Afful for upcoming community events and engagements.";
 
   try {
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug;
+    if (!slug) return { title: defaultTitle, description: defaultDesc };
+
     const response = await eventsService.getEventBySlug(slug);
 
-    if (response.success && response.data.event) {
+    if (response?.success && response?.data?.event) {
       const event = response.data.event;
-      const previousImages = (await parent).openGraph?.images || [];
+      let previousImages: string[] = [];
+      try {
+        const parentMeta = await parent;
+        previousImages = (parentMeta?.openGraph?.images as string[]) || [];
+      } catch {
+        // ignore parent metadata errors
+      }
 
-      const title = `${event.name || event.title} | Events`;
+      const title = `${event.name || event.title || "Event"} | Events`;
       const description = event.description || defaultDesc;
 
       return {
@@ -58,13 +67,17 @@ export async function generateMetadata(
 }
 
 export default async function EventDetailPage({ params }: PageProps) {
-  const slug = params.slug;
+  let slug = "";
   let initialEvent = null;
 
   try {
-    const response = await eventsService.getEventBySlug(slug);
-    if (response.success && response.data.event) {
-      initialEvent = response.data.event;
+    const resolvedParams = await params;
+    slug = resolvedParams?.slug || "";
+    if (slug) {
+      const response = await eventsService.getEventBySlug(slug);
+      if (response?.success && response?.data?.event) {
+        initialEvent = response.data.event;
+      }
     }
   } catch (error) {
     console.error("Failed to fetch event details for rendering:", error);

@@ -1,8 +1,8 @@
 import { Metadata, ResolvingMetadata } from "next";
-import { blogService } from "@/lib/services/blog-service";
+import { blogService, BlogPost } from "@/lib/services/blog-service";
 import BlogPostClient from "./BlogPostClient";
 import JsonLd from "@/components/seo/JsonLd";
-import { getImageUrl } from "@/lib/utils";
+import { getImageUrl, cleanupHtml } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -13,26 +13,40 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const { slug } = await params;
-
-  // Default metadata
   const defaultTitle = "Blog Post | Kofi Benteh Afful";
   const defaultDesc =
     "Read the latest news and updates from Hon. Kofi Benteh Afful.";
 
   try {
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug;
+    if (!slug) return { title: defaultTitle, description: defaultDesc };
+
     const response = await blogService.getPostBySlug(slug);
 
-    if (response.success && response.data.post) {
+    if (response?.success && response?.data?.post) {
       const post = response.data.post;
-      const previousImages = (await parent).openGraph?.images || [];
+      let previousImages: string[] = [];
+      try {
+        const parentMeta = await parent;
+        previousImages = (parentMeta?.openGraph?.images as string[]) || [];
+      } catch {
+        // Ignore parent metadata errors
+      }
+
+      const title = post.title || defaultTitle;
+      const description = post.excerpt ? cleanupHtml(post.excerpt) : defaultDesc;
+      const authorName =
+        typeof post.author === "string" && post.author.trim()
+          ? post.author
+          : "Hon. Kofi Benteh Afful";
 
       return {
-        title: post.title,
-        description: post.excerpt || defaultDesc,
+        title,
+        description,
         openGraph: {
-          title: post.title,
-          description: post.excerpt || defaultDesc,
+          title,
+          description,
           images: post.image
             ? [getImageUrl(post.image), ...previousImages]
             : previousImages,
@@ -41,32 +55,16 @@ export async function generateMetadata(
           url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://kofibenteh.com"}/blog/${slug}`,
           publishedTime: post.published_at,
           modifiedTime: post.published_at,
-          authors: post.author ? [post.author] : ["Hon. Kofi Benteh Afful"],
-          tags: (() => {
-            try {
-              const rawTags = post.tags as any;
-              if (Array.isArray(rawTags)) return rawTags;
-              if (typeof rawTags === "string") {
-                // Handle both JSON arrays and simple comma-separated strings
-                if (rawTags.startsWith("[")) return JSON.parse(rawTags);
-                return rawTags.split(",").map((t: string) => t.trim());
-              }
-            } catch (e) {
-              console.error("Failed to parse tags for metadata:", e);
-            }
-            return [];
-          })(),
+          authors: [authorName],
           locale: "en_GH",
         },
         twitter: {
           card: "summary_large_image",
-          title: post.title,
-          description: post.excerpt || defaultDesc,
+          title,
+          description,
           images: post.image ? [getImageUrl(post.image)] : undefined,
           site: "@kofibenteh",
-          creator: post.author
-            ? `@${post.author.replace(/\s+/g, "")}`
-            : "@kofibenteh",
+          creator: "@kofibenteh",
         },
       };
     }
@@ -81,13 +79,17 @@ export async function generateMetadata(
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params;
-  let initialPost = null;
+  let slug = "";
+  let initialPost: BlogPost | null = null;
 
   try {
-    const response = await blogService.getPostBySlug(slug);
-    if (response.success && response.data.post) {
-      initialPost = response.data.post;
+    const resolvedParams = await params;
+    slug = resolvedParams?.slug || "";
+    if (slug) {
+      const response = await blogService.getPostBySlug(slug);
+      if (response?.success && response?.data?.post) {
+        initialPost = response.data.post;
+      }
     }
   } catch (error) {
     console.error("Failed to fetch blog post for rendering:", error);
@@ -103,7 +105,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         dateModified: initialPost.published_at,
         author: {
           "@type": "Person",
-          name: initialPost.author || "Kofi Benteh Afful",
+          name:
+            typeof initialPost.author === "string" && initialPost.author.trim()
+              ? initialPost.author
+              : "Kofi Benteh Afful",
         },
       }
     : null;

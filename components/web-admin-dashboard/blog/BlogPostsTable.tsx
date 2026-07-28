@@ -19,7 +19,7 @@ import {
   blogService,
 } from "@/lib/services/blog-service";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -151,7 +151,7 @@ export function BlogPostsTable({
                             <div className="relative w-full h-full">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
-                                src={post.image}
+                                src={getImageUrl(post.image)}
                                 alt=""
                                 className="object-cover w-full h-full"
                               />

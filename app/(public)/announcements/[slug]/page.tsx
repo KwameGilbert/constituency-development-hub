@@ -12,24 +12,32 @@ export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const { slug } = await params;
-
   const defaultTitle = "Announcement | Constituency Development Hub";
   const defaultDesc =
     "Read important updates and notices from the constituency.";
 
   try {
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug;
+    if (!slug) return { title: defaultTitle, description: defaultDesc };
+
     const response = await announcementsService.getAnnouncementBySlug(slug);
 
-    if (response.success && response.data.announcement) {
+    if (response?.success && response?.data?.announcement) {
       const announcement = response.data.announcement;
-      const previousImages = (await parent).openGraph?.images || [];
+      let previousImages: string[] = [];
+      try {
+        const parentMeta = await parent;
+        previousImages = (parentMeta?.openGraph?.images as string[]) || [];
+      } catch {
+        // ignore parent metadata errors
+      }
 
       return {
-        title: announcement.title,
+        title: announcement.title || defaultTitle,
         description: defaultDesc,
         openGraph: {
-          title: announcement.title,
+          title: announcement.title || defaultTitle,
           description: defaultDesc,
           images: announcement.image_url
             ? [getImageUrl(announcement.image_url), ...previousImages]
@@ -38,7 +46,7 @@ export async function generateMetadata(
         },
         twitter: {
           card: "summary_large_image",
-          title: announcement.title,
+          title: announcement.title || defaultTitle,
           description: defaultDesc,
           images: announcement.image_url
             ? [getImageUrl(announcement.image_url)]
@@ -57,14 +65,17 @@ export async function generateMetadata(
 }
 
 export default async function AnnouncementDetailPage({ params }: PageProps) {
-  const { slug } = await params;
-
+  let slug = "";
   let initialAnnouncement = null;
 
   try {
-    const response = await announcementsService.getAnnouncementBySlug(slug);
-    if (response.success && response.data.announcement) {
-      initialAnnouncement = response.data.announcement;
+    const resolvedParams = await params;
+    slug = resolvedParams?.slug || "";
+    if (slug) {
+      const response = await announcementsService.getAnnouncementBySlug(slug);
+      if (response?.success && response?.data?.announcement) {
+        initialAnnouncement = response.data.announcement;
+      }
     }
   } catch (error) {
     console.error("Failed to fetch announcement for rendering:", error);

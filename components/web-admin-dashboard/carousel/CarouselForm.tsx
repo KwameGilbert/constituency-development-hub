@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { heroSlidesService, HeroSlide } from "@/lib/services/carousel-service";
 import { toast } from "sonner";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/utils";
 
 const heroSlideSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -36,7 +37,9 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>(slide?.image || "");
-  const [imagePreview, setImagePreview] = useState<string>(slide?.image || "");
+  const [imagePreview, setImagePreview] = useState<string>(
+    slide?.image ? getImageUrl(slide.image) : "",
+  );
   const [file, setFile] = useState<File | null>(null);
 
   const form = useForm<HeroSlideFormValues>({
@@ -198,7 +201,7 @@ export function CarouselForm({ slide, isEditing = false }: CarouselFormProps) {
               <div className="relative w-full aspect-21/9 bg-slate-100 rounded-lg overflow-hidden border border-slate-200 group">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={imagePreview}
+                  src={getImageUrl(imagePreview)}
                   alt="Slide preview"
                   className="w-full h-full object-cover"
                   onError={() => {

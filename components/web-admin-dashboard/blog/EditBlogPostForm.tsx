@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2, X, Upload } from "lucide-react";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/utils";
 
 const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -41,7 +42,9 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(post.image || "");
+  const [imagePreview, setImagePreview] = useState<string>(
+    post.image ? getImageUrl(post.image) : "",
+  );
   const [existingImageUrl, setExistingImageUrl] = useState<string>(
     post.image || "",
   );
@@ -240,7 +243,7 @@ export function EditBlogPostForm({ post }: EditBlogPostFormProps) {
                 <div className="relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={imagePreview}
+                    src={getImageUrl(imagePreview)}
                     alt="Featured image preview"
                     className="w-full h-48 object-cover rounded-lg border border-slate-200"
                   />
