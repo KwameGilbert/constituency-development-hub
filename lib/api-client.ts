@@ -1,15 +1,22 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 interface FetchOptions extends RequestInit {
   requiresAuth?: boolean;
   isFormData?: boolean;
+  timeoutMs?: number;
 }
 
 export async function apiClient<T>(
   endpoint: string,
   options: FetchOptions = {},
 ): Promise<T> {
-  const { requiresAuth = true, isFormData = false, ...fetchOptions } = options;
+  const {
+    requiresAuth = true,
+    isFormData = false,
+    timeoutMs = 5000,
+    ...fetchOptions
+  } = options;
 
   if (!BASE_URL) {
     throw new Error("NEXT_PUBLIC_API_URLis not defined");
@@ -52,6 +59,10 @@ export async function apiClient<T>(
   }
 
   let response;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const signal = fetchOptions.signal || controller.signal;
+
   try {
     // Debug: log request details to help diagnose network/CORS issues
     if (
@@ -76,6 +87,7 @@ export async function apiClient<T>(
     response = await fetch(`${BASE_URL}${endpoint}`, {
       ...fetchOptions,
       headers,
+      signal,
     });
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
@@ -87,6 +99,8 @@ export async function apiClient<T>(
     throw new Error(
       `Network error: Failed to connect to API at ${BASE_URL}${endpoint}`,
     );
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   // Try to parse JSON response
