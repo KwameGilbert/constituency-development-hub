@@ -521,9 +521,11 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
       } else {
         toast.error(response.message || "Failed to update issue");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Update error:", error);
-      toast.error("An error occurred while updating the issue");
+      toast.error(
+        error?.message || "An error occurred while updating the issue",
+      );
     } finally {
       setSubmitting(false);
     }

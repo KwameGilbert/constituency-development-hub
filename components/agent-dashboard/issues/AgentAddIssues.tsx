@@ -338,9 +338,11 @@ export function AgentAddIssues() {
       } else {
         toast.error(response.message || "Failed to submit issue");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submit error:", error);
-      toast.error("An error occurred while submitting the issue");
+      toast.error(
+        error?.message || "An error occurred while submitting the issue",
+      );
     } finally {
       setSubmitting(false);
     }
