@@ -143,19 +143,35 @@ export function AddIssues() {
     fetchData();
   }, []);
 
-  // Filter sectors when category changes
+  // Fetch sectors when category changes
   useEffect(() => {
-    if (formData.category_id) {
+    const fetchSectors = async () => {
+      if (!formData.category_id) {
+        setFilteredSectors([]);
+        return;
+      }
+
       setLoadingSectors(true);
-      const filtered = sectors.filter(
-        (s) => s.category_id === formData.category_id,
-      );
-      setFilteredSectors(filtered);
-      setLoadingSectors(false);
-    } else {
-      setFilteredSectors([]);
-    }
-    // Reset sector and subsector when category changes
+      try {
+        const response = await sectorsService.getSectors(Number(formData.category_id));
+        if (response.success && response.data?.sectors) {
+          setFilteredSectors(response.data.sectors);
+        } else {
+          setFilteredSectors(
+            sectors.filter((s) => Number(s.category_id) === Number(formData.category_id))
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching sectors:", error);
+        setFilteredSectors(
+          sectors.filter((s) => Number(s.category_id) === Number(formData.category_id))
+        );
+      } finally {
+        setLoadingSectors(false);
+      }
+    };
+
+    fetchSectors();
     setSubSectors([]);
   }, [formData.category_id, sectors]);
 

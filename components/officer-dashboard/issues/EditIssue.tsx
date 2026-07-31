@@ -292,18 +292,39 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
     fetchData();
   }, [issueId, router, onIssueLoad]);
 
-  // Filter sectors when category changes
+  // Fetch sectors when category changes
   useEffect(() => {
-    if (formData.category_id && sectors.length > 0) {
+    const fetchSectors = async () => {
+      if (!formData.category_id) {
+        setFilteredSectors([]);
+        return;
+      }
+
       setLoadingSectors(true);
-      const filtered = sectors.filter(
-        (s) => s.category_id === formData.category_id,
-      );
-      setFilteredSectors(filtered);
-      setLoadingSectors(false);
-    } else {
-      setFilteredSectors([]);
-    }
+      try {
+        const response = await sectorsService.getSectors(Number(formData.category_id));
+        if (response.success && response.data?.sectors) {
+          setFilteredSectors(response.data.sectors);
+        } else if (sectors.length > 0) {
+          setFilteredSectors(
+            sectors.filter((s) => Number(s.category_id) === Number(formData.category_id))
+          );
+        } else {
+          setFilteredSectors([]);
+        }
+      } catch (error) {
+        console.error("Error fetching sectors:", error);
+        if (sectors.length > 0) {
+          setFilteredSectors(
+            sectors.filter((s) => Number(s.category_id) === Number(formData.category_id))
+          );
+        }
+      } finally {
+        setLoadingSectors(false);
+      }
+    };
+
+    fetchSectors();
   }, [formData.category_id, sectors]);
 
   // Load subsectors when sector changes
