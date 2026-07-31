@@ -165,7 +165,7 @@ export function AgentAddIssues() {
 
       setLoadingSectors(true);
       try {
-        const response = await sectorsService.getSectors(formData.category_id);
+        const response = await sectorsService.getSectors(Number(formData.category_id));
         if (response.success && response.data?.sectors) {
           setFilteredSectors(response.data.sectors);
         } else {
