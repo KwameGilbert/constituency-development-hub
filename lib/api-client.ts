@@ -14,7 +14,7 @@ export async function apiClient<T>(
   const {
     requiresAuth = true,
     isFormData = false,
-    timeoutMs = 5000,
+    timeoutMs = 60000,
     ...fetchOptions
   } = options;
 
