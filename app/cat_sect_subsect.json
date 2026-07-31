@@ -1,0 +1,361 @@
+{
+  "module": "Public Projects",
+  "constituency": "Sefwi Wiawso",
+  "country": "Ghana",
+  "categories": [
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure",
+      "sectors": [
+        "Housing & Human Settlement",
+        "ICT & Digital Transformation",
+        "Public Buildings Infrastructure",
+        "Market Infrastructure",
+        "Street Lighting",
+        "Drainage Systems",
+        "Public Toilets Infrastructure",
+        "Waste Management Infrastructure",
+        "Telecommunications Infrastructure",
+        "Urban Planning & Zoning"
+      ]
+    },
+    {
+      "id": "health",
+      "name": "Health",
+      "sectors": [
+        "Health Infrastructure",
+        "Maternal & Child Health Services",
+        "Community Health Outreach",
+        "Health Equipment & Supplies",
+        "Disease Prevention & Control",
+        "Ambulance Services",
+        "Pharmaceutical Supply",
+        "Health Insurance Support",
+        "Nutrition Programs",
+        "Mental Health Services"
+      ]
+    },
+    {
+      "id": "road_and_transport",
+      "name": "Road and Transport",
+      "sectors": [
+        "Roads & Transport",
+        "Transport Services",
+        "Bridge Construction",
+        "Culverts & Drainage",
+        "Street Signage & Traffic Management",
+        "Footbridges & Walkways",
+        "Feeder Roads",
+        "Vehicle & Fleet Management",
+        "Road Safety Programs",
+        "Public Transport Terminals"
+      ]
+    },
+    {
+      "id": "education",
+      "name": "Education",
+      "sectors": [
+        "Education Infrastructure",
+        "Teacher Training & Development",
+        "School Feeding Programs",
+        "Scholarship & Bursary Support",
+        "Library & Learning Resources",
+        "Early Childhood Education",
+        "Vocational & Technical Education",
+        "School Furniture Supply",
+        "ICT in Education",
+        "Adult Literacy Programs"
+      ]
+    },
+    {
+      "id": "sanitation",
+      "name": "Sanitation",
+      "sectors": [
+        "Water & Sanitation",
+        "Water Resources",
+        "Public Toilet Facilities",
+        "Waste Collection & Disposal",
+        "Sewerage Systems",
+        "Borehole Drilling",
+        "Hand Pump Installation",
+        "Hygiene Education Programs",
+        "Solid Waste Management",
+        "Drainage & Flood Control"
+      ]
+    },
+    {
+      "id": "agriculture",
+      "name": "Agriculture",
+      "sectors": [
+        "Agriculture Development",
+        "Markets & Local Economic Development",
+        "Economic Development",
+        "Tourism & Culture",
+        "Forestry & Natural Resources",
+        "Irrigation Schemes",
+        "Farmer Cooperatives Support",
+        "Livestock Development",
+        "Agro-processing Facilities",
+        "Post-Harvest Storage"
+      ]
+    },
+    {
+      "id": "electricity",
+      "name": "Electricity",
+      "sectors": [
+        "Electricity & Energy",
+        "Rural Electrification",
+        "Solar Power Installation",
+        "Street Lighting Solar Systems",
+        "Power Distribution Networks",
+        "Transformer Installation",
+        "Renewable Energy Projects",
+        "Energy Efficiency Programs",
+        "Grid Extension",
+        "Backup Power Systems"
+      ]
+    },
+    {
+      "id": "youth_and_sports",
+      "name": "Youth and Sports",
+      "sectors": [
+        "Youth & Sports Development",
+        "Sports Infrastructure",
+        "Youth Employment Programs",
+        "Sports Talent Development",
+        "Recreational Facilities",
+        "Youth Skills Training",
+        "Community Sports Clubs Support",
+        "Sports Equipment Provision",
+        "Youth Leadership Programs",
+        "National Youth Games Support"
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Security",
+      "sectors": [
+        "Security & Emergency Services",
+        "Disaster Management",
+        "Police Infrastructure Support",
+        "Fire Service Support",
+        "Community Policing Programs",
+        "Border & Border Post Security",
+        "Emergency Response Equipment",
+        "Flood & Disaster Relief",
+        "Crime Prevention Programs",
+        "Security Surveillance Systems"
+      ]
+    },
+    {
+      "id": "governance",
+      "name": "Governance",
+      "sectors": [
+        "Governance & Public Administration",
+        "Social Intervention",
+        "Community Development",
+        "Women Empowerment",
+        "Persons with Disabilities",
+        "Environment & Climate",
+        "Public Services",
+        "Local Government Capacity Building",
+        "Civic Education Programs",
+        "Records & Documentation Management"
+      ]
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "sectors": [
+        {
+          "name": "Water Supply Infrastructure",
+          "subsectors": [
+            "Construction",
+            "Rehabilitation",
+            "Expansion",
+            "Maintenance",
+            "Upgrade",
+            "Equipment Provision",
+            "Network Extension",
+            "Capacity Building",
+            "Monitoring",
+            "Quality Improvement"
+          ]
+        },
+        {
+          "name": "Rural Water Supply",
+          "subsectors": [
+            "Borehole Drilling",
+            "Hand Pump Installation",
+            "Small-Town Water Systems",
+            "Community Standpipes",
+            "Pipeline Extension",
+            "Rehabilitation",
+            "Maintenance",
+            "Community Management Training",
+            "Monitoring",
+            "Water Quality Testing"
+          ]
+        },
+        {
+          "name": "Urban Water Supply",
+          "subsectors": [
+            "Treatment Plant Construction",
+            "Distribution Network Expansion",
+            "Pipeline Rehabilitation",
+            "Meter Installation",
+            "Pressure Management",
+            "Leakage Reduction",
+            "Storage Expansion",
+            "Maintenance",
+            "Monitoring",
+            "Service Quality Improvement"
+          ]
+        },
+        {
+          "name": "Boreholes & Groundwater Development",
+          "subsectors": [
+            "Hydrogeological Survey",
+            "Borehole Drilling",
+            "Borehole Rehabilitation",
+            "Pump Installation",
+            "Solar-Powered Water Systems",
+            "Groundwater Recharge",
+            "Maintenance",
+            "Water Quality Testing",
+            "Monitoring",
+            "Groundwater Protection"
+          ]
+        },
+        {
+          "name": "Water Treatment & Purification",
+          "subsectors": [
+            "Treatment Plant Construction",
+            "Plant Rehabilitation",
+            "Treatment Capacity Expansion",
+            "Filtration System Installation",
+            "Disinfection Systems",
+            "Chemical Supply",
+            "Equipment Provision",
+            "Operator Training",
+            "Water Quality Monitoring",
+            "Process Improvement"
+          ]
+        },
+        {
+          "name": "Water Storage Systems",
+          "subsectors": [
+            "Reservoir Construction",
+            "Water Tank Installation",
+            "Elevated Tank Construction",
+            "Storage Capacity Expansion",
+            "Rehabilitation",
+            "Maintenance",
+            "Pumping Systems",
+            "Safety Inspection",
+            "Monitoring",
+            "Leakage Prevention"
+          ]
+        },
+        {
+          "name": "Water Distribution Networks",
+          "subsectors": [
+            "Pipeline Construction",
+            "Network Expansion",
+            "Pipeline Replacement",
+            "Repair & Maintenance",
+            "Metering Systems",
+            "Pumping Stations",
+            "Valve Installation",
+            "Leakage Detection",
+            "Network Monitoring",
+            "Service Improvement"
+          ]
+        },
+        {
+          "name": "Rainwater Harvesting",
+          "subsectors": [
+            "Household Systems",
+            "Institutional Systems",
+            "Community Storage Facilities",
+            "Gutter Installation",
+            "Filtration Systems",
+            "Storage Tank Provision",
+            "Maintenance",
+            "Public Education",
+            "Monitoring",
+            "Water Quality Testing"
+          ]
+        },
+        {
+          "name": "Water Resources Protection",
+          "subsectors": [
+            "Watershed Protection",
+            "River Basin Management",
+            "Wetland Conservation",
+            "Pollution Prevention",
+            "Catchment Restoration",
+            "Groundwater Protection",
+            "Public Education",
+            "Regulatory Enforcement",
+            "Environmental Monitoring",
+            "Climate Resilience"
+          ]
+        },
+        {
+          "name": "Emergency Water Services",
+          "subsectors": [
+            "Emergency Water Supply",
+            "Water Tanker Services",
+            "Temporary Storage Installation",
+            "Mobile Treatment Systems",
+            "Water Purification Supply",
+            "Borehole Restoration",
+            "Drought Response",
+            "Flood Contamination Response",
+            "Water Quality Monitoring",
+            "Emergency Preparedness"
+          ]
+        }
+      ]
+    }
+  ],
+  "standardSubsectors": [
+    "Construction",
+    "Rehabilitation",
+    "Expansion",
+    "Maintenance",
+    "Upgrade",
+    "Supply",
+    "Capacity Building",
+    "Equipment Provision",
+    "Monitoring",
+    "Quality Improvement"
+  ],
+  "projectStatusOptions": [
+    "Proposal Submitted",
+    "Needs Assessment",
+    "Planning",
+    "Design Stage",
+    "Budgeting",
+    "Approved",
+    "Procurement",
+    "Funded",
+    "Tender Awarded",
+    "Contract Signed",
+    "Site Preparation",
+    "Ongoing",
+    "Phase 1 Complete",
+    "Phase 2 Complete",
+    "Near Completion",
+    "Completed",
+    "Inspection",
+    "Commissioned",
+    "Operational",
+    "Monitoring",
+    "Maintenance",
+    "Suspended",
+    "On Hold",
+    "Cancelled"
+  ]
+}
