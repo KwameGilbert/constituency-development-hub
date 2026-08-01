@@ -348,18 +348,53 @@ export default function AgentIssueDetailPage({
                     </p>
                   </div>
                 )}
-                {issue.specific_location && (
+                {issue.latitude && issue.longitude && (
                   <div className="space-y-1">
                     <label className="text-xs font-medium text-slate-500">
-                      Specific Location
+                      Coordinates
                     </label>
-                    <p className="font-semibold italic text-slate-600 text-sm">
-                      &quot;{issue.specific_location}&quot;
+                    <p className="font-semibold text-slate-600 text-sm font-mono">
+                      {issue.latitude}, {issue.longitude}
                     </p>
                   </div>
                 )}
               </CardContent>
             </Card>
+
+            {/* Images */}
+            {(() => {
+              const imgs: string[] = Array.isArray(issue.images)
+                ? issue.images
+                : typeof issue.images === "string"
+                  ? (() => { try { return JSON.parse(issue.images); } catch { return []; } })()
+                  : [];
+              return imgs.length > 0 ? (
+                <div className="pt-4">
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                    <div className="h-4 w-1 bg-amber-400 rounded-full" />
+                    Attached Images
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {imgs.map((image: string, index: number) => (
+                      <div
+                        key={index}
+                        className="aspect-video bg-slate-100 rounded-lg overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <img
+                          src={image}
+                          alt={`Attachment ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://via.placeholder.com/400x300?text=Image+Not+Available";
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null;
+            })()}
           </div>
 
           {/* Sidebar */}
