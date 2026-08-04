@@ -13,7 +13,7 @@ import {
   Image as ImageIcon,
   X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, unwrapSettled } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -188,39 +188,48 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
         setLoadingInitial(true);
         setLoadingData(true);
 
-        const [issueRes, locRes, secRes, catRes, agentRes] = await Promise.all([
-          issuesService.getOfficerIssueById(parseInt(issueId)),
-          locationsService.getLocations({
-            type: "community",
-            status: "active",
-            limit: 1000,
-          }),
-          sectorsService.getSectors(),
-          categoriesService.getCategories(),
-          issuesService.getAgentsForOfficer(),
-        ]);
+        // Settled independently: one failing endpoint must not blank the
+        // whole form (a broken /officer/agents would otherwise drop locations).
+        const [issueSettled, locSettled, secSettled, catSettled, agentSettled] =
+          await Promise.allSettled([
+            issuesService.getOfficerIssueById(parseInt(issueId)),
+            locationsService.getLocations({
+              type: "community",
+              status: "active",
+              limit: 1000,
+            }),
+            sectorsService.getSectors(),
+            categoriesService.getCategories(),
+            issuesService.getAgentsForOfficer(),
+          ]);
 
-        const typedLocRes = locRes as unknown as { success: boolean; data?: { locations?: Location[] } };
-        if (typedLocRes.success && typedLocRes.data?.locations) {
+        const issueRes = unwrapSettled(issueSettled, "issue");
+        const locRes = unwrapSettled(locSettled, "locations");
+        const secRes = unwrapSettled(secSettled, "sectors");
+        const catRes = unwrapSettled(catSettled, "categories");
+        const agentRes = unwrapSettled(agentSettled, "agents");
+
+        const typedLocRes = locRes as unknown as { success: boolean; data?: { locations?: Location[] } } | null;
+        if (typedLocRes?.success && typedLocRes.data?.locations) {
           setLocations(typedLocRes.data.locations);
         }
 
-        const typedSecRes = secRes as unknown as { success: boolean; data?: { sectors?: Sector[] } };
-        if (typedSecRes.success && typedSecRes.data?.sectors) {
+        const typedSecRes = secRes as unknown as { success: boolean; data?: { sectors?: Sector[] } } | null;
+        if (typedSecRes?.success && typedSecRes.data?.sectors) {
           setSectors(typedSecRes.data.sectors);
         }
 
-        const typedCatRes = catRes as unknown as { success: boolean; data?: { categories?: Category[] } };
-        if (typedCatRes.success && typedCatRes.data?.categories) {
+        const typedCatRes = catRes as unknown as { success: boolean; data?: { categories?: Category[] } } | null;
+        if (typedCatRes?.success && typedCatRes.data?.categories) {
           setCategories(typedCatRes.data.categories);
         }
 
-        const typedAgentRes = agentRes as unknown as { success: boolean; data?: { agents?: { id: number; name: string; email: string }[] } };
-        if (typedAgentRes.success && typedAgentRes.data?.agents) {
+        const typedAgentRes = agentRes as unknown as { success: boolean; data?: { agents?: { id: number; name: string; email: string }[] } } | null;
+        if (typedAgentRes?.success && typedAgentRes.data?.agents) {
           setAgents(typedAgentRes.data.agents);
         }
 
-        if (issueRes.success && issueRes.data.report) {
+        if (issueRes?.success && issueRes.data.report) {
           const issue = issueRes.data.report as unknown as RawIssue;
 
           if (onIssueLoad && issue.case_id) {

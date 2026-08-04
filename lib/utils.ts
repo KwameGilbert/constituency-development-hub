@@ -5,6 +5,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Returns the value of a settled promise, or null if it rejected.
+ *
+ * Use with Promise.allSettled when a screen loads several independent lookups:
+ * Promise.all rejects as soon as one call fails, which silently discards the
+ * results that did succeed and can leave unrelated fields empty.
+ */
+export function unwrapSettled<T>(
+  result: PromiseSettledResult<T>,
+  label: string,
+): T | null {
+  if (result.status === "fulfilled") return result.value;
+  console.error(`Failed to load ${label}:`, result.reason);
+  return null;
+}
+
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "";
   if (path.startsWith("data:") || path.startsWith("blob:")) return path;

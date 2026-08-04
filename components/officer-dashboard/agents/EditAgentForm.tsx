@@ -32,6 +32,7 @@ import { agentService, AgentProfile } from "@/lib/services/agent-service";
 import { locationsService, Location } from "@/lib/services/locations-service";
 import { toast } from "sonner";
 import Link from "next/link";
+import { unwrapSettled } from "@/lib/utils";
 
 interface EditAgentFormProps {
   agentId: string;
@@ -71,17 +72,21 @@ export function EditAgentForm({ agentId }: EditAgentFormProps) {
     async function fetchData() {
       try {
         setLoading(true);
-        // Fetch locations and agent data in parallel
-        const [locResponse, agentResponse] = await Promise.all([
+        // Fetch locations and agent data in parallel, settled independently so
+        // a failing agent lookup does not also blank the locations list.
+        const [locSettled, agentSettled] = await Promise.allSettled([
           locationsService.getLocations(),
           agentService.getAgentById(parseInt(agentId)),
         ]);
 
-        if (locResponse.success && locResponse.data.locations) {
+        const locResponse = unwrapSettled(locSettled, "locations");
+        const agentResponse = unwrapSettled(agentSettled, "agent");
+
+        if (locResponse?.success && locResponse.data.locations) {
           setLocations(locResponse.data.locations);
         }
 
-        if (agentResponse.success && agentResponse.data.agent) {
+        if (agentResponse?.success && agentResponse.data.agent) {
           const agent = agentResponse.data.agent;
           setOriginalAgent(agent);
           setFormData({

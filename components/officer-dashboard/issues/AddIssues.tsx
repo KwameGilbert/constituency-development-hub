@@ -13,7 +13,7 @@ import {
   Image as ImageIcon,
   X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, unwrapSettled } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -110,27 +110,35 @@ export function AddIssues() {
     const fetchData = async () => {
       try {
         setLoadingData(true);
-        const [locRes, secRes, catRes, agentRes] = await Promise.all([
-          locationsService.getLocations({
-            type: "community",
-            status: "active",
-            limit: 1000,
-          }),
-          sectorsService.getSectors(),
-          categoriesService.getCategories(),
-          issuesService.getAgentsForOfficer(),
-        ]);
+        // Settled independently: one failing endpoint must not blank the
+        // whole form (a broken /officer/agents would otherwise drop locations).
+        const [locSettled, secSettled, catSettled, agentSettled] =
+          await Promise.allSettled([
+            locationsService.getLocations({
+              type: "community",
+              status: "active",
+              limit: 1000,
+            }),
+            sectorsService.getSectors(),
+            categoriesService.getCategories(),
+            issuesService.getAgentsForOfficer(),
+          ]);
 
-        if (locRes.success && locRes.data?.locations) {
+        const locRes = unwrapSettled(locSettled, "locations");
+        const secRes = unwrapSettled(secSettled, "sectors");
+        const catRes = unwrapSettled(catSettled, "categories");
+        const agentRes = unwrapSettled(agentSettled, "agents");
+
+        if (locRes?.success && locRes.data?.locations) {
           setLocations(locRes.data.locations);
         }
-        if (secRes.success && secRes.data?.sectors) {
+        if (secRes?.success && secRes.data?.sectors) {
           setSectors(secRes.data.sectors);
         }
-        if (catRes.success && catRes.data?.categories) {
+        if (catRes?.success && catRes.data?.categories) {
           setCategories(catRes.data.categories);
         }
-        if (agentRes.success && agentRes.data?.agents) {
+        if (agentRes?.success && agentRes.data?.agents) {
           setAgents(agentRes.data.agents);
         }
       } catch (error) {

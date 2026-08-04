@@ -14,6 +14,7 @@ import {
   OfficerData,
 } from "@/lib/services/officer-reports-service";
 import { toast } from "sonner";
+import { unwrapSettled } from "@/lib/utils";
 
 interface FormData {
   name: string;
@@ -60,12 +61,16 @@ export function ProfileDetails() {
       }
 
       try {
-        const [profileRes, statsRes] = await Promise.all([
+        // Settled independently so failing stats do not also blank the profile.
+        const [profileSettled, statsSettled] = await Promise.allSettled([
           profileService.getProfile(),
           officerReportsService.getProfileStats(),
         ]);
 
-        if (profileRes.success && profileRes.data.user) {
+        const profileRes = unwrapSettled(profileSettled, "profile");
+        const statsRes = unwrapSettled(statsSettled, "profile stats");
+
+        if (profileRes?.success && profileRes.data.user) {
           setProfile(profileRes.data.user);
           setFormData((prev) => ({
             ...prev,
@@ -75,7 +80,7 @@ export function ProfileDetails() {
           }));
         }
 
-        if (statsRes.success) {
+        if (statsRes?.success) {
           setActivity(statsRes.data.activity);
           setOfficerData(statsRes.data.officer);
           if (statsRes.data.officer?.department) {
