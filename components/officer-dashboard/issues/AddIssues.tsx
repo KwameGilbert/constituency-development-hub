@@ -298,22 +298,28 @@ export function AddIssues() {
       const submitData = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== "") {
-          // Map to backend required field names if they differ
-          if (key === "reporter_name")
+          if (key === "reporter_name") {
             submitData.append("constituent_name", value.toString());
-          else if (key === "reporter_phone")
+            submitData.append("reporter_name", value.toString());
+          } else if (key === "reporter_phone") {
             submitData.append("constituent_phone", value.toString());
-          else if (key === "reporter_email")
+            submitData.append("reporter_phone", value.toString());
+          } else if (key === "reporter_email") {
             submitData.append("constituent_email", value.toString());
-          else if (key === "reporter_gender")
+            submitData.append("reporter_email", value.toString());
+          } else if (key === "reporter_gender") {
             submitData.append("constituent_gender", value.toString());
-          else if (key === "reporter_address")
+            submitData.append("reporter_gender", value.toString());
+          } else if (key === "reporter_address") {
             submitData.append("constituent_address", value.toString());
-          else if (key === "cottage")
+            submitData.append("reporter_address", value.toString());
+          } else if (key === "cottage") {
             submitData.append("specific_location", value.toString());
-          else if (key === "additional_notes")
+          } else if (key === "additional_notes") {
             submitData.append("details", value.toString());
-          else submitData.append(key, value.toString());
+          } else {
+            submitData.append(key, value.toString());
+          }
         }
       });
 

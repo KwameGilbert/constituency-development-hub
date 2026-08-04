@@ -329,10 +329,10 @@ class IssuesService {
   ): Promise<ApiResponse<{ report: Issue }>> {
     const isFormData = data instanceof FormData;
     return apiClient(`/officer/issues/${id}`, {
-      method: "POST",
+      method: "PUT",
       body: isFormData ? data : JSON.stringify(data),
       isFormData: isFormData,
-      headers: isFormData ? {} : undefined, // Let browser set boundary for FormData
+      headers: isFormData ? {} : undefined,
     });
   }
 
@@ -348,7 +348,7 @@ class IssuesService {
     comment?: string,
   ): Promise<ApiResponse<{ report: Issue }>> {
     return apiClient(`/officer/issues/${id}/status`, {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({ status, comment }),
     });
   }
