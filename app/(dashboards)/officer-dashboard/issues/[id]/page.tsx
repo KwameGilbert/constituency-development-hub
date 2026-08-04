@@ -703,7 +703,7 @@ export default function OfficerIssueDetailPage({
                     Full Name
                   </label>
                   <p className="font-semibold text-slate-900 text-sm">
-                    {issue.reporter_name || issue.constituent_name || "Name Not Provided"}
+                    {issue.reporter_name || "Name Not Provided"}
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -715,7 +715,7 @@ export default function OfficerIssueDetailPage({
                       Phone
                     </label>
                     <p className="font-semibold text-slate-900 text-sm">
-                      {issue.reporter_phone || issue.constituent_phone || "Phone Not Provided"}
+                      {issue.reporter_phone || "Phone Not Provided"}
                     </p>
                   </div>
                 </div>
@@ -728,7 +728,7 @@ export default function OfficerIssueDetailPage({
                       Email
                     </label>
                     <p className="font-semibold text-slate-900 text-sm">
-                      {issue.reporter_email || issue.constituent_email || "Email Not Provided"}
+                      {issue.reporter_email || "Email Not Provided"}
                     </p>
                   </div>
                 </div>
@@ -737,7 +737,7 @@ export default function OfficerIssueDetailPage({
                     Gender
                   </label>
                   <p className="font-semibold text-slate-900 capitalize text-sm">
-                    {issue.reporter_gender || issue.constituent_gender || "Not Specified"}
+                    {issue.reporter_gender || "Not Specified"}
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -749,7 +749,7 @@ export default function OfficerIssueDetailPage({
                       Home Address
                     </label>
                     <p className="font-semibold text-slate-900 text-sm">
-                      {issue.reporter_address || issue.constituent_address || "Address Not Specified"}
+                      {issue.reporter_address || "Address Not Specified"}
                     </p>
                   </div>
                 </div>

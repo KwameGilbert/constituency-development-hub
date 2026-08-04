@@ -328,8 +328,10 @@ class IssuesService {
     data: Record<string, unknown> | FormData,
   ): Promise<ApiResponse<{ report: Issue }>> {
     const isFormData = data instanceof FormData;
+    // FormData must go over POST: PHP does not populate a parsed body for
+    // multipart PUT requests. The backend aliases POST /{id} to officerUpdate.
     return apiClient(`/officer/issues/${id}`, {
-      method: "PUT",
+      method: isFormData ? "POST" : "PUT",
       body: isFormData ? data : JSON.stringify(data),
       isFormData: isFormData,
       headers: isFormData ? {} : undefined,

@@ -20,6 +20,7 @@ import { issuesService, Issue } from "@/lib/services/issues-service";
 export function RecentIssuesSummary() {
   const [recentIssues, setRecentIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchRecentIssues() {
@@ -27,9 +28,12 @@ export function RecentIssuesSummary() {
         const response = await issuesService.getOfficerIssues({ limit: 5 });
         if (response.success && response.data.reports) {
           setRecentIssues(response.data.reports);
+        } else {
+          setError(response?.message || "Unable to load recent issues");
         }
       } catch (error) {
         console.error("Failed to fetch recent issues:", error);
+        setError("Unable to load recent issues");
       } finally {
         setLoading(false);
       }
@@ -66,6 +70,11 @@ export function RecentIssuesSummary() {
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
             <span className="ml-2 text-gray-500">Loading...</span>
+          </div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">
+            <AlertCircle className="h-8 w-8 mx-auto mb-2" />
+            <p>{error}</p>
           </div>
         ) : recentIssues.length === 0 ? (
           <div className="text-center py-8 text-gray-500">

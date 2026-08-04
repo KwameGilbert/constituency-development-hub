@@ -486,26 +486,17 @@ export function EditIssue({ issueId, onIssueLoad }: EditIssueProps) {
       submitData.append("specific_location", formData.cottage || "");
       submitData.append("details", formData.additional_notes || "");
 
-      if (formData.reporter_name) {
+      // Also send reporter fields for backend processing if needed (as constituent fields)
+      if (formData.reporter_name)
         submitData.append("constituent_name", formData.reporter_name);
-        submitData.append("reporter_name", formData.reporter_name);
-      }
-      if (formData.reporter_phone) {
+      if (formData.reporter_phone)
         submitData.append("constituent_phone", formData.reporter_phone);
-        submitData.append("reporter_phone", formData.reporter_phone);
-      }
-      if (formData.reporter_email) {
+      if (formData.reporter_email)
         submitData.append("constituent_email", formData.reporter_email);
-        submitData.append("reporter_email", formData.reporter_email);
-      }
-      if (formData.reporter_gender) {
+      if (formData.reporter_gender)
         submitData.append("constituent_gender", formData.reporter_gender);
-        submitData.append("reporter_gender", formData.reporter_gender);
-      }
-      if (formData.reporter_address) {
+      if (formData.reporter_address)
         submitData.append("constituent_address", formData.reporter_address);
-        submitData.append("reporter_address", formData.reporter_address);
-      }
 
       submitData.append("keep_existing_images", "true");
 
