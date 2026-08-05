@@ -27,6 +27,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { sanitizeHtml } from "@/lib/utils";
 import IssueDescription from "@/components/ui/IssueDescription";
 
+/**
+ * List fields (images, documents) arrive either as arrays or as JSON strings
+ * depending on the endpoint, so normalise before iterating. A raw string has a
+ * length but no .map, which would throw during the server render.
+ */
+function parseList(field: unknown): string[] {
+  if (Array.isArray(field)) return field as string[];
+  if (typeof field === "string") {
+    try {
+      const parsed = JSON.parse(field);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 export default async function IssueDetailPage({
   params,
 }: {
@@ -304,13 +322,13 @@ export default async function IssueDetailPage({
                 </div>
 
                 {/* Images - Hidden in Overview since they are in Attachments now, or keep them? Keeping them for quick view */}
-                {issue.images && issue.images.length > 0 && (
+                {parseList(issue.images).length > 0 && (
                   <div className="pt-4 border-t">
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">
                       Images
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {issue.images.map((image, index) => (
+                      {parseList(issue.images).map((image, index) => (
                         <div
                           key={index}
                           className="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200"
@@ -319,10 +337,6 @@ export default async function IssueDetailPage({
                             src={image}
                             alt={`Issue image ${index + 1}`}
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src =
-                                "https://via.placeholder.com/400x300?text=Image+Not+Available";
-                            }}
                           />
                         </div>
                       ))}
@@ -713,20 +727,6 @@ export default async function IssueDetailPage({
               </CardHeader>
               <CardContent>
                 {(() => {
-                  // Helper to parse lists safely
-                  const parseList = (field: any): any[] => {
-                    if (Array.isArray(field)) return field;
-                    if (typeof field === "string") {
-                      try {
-                        const parsed = JSON.parse(field);
-                        return Array.isArray(parsed) ? parsed : [];
-                      } catch {
-                        return [];
-                      }
-                    }
-                    return [];
-                  };
-
                   const issueImages = parseList(issue?.images).map(
                     (url: any) => ({
                       type: "image",
