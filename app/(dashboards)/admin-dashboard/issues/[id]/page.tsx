@@ -32,12 +32,12 @@ import IssueDescription from "@/components/ui/IssueDescription";
  * depending on the endpoint, so normalise before iterating. A raw string has a
  * length but no .map, which would throw during the server render.
  */
-function parseList(field: unknown): string[] {
-  if (Array.isArray(field)) return field as string[];
+function parseList<T = string>(field: unknown): T[] {
+  if (Array.isArray(field)) return field as T[];
   if (typeof field === "string") {
     try {
       const parsed = JSON.parse(field);
-      return Array.isArray(parsed) ? parsed : [];
+      return Array.isArray(parsed) ? (parsed as T[]) : [];
     } catch {
       return [];
     }
@@ -147,7 +147,7 @@ export default async function IssueDetailPage({
                 {issue.title}
               </h1>
               <Badge className={`${getStatusColor(issue.status)} border-0`}>
-                {issue.status.replace(/_/g, " ")}
+                {(issue.status || "unknown").replace(/_/g, " ")}
               </Badge>
               <Badge className={`${getPriorityColor(issue.priority)} border-0`}>
                 {issue.priority}
@@ -466,14 +466,16 @@ export default async function IssueDetailPage({
                       </div>
                     )}
 
-                    {assessment.required_resources &&
-                      assessment.required_resources.length > 0 && (
+                    {parseList<ResourceItem>(assessment.required_resources)
+                      .length > 0 && (
                         <div className="pt-4 border-t">
                           <h3 className="text-sm font-semibold text-gray-700 mb-2">
                             Required Resources
                           </h3>
                           <div className="border rounded-md divide-y">
-                            {assessment.required_resources.map(
+                            {parseList<ResourceItem>(
+                              assessment.required_resources,
+                            ).map(
                               (res: ResourceItem, idx: number) => (
                                 <div
                                   key={idx}
@@ -682,9 +684,10 @@ export default async function IssueDetailPage({
                       Resources
                     </p>
                     <div className="space-y-2">
-                      {issue.allocated_resources &&
-                      issue.allocated_resources.length > 0 ? (
-                        issue.allocated_resources.map((resource, index) => (
+                      {parseList<ResourceItem>(issue.allocated_resources)
+                        .length > 0 ? (
+                        parseList<ResourceItem>(issue.allocated_resources).map(
+                          (resource, index) => (
                           <div
                             key={index}
                             className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
