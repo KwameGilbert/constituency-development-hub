@@ -20,9 +20,11 @@ import { Loader2 } from "lucide-react";
 
 interface IssueActionsProps {
   issue: Issue;
+  /** Called after a mutation succeeds so the caller can refetch the issue. */
+  onUpdated?: () => void;
 }
 
-export function IssueActions({ issue }: IssueActionsProps) {
+export function IssueActions({ issue, onUpdated }: IssueActionsProps) {
   const [activeAction, setActiveAction] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -38,6 +40,7 @@ export function IssueActions({ issue }: IssueActionsProps) {
       if (response.success) {
         toast.success("Issue assigned to Task Force Dashboard");
         router.refresh();
+        onUpdated?.();
       } else {
         toast.error("Failed to assign issue");
       }
@@ -212,6 +215,7 @@ export function IssueActions({ issue }: IssueActionsProps) {
         issue={issue}
         activeAction={activeAction}
         onClose={() => setActiveAction(null)}
+        onUpdated={onUpdated}
       />
     </>
   );

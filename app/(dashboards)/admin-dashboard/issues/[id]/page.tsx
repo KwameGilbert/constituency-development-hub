@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect, useCallback, use } from "react";
+import Link from "next/link";
 import { AdminHeader } from "@/components/admin-dashboard/AdminHeader";
 import {
   issuesService,
@@ -16,119 +19,147 @@ import {
   CheckCircle,
   Camera,
   FileText,
+  Users,
+  Briefcase,
 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { IssueActions } from "@/components/admin-dashboard/issues/IssueActions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { sanitizeHtml } from "@/lib/utils";
+import { parseList } from "@/lib/utils";
 import IssueDescription from "@/components/ui/IssueDescription";
 
-/**
- * List fields (images, documents) arrive either as arrays or as JSON strings
- * depending on the endpoint, so normalise before iterating. A raw string has a
- * length but no .map, which would throw during the server render.
- */
-function parseList<T = string>(field: unknown): T[] {
-  if (Array.isArray(field)) return field as T[];
-  if (typeof field === "string") {
-    try {
-      const parsed = JSON.parse(field);
-      return Array.isArray(parsed) ? (parsed as T[]) : [];
-    } catch {
-      return [];
-    }
-  }
-  return [];
+function getStatusColor(status: string) {
+  const statusColors: Record<string, string> = {
+    submitted: "bg-blue-100 text-blue-700",
+    under_officer_review: "bg-purple-100 text-purple-700",
+    forwarded_to_admin: "bg-indigo-100 text-indigo-700",
+    assigned_to_task_force: "bg-cyan-100 text-cyan-700",
+    assessment_in_progress: "bg-yellow-100 text-yellow-700",
+    assessment_submitted: "bg-orange-100 text-orange-700",
+    resources_allocated: "bg-teal-100 text-teal-700",
+    resolution_in_progress: "bg-lime-100 text-lime-700",
+    resolution_submitted: "bg-emerald-100 text-emerald-700",
+    resolved: "bg-green-100 text-green-700",
+    closed: "bg-gray-100 text-gray-700",
+  };
+  return statusColors[status] || "bg-gray-100 text-gray-700";
 }
 
-export default async function IssueDetailPage({
+function getPriorityColor(priority: string) {
+  const priorityColors: Record<string, string> = {
+    urgent: "bg-red-100 text-red-700",
+    high: "bg-orange-100 text-orange-700",
+    medium: "bg-yellow-100 text-yellow-700",
+    low: "bg-gray-100 text-gray-700",
+  };
+  return priorityColors[priority] || "bg-gray-100 text-gray-700";
+}
+
+interface AttachmentFile {
+  type: "image" | "document";
+  url: string;
+  name: string;
+  date?: string;
+}
+
+export default function IssueDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  let issue: Issue | null = null;
+  const { id } = use(params);
+  const [issue, setIssue] = useState<Issue | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  try {
-    const response = await issuesService.getIssueById(id);
-    if (response && response.success && response.data.report) {
-      issue = response.data.report;
+  const fetchIssue = useCallback(async () => {
+    try {
+      setError(null);
+      const response = await issuesService.getIssueById(id);
+      if (response && response.success && response.data.report) {
+        const report = response.data.report;
 
-      // Map backend fields to frontend expectations if necessary
-      if (issue.resolution_report && !issue.resolution) {
-        issue.resolution = issue.resolution_report;
-
-        // Ensure images are arrays (handle potential JSON strings from backend)
-        if (issue.resolution) {
-          const rawResolution = issue.resolution as unknown as {
-            before_images?: unknown;
-            after_images?: unknown;
-          };
-
-          if (typeof rawResolution.before_images === "string") {
-            try {
-              issue.resolution.before_images = JSON.parse(
-                rawResolution.before_images,
-              );
-            } catch (e) {
-              issue.resolution.before_images = [];
-            }
-          }
-
-          if (typeof rawResolution.after_images === "string") {
-            try {
-              issue.resolution.after_images = JSON.parse(
-                rawResolution.after_images,
-              );
-            } catch (e) {
-              issue.resolution.after_images = [];
-            }
-          }
+        // Map backend fields to frontend expectations if necessary
+        if (report.resolution_report && !report.resolution) {
+          report.resolution = report.resolution_report;
         }
+        // Normalise images: the API can return either a real array or a
+        // JSON-encoded string depending on the endpoint.
+        if (report.resolution) {
+          report.resolution.before_images = parseList(
+            report.resolution.before_images,
+          );
+          report.resolution.after_images = parseList(
+            report.resolution.after_images,
+          );
+        }
+        if (report.assessment_report && !report.assessment) {
+          report.assessment = report.assessment_report;
+        }
+
+        setIssue(report);
+      } else {
+        setIssue(null);
+        setError(response?.message || "Issue not found");
       }
-      if (issue.assessment_report && !issue.assessment) {
-        issue.assessment = issue.assessment_report;
-      }
-    } else {
-      issue = null;
+    } catch (err) {
+      console.error("Failed to fetch issue details:", err);
+      setIssue(null);
+      setError("Failed to load issue details");
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Failed to fetch issue details:", error);
-    issue = null;
+  }, [id]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchIssue();
+  }, [fetchIssue]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+        <AdminHeader title="Issue Details" />
+        <div className="flex-1 p-8 space-y-6 max-w-6xl mx-auto w-full">
+          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-64 w-full rounded-lg" />
+          <Skeleton className="h-48 w-full rounded-lg" />
+        </div>
+      </div>
+    );
   }
 
-  if (!issue) return notFound();
-
-  function getStatusColor(status: string) {
-    const statusColors: Record<string, string> = {
-      submitted: "bg-blue-100 text-blue-700",
-      under_officer_review: "bg-purple-100 text-purple-700",
-      forwarded_to_admin: "bg-indigo-100 text-indigo-700",
-      assigned_to_task_force: "bg-cyan-100 text-cyan-700",
-      assessment_in_progress: "bg-yellow-100 text-yellow-700",
-      assessment_submitted: "bg-orange-100 text-orange-700",
-      resources_allocated: "bg-teal-100 text-teal-700",
-      resolution_in_progress: "bg-lime-100 text-lime-700",
-      resolution_submitted: "bg-emerald-100 text-emerald-700",
-      resolved: "bg-green-100 text-green-700",
-      closed: "bg-gray-100 text-gray-700",
-    };
-    return statusColors[status] || "bg-gray-100 text-gray-700";
+  if (error || !issue) {
+    return (
+      <div className="flex flex-col min-h-screen w-full bg-slate-50">
+        <AdminHeader title="Issue Details" />
+        <div className="flex-1 p-8 max-w-6xl mx-auto w-full">
+          <Link href="/admin-dashboard/issues">
+            <Button variant="ghost" className="mb-4">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Issues
+            </Button>
+          </Link>
+          <div className="rounded-lg border bg-red-50 p-6 text-red-600 flex items-center gap-3">
+            <AlertCircle className="h-5 w-5" />
+            <div>
+              <p className="font-medium">Issue Not Found</p>
+              <p className="text-sm">
+                {error || "This issue could not be loaded."}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  function getPriorityColor(priority: string) {
-    const priorityColors: Record<string, string> = {
-      urgent: "bg-red-100 text-red-700",
-      high: "bg-orange-100 text-orange-700",
-      medium: "bg-yellow-100 text-yellow-700",
-      low: "bg-gray-100 text-gray-700",
-    };
-    return priorityColors[priority] || "bg-gray-100 text-gray-700";
-  }
+  // Present when the issue was filed on the constituent's behalf by an
+  // agent or officer, rather than submitted directly.
+  const agentObject = issue.agent || issue.user;
+  const isAgentSubmitted = issue.origin === "agent" || !!agentObject;
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-slate-50">
@@ -169,7 +200,6 @@ export default async function IssueDetailPage({
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            {/* ... keeping existing overview content ... */}
             {/* Issue Details Card */}
             <Card>
               <CardHeader>
@@ -190,6 +220,17 @@ export default async function IssueDetailPage({
                   />
                 </div>
 
+                {issue.additional_notes && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                      Additional Notes
+                    </h3>
+                    <p className="text-sm text-gray-600 bg-slate-50 border p-3 rounded-md whitespace-pre-wrap">
+                      {issue.additional_notes}
+                    </p>
+                  </div>
+                )}
+
                 {/* Metadata Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
                   <div className="flex items-start gap-3">
@@ -206,6 +247,32 @@ export default async function IssueDetailPage({
                       )}
                     </div>
                   </div>
+
+                  {issue.suburb && (
+                    <div className="flex items-start gap-3">
+                      <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          Suburb
+                        </p>
+                        <p className="text-gray-600">{issue.suburb}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {issue.specific_location && (
+                    <div className="flex items-start gap-3 md:col-span-2">
+                      <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          Specific Location
+                        </p>
+                        <p className="text-gray-600 italic">
+                          &quot;{issue.specific_location}&quot;
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex items-start gap-3">
                     <Calendar className="h-5 w-5 text-gray-400 mt-0.5" />
@@ -266,6 +333,19 @@ export default async function IssueDetailPage({
                     <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
                     <div>
                       <p className="text-sm font-medium text-gray-700">
+                        Impact Type
+                      </p>
+                      <p className="text-gray-600 capitalize">
+                        {issue.issue_type?.replace(/_/g, " ") ||
+                          "Community Based"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">
                         Sector
                       </p>
                       <p className="text-gray-600">{issue.sector || "N/A"}</p>
@@ -283,6 +363,36 @@ export default async function IssueDetailPage({
                       </p>
                     </div>
                   </div>
+
+                  {issue.people_affected != null && (
+                    <div className="flex items-start gap-3">
+                      <Users className="h-5 w-5 text-gray-400 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          People Affected
+                        </p>
+                        <p className="text-gray-600">
+                          {Number(issue.people_affected).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {issue.estimated_budget != null && (
+                    <div className="flex items-start gap-3">
+                      <div className="h-5 w-5 flex items-center justify-center font-bold text-gray-400 text-[10px] mt-0.5">
+                        GH₵
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          Estimated Budget
+                        </p>
+                        <p className="text-gray-600">
+                          GH₵ {Number(issue.estimated_budget).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex items-start gap-3">
                     <Mail className="h-5 w-5 text-gray-400 mt-0.5" />
@@ -321,7 +431,7 @@ export default async function IssueDetailPage({
                   </div>
                 </div>
 
-                {/* Images - Hidden in Overview since they are in Attachments now, or keep them? Keeping them for quick view */}
+                {/* Images */}
                 {parseList(issue.images).length > 0 && (
                   <div className="pt-4 border-t">
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">
@@ -345,6 +455,33 @@ export default async function IssueDetailPage({
                 )}
               </CardContent>
             </Card>
+
+            {/* Reporting Agent (present when filed on the constituent's behalf) */}
+            {isAgentSubmitted && agentObject && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-amber-600" />
+                    Reporting Agent
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center border border-amber-200 shrink-0">
+                    <Briefcase className="h-4 w-4 text-amber-700" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-gray-900 truncate">
+                      {agentObject.name || agentObject.user?.name || "Agent"}
+                    </p>
+                    <p className="text-sm text-gray-500 truncate">
+                      {agentObject.email || agentObject.user?.email || "No email"}
+                      {" · "}
+                      {agentObject.phone || agentObject.user?.phone || "No phone"}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="assessment" className="space-y-6">
@@ -378,10 +515,7 @@ export default async function IssueDetailPage({
                   </CardHeader>
                   <CardContent className="space-y-6">
                     {/* Status Badge */}
-                    <div className="flex justify-end items-center gap-2">
-                      <span className="text-xs text-gray-400 font-mono">
-                        DEBUG_STATUS: [{assessment.status}]
-                      </span>
+                    <div className="flex justify-end">
                       <Badge
                         variant={
                           assessment.status === "approved"
@@ -730,44 +864,43 @@ export default async function IssueDetailPage({
               </CardHeader>
               <CardContent>
                 {(() => {
-                  const issueImages = parseList(issue?.images).map(
-                    (url: any) => ({
+                  const issueImages: AttachmentFile[] = parseList<string>(
+                    issue.images,
+                  ).map((url) => ({
+                    type: "image",
+                    url,
+                    name: "Issue Image",
+                    date: issue.created_at,
+                  }));
+
+                  const assessment =
+                    issue.assessment_report || issue.assessment;
+
+                  let assessmentFiles: AttachmentFile[] = [];
+                  if (assessment) {
+                    const aImages: AttachmentFile[] = parseList<string>(
+                      assessment.images,
+                    ).map((url) => ({
                       type: "image",
                       url,
-                      name: "Issue Image",
-                      date: issue?.created_at,
-                    }),
-                  );
-                  const assessment =
-                    issue?.assessment_report || issue?.assessment;
-
-                  let assessmentFiles: {
-                    type: string;
-                    url: any;
-                    name: string;
-                    date: any;
-                  }[] = [];
-                  if (assessment) {
-                    const aImages = parseList(assessment.images).map(
-                      (url: any) => ({
-                        type: "image",
-                        url,
-                        name: "Assessment Image",
-                        date: assessment.created_at,
-                      }),
-                    );
-                    const aDocs = parseList(assessment.documents).map(
-                      (url: any) => ({
-                        type: "document",
-                        url,
-                        name: "Assessment Document",
-                        date: assessment.created_at,
-                      }),
-                    );
+                      name: "Assessment Image",
+                      date: assessment.created_at,
+                    }));
+                    const aDocs: AttachmentFile[] = parseList<string>(
+                      assessment.documents,
+                    ).map((url) => ({
+                      type: "document",
+                      url,
+                      name: "Assessment Document",
+                      date: assessment.created_at,
+                    }));
                     assessmentFiles = [...aImages, ...aDocs];
                   }
 
-                  const allAttachments = [...issueImages, ...assessmentFiles];
+                  const allAttachments: AttachmentFile[] = [
+                    ...issueImages,
+                    ...assessmentFiles,
+                  ];
 
                   if (allAttachments.length === 0) {
                     return (
@@ -827,7 +960,7 @@ export default async function IssueDetailPage({
         </Tabs>
 
         {/* Admin Actions */}
-        <IssueActions issue={issue} />
+        <IssueActions issue={issue} onUpdated={fetchIssue} />
       </div>
     </div>
   );

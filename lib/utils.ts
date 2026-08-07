@@ -21,6 +21,25 @@ export function unwrapSettled<T>(
   return null;
 }
 
+/**
+ * Normalises a list field that the API may return as a real array or as a
+ * JSON-encoded string, depending on the endpoint. A raw string has a
+ * `.length` but no `.map`, so treating it as an array without parsing first
+ * throws during render.
+ */
+export function parseList<T = string>(field: unknown): T[] {
+  if (Array.isArray(field)) return field as T[];
+  if (typeof field === "string") {
+    try {
+      const parsed = JSON.parse(field);
+      return Array.isArray(parsed) ? (parsed as T[]) : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "";
   if (path.startsWith("data:") || path.startsWith("blob:")) return path;

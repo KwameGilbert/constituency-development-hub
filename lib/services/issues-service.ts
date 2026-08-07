@@ -2,6 +2,14 @@ import { apiClient } from "@/lib/api-client";
 
 // --- Interfaces ---
 
+export interface ReportingContact {
+  id?: number;
+  name?: string;
+  email?: string;
+  phone?: string;
+  user?: { name?: string; email?: string; phone?: string };
+}
+
 export interface Issue {
   id: number;
   case_id?: string;
@@ -21,11 +29,18 @@ export interface Issue {
   suburb_id?: number;
   smaller_community?: string;
   cottage?: string;
+  specific_location?: string;
   latitude?: number;
   longitude?: number;
   people_affected?: number;
+  estimated_budget?: number;
   additional_notes?: string;
   images?: string[];
+  // Present when the issue was filed on a constituent's behalf by an agent
+  // or officer, rather than submitted directly (see origin).
+  origin?: string;
+  agent?: ReportingContact;
+  user?: ReportingContact;
   status:
     | "submitted"
     | "under_officer_review"

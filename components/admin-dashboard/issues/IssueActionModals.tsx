@@ -45,12 +45,15 @@ interface ActionModalsProps {
   issue: Issue;
   activeAction: string | null;
   onClose: () => void;
+  /** Called after a mutation succeeds so the caller can refetch the issue. */
+  onUpdated?: () => void;
 }
 
 export function IssueActionModals({
   issue,
   activeAction,
   onClose,
+  onUpdated,
 }: ActionModalsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -115,6 +118,7 @@ export function IssueActionModals({
       if (response.success) {
         toast.success("Task force assigned successfully");
         router.refresh();
+        onUpdated?.();
         onClose();
       } else {
         toast.error("Failed to assign task force");
@@ -147,6 +151,7 @@ export function IssueActionModals({
       if (response.success) {
         toast.success("Resources allocated successfully");
         router.refresh();
+        onUpdated?.();
         onClose();
       } else {
         toast.error("Failed to allocate resources");
@@ -174,6 +179,7 @@ export function IssueActionModals({
       if (response.success) {
         toast.success(`Assessment ${assessmentAction}d successfully`);
         router.refresh();
+        onUpdated?.();
         onClose();
       } else {
         toast.error("Failed to review assessment");
@@ -201,6 +207,7 @@ export function IssueActionModals({
       if (response.success) {
         toast.success(`Resolution ${resolutionAction}d successfully`);
         router.refresh();
+        onUpdated?.();
         onClose();
       } else {
         toast.error("Failed to review resolution");
@@ -228,6 +235,7 @@ export function IssueActionModals({
       if (response.success) {
         toast.success("Status updated successfully");
         router.refresh();
+        onUpdated?.();
         onClose();
       } else {
         toast.error("Failed to update status");

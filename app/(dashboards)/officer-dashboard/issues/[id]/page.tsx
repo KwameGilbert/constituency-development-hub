@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { issuesService, Issue } from "@/lib/services/issues-service";
 import { DashboardHeader } from "../../dashboard-header";
 import IssueDescription from "@/components/ui/IssueDescription";
+import { parseList } from "@/lib/utils";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -530,11 +531,7 @@ export default function OfficerIssueDetailPage({
 
             {/* Images */}
             {(() => {
-              const imgs: string[] = Array.isArray(issue.images)
-                ? issue.images
-                : typeof issue.images === "string"
-                  ? (() => { try { return JSON.parse(issue.images); } catch { return []; } })()
-                  : [];
+              const imgs = parseList<string>(issue.images);
               return imgs.length > 0 ? (
                 <div className="pt-4">
                   <h3 className="text-sm font-semibold text-slate-700 mb-3 flex items-center gap-2">
